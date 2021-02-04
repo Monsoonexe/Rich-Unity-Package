@@ -13,7 +13,7 @@ public class EventCameraLocator : RichMonoBehaviour
 	[Tooltip("[Optional] Canvas which needs an event camera.")]
 	public Canvas canvas;
 
-    private void Awake()
+    protected override void Awake()
     {
     	if(canvas == null)
     		canvas = GetComponent<Canvas>();
