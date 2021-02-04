@@ -1,7 +1,5 @@
 ﻿using System.Text;
 using UnityEngine;
-using Explore;
-using Explore.Audio;
 
 /// <summary>
 /// 
@@ -43,11 +41,6 @@ public class Item : RichScriptableObject, IItem //data
     [Tooltip("Usually key or quest items cannot be destroyed.")]
     protected bool isDestroyable = true;
     public bool IsDestroyable { get => isDestroyable; }
-
-    /// <summary>
-    /// Is this Item Usable? Some Items can only be used conditionally.
-    /// </summary>
-    public virtual bool CanUse(Character character) => true;
 
     [SerializeField]
     [Tooltip("Player-facing item name (Sword of the Fallen).")]
