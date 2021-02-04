@@ -5,12 +5,21 @@
 /// world camera (event camera) property. Replace if there's a better Controller on this
 /// object that can do this.
 /// </summary>
-[RequireComponent(typeof(Canvas))]
 public class EventCameraLocator : RichMonoBehaviour
 {
-    private void Start()
+	[Tooltip("[Optional] Camera to assign to canvas.worldCamera.")]
+	public Camera worldEventCamera;
+
+	[Tooltip("[Optional] Canvas which needs an event camera.")]
+	public Canvas canvas;
+
+    private void Awake()
     {
-        GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+    	if(canvas == null)
+    		canvas = GetComponent<Canvas>();
+
+        canvas.worldCamera = worldEventCamera != null ? 
+        	worldEventCamera : GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         Destroy(this);//my job is done!
     }
 }
