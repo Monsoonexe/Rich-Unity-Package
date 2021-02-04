@@ -3,6 +3,6 @@
     public interface IDamageable
     {
         void TakeDamage(int damageAmount);
-        void TakeDamage(DamagePacket damagePacket, Entity damageSource);
+        //void TakeDamage(DamagePacket damagePacket, Entity damageSource);
     }
 }
