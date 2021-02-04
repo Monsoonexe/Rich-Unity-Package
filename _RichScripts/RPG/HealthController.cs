@@ -93,6 +93,7 @@ namespace Explore
             return currentHealth.ToString() + SPACE_SLASH_SPACE + maxHealth.ToString();
         }
 
+        /* 
         public void TakeDamage(DamagePacket damagePacket, Entity damageSource)
         {
             var damageAmount = damagePacket.DamageAmount;
@@ -109,5 +110,6 @@ namespace Explore
                 deadEvent.Invoke();
             }
         }
+        */
     }
 }
