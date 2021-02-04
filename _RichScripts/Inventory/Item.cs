@@ -9,7 +9,7 @@ using UnityEngine;
 /// <seealso cref="ItemStack"/>
 [CreateAssetMenu(fileName = "_Item",
                  menuName = "ScriptableObjects/Item")]
-public class Item : RichScriptableObject, IItem //data
+public class Item : RichScriptableObject//data
 {   //please update Constructors when adding properties!
     /// <summary>
     /// Community StringBuilder object.
