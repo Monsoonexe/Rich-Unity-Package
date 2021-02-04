@@ -10,7 +10,7 @@ public class EventCameraLocator : RichMonoBehaviour
 {
     private void Start()
     {
-        GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComonent<Transform>();
+        GetComponent<Canvas>().worldCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
         Destroy(this);//my job is done!
     }
 }
