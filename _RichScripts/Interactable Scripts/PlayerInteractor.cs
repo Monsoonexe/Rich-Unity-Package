@@ -21,7 +21,7 @@ public class PlayerInteractor : RichMonoBehaviour
 {
     [Header("--Settings--")]
     [SerializeField]
-    private Player playerCharacter;
+    //private Player playerCharacter;
     private IPlayerInteractable targetInteractable;
     private Rigidbody myRigidbody;
     private Collider myCollider;
@@ -44,7 +44,7 @@ public class PlayerInteractor : RichMonoBehaviour
         //check for button press and an Interactable nearby
         if (Input.GetButtonDown("Interact") && targetInteractable != null)
         {
-            targetInteractable.Interact(playerCharacter);//do interaction
+            //targetInteractable.Interact(playerCharacter);//do interaction
         }
     }
 
@@ -56,7 +56,7 @@ public class PlayerInteractor : RichMonoBehaviour
             if(newInteractable != targetInteractable) // prevents repeats / stuttering
             {
                 targetInteractable = newInteractable;
-                targetInteractable.OnEnterRange(playerCharacter);
+                //targetInteractable.OnEnterRange(playerCharacter);
             }
         }
     }
@@ -68,7 +68,7 @@ public class PlayerInteractor : RichMonoBehaviour
             var newInteractable = other.GetComponent<IPlayerInteractable>();
             if (newInteractable == targetInteractable) // prevents repeats / stuttering
             {
-                targetInteractable.OnExitRange(playerCharacter);
+                //targetInteractable.OnExitRange(playerCharacter);
                 targetInteractable = null;
             }
         }
