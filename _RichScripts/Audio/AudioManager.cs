@@ -89,6 +89,7 @@ public class AudioManager : RichMonoBehaviour
         if (!Instance)
         {
             Instance = current;
+            transform.SetParent(null);//DontDestroyOnLoad only works when transform is at root of Scene
             DontDestroyOnLoad(Instance.gameObject); // immortality!
             IsInitialized = true;
         }
@@ -187,7 +188,7 @@ public class AudioManager : RichMonoBehaviour
     }
 
     #region API
-    
+
     /// <summary>
     /// Create an AudioManager in the Scene.
     /// </summary>
@@ -241,7 +242,7 @@ public class AudioManager : RichMonoBehaviour
             options.priority = 128;
             options.volume = 1.0f;//max
         }
-        Debug.Assert(Instance != null, "[AudioManager] Not initialized." +
+        Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
             "Please call AudioManager.Init() or instantiate prefab at root.");
 
         //find an audio source with the lowest volume, or that is not playing
@@ -284,7 +285,7 @@ public class AudioManager : RichMonoBehaviour
         AudioOptions options = default)
     {
         if (!clip) return AudioID.Invalid;//for safety
-        Debug.Assert(Instance != null, "[AudioManager] Not initialized." +
+        Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
             "Please call AudioManager.Init() or instantiate prefab at root.");
 
         //default values for options, iff none included.
