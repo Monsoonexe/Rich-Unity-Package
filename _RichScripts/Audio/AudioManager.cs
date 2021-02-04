@@ -89,7 +89,7 @@ public class AudioManager : RichMonoBehaviour
         if (!Instance)
         {
             Instance = current;
-            transform.SetParent(null);//DontDestroyOnLoad only works when transform is at root of Scene
+            current.transform.SetParent(null);//DontDestroyOnLoad only works when transform is at root of Scene
             DontDestroyOnLoad(Instance.gameObject); // immortality!
             IsInitialized = true;
         }
