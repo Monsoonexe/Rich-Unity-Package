@@ -186,7 +186,7 @@ public struct ItemStack// value type
     {
         return 
             (Item != null ? Item.ItemName : "empty")
-            + ConstStrings.SPACE + ConstStrings.GetCachedString(_amount);
+            +  " " + _amount.ToString();
     }
 
     //public static ItemStack operator +(ItemStack a, ItemStack b)
