@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using Explore;
-using Explore.Events;
 
 /// <summary>
 /// Handles triggering Interactions between a Player and the world.
@@ -39,32 +37,20 @@ public class PlayerInteractor : RichMonoBehaviour
         myRigidbody.angularDrag = 0;
         myRigidbody.drag = 0;
         myRigidbody.mass = Mathf.Epsilon;//can't actually be zero.
-
-        Signals.Get<OnPauseGameSignal>().AddListener(PauseGameHandler);
-        Signals.Get<TogglePlayerInteractability>().AddListener(ToggleHandler);
-    }
-
-    private void OnDestroy()
-    {
-
-        Signals.Get<OnPauseGameSignal>().RemoveListener(PauseGameHandler);
-        Signals.Get<TogglePlayerInteractability>().RemoveListener(ToggleHandler);
     }
 
     private void Update()
     {
         //check for button press and an Interactable nearby
-        if (Input.GetButtonDown(ConstStrings.INPUT_INTERACT) && targetInteractable != null)
+        if (Input.GetButtonDown("Interact") && targetInteractable != null)
         {
             targetInteractable.Interact(playerCharacter);//do interaction
-            Signals.Get<InteractableInteractSignal>() // alert any other passive listeners
-                .Dispatch(targetInteractable, playerCharacter);//interaction occured
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag(ConstStrings.TAG_INTERACTABLE))
+        if (other.gameObject.CompareTag("Interactable"))
         {
             var newInteractable = other.GetComponent<IPlayerInteractable>();
             if(newInteractable != targetInteractable) // prevents repeats / stuttering
@@ -77,7 +63,7 @@ public class PlayerInteractor : RichMonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag(ConstStrings.TAG_INTERACTABLE))
+        if (other.gameObject.CompareTag("Interactable"))
         {
             var newInteractable = other.GetComponent<IPlayerInteractable>();
             if (newInteractable == targetInteractable) // prevents repeats / stuttering
@@ -94,5 +80,4 @@ public class PlayerInteractor : RichMonoBehaviour
         myCollider.enabled = active;// en/disable collisions
     }
 
-    private void PauseGameHandler(bool paused) => this.enabled = !paused;
 }
