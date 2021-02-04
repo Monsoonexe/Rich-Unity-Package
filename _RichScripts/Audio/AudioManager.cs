@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.Audio;
 using DG.Tweening;
 
@@ -188,11 +187,13 @@ public class AudioManager : RichMonoBehaviour
     }
 
     #region API
-
-    [MenuItem("Tools/Audio Manager/Create Instance in Scene")]
+    
     /// <summary>
     /// Create an AudioManager in the Scene.
     /// </summary>
+#if UNITY_EDITOR
+    [UnityEditor.MenuItem("Tools/Audio Manager/Create Instance in Scene")]
+#endif
     public static void Init()
         => new GameObject("AudioManager").AddComponent<AudioManager>();
 
