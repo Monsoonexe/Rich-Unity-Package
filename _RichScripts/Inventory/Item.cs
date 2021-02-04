@@ -14,19 +14,17 @@ public class Item : RichScriptableObject//data
     /// <summary>
     /// Community StringBuilder object.
     /// </summary>
-	protected static readonly StringBuilder sb = new StringBuilder();
+    protected static readonly StringBuilder sb = new StringBuilder();
     public const int MAX_STACK_AMOUNT = 9999;
 
     [Header("---Item---")]
     [SerializeField]
     [Tooltip("Unique id that identifies item (every 'sword of fallen' will have same id).")]
-    [System.Obsolete("NOT Obsolete, but id will not work with builds because set by" +
-        "AssetDatabase, which is Editor only.")]
     protected string id;
     /// <summary>
     /// Unique id that identifies item (every 'sword of fallen' will have same id).
     /// </summary>
-	public string ID { get { return id; } } // public readonly serialized property	
+    public string ID { get { return id; } } // public readonly serialized property  
 
     [SerializeField]
     [Tooltip("Is this Item a tool, armor, consumable?")]
@@ -57,7 +55,7 @@ public class Item : RichScriptableObject//data
     /// <summary>
     /// "General player-facing description (a potion that makes you invisible)."
     /// </summary>
-	public string ItemDescription { get => itemDescription; }
+    public string ItemDescription { get => itemDescription; }
 
     [SerializeField]
     [Tooltip("Sprite that represents like items in Inventory.")]
@@ -65,7 +63,7 @@ public class Item : RichScriptableObject//data
     /// <summary>
     /// Sprite that represents like items in Inventory.
     /// </summary>
-	public Sprite Icon { get => icon; }
+    public Sprite Icon { get => icon; }
 
     [SerializeField]
     [Tooltip("The Item's physical form, if it were to be instantiated.")]
@@ -82,7 +80,7 @@ public class Item : RichScriptableObject//data
     /// <summary>
     /// "How many of this item can be stacked in Inventory? (usually Tools and Weapons are 1."
     /// </summary>
-	public virtual int MaximumStacks { get => maximumStack; } // public readonly serialized property	
+    public virtual int MaximumStacks { get => maximumStack; } // public readonly serialized property    
 
     [Header("---Audio---")]
     [SerializeField]
@@ -155,10 +153,10 @@ public class Item : RichScriptableObject//data
     /// 
     /// </summary>
     protected virtual void OnValidate()
-	{   //asset Database only works in Editor, 
-		string path = UnityEditor.AssetDatabase.GetAssetPath(this);
-		id = UnityEditor.AssetDatabase.AssetPathToGUID(path);
-	}
+    {
+        if(string.IsNullOrEmpty(id))
+            id = GetInstanceID().ToString();
+    }
 
 #endif
 
