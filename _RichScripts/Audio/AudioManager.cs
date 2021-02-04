@@ -122,9 +122,9 @@ public class AudioManager : RichMonoBehaviour
         if (audioMixer)
         {   //this section of code makes a lot of assumptions about the given audio mixer
             var sfxGroup = audioMixer.FindMatchingGroups("SFX")[0];
-            foreach (var source in SFXAudioSources)
+            for (var i = 0; i < sfxAudioSourceCount; ++i)
             {
-                source.outputAudioMixerGroup = sfxGroup;
+                SFXAudioSources[i].outputAudioMixerGroup = sfxGroup;
             }
             var bgGroup = audioMixer.FindMatchingGroups("Background Music")[0];
             backgroundMusicTrackA.outputAudioMixerGroup = bgGroup;
