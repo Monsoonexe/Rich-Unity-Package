@@ -213,6 +213,13 @@ namespace Explore
 	    #region Random and Collections
 
 	    /// <summary>
+	    /// Returns either True or False with a 50-50 chance.
+	    /// </summary>
+    	public static bool FlipCoin() 
+       		=> Random.Range(0, 2) == 0;//
+    
+
+	    /// <summary>
 	    /// Returns a random element from array, or default if collection is empty.
 	    /// </summary>
 	    /// <typeparam name="T"></typeparam>
