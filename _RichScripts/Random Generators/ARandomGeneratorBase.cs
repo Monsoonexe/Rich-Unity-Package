@@ -1,16 +1,10 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="TContainer">Weighted</typeparam>
-/// <typeparam name="TValue"></typeparam>
-/// <seealso cref="RandomIntGenerator"/> see for example
 public abstract class ARandomGeneratorBase<TContainer, TValue> : RichScriptableObject
     where TContainer : AWeightedProbability<TValue>
 {
     [SerializeField]
-    protected TContainer[] availablePool = new TContainer[0]; // only YOU can prevent nullrefs
+    protected TContainer[] availablePool;
 
     /// <summary>
     /// Peek or examine the pool. This could be on a SO, so don't go changing this.
@@ -47,15 +41,6 @@ public abstract class ARandomGeneratorBase<TContainer, TValue> : RichScriptableO
 
         return cachedResults;
     }
-
-    /// <summary>
-    /// Assign a new pool of WeightedProbabilities to draw from.
-    /// Note: This change will persist when exiting PlayMode. Do not pre-load data into
-    /// an ARandomGen you expect to change the pool.
-    /// </summary>
-    /// <param name="newPool"></param>
-    public void AssignNewPool(TContainer[] newPool)
-        => availablePool = newPool;
 
     /// <summary>
     /// Total accumulated value of all weights in pool.
