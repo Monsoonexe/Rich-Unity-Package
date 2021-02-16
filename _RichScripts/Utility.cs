@@ -367,8 +367,21 @@ public static class Utility
         }
 
         return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
-
     }
+
+    public static int RollDice(int dice, int sides, int mod)
+    {   //validate
+        Debug.Assert(dice >= 0 && sides > 0, "[Utility] Invalid RollDice input: " 
+            + dice.ToString() + " " + sides.ToString());
+
+        var result = mod;
+        var upperRandomLimit = sides + 1;//because upper bound of random is exclusive
+        for (; dice > 0; --dice)
+            result += Random.Range(1, upperRandomLimit);
+        return result;
+    }
+
+    public static int RollDie(int sides) => Random.Range(1, sides + 1);
 
     #endregion
 
