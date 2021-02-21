@@ -2,7 +2,7 @@
 
 [CreateAssetMenu(fileName = "IntReferences",
 	menuName = "ScriptableObjects/References/Int")]
-public class IntReference : RichScriptableObject
+public class IntReference : ScriptableReferences<int>
 {
     //exists
 }
