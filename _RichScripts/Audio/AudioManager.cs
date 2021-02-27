@@ -9,7 +9,7 @@ using DG.Tweening;
 /// </summary>
 public struct AudioID
 {
-    public static int IDCounter = 0;
+    public static int IDCounter = 1; //start at 1 so 0 (default) is invalid
 
     public readonly int ID;
 
