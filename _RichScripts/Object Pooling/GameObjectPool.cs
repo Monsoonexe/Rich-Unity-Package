@@ -45,7 +45,7 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
     public virtual IPoolable CreatePoolable()
     {
-        var newGameObj = Instantiate(objectPrefab);
+        var newGameObj = Instantiate(objectPrefab, myTransform);
         var poolable = newGameObj.GetComponent<IPoolable>();
 
         //validate
