@@ -21,7 +21,7 @@ public abstract class ARandomGeneratorBase<TContainer, TValue> : RichScriptableO
     /// </summary>
     /// <returns></returns>
     public virtual TValue GetNextRandom() => 
-        AWeightedProbability.GetWeightedRandomElement(availablePool);
+        AWeightedProbability.GetWeightedRandomElement(this);
 
     /// <summary>
     /// Used to get a pool of objects.
