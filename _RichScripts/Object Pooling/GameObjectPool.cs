@@ -6,7 +6,7 @@ public delegate void InitPoolableMethod(IPoolable poolable);
 /// <summary>
 /// Base Class for ObjectPool System
 /// </summary>
-public abstract class GameObjectPool : RichMonoBehaviour
+public class GameObjectPool : RichMonoBehaviour
 {
     public enum InitStrategy
     {
@@ -19,6 +19,8 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
     [Header("---Pool Base Settings---")]
     public bool InitOnAwake = true;
+
+    public bool createWhenEmpty = true;
 
     [SerializeField]
     protected InitStrategy initStragety = InitStrategy.EAGER;
@@ -35,12 +37,26 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
     //runtime data
     private Stack<IPoolable> pool;
+    //private Queue<IPoolable> queuePool;
 
     protected override void Awake()
     {
         base.Awake();
         if(InitOnAwake)
             InitPool();
+    }
+
+    private void OnValidate()
+    {
+        if (objectPrefab != null)
+        {   //ensure prefab has an IPoolable Component on it 
+            if (objectPrefab.GetComponent<IPoolable>() == null)
+            {
+                Debug.LogError("[GameObjectPool] Prefab {" + objectPrefab.name
+                    + "} does not have an IPoolable Component", objectPrefab);
+                objectPrefab = null;
+            }
+        }
     }
 
     public virtual IPoolable CreatePoolable()
@@ -54,10 +70,7 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
         poolable.OnCreate();
         poolable.PoolOwner = this; //know where you came from
-
-        if (initStragety == InitStrategy.EAGER)
-            InitPoolableMethod(poolable);
-
+        
         return poolable;
     }
 
@@ -69,17 +82,19 @@ public abstract class GameObjectPool : RichMonoBehaviour
     {
         IPoolable depooledItem = null;
 
-        Debug.Assert(pool.Count != 0, "[GameObjectPool] Pool is empty.", this);
-
-        if(pool.Count != 0)
-        {
+        if (pool.Count > 0)
             depooledItem = pool.Pop();
+        else if(createWhenEmpty)
+            depooledItem = CreatePoolable();
+        
+        if(depooledItem != null)
+        {
             if (initStragety == InitStrategy.LAZY)
                 InitPoolableMethod(depooledItem);
 
             depooledItem.OnDepool();
         }
-        
+
         return depooledItem;
     }
 
@@ -105,7 +120,14 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
         //preload pool
         for(var i = startingAmount; i > 0; --i)
-            pool.Push(CreatePoolable());
+        {
+            var newP = CreatePoolable();
+
+            if (initStragety == InitStrategy.EAGER)
+                    InitPoolableMethod(newP);
+
+            pool.Push(newP);
+        }
     }
 
     /// <summary>
@@ -123,4 +145,5 @@ public abstract class GameObjectPool : RichMonoBehaviour
 
         pool.TrimExcess();
     }
+
 }
