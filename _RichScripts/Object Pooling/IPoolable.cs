@@ -8,3 +8,8 @@ public interface IPoolable
     void OnEnpool();
     void OnDepool();
 }
+
+public static class IPoolable_Extensions
+{
+    public static void ReturnToPool(this IPoolable p) => p.PoolOwner.Enpool(p);
+}
