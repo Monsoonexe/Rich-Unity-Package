@@ -38,7 +38,7 @@ public static class Utility
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool Xor(this bool a, bool b)  => (a && !b) || (!a && b);
+    public static bool Xor(this bool a, bool b) => (a && !b) || (!a && b);
 
     /// <summary>
     /// Shortcut for a = !a;
@@ -90,10 +90,16 @@ public static class Utility
     }
 
     public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
-    
+
     #endregion
 
     #region Collection Helpers
+
+    public static bool IndexIsInRange<T>(this T[] source, int index)
+        => index > 0 && index < source.Length;
+
+    public static bool IndexIsInRange<T>(this List<T> source, int index)
+        => index > 0 && index < source.Count;
 
     public static T[] CloneArray<T>(this T[] source)
     {
@@ -112,7 +118,7 @@ public static class Utility
                 return true;
         return false;
     }
-    
+
     /// <summary>
     /// Returns the first index matching the given element, or -1 if not found.
     /// </summary>
@@ -123,7 +129,8 @@ public static class Utility
     public static int GetIndexOfElementInArray<T>(T element, T[] array)
     {
         var length = array.Length;
-        for(var i = 0; i < length; ++i)
+
+        for (var i = 0; i < length; ++i)
             if (array[i].Equals(element))
                 return i;
         return -1;//not found
@@ -211,13 +218,6 @@ public static class Utility
     #region Random and Collections
 
     /// <summary>
-    /// Returns either True or False with a 50-50 chance.
-    /// </summary>
-	public static bool FlipCoin() 
-   		=> Random.Range(0, 2) == 0;//
-
-
-    /// <summary>
     /// Returns a random element from array, or default if collection is empty.
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -251,28 +251,28 @@ public static class Utility
     /// <param name="totalCollection"></param>
     /// <param name="usedCollection"></param>
     /// <returns></returns>
-    public static T GetRandomUnused<T>(T[] totalCollection, 
+    public static T GetRandomUnused<T>(T[] totalCollection,
         T[] usedCollection)
-    {            
+    {
         //build a pool of indices that have not been used.  
         var possibleIndices = CommunityIndiceList;
 
         var totalCount = totalCollection.Length;
         for (var i = 0; i < totalCount; ++i)
         {
-            if(!Contains(usedCollection, totalCollection[i])) 
+            if (!Contains(usedCollection, totalCollection[i]))
             {
                 possibleIndices.Add(i);//this index is safe to choose from
             }
         }
 
-        if(possibleIndices.Count == 0)
+        if (possibleIndices.Count == 0)
         {
             Debug.Log("Every index has been used in collection of count: " + totalCollection.Length);
             return default;
         }
 
-        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]]; 
+        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
     }
 
     /// <summary>
@@ -323,7 +323,7 @@ public static class Utility
         var totalCount = totalCollection.Count;
         for (var i = 0; i < totalCount; ++i)
         {
-            if (!usedCollection.Contains((T) totalCollection[i]))
+            if (!usedCollection.Contains((T)totalCollection[i]))
             {
                 possibleIndices.Add(i);//this index is safe to choose from
             }
@@ -354,7 +354,7 @@ public static class Utility
         var totalCount = totalCollection.Count;
         for (var i = 0; i < totalCount; ++i)
         {
-            if(!usedCollection.Contains(totalCollection[i]))
+            if (!usedCollection.Contains(totalCollection[i]))
             {
                 possibleIndices.Add(i);//this index is safe to choose from
             }
@@ -367,6 +367,7 @@ public static class Utility
         }
 
         return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
+
     }
 
     public static int RollDice(int dice, int sides, int mod)
@@ -433,7 +434,7 @@ public static class Utility
 
     #endregion
 
-    public static void SetLayerRecursively(this Transform obj, int newLayer )
+    public static void SetLayerRecursively(this Transform obj, int newLayer)
     {
         obj.gameObject.layer = newLayer;
         var childCount = obj.childCount;
@@ -451,7 +452,7 @@ public static class Utility
 
     #region Math
 
-    public static int AbsoluteValue(this int i)
+    public static int AbsoluteValue(int i)
         => i >= 0 ? i : -i;
 
     /// <summary>
@@ -459,7 +460,7 @@ public static class Utility
     /// </summary>
     /// <param name="f"></param>
     /// <returns>Because Mathf.Abs() is managed code.</returns>
-    public static float AbsoluteValue(this float f)
+    public static float AbsoluteValue(float f)
         => f >= 0 ? f : -f;
 
     /// <summary>
@@ -467,13 +468,13 @@ public static class Utility
     /// </summary>
     /// <param name="f"></param>
     /// <returns></returns>
-    public static void SetAbsolute(ref this float f)
+    public static void SetAbsoluteValue(this ref float f)
         => f = f >= 0 ? f : -f;
 
     public static Vector2 AbsoluteValue(this Vector2 v)
         => new Vector2(AbsoluteValue(v.x), AbsoluteValue(v.y));
 
-    public static Vector3 AbsoluteValue(this Vector3 v)
+    public static Vector3 AbsoluteValue(Vector3 v)
         => new Vector3(AbsoluteValue(v.x), AbsoluteValue(v.y), AbsoluteValue(v.z));
 
     /// <summary>
@@ -482,7 +483,7 @@ public static class Utility
     /// <param name="a"></param>
     /// <param name="decimalDigits"></param>
     /// <returns></returns>
-    public static float TruncateMantissa(this float a, int decimalDigits)
+    public static float TruncateMantissa(this ref float a, int decimalDigits)
     {
         if (decimalDigits == 0)
             return (int)a;
@@ -493,10 +494,9 @@ public static class Utility
         for (var i = 0; i < decimalDigits; ++i)
             truncator *= TEN;
 
-        return ((int)(a * truncator)) / truncator;
+        return a = ((int)(a * truncator)) / truncator;
     }
 
-
-	#endregion
+    #endregion
 
 }
