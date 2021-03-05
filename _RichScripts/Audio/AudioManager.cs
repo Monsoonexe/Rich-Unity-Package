@@ -9,7 +9,7 @@ using DG.Tweening;
 /// </summary>
 public struct AudioID
 {
-    public static int IDCounter = 1; //start at 1 so 0 (default) is invalid
+    public static int IDCounter = 1;
 
     public readonly int ID;
 
@@ -113,11 +113,14 @@ public class AudioManager : RichMonoBehaviour
         for (var i = 0; i < sfxAudioSourceCount; ++i)
         {
             SFXAudioSources[i] = gameObject.AddComponent<AudioSource>(); // new AudioSource
+            SFXAudioSources[i].playOnAwake = false;
         }
 
         //create background track sources
         backgroundMusicTrackA = gameObject.AddComponent<AudioSource>();
+        backgroundMusicTrackA.playOnAwake = false;
         backgroundMusicTrackB = gameObject.AddComponent<AudioSource>();
+        backgroundMusicTrackB.playOnAwake = false;
 
         if (audioMixer)
         {   //this section of code makes a lot of assumptions about the given audio mixer
@@ -196,7 +199,10 @@ public class AudioManager : RichMonoBehaviour
     [UnityEditor.MenuItem("Tools/Audio Manager/Create Instance in Scene")]
 #endif
     public static void Init()
-        => new GameObject("AudioManager").AddComponent<AudioManager>();
+    {
+        if (!Instance)
+            new GameObject("AudioManager").AddComponent<AudioManager>();
+    }
 
     /// <summary>
     /// Different way to play a SFX if you don't want to use AudioOptions.
@@ -207,7 +213,7 @@ public class AudioManager : RichMonoBehaviour
     /// <param name="crossfade"></param>
     /// <param name="priority"></param>
     /// <param name="volume"></param>
-    /// <param name="duration"></param>
+    /// <param name="duration">If 'duration' LT 0, then it will be length of clip.</param>
     /// <returns></returns>
     public static AudioID PlaySFX(AudioClip clip, bool loop = false,
         bool pitchShift = true, float crossfade = 0.0f, int priority = 128,
@@ -224,7 +230,7 @@ public class AudioManager : RichMonoBehaviour
     }
 
     /// <summary>
-    /// Play the given clip.
+    /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
     /// </summary>
     /// <param name="clip"></param>
     /// <param name="options"></param>
@@ -271,13 +277,15 @@ public class AudioManager : RichMonoBehaviour
         }
 
         source = sources[lowestIndex];
+        //set duration to clip length if < 0
+        var _duration = options.duration < 0 ? clip.length : options.duration;
 
         var key = TrackAudio(source); // return a key so audio can be interrupted later
         ConfigAudioSource(source, clip, options);
 
         // if looping with duration < 0, it's up to caller to stop the clip.
         if (!options.loop || options.duration > 0) //stop clip if not looping, or if looping for a specified duration
-            Instance.StartCoroutine(RemoveSourceAfterClip(options.duration, key)); // free source after time
+            Instance.StartCoroutine(RemoveSourceAfterClip(_duration, key)); // free source after time
         return key;
     }
 
@@ -336,6 +344,37 @@ public class AudioManager : RichMonoBehaviour
         }
     }
 
+    public static void StopAllSFX()
+    {
+        var sources = SFXSources;
+        for(var i = sources.Length; i > 0; --i )
+            sources[i].Stop();
+    }
+
+    public static void StopAllSFXFade(float fadeOutDuration)
+    {
+        var sources = SFXSources;
+        for (var i = sources.Length; i > 0; --i)
+        {
+            sources[i].DOFade(0, fadeOutDuration)
+                .OnComplete(sources[i].Stop);
+        }
+    }
+
+    public static void StopAllBackground()
+    {
+        BackgroundMusicTrackA.Stop();
+        BackGroundMusicTrackB.Stop();
+    }
+
+    public static void StopAllBackgroundFade(float fadeDuration)
+    {
+        BackgroundMusicTrackA.DOFade(0, fadeDuration)
+            .OnComplete(BackgroundMusicTrackA.Stop);
+        BackGroundMusicTrackB.DOFade(0, fadeDuration)
+            .OnComplete(BackGroundMusicTrackB.Stop);
+    }
+
     #endregion
 }
 
@@ -348,11 +387,27 @@ public static class Audio_Extensions
         AudioOptions options = default)
         => AudioManager.PlayBackgroundTrack(clip, options);
 
+    /// <summary>
+    /// Different way to play a SFX if you don't want to use AudioOptions.
+    /// </summary>
+    /// <param name="clip"></param>
+    /// <param name="loop"></param>
+    /// <param name="pitchShift"></param>
+    /// <param name="crossfade"></param>
+    /// <param name="priority"></param>
+    /// <param name="volume"></param>
+    /// <param name="duration">If 'duration' LT 0, then it will be length of clip.</param>
+    /// <returns></returns>
     public static AudioID PlaySFX(this AudioClip clip, bool loop = false,
             bool pitchShift = true, float crossfade = 0.0f, int priority = 128,
             float volume = 1.0f, float duration = 0.0f)
         => AudioManager.PlaySFX(clip, loop, pitchShift, crossfade, priority, volume, duration);
 
+    /// <summary>
+    /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
+    /// </summary>
+    /// <param name="clip"></param>
+    /// <param name="options"></param>
     public static AudioID PlaySFX(this AudioClip clip, AudioOptions options)
         => AudioManager.PlaySFX(clip, options);
 
