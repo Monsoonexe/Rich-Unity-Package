@@ -1,8 +1,10 @@
-﻿/// <summary>
+﻿using System;
+
+/// <summary>
 /// Weight and int.
 /// </summary>
 /// <seealso cref="RandomIntGenerator"/>
-[System.Serializable]
+[Serializable]
 public class WeightedInt : AWeightedProbability<int>
 {
     //exists
