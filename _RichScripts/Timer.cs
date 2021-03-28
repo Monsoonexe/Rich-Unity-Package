@@ -11,29 +11,24 @@ public class Timer : RichMonoBehaviour
     private Coroutine timerRoutine;
 
     /// <summary>
-    /// Total duration of timer.
+    /// Total duration of timer. TOP
     /// </summary>
-    private float timerDuration = 0;
+    public float TimerDuration = 0;
 
     /// <summary>
-    /// Time remaining on current loop.
+    /// Time remaining on current loop. COUNTDOWN
     /// </summary>
-    private float timeRemaining = 0;
+    public float TimeRemaining = 0;
 
     /// <summary>
-    /// Time remaining on current loop.
+    /// Accumulated time that has elapsed since last Restart(), or Init()
     /// </summary>
-    public float TimeRemaining { get => timeRemaining; }
-
-    /// <summary>
-    /// How much time has passed.
-    /// </summary>
-    public float ElapsedTime { get => timerDuration - timeRemaining; }
+    public float TimeEllapsed { get; private set; }
 
     /// <summary>
     /// 
     /// </summary>
-    public float PercentComplete { get => (timerDuration - timeRemaining) / timerDuration; }
+    public float PercentComplete { get => (TimerDuration - TimeRemaining) / TimerDuration; }
 
     private bool paused = false;
     public bool Paused
@@ -42,9 +37,9 @@ public class Timer : RichMonoBehaviour
         set
         {
             if (value == true)
-                PauseTimer();
+                Stop();
             else
-                ResumeTimer();
+                Resume();
         }
     }
 
@@ -57,73 +52,76 @@ public class Timer : RichMonoBehaviour
 
     private void OnDisable()
     {
-        StopTimer();
+        Stop();
     }
 
-    public void InitTimer(float duration, Action callback, bool loop = false)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="duration">Length of timer.</param>
+    /// <param name="callback">Override current callback with this one.</param>
+    /// <param name="loop">Auto-repeat at end?</param>
+    public void Initialize(float duration, Action callback, bool loop = false)
     {
+        OnTimerExpire.RemoveAllListeners();
         OnTimerExpire.AddListener(callback.Invoke);//
-        InitTimer(duration, loop);//forward call
+        Initialize(duration, loop);//forward call
     }
 
-    public void InitTimer(float duration, bool loop = false)
+    public void Initialize(float duration, bool loop = false)
     {
-        timerDuration = duration;
-        timeRemaining = duration;
+        TimerDuration = duration;
         this.loop = loop;
         paused = false;
         timerRoutine = StartCoroutine(TickTimer());
     }
 
-    public void PauseTimer()
+    public void Stop()
     {
         paused = true;
         if (timerRoutine != null)
             StopCoroutine(timerRoutine);
     } 
 
-    public void RestartTimer()
-    {
-        InitTimer(timerDuration, loop);
-    }
-
-    public void ResumeTimer()
+    public void Restart()
+        => Initialize(TimerDuration, loop);
+    
+    public void Resume()
     {
         paused = false;
         timerRoutine = StartCoroutine(TickTimer());
     }
 
-    public void StopTimer()
+    /// <summary>
+    /// Will nearly immediately complete, just not right away.
+    /// </summary>
+    public void ForceCompleteEventually()
     {
-        timerDuration = 0;
-        timeRemaining = 0;
-        if(timerRoutine != null)
-            StopCoroutine(timerRoutine);
-        paused = true;
+        TimeRemaining = 0;
     }
 
     /// <summary>
-    /// 
+    /// tick... tick... tick...
     /// </summary>
     /// <returns></returns>
     /// <remarks>TODO - Could greatly reduce Coroutine iteration by using WaitForSeconds
     /// and calculating the runtime values in the functions.</remarks>
     private IEnumerator TickTimer()
     {
-        restartTimer:
-        while (timeRemaining > 0) 
+        do
         {
-            yield return null;//wait for next frame
-            timeRemaining -= Time.deltaTime;
-        }
+            TimeRemaining = TimerDuration;//reset timer
+            TimeEllapsed = 0;
+            while (TimeRemaining > 0)
+            {
+                yield return null;//wait for next frame
+                var deltaTime = Time.deltaTime;
+                TimeEllapsed += deltaTime;//track total time (in case duration was modified while running)
+                TimeRemaining -= deltaTime;//tick... tick... tick...
+            }
 
-        onTimerExpire.Invoke(); //raise event
-
-        if (loop)
-        {
-            timeRemaining = timerDuration;//reset timer
-            goto restartTimer;
-        }
+            onTimerExpire.Invoke(); //raise event
+        } while (loop);
     }
 
     #region Constructors
