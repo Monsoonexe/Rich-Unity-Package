@@ -9,25 +9,25 @@ using DG.Tweening;
 /// </summary>
 public struct AudioID
 {
-    public static int IDCounter = 1;
+    public static uint IDCounter = 1;
 
-    public readonly int ID;
+    public readonly uint ID;
 
     /// <summary>
     /// preferred method: var key = new AudioID(AudioID.GetNextID);
     /// </summary>
     /// <param name="id"></param>
-    public AudioID(int id)
+    public AudioID(uint id)
     {
         ID = id;
     }
 
     /// <summary>
-    /// Returns a new AudioID of -1, which is a flag it's invalid.
+    /// Returns a new AudioID of 0, which is a flag it's invalid.
     /// </summary>
-    public static AudioID Invalid { get => new AudioID(-1); }
-    public static int GetNextID { get => IDCounter++; }//unhinged!
-    //will cause overflow exception after ~2.1 billion sounds are played
+    public static AudioID Invalid { get => new AudioID(0); }
+    public static uint GetNextID { get => IDCounter++; }
+    public static AudioID GetNextKey { get => new AudioID(IDCounter++); }
 }
 
 public class AudioManager : RichMonoBehaviour
@@ -67,8 +67,8 @@ public class AudioManager : RichMonoBehaviour
     /// <summary>
     /// This is so the caller can query the sound after the fact, like for interruping a spell.
     /// </summary>
-    private static Dictionary<int, AudioSource> sourceDictionary
-        = new Dictionary<int, AudioSource>(6);
+    private static Dictionary<uint, AudioSource> sourceDictionary
+        = new Dictionary<uint, AudioSource>(6);
 
     protected override void Awake()
     {
