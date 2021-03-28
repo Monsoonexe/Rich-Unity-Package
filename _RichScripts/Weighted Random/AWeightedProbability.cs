@@ -74,7 +74,7 @@ public abstract class AWeightedProbability
     }
 
     /// <summary>
-    /// GetPrint a random element using Weighted algorithm.
+    /// Get a random element using Weighted algorithm.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="items"></param>
@@ -85,6 +85,32 @@ public abstract class AWeightedProbability
         var randomValue = Random.Range(0, totalWeight) + 1;
         var index = 0;
         AWeightedProbability<T> result = null;
+
+        while (randomValue > 0)
+        {
+            result = items[index++];
+            randomValue -= result.weight;
+        }
+
+        return result.Value;
+    }
+
+    /// <summary>
+    /// Get a random element using Weidghted algorithm.
+    /// </summary>
+    /// <typeparam name="TContainer"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
+    /// <param name="generator"></param>
+    /// <returns></returns>
+    public static TValue GetWeightedRandomElement<TContainer, TValue>(
+        ARandomGeneratorBase<TContainer, TValue> generator)
+        where TContainer : AWeightedProbability<TValue>
+    {
+        var totalWeight = generator.TotalWeight;
+        var items = generator.Pool;
+        var randomValue = Random.Range(0, totalWeight) + 1;
+        var index = 0;
+        AWeightedProbability<TValue> result = null;
 
         while (randomValue > 0)
         {
