@@ -223,7 +223,7 @@ public static class Utility
     /// <typeparam name="T"></typeparam>
     /// <param name="collection"></param>
     /// <returns></returns>
-    public static T GetRandomElement<T>(T[] collection)
+    public static T GetRandomElement<T>(this T[] collection)
     {
         var length = collection.Length;
         if (length == 0) return default; // no elements!
@@ -236,7 +236,7 @@ public static class Utility
     /// <typeparam name="T"></typeparam>
     /// <param name="collection"></param>
     /// <returns></returns>
-    public static T GetRandomElement<T>(List<T> collection)
+    public static T GetRandomElement<T>(this List<T> collection)
     {
         var length = collection.Count;
         if (length == 0) return default; // no elements!
@@ -432,8 +432,28 @@ public static class Utility
         callback();
     }
 
+    /// <summary>
+    /// Postpone execution until after so many frames have passed.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <param name="frames"></param>
+    /// <returns></returns>
+    public static IEnumerator InvokeAfterFrames(this Action callback, int frames)
+    {
+        for(var i = 0; i < frames; ++i)
+        {
+            yield return null;
+        }
+        callback();
+    }
+
     #endregion
 
+    /// <summary>
+    /// Set this and all children (and on) to given layer.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="newLayer"></param>
     public static void SetLayerRecursively(this Transform obj, int newLayer)
     {
         obj.gameObject.layer = newLayer;
@@ -445,6 +465,11 @@ public static class Utility
         }
     }
 
+    /// <summary>
+    /// Set this and all children (and on) to given layer.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="newLayer"></param>
     public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
     {
         SetLayerRecursively(gameObj.transform, newLayer);
@@ -485,15 +510,17 @@ public static class Utility
     /// <returns></returns>
     public static float TruncateMantissa(this ref float a, int decimalDigits)
     {
-        if (decimalDigits == 0)
+        if (decimalDigits == 0) //cast it to and from an int to clear mantissa
             return (int)a;
 
-        const int TEN = 10;
-        var truncator = 1.0f;
+        const int TEN = 10;//base 10
+        var truncator = 1.0f;//start at 1 for multiply
 
+        //exponentiate to move desired portion into integer section
         for (var i = 0; i < decimalDigits; ++i)
             truncator *= TEN;
 
+        //move decimal left, truncate mantissa, move decimal back right
         return a = ((int)(a * truncator)) / truncator;
     }
 
