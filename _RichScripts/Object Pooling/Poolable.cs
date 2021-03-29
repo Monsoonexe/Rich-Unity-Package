@@ -20,6 +20,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
 
     public virtual void OnDepool()
     {
+        gameObject.SetActive(true);
         if (lifetime > 0)
         {
             lifetimeCoroutine = StartCoroutine(
@@ -33,6 +34,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
         {
             StopCoroutine(lifetimeCoroutine);
         }
+        gameObject.SetActive(false);
     }
 
     public void ReturnToPool()
