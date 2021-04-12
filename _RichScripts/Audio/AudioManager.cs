@@ -23,11 +23,8 @@ public struct AudioID
     }
 
     /// <summary>
-    /// Returns a new AudioID of 0, which is a flag it's invalid.
     /// </summary>
     public static AudioID Invalid { get => new AudioID(0); }
-    public static uint GetNextID { get => IDCounter++; }
-    public static AudioID GetNextKey { get => new AudioID(IDCounter++); }
 }
 
 public class AudioManager : RichMonoBehaviour
