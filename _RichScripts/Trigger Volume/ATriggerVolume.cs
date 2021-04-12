@@ -4,7 +4,6 @@ using UnityEngine.Events;
 /// <summary>
 /// 
 /// </summary>
-[RequireComponent(typeof(Collider))]
 public abstract class ATriggerVolume : RichMonoBehaviour
 {
     [SerializeField]
