@@ -6,20 +6,9 @@
 [RequireComponent(typeof(Collider2D))]
 public class TriggerVolume2D : ATriggerVolume
 {
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag(reactToTag))
-        {
-            enterEvent.Invoke();
-        }
-    }
+    protected void OnTriggerEnter2D(Collider2D collision)
+        => HandleEnterCollision(collision.gameObject);
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag(reactToTag))
-        {
-            exitEvent.Invoke();
-        }
-    }
-
+    protected void OnTriggerExit2D(Collider2D collision)
+        => HandleExitCollision(collision.gameObject);
 }

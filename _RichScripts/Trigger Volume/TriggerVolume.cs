@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
 /// Do something when something enters this volume.
@@ -8,19 +7,8 @@ using UnityEngine.Events;
 public class TriggerVolume : ATriggerVolume
 {
     protected void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag(reactToTag))
-        {
-            enterEvent.Invoke();
-        }
-    }
+        => HandleEnterCollision(other.gameObject);
 
     protected void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag(reactToTag))
-        {
-            exitEvent.Invoke();
-        }
-    }
-
+        => HandleExitCollision(other.gameObject);
 }
