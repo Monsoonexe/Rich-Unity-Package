@@ -1,4 +1,8 @@
 ﻿
+/// <summary>
+/// Integer that is always in range ['floor', 'ceiling'].
+/// ++ -- will modify integer by 'step'.
+/// </summary>
 public struct LoopingInt
 {
     public const int DEFAULT_STEP = 1;
@@ -37,6 +41,9 @@ public struct LoopingInt
         Index = startingIndex;
     }
 
+    /// <summary>
+    /// Index from [floor, ceiling], step = 1.
+    /// </summary>
     public LoopingInt(int floor, int ceiling)
     {
         _index = 0; //have to do this before Index can be used.
@@ -47,6 +54,10 @@ public struct LoopingInt
         Index = floor;
     }
 
+    /// <summary>
+    /// Index from [0, ceiling], step = 1. Useful for array indexers
+    /// </summary>
+    /// <param name="ceiling"></param>
     public LoopingInt(int ceiling)
     {
         _index = 0;
@@ -57,6 +68,10 @@ public struct LoopingInt
 
     #endregion
 
+    /// <summary>
+    /// Index = floor;
+    /// </summary>
+    /// <returns></returns>
     public LoopingInt ResetIndex()
     {
         Index = floor;
@@ -65,6 +80,10 @@ public struct LoopingInt
 
     #region Operators
 
+    /// <summary>
+    /// Index.
+    /// </summary>
+    /// <param name="a"></param>
     public static implicit operator int (LoopingInt a) 
         => a.Index;
 

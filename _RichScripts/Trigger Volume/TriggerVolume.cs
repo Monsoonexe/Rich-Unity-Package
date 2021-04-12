@@ -5,17 +5,8 @@ using UnityEngine.Events;
 /// Do something when something enters this volume.
 /// </summary>
 [RequireComponent(typeof(Collider))]
-public class TriggerVolume : RichMonoBehaviour
+public class TriggerVolume : ATriggerVolume
 {
-    [SerializeField]
-    protected string reactToTag = "Player";
-
-    [SerializeField]
-    protected UnityEvent enterEvent = new UnityEvent();
-
-    [SerializeField]
-    protected UnityEvent exitEvent = new UnityEvent();
-
     protected void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag(reactToTag))
