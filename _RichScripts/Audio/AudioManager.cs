@@ -284,14 +284,14 @@ public class AudioManager : RichMonoBehaviour
         }
 
         source = sources[lowestIndex];
-        //set duration to clip length if < 0
-        var _duration = options.duration < 0 ? clip.length : options.duration;
+        //set duration to clip length if <= 0
+        var _duration = options.duration <= 0 ? clip.length : options.duration;
 
         var key = TrackAudio(source); // return a key so audio can be interrupted later
         ConfigAudioSource(source, clip, options);
 
         // if looping with duration < 0, it's up to caller to stop the clip.
-        if (!options.loop || options.duration > 0) //stop clip if not looping, or if looping for a specified duration
+        if (!options.loop || _duration > 0) //stop clip if not looping, or if looping for a specified duration
             Instance.StartCoroutine(RemoveSourceAfterClip(_duration, key)); // free source after time
         return key;
     }
