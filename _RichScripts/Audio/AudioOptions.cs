@@ -22,7 +22,7 @@ public struct AudioOptions
 
     /// <summary>
     /// How much time should this clip should be played for.
-    /// Value LT 0 means "full length of clip".
+    /// Value LTE 0 means "play full length of clip".
     /// </summary>
     [Tooltip("How much time should this clip should be played for. \nValue LT 0 means 'full length of clip'.")]
     public float duration;
