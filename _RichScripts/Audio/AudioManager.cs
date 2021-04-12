@@ -23,8 +23,11 @@ public struct AudioID
     }
 
     /// <summary>
+    /// Returns a new AudioID of 0, which is a flag it's invalid.
     /// </summary>
     public static AudioID Invalid { get => new AudioID(0); }
+    public static uint GetNextID { get => IDCounter++; }
+    public static AudioID GetNextKey { get => new AudioID(GetNextID); }
 }
 
 public class AudioManager : RichMonoBehaviour
@@ -200,6 +203,13 @@ public class AudioManager : RichMonoBehaviour
         if (!Instance)
             new GameObject("AudioManager").AddComponent<AudioManager>();
     }
+
+    public void PlaySFX(AudioClip clip)
+        => AudioManager.PlaySFX(clip);
+
+    public void PlaySFX(AudioClipReference clipRef)
+        => AudioManager.PlaySFX(
+            clipRef.Value, clipRef.Options);
 
     /// <summary>
     /// Different way to play a SFX if you don't want to use AudioOptions.
