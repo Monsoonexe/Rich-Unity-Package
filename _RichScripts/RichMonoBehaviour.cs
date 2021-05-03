@@ -5,7 +5,7 @@ public class RichMonoBehaviour : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField]
     [TextArea]
-    protected string developerDescription = "Please enter a description or a note.";
+    private string developerDescription = "Please enter a description or a note.";
 #endif
 
     /// <summary>
@@ -23,5 +23,11 @@ public class RichMonoBehaviour : MonoBehaviour
     {
         myTransform = this.GetComponent<Transform>();
     }
+
+    /// <summary>
+    /// Delete this Mono's GameObject.
+    /// </summary>
+    /// <remarks>Useful for hooking to event.</remarks>
+    public void DestroyGameObject() => Destroy(this.gameObject);
 
 }
