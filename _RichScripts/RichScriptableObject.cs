@@ -9,7 +9,7 @@ public class RichScriptableObject : ScriptableObject
     [SerializeField]
     [TextArea]
 #pragma warning disable IDE0044 // Add readonly modifier
-    public string developerDescription = "Enter a description";
+    private string developerDescription = "Enter a description";
 #pragma warning restore IDE0044 // Add readonly modifier
 
 #endif
