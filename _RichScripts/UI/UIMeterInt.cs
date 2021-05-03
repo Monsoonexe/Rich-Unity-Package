@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using ScriptableObjectArchitecture;
 
 /// <summary>
 /// Controls a meter fill amount between min and max
 /// </summary>
+[SelectionBase]
 public class UIMeterInt : RichUIElement
 {
     [Header("---Prefab Refs---")]
