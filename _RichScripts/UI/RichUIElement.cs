@@ -11,7 +11,7 @@ public class RichUIElement : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField]
     [TextArea]
-    protected string developerDescription = "Please enter a description";
+    private string developerDescription = "Please enter a description";
 #endif
 
     /// <summary>
@@ -31,6 +31,14 @@ public class RichUIElement : MonoBehaviour
 
     [ContextMenu("Show")]
     public void Hide() => ToggleVisuals(false);
+    
+    /// <summary>
+    /// Used to refresh UI with current values.
+    /// </summary>
+    public virtual void UpdateUI()
+    {
+
+    }
 }
 
 public class RichUIElement<T> : RichUIElement
