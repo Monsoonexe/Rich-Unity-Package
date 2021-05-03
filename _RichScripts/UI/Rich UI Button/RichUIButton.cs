@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 /// <seealso cref="RichUIButtonPayload{Tpayload}"/>
 /// <seealso cref="LoadedButton{TPayload}"/>
-public sealed class RichUIButton : ARichUIButton
+public class RichUIButton : ARichUIButton
 {
     /// <summary>
     /// call base.OnEnable() to auto subscribe to button
