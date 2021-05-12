@@ -13,6 +13,10 @@ using Random = UnityEngine.Random;
 public static class Utility
 {    //stuff we can all use!
     #region Boolean Operations
+    
+    //for situations where bools just don't cut it
+    public const int TRUE_int = 1;
+    public const int FALSE_int = 0;
 
     /// <summary>
     /// A && B in function form.
