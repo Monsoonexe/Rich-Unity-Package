@@ -26,6 +26,13 @@ public class RichUIElement : MonoBehaviour
             gameObject.SetActive(active);//if hit ground
     }
 
+
+    /// <summary>
+    /// Show if hidden, hide if shown.
+    /// </summary>
+    public virtual void ToggleVisuals()
+        => ToggleVisuals(gameobject.activeSelf);
+
     [ContextMenu("Hide")]
     public void Show() => ToggleVisuals(true);
 
@@ -47,4 +54,24 @@ public class RichUIElement<T> : RichUIElement
     /// The data that this UI Element should show.
     /// </summary>
     public T targetData;
+
+    protected virtual void OnEnable()
+    {
+        SubscribeToEvents();
+    }
+
+    protected virtual void OnDisable()
+    {
+        UnsubscribeFromEvents();
+    }
+
+    protected virtual void SubscribeToEvents()
+    {
+
+    }
+
+    protected virtual void UnsubscribeFromEvents()
+    {
+
+    }
 }
