@@ -29,5 +29,28 @@ public class RichMonoBehaviour : MonoBehaviour
     /// </summary>
     /// <remarks>Useful for hooking to event.</remarks>
     public void DestroyGameObject() => Destroy(this.gameObject);
+    
+    public void Enable() => this.enabled = true;
+    public void Disable() => this.enabled = false;
+
+    /// <summary>
+    /// Set a reference to a singleton to the given instance if valid.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="instance"></param>
+    /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+    /// <returns>False if a SingletonError occured.</returns>
+    private static void InitSingleton<T>(T instance, ref T singletonRef)
+    {
+        if(singletonRef == null)
+        {   //we are the singleton
+            singletonRef = instance;
+        }
+        else if(!singletonRef.Equals(instance))
+        {   //there are two Singletons
+            throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
+                instance.ToString(), singletonRef.ToString()));
+        }
+    }
 
 }
