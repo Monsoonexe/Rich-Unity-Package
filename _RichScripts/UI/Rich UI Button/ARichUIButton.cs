@@ -5,6 +5,7 @@ using TMPro;
 public abstract class ARichUIButton : RichUIElement
 {
     private static int static_ID = 0;
+    private static int GetNextID { get => static_ID++; }
     /// <summary>
     /// Every RichUIButton has a unique ID. Use this to differentiate when event is called.
     /// </summary>
@@ -13,24 +14,26 @@ public abstract class ARichUIButton : RichUIElement
     [Header("---Button---")]
     [SerializeField]
     protected Button myButton;
-    public Button Button => myButton;
+    public bool ButtonEnabled => myButton.enabled;
 
     [SerializeField]
     protected Image myImage;
-    public Image Image => myImage;
-    public Sprite Sprite { get => myImage.sprite; set => myImage.sprite = value; }
+    public Image Image { get => myImage; }
+    public bool ImageEnabled => myImage.enabled;
+    public Sprite Sprite => myImage.sprite;
 
     [SerializeField]
     protected TextMeshProUGUI myText;
-    public TextMeshProUGUI Label => myText;
-    public string Text { get => myText.text; set => myText.text = value; }
+    public TextMeshProUGUI Label { get => myText; }
+    public string Text => myText.text;
+    public bool TextEnabled => myText.enabled;
 
     /// <summary>
     /// Please call base.Awake() for maximum ease.
     /// </summary>
     protected virtual void Awake()
     {
-        ID = static_ID++;// get that ID!
+        ID = GetNextID;// get that ID!
         if (!myButton)
         {
             myButton = GetComponent<Button>(); //keep looking
