@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
+[SelectionBase]
 public class RichMonoBehaviour : MonoBehaviour
 {
 #if UNITY_EDITOR
+#pragma warning disable 0414
     [SerializeField]
     [TextArea]
     private string developerDescription = "Please enter a description or a note.";
+#pragma warning restore
 #endif
 
     /// <summary>
@@ -28,8 +31,14 @@ public class RichMonoBehaviour : MonoBehaviour
     /// Delete this Mono's GameObject.
     /// </summary>
     /// <remarks>Useful for hooking to event.</remarks>
-    public void DestroyGameObject() => Destroy(this.gameObject);
-    
+    public void DestroyGameObject() => Destroy(gameObject);
+    public void DestroyComponent() => Destroy(this);
+    public void DontDestroyOnLoad()
+    {
+        transform.SetParent(null);
+        DontDestroyOnLoad(gameObject);
+    }
+
     public void Enable() => this.enabled = true;
     public void Disable() => this.enabled = false;
 
@@ -40,17 +49,22 @@ public class RichMonoBehaviour : MonoBehaviour
     /// <param name="instance"></param>
     /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
     /// <returns>False if a SingletonError occured.</returns>
-    private static void InitSingleton<T>(T instance, ref T singletonRef)
+    protected static bool InitSingleton<T>(T instance, ref T singletonRef, bool dontDestroyOnLoad = true)
+        where T : RichMonoBehaviour
     {
+        var valid = true; //return value
         if(singletonRef == null)
         {   //we are the singleton
             singletonRef = instance;
+            if(dontDestroyOnLoad) instance.DontDestroyOnLoad();
         }
-        else if(!singletonRef.Equals(instance))
+        else if(!instance.Equals(singletonRef))
         {   //there are two Singletons
-            throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
-                instance.ToString(), singletonRef.ToString()));
+            //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
+                //instance.ToString(), singletonRef.ToString()));
+            valid = false;
         }
+        return valid;
     }
 
 }
