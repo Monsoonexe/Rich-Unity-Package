@@ -99,6 +99,15 @@ public static class Utility
 
     #region Collection Helpers
 
+    public static void AddIfNew<T>(this List<T> list, T item)
+    {
+        if (!list.Contains(item))
+            list.Add(item);
+    }
+
+    public static T Last<T>(this T[] collection)
+        => collection[collection.Length - 1];
+
     public static bool IndexIsInRange<T>(this T[] source, int index)
         => index > 0 && index < source.Length;
 
