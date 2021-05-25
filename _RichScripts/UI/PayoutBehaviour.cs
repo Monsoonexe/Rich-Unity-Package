@@ -1,0 +1,101 @@
+﻿using UnityEngine;
+using DG.Tweening;
+using TMPro;
+using ScriptableObjectArchitecture;
+
+/// <summary>
+/// This thing makes the numbers go up over time.
+/// </summary>
+/// <remarks>Kind of gangster since it steps over the owner
+/// of the TMPText, but at least it only changes color.</remarks>
+public class PayoutBehaviour : RichMonoBehaviour
+{
+    public const float MAX_DURATION = 3.0f;
+
+    [Header("---Settings---")]
+    [SerializeField]
+    private float payoutCreditsPerSecond = 100.0f;
+
+    [SerializeField]
+    [Tooltip("Color of text while credits are being paid out.")]
+    private Color creditPayoutTMPColor = Color.yellow;
+
+    [Header("---Scene Refs---")]
+    [SerializeField]
+    private TextMeshProUGUI creditsTMP;
+
+    [Header("---Resources---")]
+    [SerializeField]
+    private IntVariable playerCredits;
+
+    [SerializeField]
+    private IntVariable playerWinnings;
+
+    [Header("---Audio---")]
+    [SerializeField]
+    private AudioClipReference pingPingPingAudio;
+
+    //DOTween.To() only works on float values, 
+    //so these convert int properties to floats.
+
+    private float GetWinAmount() 
+        => playerWinnings.Value;
+
+    private void SetWinAmount(float newAmount) 
+        => playerWinnings.Value = (int)newAmount;
+
+    private float GetCurrentValue() 
+        => playerCredits.Value;
+
+    private void SetCurrentValue(float newValue) 
+        => playerCredits.Value = (int)newValue;
+
+    public Tween PayPlayer()
+    {   //collect data
+        var currentCreditValue = playerCredits.Value; // collect values
+        var winAmountValue = (float)playerWinnings.Value; //cached
+        var newtotal = currentCreditValue + winAmountValue;
+        var duration = CalculatePayoutDuration(
+            currentCreditValue, (int)winAmountValue);
+        var cachedColor = creditsTMP.color;//cache to remember
+
+        //effects to play while money is paying out
+        void DoStartEffects()
+        {
+            AudioManager.PlaySFX(pingPingPingAudio, //play sound on begin
+                loop: true, pitchShift: false, duration: duration);
+
+            creditsTMP.color = creditPayoutTMPColor; // make color while paying out
+        }
+
+        void DoEndEffects()
+        {
+            creditsTMP.color = cachedColor;//restore color
+        }
+
+        //gambler money increase
+        var makeItRainTween = DOTween.To(GetCurrentValue, SetCurrentValue, newtotal,
+            duration)
+            .SetEase(Ease.Linear)//straight line
+            .OnStart(DoStartEffects)
+            .OnComplete(DoEndEffects);
+
+        return makeItRainTween; //arbitrarily return this tween
+    }
+
+    /// <summary>
+    /// As a function so it's easy to find and change when I want to make it better.
+    /// </summary>
+    /// <param name="currentValue"></param>
+    /// <param name="winAmount"></param>
+    /// <returns></returns>
+    private float CalculatePayoutDuration(int currentValue, int winAmount)
+    {
+        Debug.Assert(payoutCreditsPerSecond != 0, 
+            "[PayoutBehaviour] Divide by zero!");
+
+        var seconds = winAmount / payoutCreditsPerSecond;
+        seconds = seconds >= MAX_DURATION ? MAX_DURATION : seconds;//ceiling
+        return seconds;
+    }
+}
