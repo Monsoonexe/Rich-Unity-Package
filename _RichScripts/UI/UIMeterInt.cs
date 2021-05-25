@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using ScriptableObjectArchitecture;
 
 /// <summary>
@@ -21,6 +22,12 @@ public class UIMeterInt : RichUIElement<IntVariable>
     /// Change tint of image (Image.color).
     /// </summary>
     public Color FillTint { get => myImage.color; set => myImage.color = value; }
+
+    public void OnValidate()
+    {
+        if (targetData != null && !targetData.Clampable)
+            Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + targetData.name, this);
+    }
 
     protected override void SubscribeToEvents()
     {
@@ -47,10 +54,4 @@ public class UIMeterInt : RichUIElement<IntVariable>
 
     public override void ToggleVisuals()
         => myImage.enabled = !myImage.enabled;
-
-    public void OnValidate()
-    {
-        if (targetData != null && !targetData.Clampable)
-            Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + targetData.name, this);
-    }
 }
