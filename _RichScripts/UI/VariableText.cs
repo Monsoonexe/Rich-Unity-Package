@@ -2,36 +2,32 @@
 using TMPro;
 using ScriptableObjectArchitecture;
 
-public class VariableText : RichUIElement
+public class VariableText : RichUIElement<BaseVariable>
 {
     [Header("---Scene Refs---")]
     [SerializeField]
     private TextMeshProUGUI tmp;
 
-    [Header("---Data Refs---")]
-    [SerializeField]
-    private BaseVariable data;
-
-    private void OnEnable()
+    protected override void SubscribeToEvents()
     {
-        data.AddListener(UpdateVisuals);
+        targetData.AddListener(UpdateUI);
     }
 
-    private void OnDisable()
+    protected override void UnsubscribeFromEvents()
     {
-        data.RemoveListener(UpdateVisuals);
+        targetData.RemoveListener(UpdateUI);
     }
 
     private void Start()
     {
-        UpdateVisuals();
+        UpdateUI();
     }
 
     /// <summary>
     /// Update UI elements with current values.
     /// </summary>
-    public void UpdateVisuals()
+    public override void UpdateUI()
     {
-        tmp.text = data.ToString();
+        tmp.text = targetData.ToString();
     }
 }
