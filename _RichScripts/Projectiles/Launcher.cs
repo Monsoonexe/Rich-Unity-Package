@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(ProjectilePool))]
+[RequireComponent(typeof(GameObjectPool))]
 public class Launcher : RichMonoBehaviour, ILaunchable
 {
     /// <summary>
@@ -11,7 +11,7 @@ public class Launcher : RichMonoBehaviour, ILaunchable
     protected override void Awake()
     {
         base.Awake();
-        projectilePool = GetComponent<ProjectilePool>();
+        projectilePool = GetComponent<GameObjectPool>();
     }
 
     protected virtual void Start()
@@ -22,7 +22,7 @@ public class Launcher : RichMonoBehaviour, ILaunchable
     public virtual void Launch(Transform spawnPoint)
     {
         //get obj from pool
-        var projectile = projectilePool.Depool() as RichMonoBehaviour;
+        var projectile = projectilePool.Depool<RichMonoBehaviour>();
 
         if (!projectile)//pool empty
         {
