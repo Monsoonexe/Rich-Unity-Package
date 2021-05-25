@@ -18,12 +18,6 @@ public class InputFieldToScriptable : RichUIElement<BaseVariable>
         inputField.text = targetData.ToString();
     }
 
-    public override void ToggleVisuals(bool active)
-        => inputField.enabled = active;
-
-    public override void ToggleVisuals()
-        => inputField.enabled = !inputField.enabled;
-
     protected override void SubscribeToEvents()
     {
         inputField.onEndEdit.AddListener(UpdateData);
