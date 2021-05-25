@@ -7,7 +7,7 @@ namespace ScriptableObjectArchitecture.Editor
     [CustomEditor(typeof(BaseVariable<>), true)]
     public class BaseVariableEditor : UnityEditor.Editor
     {
-        private IBaseVariable Target { get { return (IBaseVariable)target; } }
+        private BaseVariable Target { get { return (BaseVariable)target; } }
         protected bool IsClampable { get { return Target.Clampable; } }
         protected bool IsClamped { get { return Target.IsClamped; } }
 
@@ -58,7 +58,8 @@ namespace ScriptableObjectArchitecture.Editor
                 if (scope.changed)
                 {
                     // Value changed, raise events
-                    Target.Raise();
+                    //Target.Raise();
+                    Target.BaseValue = Target.BaseValue; //force Raise() and possibly Raise(T)
                 }
             }
         }
