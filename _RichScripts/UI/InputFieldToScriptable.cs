@@ -13,11 +13,6 @@ public class InputFieldToScriptable : RichUIElement<BaseVariable>
         inputField = GetComponent<TMP_InputField>();
     }
 
-    private void Start()
-    {
-        inputField.text = targetData.ToString();
-    }
-
     protected override void SubscribeToEvents()
     {
         inputField.onEndEdit.AddListener(UpdateData);
@@ -26,6 +21,11 @@ public class InputFieldToScriptable : RichUIElement<BaseVariable>
     protected override void UnsubscribeFromEvents()
     {
         inputField.onEndEdit.RemoveListener(UpdateData);
+    }
+
+    public override void UpdateUI()
+    {
+        inputField.text = targetData.ToString();
     }
 
     private void UpdateData(string stringVal)

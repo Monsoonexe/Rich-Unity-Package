@@ -18,11 +18,6 @@ public class VariableText : RichUIElement<BaseVariable>
         targetData.RemoveListener(UpdateUI);
     }
 
-    private void Start()
-    {
-        UpdateUI();
-    }
-
     /// <summary>
     /// Update UI elements with current values.
     /// </summary>

@@ -54,6 +54,11 @@ public class RichUIElement<T> : RichUIElement
     /// </summary>
     public T targetData;
 
+    protected virtual void Start()
+    {
+        UpdateUI();
+    }
+
     protected virtual void OnEnable()
     {
         SubscribeToEvents();
