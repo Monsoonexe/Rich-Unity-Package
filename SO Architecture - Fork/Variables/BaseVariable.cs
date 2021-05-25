@@ -1,17 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
-    public interface IBaseVariable 
+    public abstract class BaseVariable : GameEventBase
     {
-        bool IsClamped { get; }
-        bool Clampable { get; }
-        bool ReadOnly { get; }
-        System.Type Type { get; }
-        object BaseValue { get; set; }
-        void Raise();
+        public abstract bool IsClamped { get; }
+        public abstract bool Clampable { get; }
+        public abstract bool ReadOnly { get; }
+        public abstract Type Type { get; }
+        public abstract object BaseValue { get; set; }
     }
-    public abstract class BaseVariable<T> : GameEventBase<T>, IBaseVariable
+    public abstract class BaseVariable<T> : BaseVariable
     {
         public virtual T Value
         {
@@ -23,6 +24,7 @@ namespace ScriptableObjectArchitecture
             {
                 _value = SetValue(value);
                 Raise();
+                Raise(_value);
             }
         }
         public virtual T MinClampValue
@@ -54,11 +56,11 @@ namespace ScriptableObjectArchitecture
             }
         }
 
-        public virtual bool Clampable { get { return false; } }
-        public virtual bool ReadOnly { get { return _readOnly; } }
-        public virtual bool IsClamped { get { return _isClamped; } }
-        public virtual System.Type Type { get { return typeof(T); } }
-        public virtual object BaseValue
+        public override bool Clampable { get { return false; } }
+        public override bool ReadOnly { get { return _readOnly; } }
+        public override bool IsClamped { get { return _isClamped; } }
+        public override Type Type { get { return typeof(T); } }
+        public override object BaseValue
         {
             get
             {
@@ -68,6 +70,7 @@ namespace ScriptableObjectArchitecture
             {
                 _value = SetValue((T)value);
                 Raise();
+                Raise(_value);
             }
         }
 
@@ -83,7 +86,24 @@ namespace ScriptableObjectArchitecture
         protected T _minClampedValue = default(T);
         [SerializeField]
         protected T _maxClampedValue = default(T);
-        
+
+        protected readonly List<Action<T>> _typedActions = new List<Action<T>>();
+
+        public void AddListener(Action<T> action)
+        {
+            if (!_typedActions.Contains(action))
+                _typedActions.Add(action);
+        }
+        public void RemoveListener(Action<T> action)
+        {
+            if (!_typedActions.Contains(action))
+                _typedActions.Remove(action);
+        }
+        public void Raise(T value)
+        {
+            for (var i = _typedActions.Count - 1; i >= 0; --i)
+                _typedActions[i].Invoke(value);               
+        }
         public virtual T SetValue(T value)
         {
             if (_readOnly)
