@@ -488,6 +488,27 @@ public static class Utility
         SetLayerRecursively(gameObj.transform, newLayer);
     }
 
+    /// <summary>
+    /// Case insensitive check.
+    /// </summary>
+    /// <param name="source">Source string.</param>
+    /// <param name="result">Result is invalid if 'false' is returned.</param>
+    /// <returns>True if parse was successful. Result is invalid if 'false' is returned.</returns>
+    public static bool TryStringToBool(this string source, out bool result)
+    {
+        var success = true;
+        result = false;
+        var lowerSource = source.ToLower();
+        var isTrue = lowerSource == ConstStrings.TRUE_STRING_LOWER;
+
+        success = lowerSource == ConstStrings.FALSE_STRING_LOWER
+            || isTrue;
+
+        result = isTrue;
+
+        return success;
+    }
+
     #region Math
 
     public static int AbsoluteValue(int i)
