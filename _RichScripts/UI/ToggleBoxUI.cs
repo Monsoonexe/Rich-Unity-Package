@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using ScriptableObjectArchitecture;
 
 /// <summary>
 /// Say something!
 /// </summary>
-public class ToggleBoxUI : RichUIElement
+public class ToggleBoxUI : VariableText
 {
     [Header("---Toggle State---")]
     public bool ToggleValue;
@@ -30,9 +29,6 @@ public class ToggleBoxUI : RichUIElement
     [SerializeField]
     private Button toggleButton;
 
-    [SerializeField]
-    private TextMeshProUGUI toggleTextTMP;
-
     [Header("---Game Events---")]
     [SerializeField]
     private BoolUnityEvent toggleEvent;
@@ -40,11 +36,6 @@ public class ToggleBoxUI : RichUIElement
     private void Awake()
     {   //subscribe to events
         toggleButton.onClick.AddListener(Toggle);
-    }
-
-    private void Start()
-    {
-        SetState(ToggleValue); // init starting state
     }
 
     private void OnDestroy()
@@ -57,6 +48,11 @@ public class ToggleBoxUI : RichUIElement
         SetState(!ToggleValue);
     }
 
+    public override void UpdateUI()
+    {
+        SetState(ToggleValue); // init starting state
+    }
+
     public void SetState(bool togg)
     {
         ToggleValue = togg;
@@ -64,13 +60,13 @@ public class ToggleBoxUI : RichUIElement
         {
             toggleImage.sprite = onSprite;
             toggleImage.color = onColor;
-            toggleTextTMP.text = onString;
+            tmp.text = onString;
         }
         else
         {
             toggleImage.sprite = offSprite;
             toggleImage.color = offColor;
-            toggleTextTMP.text = offString;
+            tmp.text = offString;
         }
         toggleEvent.Invoke(togg);
     }

@@ -6,7 +6,7 @@ using ScriptableObjectArchitecture;
 /// Controls a meter fill amount between min and max
 /// </summary>
 [SelectionBase]
-public class UIMeterInt : RichUIElement
+public class UIMeterInt : RichUIElement<IntVariable>
 {
     [Header("---Prefab Refs---")]
     [SerializeField]
@@ -22,34 +22,14 @@ public class UIMeterInt : RichUIElement
     /// </summary>
     public Color FillTint { get => myImage.color; set => myImage.color = value; }
 
-    [Header("---Resources---")]
-    [SerializeField]
-    private IntVariable sourceValue;
-
-    private void OnEnable()
+    protected override void SubscribeToEvents()
     {
-        SubscribeToEvents();
-        UpdateUI();
+        targetData.AddListener(UpdateUI);
     }
 
-    private void OnDisable()
+    protected override void UnsubscribeFromEvents()
     {
-        UnsubscribeFromEvents();
-    }
-
-    private void Start()
-    {
-        UpdateUI();
-    }
-
-    public void SubscribeToEvents()
-    {
-        sourceValue.AddListener(UpdateUI);
-    }
-
-    public void UnsubscribeFromEvents()
-    {
-        sourceValue.RemoveListener(UpdateUI);
+        targetData.RemoveListener(UpdateUI);
     }
 
     /// <summary>
@@ -57,19 +37,20 @@ public class UIMeterInt : RichUIElement
     /// </summary>
     public override void UpdateUI()
     {
-        var min = sourceValue.MinClampValue; //cache
-        float range = sourceValue.MaxClampValue - min;
-        myImage.fillAmount = (sourceValue  - min) / range;
+        var min = targetData.MinClampValue; //cache
+        float range = targetData.MaxClampValue - min;
+        myImage.fillAmount = (targetData - min) / range;
     }
 
     public override void ToggleVisuals(bool active)
-    {
-        myImage.enabled = active;
-    }
+        => myImage.enabled = active;
+
+    public override void ToggleVisuals()
+        => myImage.enabled = !myImage.enabled;
 
     public void OnValidate()
     {
-        if (sourceValue != null && !sourceValue.Clampable)
-            Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + sourceValue.name, this);
+        if (targetData != null && !targetData.Clampable)
+            Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + targetData.name, this);
     }
 }

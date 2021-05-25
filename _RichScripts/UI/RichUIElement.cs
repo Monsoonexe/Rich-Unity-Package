@@ -14,6 +14,11 @@ public class RichUIElement : MonoBehaviour
     private string developerDescription = "Please enter a description";
 #endif
 
+    protected virtual void Start()
+    {
+        UpdateUI();
+    }
+
     /// <summary>
     /// Definitely override this with custom implmentation (canvas.enabled recommended). 
     /// No need for base.ToggleVisuals().
@@ -53,11 +58,6 @@ public class RichUIElement<T> : RichUIElement
     /// The data that this UI Element should show.
     /// </summary>
     public T targetData;
-
-    protected virtual void Start()
-    {
-        UpdateUI();
-    }
 
     protected virtual void OnEnable()
     {
