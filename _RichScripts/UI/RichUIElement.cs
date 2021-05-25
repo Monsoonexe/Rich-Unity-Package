@@ -26,7 +26,6 @@ public class RichUIElement : MonoBehaviour
             gameObject.SetActive(active);//if hit ground
     }
 
-
     /// <summary>
     /// Show if hidden, hide if shown.
     /// </summary>
@@ -58,6 +57,7 @@ public class RichUIElement<T> : RichUIElement
     protected virtual void OnEnable()
     {
         SubscribeToEvents();
+        UpdateUI();
     }
 
     protected virtual void OnDisable()
