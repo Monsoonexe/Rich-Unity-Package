@@ -9,7 +9,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
 
     public GameObjectPool PoolOwner { get; set; }
 
-    public bool InUse { get; }
+    public bool InUse { get; private set;}
 
     private Coroutine lifetimeCoroutine;
 
@@ -20,6 +20,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
 
     public virtual void OnDepool()
     {
+        InUse = true;
         gameObject.SetActive(true);
         if (lifetime > 0)
         {
@@ -30,6 +31,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
 
     public virtual void OnEnpool()
     {
+        InUse = false;
         if (lifetimeCoroutine != null)
         {
             StopCoroutine(lifetimeCoroutine);
@@ -37,6 +39,5 @@ public class Poolable : RichMonoBehaviour, IPoolable
         gameObject.SetActive(false);
     }
 
-    public void ReturnToPool()
-        => PoolOwner.Enpool(this);
+    public void ReturnToPool() => PoolOwner.Enpool(this);
 }
