@@ -8,9 +8,9 @@ public class RichScriptableObject : ScriptableObject
 #if UNITY_EDITOR
     [SerializeField]
     [TextArea]
-#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable 0414
     private string developerDescription = "Enter a description";
-#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore 
 
 #endif
 
