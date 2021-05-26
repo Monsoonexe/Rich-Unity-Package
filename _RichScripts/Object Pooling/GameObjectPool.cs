@@ -28,7 +28,9 @@ public class GameObjectPool : RichMonoBehaviour
     [SerializeField]
     private int startingAmount = 6;
 
-    public int Count { get => pool.Count; }
+    [SerializeField]
+    [Tooltip("less than 0 means 'no limit'.")]
+    private int maxAmount = 10;
 
     /// <summary>
     /// [Optional] Something special to be performed on new entries.
@@ -37,6 +39,22 @@ public class GameObjectPool : RichMonoBehaviour
 
     //runtime data
     private Stack<IPoolable> pool;
+    private List<IPoolable> manifest;
+
+    /// <summary>
+    /// Total items this Pool tracks.
+    /// </summary>
+    public int PopulationCount { get => manifest.Count; }
+
+    /// <summary>
+    /// How many items are ready to be deployed.
+    /// </summary>
+    public int ReadyCount { get => pool.Count; }
+
+    /// <summary>
+    /// Number of items currently depooled.
+    /// </summary>
+    public int InUseCount { get => manifest.Count - pool.Count; }
     //private Queue<IPoolable> queuePool;
 
     protected override void Awake()
@@ -59,8 +77,11 @@ public class GameObjectPool : RichMonoBehaviour
         }
     }
 
-    public virtual IPoolable CreatePoolable()
+    protected virtual IPoolable CreatePoolable()
     {
+        if (maxAmount >= 0 && PopulationCount >= maxAmount)
+            return null; //at max capacity
+
         var newGameObj = Instantiate(objectPrefab, myTransform);
         var poolable = newGameObj.GetComponent<IPoolable>();
 
@@ -70,6 +91,7 @@ public class GameObjectPool : RichMonoBehaviour
 
         poolable.OnCreate();
         poolable.PoolOwner = this; //know where you came from
+        manifest.Add(poolable);//track
         
         return poolable;
     }
@@ -91,24 +113,30 @@ public class GameObjectPool : RichMonoBehaviour
         {
             if (initStragety == InitStrategy.LAZY)
                 InitPoolableMethod(depooledItem);
-
+            
             depooledItem.OnDepool();
         }
 
         return depooledItem;
     }
 
+    public T Depool<T>() where T : class => Depool() as T;
+
     /// <summary>
     /// Add an item back into the pool.
     /// </summary>
     /// <param name="poolable"></param>
     /// <returns>Whether item was sucessfully enpooled</returns>
-    public virtual bool Enpool(IPoolable poolable)
+    public virtual void Enpool(IPoolable poolable)
     {
-        pool.Push(poolable);
-        poolable.PoolOwner = this;//claim
-        poolable.OnEnpool();
-        return true;
+        Debug.Assert(poolable.PoolOwner == this,
+            "[GameObjectPool] Pool Error! Enpooled to non-owning Pool!", this);
+
+        if (!pool.Contains(poolable))//guard against multiple entries
+        {
+            pool.Push(poolable);
+            poolable.OnEnpool();
+        }
     }
 
     /// <summary>
@@ -116,7 +144,8 @@ public class GameObjectPool : RichMonoBehaviour
     /// </summary>
     public virtual void InitPool()
     {
-        pool = new Stack<IPoolable>(startingAmount);
+        maxAmount = maxAmount < startingAmount ? startingAmount : maxAmount;
+        pool = new Stack<IPoolable>(maxAmount);
 
         //preload pool
         for(var i = startingAmount; i > 0; --i)
@@ -139,11 +168,22 @@ public class GameObjectPool : RichMonoBehaviour
         //if (!resizeable) return;
         //Debug.Assert(resizeable, "[GameObjectPool] Attempting to resize a marked non-resizable pool.");
 
-        var smallerCapacity = Mathf.Min(newCapacity, pool.Count);
-        while (pool.Count > smallerCapacity) //shrink
-            pool.Pop();//trim excess
+        maxAmount = Mathf.Min(newCapacity, ReadyCount);
+        while (pool.Count > maxAmount) //shrink
+        {
+            var poolable = pool.Pop();//trim excess
+            manifest.Remove(poolable);
+        }
 
+        manifest.TrimExcess();
         pool.TrimExcess();
+    }
+
+    public void ReturnAllToPool()
+    {
+        var count = manifest.Count;
+        for (var i = 0; i < count; ++i)
+            Enpool(manifest[i]);
     }
 
 }
