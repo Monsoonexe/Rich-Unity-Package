@@ -105,8 +105,25 @@ public static class Utility
             list.Add(item);
     }
 
-    public static T Last<T>(this T[] collection)
-        => collection[collection.Length - 1];
+    public static T Last<T>(this T[] collection) => collection[collection.Length - 1];
+
+    public static T Last<T>(this List<T> collection) => collection[collection.Count - 1];
+
+    /// <summary>
+    /// Length - 1
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="col"></param>
+    /// <returns></returns>
+    public static int LastIndex<T>(this T[] col) => col.Length - 1;
+
+    /// <summary>
+    /// Count - 1
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="col"></param>
+    /// <returns></returns>
+    public static int LastIndex<T>(this List<T> col) => col.Count - 1;
 
     public static bool IndexIsInRange<T>(this T[] source, int index)
         => index > 0 && index < source.Length;
@@ -383,6 +400,65 @@ public static class Utility
 
     }
 
+    /// <summary>
+    /// Removes and returns a random element of list. [0, Count)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static T RemoveRandomElement<T>(this List<T> list)
+    {
+        var randomIndex = Random.Range(0, list.Count);
+        var randomElement = list[randomIndex];
+        list.RemoveAt(randomIndex);
+        return randomElement;
+    }
+
+    /// <summary>
+    /// Remove a random element in [start, end).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    public static T RemoveRandomElement<T>(this List<T> list, int start, int end)
+    {
+        var count = list.Count;
+        //validate
+        start = (start < 0 || start >= count) ? 0 : start; //start [0, count - 1]
+        end = (end < 1 || end > count) ? count : end;//end [1, count]
+
+        //compute
+        var randomIndex = Random.Range(start, end);
+        var randomElement = list[randomIndex];
+        list.RemoveAt(randomIndex);
+        return randomElement;
+    }
+
+    /// <summary>
+    /// Remove and return the element at the given index.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="i"></param>
+    /// <returns></returns>
+    public static T GetRemoveAt<T>(this List<T> list, int i)
+    {
+        var el = list[i];
+        list.RemoveAt(i);
+        return el;
+    }
+
+    /// <summary>
+    /// Removes item at highest index. Useful because the List won't shift each element (stack).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <returns></returns>
+    public static T GetRemoveLast<T>(this List<T> list)
+        => list.GetRemoveAt(list.LastIndex());
+
     public static int RollDice(int dice, int sides, int mod)
     {   //validate
         Debug.Assert(dice >= 0 && sides > 0, "[Utility] Invalid RollDice input: " 
@@ -527,6 +603,11 @@ public static class Utility
     public static void SetAbsoluteValue(this ref float f)
         => f = f >= 0 ? f : -f;
 
+    public static int Min(int x, int y) => x < y ? x : y;
+    public static int Max(int x, int y) => x > y ? x : y;
+    public static float Min(float x, float y) => x < y ? x : y;
+    public static float Max(float x, float y) => x > y ? x : y;
+
     public static Vector2 AbsoluteValue(this Vector2 v)
         => new Vector2(AbsoluteValue(v.x), AbsoluteValue(v.y));
 
@@ -541,7 +622,29 @@ public static class Utility
     /// <returns></returns>
     public static float TruncateMantissa(this ref float a, int decimalDigits)
     {
-        if (decimalDigits == 0) //cast it to and from an int to clear mantissa
+        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
+            return (int)a;
+
+        const int TEN = 10;//base 10
+        var truncator = 1.0f;//start at 1 for multiply
+
+        //exponentiate to move desired portion into integer section
+        for (var i = 0; i < decimalDigits; ++i)
+            truncator *= TEN;
+
+        //move decimal left, truncate mantissa, move decimal back right
+        return a = ((int)(a * truncator)) / truncator;
+    }
+
+    /// <summary>
+    /// 10.37435 (1) = 10.3
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="decimalDigits"></param>
+    /// <returns></returns>
+    public static float TruncateMantissa(float a, int decimalDigits)
+    {
+        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
             return (int)a;
 
         const int TEN = 10;//base 10
