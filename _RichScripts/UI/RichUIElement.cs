@@ -11,7 +11,9 @@ public class RichUIElement : MonoBehaviour
 #if UNITY_EDITOR
     [SerializeField]
     [TextArea]
-    private string developerDescription = "Please enter a description";
+#pragma warning disable 0414
+    private string developerDescription = "Enter a description";
+#pragma warning restore 
 #endif
 
     protected virtual void Start()
