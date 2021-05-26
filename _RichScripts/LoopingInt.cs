@@ -24,8 +24,19 @@ public struct LoopingInt
         }
     }
 
+    /// <summary>
+    /// Lowest possible value.
+    /// </summary>
     public int floor;
+
+    /// <summary>
+    /// Highest possible value.
+    /// </summary>
     public int ceiling;
+
+    /// <summary>
+    /// Affects step value of -- and ++ operations.
+    /// </summary>
     public int step;
 
     #region Constructors
@@ -61,7 +72,7 @@ public struct LoopingInt
     public LoopingInt(int ceiling)
     {
         _index = 0;
-        this.floor = 0;
+        floor = 0;
         this.ceiling = ceiling;
         step = DEFAULT_STEP;
     }
@@ -84,8 +95,7 @@ public struct LoopingInt
     /// Index.
     /// </summary>
     /// <param name="a"></param>
-    public static implicit operator int (LoopingInt a) 
-        => a.Index;
+    public static implicit operator int (LoopingInt a) => a.Index;
 
     /// <summary>
     /// Add step to index.
