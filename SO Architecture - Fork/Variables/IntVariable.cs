@@ -24,5 +24,13 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
+
+        public void Add(int x) => Value += x;
+        public void Subtract(int x) => Value -= x;
+        public void Multiply(int x) => Value *= x;
+        public void Divide(int x) => Value /= x;
+        public void Halve() => Value /= 2;
+        public void Double() => Value *= 2;
+        public void Negate() => Value *= -1;
     } 
 }
