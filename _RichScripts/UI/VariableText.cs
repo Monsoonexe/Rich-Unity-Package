@@ -6,7 +6,7 @@ public class VariableText : RichUIElement<BaseVariable>
 {
     [Header("---Scene Refs---")]
     [SerializeField]
-    private TextMeshProUGUI tmp;
+    protected TextMeshProUGUI tmp;
 
     protected override void SubscribeToEvents()
     {
