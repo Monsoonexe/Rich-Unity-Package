@@ -60,6 +60,7 @@ public class GameObjectPool : RichMonoBehaviour
     protected override void Awake()
     {
         base.Awake();
+        manifest = new List<IPoolable>();
         if(InitOnAwake)
             InitPool();
     }
