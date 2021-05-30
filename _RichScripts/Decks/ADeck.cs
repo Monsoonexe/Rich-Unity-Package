@@ -9,6 +9,7 @@ public abstract class ADeck<T> : RichScriptableObject
     [SerializeField]
     private List<T> manifest = new List<T>();
     public List<T> Manifest { get => manifest; }
+
     public readonly List<T> unusedCards = new List<T>();
     public readonly List<T> usedCards = new List<T>();
 
@@ -22,7 +23,8 @@ public abstract class ADeck<T> : RichScriptableObject
     {
         usedCards.Clear();
         unusedCards.Clear();
-        //temporarily use used cards array
+
+        //temporarily use used cards array (stage)
         for (var i = 0; i < TotalCardCount; ++i)
             usedCards.Add(manifest[i]);
 
