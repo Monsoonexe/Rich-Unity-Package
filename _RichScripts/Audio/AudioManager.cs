@@ -26,8 +26,9 @@ public struct AudioID
     /// Returns a new AudioID of 0, which is a flag it's invalid.
     /// </summary>
     public static AudioID Invalid { get => new AudioID(0); }
-    public static uint GetNextID { get => IDCounter++; }
-    public static AudioID GetNextKey { get => new AudioID(GetNextID); }
+    public static uint GetNextID() => IDCounter++; 
+    public static AudioID GetNextKey() => new AudioID(GetNextID()); 
+    public static implicit operator uint(AudioID a) => a.ID;
 }
 
 public class AudioManager : RichMonoBehaviour
@@ -142,11 +143,10 @@ public class AudioManager : RichMonoBehaviour
     /// <returns></returns>
     private static AudioID TrackAudio(AudioSource source)
     {
-        //TODO - prevent duplicates in dictionary
         //maybe use a List of custom structs
-        var key = new AudioID(AudioID.GetNextID);
+        var key = AudioID.GetNextKey();
 
-        sourceDictionary.Add(key.ID, source);
+        sourceDictionary.Add(key, source);
 
         return key;
     }
@@ -161,7 +161,7 @@ public class AudioManager : RichMonoBehaviour
     /// <param name="clip"></param>
     /// <param name="options"></param>
     private static void ConfigAudioSource(AudioSource source,
-        AudioClip clip, AudioOptions options)
+        AudioClip clip, ref AudioOptions options)
     {
         //load options
         source.loop = options.loop;
@@ -185,8 +185,9 @@ public class AudioManager : RichMonoBehaviour
 
         if (sourceDictionary.TryGetValue(key.ID, out AudioSource ass))
         {
-            ass.Stop(); // stop if still playing
             sourceDictionary.Remove(key.ID);
+            if (ass.loop == true)
+                ass.Stop();
         }
     }
 
@@ -261,7 +262,7 @@ public class AudioManager : RichMonoBehaviour
         //find an audio source with the lowest volume, or that is not playing
         var size = SFXSources.Length;
         var sources = SFXSources;
-        var lowestVolume = float.MaxValue;// 1 would also suffice
+        var lowestVolume = 1.0f;// note not used at all
         var lowestIndex = 0;
         AudioSource source = null;
 
@@ -288,7 +289,7 @@ public class AudioManager : RichMonoBehaviour
         var _duration = options.duration <= 0 ? clip.length : options.duration;
 
         var key = TrackAudio(source); // return a key so audio can be interrupted later
-        ConfigAudioSource(source, clip, options);
+        ConfigAudioSource(source, clip, ref options);
 
         // if looping with duration < 0, it's up to caller to stop the clip.
         if (!options.loop || _duration > 0) //stop clip if not looping, or if looping for a specified duration
@@ -322,7 +323,7 @@ public class AudioManager : RichMonoBehaviour
         var key = TrackAudio(ActiveMusicTrack);
         if (!options.loop) // if it's looping, it's up to caller to stop the clip.
             Instance.StartCoroutine(RemoveSourceAfterClip(clip.length, key)); // free source after time
-        ConfigAudioSource(ActiveMusicTrack, clip, options);
+        ConfigAudioSource(ActiveMusicTrack, clip, ref options);
         return key;
     }
 
