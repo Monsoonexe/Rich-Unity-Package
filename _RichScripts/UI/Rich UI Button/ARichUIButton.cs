@@ -31,8 +31,9 @@ public abstract class ARichUIButton : RichUIElement
     /// <summary>
     /// Please call base.Awake() for maximum ease.
     /// </summary>
-    protected virtual void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         ID = GetNextID;// get that ID!
         if (!myButton)
         {

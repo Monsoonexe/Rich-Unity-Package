@@ -6,15 +6,9 @@
 /// <seealso cref="Editor.RichUIElement_Inspector"/>
 /// <seealso cref="RichUIButton"/>
 [SelectionBase]
-public class RichUIElement : MonoBehaviour
+public class RichUIElement : RichMonoBehaviour
 {
-#if UNITY_EDITOR
-    [SerializeField]
-    [TextArea]
-#pragma warning disable 0414
-    private string developerDescription = "Enter a description";
-#pragma warning restore 
-#endif
+    public RectTransform rectTransform { get => (RectTransform)myTransform; }
 
     protected virtual void Start()
     {
@@ -29,15 +23,14 @@ public class RichUIElement : MonoBehaviour
     public virtual void ToggleVisuals(bool active)
     {
         //do show if not showing and should be -- and stop showing if are and should not be
-        if (gameObject.activeSelf != active)//hide
-            gameObject.SetActive(active);//if hit ground
+        if (gameObject.activeSelf != active)//ignore if already in requested state
+            gameObject.SetActive(active);
     }
 
     /// <summary>
     /// Show if hidden, hide if shown.
     /// </summary>
-    public virtual void ToggleVisuals()
-        => ToggleVisuals(gameObject.activeSelf);
+    public virtual void ToggleVisuals() => ToggleVisuals(gameObject.activeSelf);
 
     [ContextMenu("Show")]
     public void Show() => ToggleVisuals(true);
@@ -50,7 +43,7 @@ public class RichUIElement : MonoBehaviour
     /// </summary>
     public virtual void UpdateUI()
     {
-
+        //nada
     }
 }
 

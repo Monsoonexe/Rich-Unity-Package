@@ -8,8 +8,9 @@ public class InputFieldToScriptable : RichUIElement<BaseVariable>
     //member Components
     private TMP_InputField inputField;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         inputField = GetComponent<TMP_InputField>();
     }
 
