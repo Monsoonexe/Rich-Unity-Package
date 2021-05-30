@@ -35,12 +35,19 @@ public class RichMonoBehaviour : MonoBehaviour
     public void DestroyComponent() => Destroy(this);
     public void DontDestroyOnLoad()
     {
-        transform.SetParent(null);
+        myTransform.SetParent(null);
         DontDestroyOnLoad(gameObject);
     }
 
+    //useful for delegates and events
     public void Enable() => this.enabled = true;
     public void Disable() => this.enabled = false;
+    public void SetEnabled(bool enabled) => this.enabled = enabled;
+
+    //useful for delegates and events
+    public void SetActive(bool active) => gameObject.SetActive(active);
+    public void SetActiveTrue() => gameObject.SetActive(true);
+    public void SetActiveFalse() => gameObject.SetActive(false);
 
     /// <summary>
     /// Set a reference to a singleton to the given instance if valid.
