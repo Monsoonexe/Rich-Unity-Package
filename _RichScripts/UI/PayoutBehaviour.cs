@@ -10,11 +10,9 @@ using ScriptableObjectArchitecture;
 /// of the TMPText, but at least it only changes color.</remarks>
 public class PayoutBehaviour : RichMonoBehaviour
 {
-    public const float MAX_DURATION = 3.0f;
-
     [Header("---Settings---")]
-    [SerializeField]
-    private float payoutCreditsPerSecond = 100.0f;
+    public float payoutCreditsPerSecond = 100.0f;
+    public float maxDuration = 3.0f;
 
     [SerializeField]
     [Tooltip("Color of text while credits are being paid out.")]
@@ -95,7 +93,7 @@ public class PayoutBehaviour : RichMonoBehaviour
             "[PayoutBehaviour] Divide by zero!");
 
         var seconds = winAmount / payoutCreditsPerSecond;
-        seconds = seconds >= MAX_DURATION ? MAX_DURATION : seconds;//ceiling
+        seconds = seconds >= maxDuration ? maxDuration : seconds;//ceiling
         return seconds;
     }
 }
