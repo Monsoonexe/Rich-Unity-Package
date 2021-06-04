@@ -23,6 +23,17 @@ public class VariableText : RichUIElement<BaseVariable>
     /// </summary>
     public override void UpdateUI()
     {
-        tmp.text = targetData.ToString();
+        var outputString = string.Empty;
+
+        if(targetData is IntVariable intData)
+        {
+            outputString = ConstStrings.GetCachedString(intData);
+        }
+        else
+        {
+            outputString = targetData.ToString();
+        }
+
+        tmp.text = outputString; 
     }
 }
