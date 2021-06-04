@@ -35,6 +35,8 @@ public static class ConstStrings
     public static readonly string OKAY = "Okay";
     public static readonly string YES = "Yes";
     public static readonly string CONTINUE = "Continue";
+    public static readonly string FALSE_STRING_LOWER = bool.FalseString.ToLower();
+    public static readonly string TRUE_STRING_LOWER = bool.TrueString.ToLower();
 
     //common spacers
     public static readonly string SPACE_SLASH_SPACE = " / ";
