@@ -15,8 +15,14 @@ public class GameObjectSpawner : RichMonoBehaviour
     public void SetSpawnablePrefab(GameObject newPrefab)
         => spawnable = newPrefab;
 
+    /// <summary>
+    /// Spawn a new instance at World Origin.
+    /// </summary>
     public Transform SpawnNew() => SpawnNew(spawnable);
 
+    /// <summary>
+    /// Spawn a new instance at World Origin.
+    /// </summary>
     public Transform SpawnNew(GameObject prefab)
     {
         var newInstance = Instantiate(prefab);
@@ -26,6 +32,10 @@ public class GameObjectSpawner : RichMonoBehaviour
         return newITransform;
     }
 
+    /// <summary>
+    /// Spawn at this Spawner's location.
+    /// </summary>
+    /// <returns></returns>
     public Transform SpawnNewHere()
         => SpawnAtPlace(myTransform);
 
@@ -52,6 +62,9 @@ public class GameObjectSpawner : RichMonoBehaviour
         return newObjTrans;
     }
 
+    /// <summary>
+    /// Spawn a new instance at point with Origin rotation.
+    /// </summary>
     public Transform SpawnAtPoint(Vector3 point)
     {
         var newObjTrans = SpawnNew(spawnable);
