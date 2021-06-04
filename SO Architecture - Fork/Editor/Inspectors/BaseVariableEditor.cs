@@ -86,8 +86,11 @@ namespace ScriptableObjectArchitecture.Editor
         }
         protected void DrawReadonlyField()
         {
-            if (IsClampable)
+            if (IsClamped)
+            {
+                _readOnly.boolValue = false;
                 return;
+            }
 
             EditorGUILayout.PropertyField(_readOnly, new GUIContent("Read Only", READONLY_TOOLTIP));
 
