@@ -24,9 +24,17 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
+        public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
+        public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
         public void Add(int x) => Value += x;
+        public void Add(IntVariable x) => Value += x;
+        public void Add(FloatVariable x) => Value += (int)x;
+
         public void Subtract(int x) => Value -= x;
+        public void Subtract(IntVariable x) => Value -= x;
+        public void Subtract(FloatVariable x) => Value -= (int)x;
+
         public void Multiply(int x) => Value *= x;
         public void Divide(int x) => Value /= x;
         public void Halve() => Value /= 2;
