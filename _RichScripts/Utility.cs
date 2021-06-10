@@ -1,9 +1,13 @@
 ﻿using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using UnityEngine;
 using DG.Tweening;
+
+//clarifications between UnityEngine and System classes
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -337,15 +341,16 @@ public static class Utility
         return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
     }
 
+    
     /// <summary>
-    /// GetPrint a random element from Collection that is not in usedCollection. 
+    /// Get a random element from Collection that is not in usedCollection. 
     /// Up to caller to store this value in usedCollection
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="totalCollection"></param>
     /// <param name="usedCollection"></param>
     /// <returns></returns>
-    public static T GetRandomUnused<T>(IList totalCollection, List<T> usedCollection)
+    public static T GetRandomUnused<T>(IList<T> totalCollection, List<T> usedCollection)
     {
         //build a pool of indices that have not been used.  
         var possibleIndices = CommunityIndiceList;
@@ -353,7 +358,7 @@ public static class Utility
         var totalCount = totalCollection.Count;
         for (var i = 0; i < totalCount; ++i)
         {
-            if (!usedCollection.Contains((T)totalCollection[i]))
+            if (!usedCollection.Contains(totalCollection[i]))
             {
                 possibleIndices.Add(i);//this index is safe to choose from
             }
@@ -365,7 +370,7 @@ public static class Utility
             return default;
         }
 
-        return (T)totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
+        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
     }
 
     /// <summary>
@@ -581,6 +586,25 @@ public static class Utility
 
         return success;
     }
+
+    #region Debug Assertions
+
+    [Conditional("UNITY_EDITOR")]//editor only
+    public static void AssertValidIndex<T>(
+        ICollection<T> collection, int index)
+        => Debug.AssertFormat(index >= 0 && index < collection.Count,
+            "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}].",//report index
+            index, collection.Count);
+
+    [Conditional("UNITY_EDITOR")]//editor only
+    public static void AssertValidIndex<T>(
+        ICollection<T> collection, int index, string name)
+        => Debug.AssertFormat(index >= 0 && index < collection.Count,
+            "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}] " + //report index
+            "on: {2}", //report name of problem mono
+            index, collection.Count, name);
+
+    #endregion
 
     #region Math
 
