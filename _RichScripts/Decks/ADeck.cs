@@ -54,6 +54,8 @@ public abstract class ADeck<T> : RichScriptableObject
 
     public T Draw()
     {
+        if (unusedCards.Count == 0) return default;//index out of range failsafe.
+        
         //draw from highest slot to avoid shifting all elements
         var card = unusedCards.GetRemoveAt(unusedCards.LastIndex());
         usedCards.Add(card);
