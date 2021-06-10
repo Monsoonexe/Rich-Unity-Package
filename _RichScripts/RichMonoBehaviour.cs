@@ -74,4 +74,13 @@ public class RichMonoBehaviour : MonoBehaviour
         return valid;
     }
 
+    public static T Construct<T>() where T : RichMonoBehaviour
+        => new GameObject().AddComponent<T>();
+
+    public static T Construct<T>(string name) where T : RichMonoBehaviour
+    {
+        var newObj = Construct<T>();
+        newObj.name = name;
+        return newObj;
+    }
 }
