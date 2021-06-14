@@ -14,9 +14,9 @@ public class AudioClipReference_Inspector : Editor
     	
     	GUILayout.Label("AudioClipReference_Inspector", EditorStyles.boldLabel);
 
-        if(targetObject.Value != null && GUILayout.Button("Preview Clip"))
-        {
-            RichEditorUtility.EditorPlayClip(targetObject);
-        }
+        // if(targetObject.Value != null && GUILayout.Button("Preview Clip"))
+        // {
+        //     RichEditorUtility.EditorPlayClip(targetObject);
+        // }
     }
 }
