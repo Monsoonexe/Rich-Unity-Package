@@ -15,7 +15,7 @@ public class AudioHub : RichMonoBehaviour
     protected struct TableEntry
     {
         public string tag;
-        public AudioClipReference audioClipRef;
+        public AudioClipVariable audioClipRef;
     }
 
     #endregion

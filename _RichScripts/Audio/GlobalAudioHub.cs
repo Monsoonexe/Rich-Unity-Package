@@ -22,7 +22,9 @@ public class GlobalAudioHub : AudioHub
         instance.PlayAudioClipSFX(clipTag);
     }
 
+#if UNITY_EDITOR
     [UnityEditor.MenuItem("Tools/Audio Manager/GlobalAudioHub")]
+#endif
     public static void ConstructGlobal()
     {
         if(instance != null)

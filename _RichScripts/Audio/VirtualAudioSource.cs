@@ -8,17 +8,16 @@
 /// <seealso cref="AudioManager"/>
 public class VirtualAudioSource : RichMonoBehaviour
 {
-    public AudioClip clip;
+    public AudioClipVariable clip;
     public bool playOnAwake = false;
     public bool stopOnDestroy = false;
-    public AudioOptions options;
 
     private AudioID audioID;
 
     private void Start()
     {
         if (playOnAwake && clip)
-            PlaySFX(clip, options);
+            PlaySFX(clip.Value, clip.Options);
     }
 
     private void OnDestroy()
@@ -34,12 +33,15 @@ public class VirtualAudioSource : RichMonoBehaviour
         AudioOptions options)
         => audioID = AudioManager.PlayBackgroundTrack(clip, options);
 
+    public void PlaySFX()
+        => audioID = AudioManager.PlaySFX(clip.Value, clip.Options);
+
     public void PlaySFX(AudioClip clip)
         => audioID = AudioManager.PlaySFX(clip);
 
-    public void PlaySFX(AudioClipReference clipRef)
+    public void PlaySFX(AudioClipVariable clipRef)
         => audioID = AudioManager.PlaySFX(
-            clipRef.Value, clipRef.Options);  
+            clipRef.Value, clipRef.Options);
 
     /// <summary>
     /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
