@@ -59,6 +59,7 @@ namespace ScriptableObjectArchitecture.Editor
                 {
                     // Value changed, raise events
                     //Target.Raise();
+                    serializedObject.ApplyModifiedProperties(); //upate with value
                     Target.BaseValue = Target.BaseValue; //force Raise() and possibly Raise(T)
                 }
             }
