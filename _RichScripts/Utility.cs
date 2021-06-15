@@ -464,7 +464,7 @@ public static class Utility
     public static T GetRemoveLast<T>(this List<T> list)
         => list.GetRemoveAt(list.LastIndex());
 
-    public static int RollDice(int dice, int sides, int mod)
+    public static int RollDice(int dice, int sides, int mod = 0)
     {   //validate
         Debug.Assert(dice >= 0 && sides > 0, "[Utility] Invalid RollDice input: " 
             + dice.ToString() + " " + sides.ToString());
