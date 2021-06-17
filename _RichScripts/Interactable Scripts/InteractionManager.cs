@@ -15,11 +15,12 @@ using NaughtyAttributes;
 /// </remarks>
 /// <seealso cref="Interactable"/>
 [RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
 public sealed class InteractionManager : RichMonoBehaviour
 {
     private static List<IInteractable> interactableList = new List<IInteractable>(12);
 
+    [Required]
+    [Tooltip("Can be set dynamically.")]
     public PlayerScript playerCharacter;
 
     [Header("---Settings---")]
@@ -31,6 +32,14 @@ public sealed class InteractionManager : RichMonoBehaviour
 
     public bool allowProximityInteractions = true;
 
+    [ShowIf("allowProximityInteractions")]
+    [Tooltip("This component needs a Rigidbody on the same GameObject" +
+        "in order to detect proximity.")]
+    [Required]
+    [SerializeField]
+    private Rigidbody myRigidbody;
+
+    [Header("---Input---")]
     public bool useKeyCode = false;
 
     [ShowIf("useKeyCode")]
@@ -42,23 +51,34 @@ public sealed class InteractionManager : RichMonoBehaviour
     [InputAxis]
     public string interactButton = "Fire1";
 
-    [Header("---Raycast Settings---")]
+    [BoxGroup("---Raycast Settings---")]
     public bool allowRaycastInteractions = true;
 
+    [BoxGroup("---Raycast Settings---")]
+    [ShowIf("allowRaycastInteractions")]
     public QueryTriggerInteraction queryTriggerInteraction 
         = QueryTriggerInteraction.Ignore;
 
-    public LayerMask raycastLayerMask;
+    [BoxGroup("---Raycast Settings---")]
+    [ShowIf("allowRaycastInteractions")]
+    public LayerMask raycastLayerMask = -1;
 
     [MinValue(0)]
+    [BoxGroup("---Raycast Settings---")]
+    [ShowIf("allowRaycastInteractions")]
     public float raycastLength = 10.0f;
 
     [Tooltip("[Modifying has no effect in PlayMode]\r\n" 
         + "Seconds between each raycast query for an IInteractable.\r\n"
         + "Lower is more responsive but costly.")]
     [MinValue(0)]
+    [BoxGroup("---Raycast Settings---")]
+    [ShowIf("allowRaycastInteractions")]
     public float raycastInterval = 0.25f;
 
+    [BoxGroup("---Raycast Settings---")]
+    [ShowIf("allowRaycastInteractions")]
+    [Required]
     public Transform raycastOrigin = null;
 
     [Foldout("---Events---")]
@@ -87,7 +107,6 @@ public sealed class InteractionManager : RichMonoBehaviour
     public UnityEvent OnExitHoverEvent { get => exitHoverEvent; }
 
     //member components
-    private Rigidbody myRigidbody;
     private Collider myCollider;
     private Timer myRaycastTimer;
 
