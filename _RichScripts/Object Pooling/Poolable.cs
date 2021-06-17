@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
+using NaughtyAttributes;
 
 /// <summary>
 /// A basic Poolable MonoBehaviour.
 /// </summary>
 public class Poolable : RichMonoBehaviour, IPoolable
 {
+    [MinValue(0)]
     public float lifetime = 10f;
 
     public GameObjectPool PoolOwner { get; set; }
 
+    [ShowNativeProperty]
     public bool InUse { get; private set;}
 
     private Coroutine lifetimeCoroutine;
@@ -39,5 +42,6 @@ public class Poolable : RichMonoBehaviour, IPoolable
         gameObject.SetActive(false);
     }
 
+    [Button("ReturnToPool()", EButtonEnableMode.Playmode)]
     public void ReturnToPool() => PoolOwner.Enpool(this);
 }

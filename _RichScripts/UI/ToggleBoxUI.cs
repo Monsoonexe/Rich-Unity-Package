@@ -32,9 +32,11 @@ public class ToggleBoxUI : VariableText
     [Header("---Game Events---")]
     [SerializeField]
     private BoolUnityEvent toggleEvent;
-
-    private void Awake()
-    {   //subscribe to events
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        //subscribe to events
         toggleButton.onClick.AddListener(Toggle);
     }
 

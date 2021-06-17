@@ -23,9 +23,7 @@ public class RichMonoBehaviour : MonoBehaviour
     public new Transform transform { get => myTransform; }
 
     protected virtual void Awake()
-    {
-        myTransform = this.GetComponent<Transform>();
-    }
+        => myTransform = this.GetComponent<Transform>();
 
     /// <summary>
     /// Delete this Mono's GameObject.
@@ -45,9 +43,9 @@ public class RichMonoBehaviour : MonoBehaviour
     public void SetEnabled(bool enabled) => this.enabled = enabled;
 
     //useful for delegates and events
-    public void SetActive(bool active) => gameObject.SetActive(active);
     public void SetActiveTrue() => gameObject.SetActive(true);
     public void SetActiveFalse() => gameObject.SetActive(false);
+    public void SetActive(bool active) => gameObject.SetActive(active);
 
     /// <summary>
     /// Set a reference to a singleton to the given instance if valid.
@@ -78,9 +76,5 @@ public class RichMonoBehaviour : MonoBehaviour
         => new GameObject().AddComponent<T>();
 
     public static T Construct<T>(string name) where T : RichMonoBehaviour
-    {
-        var newObj = Construct<T>();
-        newObj.name = name;
-        return newObj;
-    }
+        => new GameObject(name).AddComponent<T>();
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using NaughtyAttributes;
 
 /// <summary>
 /// Base class for Trigger Volume behaviour. 
@@ -8,14 +9,17 @@ using UnityEngine.Events;
 public abstract class ATriggerVolume : RichMonoBehaviour
 {
     [SerializeField]
+    [Tag]
     protected string reactToTag = "Player";
 
     /// <summary>
     /// Running total of times this has been triggered.
     /// </summary>
     [Tooltip("Running total of times this has been triggered.")]
+    [ReadOnly]
     public int triggerCount = 0;
 
+    [Header("---Events---")]
     [SerializeField]
     protected UnityEvent enterEvent = new UnityEvent();
 
@@ -26,8 +30,8 @@ public abstract class ATriggerVolume : RichMonoBehaviour
     {
         if (other.CompareTag(reactToTag))
         {
-            enterEvent.Invoke();
             ++triggerCount;
+            enterEvent.Invoke();
         }
     }
 
@@ -35,8 +39,8 @@ public abstract class ATriggerVolume : RichMonoBehaviour
     {
         if (other.CompareTag(reactToTag))
         {
-            exitEvent.Invoke();
             ++triggerCount;
+            exitEvent.Invoke();
         }
     }
 }

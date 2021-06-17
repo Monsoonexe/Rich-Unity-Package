@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using NaughtyAttributes;
 
 /// <summary>
 /// Provides helpful functions to make spawning GameObjects easier.
@@ -86,6 +87,7 @@ public class GameObjectSpawner : RichMonoBehaviour
     public void DoSpawnNew(GameObject prefab)
         => SpawnNew();
 
+    [Button("DoSpawnNewHere()", EButtonEnableMode.Playmode)]
     public void DoSpawnNewHere()
         => SpawnNewHere();
 

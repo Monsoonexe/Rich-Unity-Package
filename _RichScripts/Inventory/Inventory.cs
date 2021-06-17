@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Explore;
 
 /// <summary>
 /// A collection of items with amounts.
@@ -43,8 +42,11 @@ public class Inventory : RichMonoBehaviour, IItemContainer // behaviour
     /// <param name="stack"></param>
     public virtual void AddItem(ref ItemStack stack)
     {
-        Debug.Assert(stack.Item != null, "[Inventory] null item being added", this);
-        Debug.Assert(stack.Amount > 0, "[Inventory] amount <= 0, ", this);
+        Debug.Assert(stack.Item != null, 
+            "[Inventory] null item being added", this);
+
+        Debug.Assert(stack.Amount > 0, 
+            "[Inventory] amount <= 0, ", this);
 
         var i = 0;//index
         //add to existing stacks first
@@ -113,7 +115,8 @@ public class Inventory : RichMonoBehaviour, IItemContainer // behaviour
             else
             {
                 Debug.AssertFormat(false,
-                    "[Inventory] Items do not match: {0}, {1} ", stockItem.Item, stack.Item);
+                    "[Inventory] Items do not match: {0}, {1} ", 
+                    stockItem.Item, stack.Item);
             }
         }
     }

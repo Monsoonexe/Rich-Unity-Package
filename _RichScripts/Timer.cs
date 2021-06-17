@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using NaughtyAttributes;
 
 /// <summary>
 /// A mostly-accurate timer Mono.
@@ -28,6 +29,7 @@ public class Timer : RichMonoBehaviour
     /// <summary>
     /// 
     /// </summary>
+    [ShowNativeProperty]
     public float PercentComplete { get => (TimerDuration - TimeRemaining) / TimerDuration; }
 
     private bool paused = false;
@@ -132,7 +134,7 @@ public class Timer : RichMonoBehaviour
     /// <returns></returns>
     public static Timer Construct()
     {
-        return new GameObject("Flip Timer").AddComponent<Timer>();
+        return new GameObject("Timer").AddComponent<Timer>();
     }
 
     #endregion

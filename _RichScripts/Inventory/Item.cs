@@ -1,11 +1,10 @@
 ﻿using System.Text;
 using UnityEngine;
+using ScriptableObjectArchitecture;
 
 /// <summary>
 /// 
 /// </summary>
-/// <seealso cref="EquippableItem"/>
-/// <seealso cref="ToolDataSO"/>
 /// <seealso cref="ItemStack"/>
 [CreateAssetMenu(fileName = "_Item",
                  menuName = "ScriptableObjects/Item")]

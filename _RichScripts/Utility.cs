@@ -114,26 +114,21 @@ public static class Utility
     public static T Last<T>(this List<T> collection) => collection[collection.Count - 1];
 
     /// <summary>
-    /// Length - 1
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="col"></param>
-    /// <returns></returns>
-    public static int LastIndex<T>(this T[] col) => col.Length - 1;
-
-    /// <summary>
     /// Count - 1
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="col"></param>
     /// <returns></returns>
-    public static int LastIndex<T>(this List<T> col) => col.Count - 1;
+    public static int LastIndex(this IList col) => col.Count - 1;
 
-    public static bool IndexIsInRange<T>(this T[] source, int index)
-        => index > 0 && index < source.Length;
+    /// <summary>
+    /// Element at Count - 1.
+    /// </summary>
+    /// <param name="col"></param>
+    /// <returns></returns>
+    public static T Last<T>(this IList<T> col) => col[col.Count - 1];
 
-    public static bool IndexIsInRange<T>(this List<T> source, int index)
-        => index > 0 && index < source.Count;
+    public static bool IndexIsInRange(this IList source, int index)
+        => index >= 0 && index < source.Count;
 
     public static T[] CloneArray<T>(this T[] source)
     {
@@ -250,6 +245,11 @@ public static class Utility
     #endregion
 
     #region Random and Collections
+    /// <summary>
+    /// Has an n probability of returning 'true'.
+    /// </summary>
+    /// <returns></returns>
+    public static bool Chance(double n) => Random.Range(0, 1) <= n;
 
     /// <summary>
     /// Returns a random element from array, or default if collection is empty.
@@ -340,7 +340,6 @@ public static class Utility
 
         return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
     }
-
     
     /// <summary>
     /// Get a random element from Collection that is not in usedCollection. 
@@ -606,82 +605,38 @@ public static class Utility
 
     #endregion
 
-    #region Math
-
-    public static int AbsoluteValue(int i)
-        => i >= 0 ? i : -i;
+    #region Functional Iterating
 
     /// <summary>
-    /// Runs ~twice as fast as Mathf.Abs().
+    /// Simply loops a given number of times
     /// </summary>
-    /// <param name="f"></param>
-    /// <returns>Because Mathf.Abs() is managed code.</returns>
-    public static float AbsoluteValue(float f)
-        => f >= 0 ? f : -f;
-
-    /// <summary>
-    /// f = |f|
-    /// </summary>
-    /// <param name="f"></param>
-    /// <returns></returns>
-    public static void SetAbsoluteValue(this ref float f)
-        => f = f >= 0 ? f : -f;
-
-    public static int Min(int x, int y) => x < y ? x : y;
-    public static int Max(int x, int y) => x > y ? x : y;
-    public static float Min(float x, float y) => x < y ? x : y;
-    public static float Max(float x, float y) => x > y ? x : y;
-
-    public static Vector2 AbsoluteValue(this Vector2 v)
-        => new Vector2(AbsoluteValue(v.x), AbsoluteValue(v.y));
-
-    public static Vector3 AbsoluteValue(Vector3 v)
-        => new Vector3(AbsoluteValue(v.x), AbsoluteValue(v.y), AbsoluteValue(v.z));
-
-    /// <summary>
-    /// 10.37435 (1) = 10.3
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="decimalDigits"></param>
-    /// <returns></returns>
-    public static float TruncateMantissa(this ref float a, int decimalDigits)
+    /// <param name="cycles"></param>
+    /// <param name="action"></param>
+    public static void Repeat(Action action, ulong cycles)
     {
-        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-            return (int)a;
-
-        const int TEN = 10;//base 10
-        var truncator = 1.0f;//start at 1 for multiply
-
-        //exponentiate to move desired portion into integer section
-        for (var i = 0; i < decimalDigits; ++i)
-            truncator *= TEN;
-
-        //move decimal left, truncate mantissa, move decimal back right
-        return a = ((int)(a * truncator)) / truncator;
+        for (ulong i = 0; i < cycles; i++)
+            action();
     }
 
     /// <summary>
-    /// 10.37435 (1) = 10.3
+    /// A 'foreach' with a 'for' backbone
+    /// Look at source for example
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="decimalDigits"></param>
-    /// <returns></returns>
-    public static float TruncateMantissa(float a, int decimalDigits)
+    public static void ForEach<T>(this IList<T> objects, Action<T> action)
     {
-        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-            return (int)a;
-
-        const int TEN = 10;//base 10
-        var truncator = 1.0f;//start at 1 for multiply
-
-        //exponentiate to move desired portion into integer section
-        for (var i = 0; i < decimalDigits; ++i)
-            truncator *= TEN;
-
-        //move decimal left, truncate mantissa, move decimal back right
-        return a = ((int)(a * truncator)) / truncator;
+        for (int i = 0; i < objects.Count; i++)
+            action(objects[i]);
     }
 
+    /// <summary>
+    /// Times how long the action took to complete and returns that time in milliseconds.
+    /// </summary>
+    public static long SpeedTest(Action action)
+    {
+        Stopwatch watch = Stopwatch.StartNew();
+        action();
+        watch.Stop();
+        return watch.ElapsedMilliseconds;
+    }
     #endregion
-
 }

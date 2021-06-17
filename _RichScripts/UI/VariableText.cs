@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 public class VariableText : RichUIElement<BaseVariable>
 {
     [Header("---Scene Refs---")]
     [SerializeField]
+    [Required]
     protected TextMeshProUGUI tmp;
 
     protected override void SubscribeToEvents()

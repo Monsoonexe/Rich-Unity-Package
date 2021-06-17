@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-
+using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 /// <summary>
 /// 
 /// </summary>
-/// <remarks>TODO - Every Entity has a health controller, so every Entity now 
-/// has power and oxygen. This shouldn't be the case.
-/// Instead, just have 3 unique health controllers and treat them differently</remarks>
+/// <remarks></remarks>
 public class HealthController : RichMonoBehaviour, 
     IDamageable, IHealable
 {
-    [Header ("Vitality Bar")]
-    [SerializeField] private int currentVitality = 100;
-    [SerializeField] private int maxVitality = 100; 
+    [Header("---Resources---")]
+    [SerializeField] 
+    private int currentVitality = 100;
+
+    [SerializeField] 
+    [MinValue(1)]
+    private int maxVitality = 100; 
 
     public float MaxVitality { get => maxVitality; }
     public float CurrentVitality { get => currentVitality; }
@@ -48,13 +51,14 @@ public class HealthController : RichMonoBehaviour,
         }
         else
         {
-            currentVitality = Mathf.Clamp(currentVitality + recoverAmount, 0, maxVitality);
+            currentVitality = RichMath.Clamp(
+                currentVitality + recoverAmount, 0, maxVitality);
         }
 
         vitalityGainedEvent.Invoke();
     }
 
-    [ContextMenu("Recover Full Health")]
+    [Button("Recover Full Health")]
     public void RecoverFullHealth()
         => Revive(1);
 
@@ -63,10 +67,10 @@ public class HealthController : RichMonoBehaviour,
     /// Range: 0 lt value lte 1.0f
     /// </summary>
     /// <param name="healthRatio">Range: 0 lt value lte 1.0f</param>
-    public void Revive(int healthRatio = 1)
+    public void Revive(float healthRatio = 1)
     {
         IsDead = false;
-        RecoverHealth(healthRatio * maxVitality);
+        RecoverHealth((int)(healthRatio * maxVitality));
     }
     
     /// <summary>
@@ -90,7 +94,8 @@ public class HealthController : RichMonoBehaviour,
         {
             damageAmount = currentVitality;
         }
-        currentVitality = Mathf.Clamp(currentVitality - damageAmount, 0, maxVitality);
+        currentVitality = RichMath.Clamp(
+            currentVitality - damageAmount, 0, maxVitality);
         vitalityLostEvent.Invoke();
 
         if (currentVitality <= 0 && !IsDead)//if this is the moment of death
@@ -99,5 +104,4 @@ public class HealthController : RichMonoBehaviour,
             deadEvent.Invoke();
         }
     }
-
 }

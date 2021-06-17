@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 /// <summary>
 /// Abstract representation of a deck of something (cards)
@@ -13,6 +14,7 @@ public abstract class ADeck<T> : RichScriptableObject
     public readonly List<T> unusedCards = new List<T>();
     public readonly List<T> usedCards = new List<T>();
 
+    [ShowNativeProperty]
     public int CardsRemaining { get => unusedCards.Count; }
     public int TotalCardCount { get => manifest.Count; }
 

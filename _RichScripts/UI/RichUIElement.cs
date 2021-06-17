@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using NaughtyAttributes;
 
 /// <summary>
 /// Common base class for UI elements. Comes with some a handy Hide/Show interface.
@@ -52,6 +53,7 @@ public class RichUIElement<T> : RichUIElement
     /// <summary>
     /// The data that this UI Element should show.
     /// </summary>
+    [Required]
     public T targetData;
 
     protected virtual void OnEnable()

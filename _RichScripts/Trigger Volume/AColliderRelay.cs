@@ -5,12 +5,14 @@
 /// </summary>
 /// <seealso cref="TriggerColliderRelay"/>
 /// <seealso cref="CollisionRelay"/>
-
 [RequireComponent(typeof(Collider))]
 public abstract class AColliderRelay : RichMonoBehaviour
 {
-    [Header("---Prefab Refs---")]
-    [SerializeField]
     protected Collider myCollider;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        myCollider = GetComponent<Collider>();
+    }
 }

@@ -25,7 +25,7 @@ public struct ItemStack// value type
         get => _amount;
         set
         {
-            _amount = Mathf.Clamp(value, 0, MaxAmount);//max value
+            _amount = RichMath.Clamp(value, 0, MaxAmount);//max value
             if (_amount == 0) Item = null; // disown Item
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using DG.Tweening;
+using ScriptableObjectArchitecture;
 
 /// <summary>
 /// Holds an immutable ID.
@@ -46,7 +47,7 @@ public class AudioManager : RichMonoBehaviour
     [SerializeField] private AudioMixer audioMixer;
 
     [SerializeField]
-    private int sfxAudioSourceCount = 4;
+    private int sfxAudioSourceCount = 6;
 
     private AudioSource[] SFXAudioSources;
     private static AudioSource[] SFXSources { get => Instance.SFXAudioSources; }
@@ -211,6 +212,10 @@ public class AudioManager : RichMonoBehaviour
     public void PlaySFX(AudioClipReference clipRef)
         => AudioManager.PlaySFX(
             clipRef.Value, clipRef.Options);
+        
+    public void PlaySFX(AudioClipVariable clipVar)
+        => AudioManager.PlaySFX(
+            clipVar.Value, clipVar.Options);
 
     /// <summary>
     /// Different way to play a SFX if you don't want to use AudioOptions.

@@ -42,6 +42,7 @@ public class AudioHub : RichMonoBehaviour
             Inititialize();
     }
 
+    [Button("Inititialize", EButtonEnableMode.Playmode)]
     public void Inititialize()
     {
         var entries = clipEntries.Length;

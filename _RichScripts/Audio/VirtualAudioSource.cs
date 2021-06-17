@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ScriptableObjectArchitecture;
 
 /// <summary>
 /// A Mono that will play audio from static AudioManager.
@@ -8,7 +9,7 @@
 /// <seealso cref="AudioManager"/>
 public class VirtualAudioSource : RichMonoBehaviour
 {
-    public AudioClipVariable clip;
+    public AudioClipReference clip;
     public bool playOnAwake = false;
     public bool stopOnDestroy = false;
 
@@ -16,7 +17,7 @@ public class VirtualAudioSource : RichMonoBehaviour
 
     private void Start()
     {
-        if (playOnAwake && clip)
+        if (playOnAwake)
             PlaySFX(clip.Value, clip.Options);
     }
 
