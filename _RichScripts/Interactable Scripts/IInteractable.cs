@@ -13,27 +13,27 @@ public class Interactable : RichMonoBehaviour, IInteractable
     //[Header("---Settings---")]
     //public bool autoInteract;
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent enterRangeEvent = new UnityEvent();
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent exitRangeEvent = new UnityEvent();
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent enterHoverEvent = new UnityEvent();
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent exitHoverEvent = new UnityEvent();
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField] 
     protected UnityEvent interactEvent = new UnityEvent();
 
-    [Foldout("Events")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent endInteractEvent = new UnityEvent();
 

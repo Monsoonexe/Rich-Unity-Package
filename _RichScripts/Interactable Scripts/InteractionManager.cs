@@ -13,8 +13,7 @@ using NaughtyAttributes;
 /// If you need more information, either follow the same pattern with a new IIInteractable,
 /// or get it from the 'context': player.Inventory[0].Item or something.
 /// </remarks>
-/// <seealso cref="IPlayerIInteractable"/>
-/// <seealso cref="IIInteractable{T}"/>
+/// <seealso cref="Interactable"/>
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
 public sealed class InteractionManager : RichMonoBehaviour
@@ -62,23 +61,27 @@ public sealed class InteractionManager : RichMonoBehaviour
 
     public Transform raycastOrigin = null;
 
-    [Header("---Events---")]
+    [Foldout("---Events---")]
     [SerializeField] 
     private UnityEvent interactEvent = new UnityEvent();
     public UnityEvent OnInteractEvent { get => interactEvent; }
 
+    [Foldout("---Events---")]
     [SerializeField]
-    private UnityEvent enterEvent = new UnityEvent();
-    public UnityEvent OnEnterEvent { get => enterEvent; }
+    private UnityEvent enterRangeEvent = new UnityEvent();
+    public UnityEvent OnEnterEvent { get => enterRangeEvent; }
 
+    [Foldout("---Events---")]
     [SerializeField]
-    private UnityEvent exitEvent = new UnityEvent();
-    public UnityEvent OnExitEvent { get => exitEvent; }
+    private UnityEvent exitRangeEvent = new UnityEvent();
+    public UnityEvent OnExitEvent { get => exitRangeEvent; }
 
+    [Foldout("---Events---")]
     [SerializeField]
     private UnityEvent enterHoverEvent = new UnityEvent();
     public UnityEvent OnEnterHoverEvent { get => enterHoverEvent; }
 
+    [Foldout("---Events---")]
     [SerializeField]
     private UnityEvent exitHoverEvent = new UnityEvent();
     public UnityEvent OnExitHoverEvent { get => exitHoverEvent; }
@@ -183,7 +186,7 @@ public sealed class InteractionManager : RichMonoBehaviour
                 && newIInteractable != proximityIInteractable) // prevents repeats / stuttering
             {
                 proximityIInteractable = newIInteractable;
-                enterEvent.Invoke();
+                enterRangeEvent.Invoke();
                 proximityIInteractable.OnEnterRange(playerCharacter);
             }
         }
@@ -199,7 +202,7 @@ public sealed class InteractionManager : RichMonoBehaviour
             if (newIInteractable != null  //if encountered an IInteractable
                 && newIInteractable == proximityIInteractable) // prevents repeats / stuttering
             {
-                exitEvent.Invoke();
+                exitRangeEvent.Invoke();
                 proximityIInteractable.OnExitRange(playerCharacter);
                 proximityIInteractable = null;
             }
