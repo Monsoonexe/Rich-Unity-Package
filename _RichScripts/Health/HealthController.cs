@@ -12,32 +12,49 @@ public class HealthController : RichMonoBehaviour,
 {
     [Header("---Resources---")]
     [SerializeField] 
-    private int currentVitality = 100;
+    private IntReference currentHealth = new IntReference(100);
 
     [SerializeField] 
-    [MinValue(1)]
-    private int maxVitality = 100; 
+    private IntReference maxHealth = new IntReference(100); 
 
-    public float MaxVitality { get => maxVitality; }
-    public float CurrentVitality { get => currentVitality; }
+    public int MaxHealth { get => maxHealth; }
+    public int CurrentHealth { get => currentHealth; }
 
     /// <summary>
     /// Current / max health.
     /// </summary>
-    public float VitalityRatio { get => (float)currentVitality / maxVitality; }
-    public bool IsDamaged { get => currentVitality < maxVitality; }
+    [ShowNativeProperty]
+    public float HealthRatio { get => (float)currentHealth / maxHealth; }
+
+    [ShowNativeProperty]
+    public bool IsDamaged { get => currentHealth < maxHealth; }
+
+    [ShowNativeProperty]
     public bool IsDead { get; private set; }
 
-    //general
-    public readonly UnityEvent revivedEvent = new UnityEvent();
+    #region Events
 
+    [Foldout("---Events---")]
+    [SerializeField]
+    private UnityEvent healthGainedEvent = new UnityEvent();
+    public UnityEvent HealthGainedEvent { get => healthGainedEvent; }
+
+    [Foldout("---Events---")]
+    [SerializeField]
+    private UnityEvent healthLostEvent = new UnityEvent();
+    public UnityEvent HealthLostEvent { get => healthLostEvent; }
+
+    [Foldout("---Events---")]
+    [SerializeField]
+    private UnityEvent revivedEvent = new UnityEvent();
+    public UnityEvent RevivedEvent { get => revivedEvent; }
+
+    [Foldout("---Events---")]
     [SerializeField]
     private UnityEvent deadEvent = new UnityEvent();
     public UnityEvent DeadEvent { get => deadEvent; }
 
-    //health
-    public readonly UnityEvent vitalityLostEvent = new UnityEvent();
-    public readonly UnityEvent vitalityGainedEvent = new UnityEvent();
+    #endregion
 
     /// <summary>
     /// Recover given health. 0 > amount means ALL health.
@@ -47,15 +64,15 @@ public class HealthController : RichMonoBehaviour,
     {
         if (recoverAmount < 0) //heal all wounds
         {
-            currentVitality = maxVitality;
+            currentHealth.Value = maxHealth;
         }
         else
         {
-            currentVitality = RichMath.Clamp(
-                currentVitality + recoverAmount, 0, maxVitality);
+            currentHealth.Value = RichMath.Clamp(
+                currentHealth + recoverAmount, 0, maxHealth);
         }
 
-        vitalityGainedEvent.Invoke();
+        healthGainedEvent.Invoke();
     }
 
     [Button("Recover Full Health")]
@@ -70,18 +87,18 @@ public class HealthController : RichMonoBehaviour,
     public void Revive(float healthRatio = 1)
     {
         IsDead = false;
-        RecoverHealth((int)(healthRatio * maxVitality));
+        RecoverHealth((int)(healthRatio * maxHealth));
     }
     
     /// <summary>
     /// Change amount of max health available.
     /// </summary>
     /// <param name="amount"></param>
-    public void SetMaxVitality(int amount)
+    public void SetMaxHealth(int amount)
     {
-        maxVitality = amount;
-        currentVitality = currentVitality < maxVitality // clamp currentHealth to new max
-            ? currentVitality : maxVitality;
+        maxHealth.Value = amount;
+        currentHealth.Value = currentHealth < maxHealth // clamp currentHealth to new max
+            ? currentHealth : maxHealth;
     }
 
     /// <summary>
@@ -92,16 +109,24 @@ public class HealthController : RichMonoBehaviour,
     {
         if (damageAmount < 0) //insta-kill
         {
-            damageAmount = currentVitality;
+            damageAmount = currentHealth;
         }
-        currentVitality = RichMath.Clamp(
-            currentVitality - damageAmount, 0, maxVitality);
-        vitalityLostEvent.Invoke();
+        currentHealth.Value = RichMath.Clamp(
+            currentHealth - damageAmount, 0, maxHealth);
+        healthLostEvent.Invoke();
 
-        if (currentVitality <= 0 && !IsDead)//if this is the moment of death
+        if (currentHealth <= 0 && !IsDead)//if this is the moment of death
         {
             IsDead = true;
             deadEvent.Invoke();
         }
     }
+
+#if UNITY_EDITOR
+
+    [Button]
+    private void TestTake5Damage()
+        => TakeDamage(5);
+
+#endif
 }
