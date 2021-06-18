@@ -109,9 +109,7 @@ public static class Utility
             list.Add(item);
     }
 
-    public static T Last<T>(this T[] collection) => collection[collection.Length - 1];
-
-    public static T Last<T>(this List<T> collection) => collection[collection.Count - 1];
+    public static T Last<T>(this IList<T> collection) => collection[collection.Count - 1];
 
     /// <summary>
     /// Count - 1
@@ -142,7 +140,7 @@ public static class Utility
     public static bool Contains<T>(this T[] array, T elem)
     {
         var length = array.Length;
-        for (var i = 0; i < length; ++i)
+        for (var i = 0; i < length; ++i) //TODO what if this is an array of ints? ints can't be null. wtf?
             if (array[i] != null && array[i].Equals(elem))
                 return true;
         return false;
@@ -155,15 +153,8 @@ public static class Utility
     /// <param name="element"></param>
     /// <param name="array"></param>
     /// <returns></returns>
-    public static int GetIndexOfElementInArray<T>(T element, T[] array)
-    {
-        var length = array.Length;
-
-        for (var i = 0; i < length; ++i)
-            if (array[i].Equals(element))
-                return i;
-        return -1;//not found
-    }
+    public static int IndexOf<T>(this T[] array, T element)
+        => Array.IndexOf(array, element);    
 
     /// <summary>
     /// Returns List with lowest Count from List of Lists.
@@ -172,7 +163,7 @@ public static class Utility
     /// <param name="lists"></param>
     /// <returns></returns>
     /// <remarks>Ignores Lists with </remarks>
-    public static List<T> GetShortestList<T>(List<List<T>> lists)
+    public static List<T> GetShortestList<T>(IList<IList<T>> lists)
     {
         //first shortest path
         var shortestLength = int.MaxValue;
@@ -198,7 +189,7 @@ public static class Utility
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns>True if A & B are the same size and every element in A is in B</returns>
-    public static bool IsEquivalentTo<T>(this List<T> a, List<T> b)
+    public static bool IsEquivalentTo<T>(this IList<T> a, IList<T> b)
     {
         if (a.Count != b.Count) return false;
 
@@ -216,7 +207,7 @@ public static class Utility
     /// <param name="a">check if this one is a subset</param>
     /// <param name="b">"master" set</param>
     /// <returns></returns>
-    public static bool IsSubsetOf<T>(this List<T> a, List<T> b)
+    public static bool IsSubsetOf<T>(this IList<T> a, IList<T> b)
     {
         foreach (var item in a)
         {
@@ -271,88 +262,11 @@ public static class Utility
     /// <typeparam name="T"></typeparam>
     /// <param name="collection"></param>
     /// <returns></returns>
-    public static T GetRandomElement<T>(this T[] collection)
-    {
-        var length = collection.Length;
-        if (length == 0) return default; // no elements!
-        return collection[Random.Range(0, length)];
-    }
-
-    /// <summary>
-    /// Returns a random element from array, or default if collection is empty.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="collection"></param>
-    /// <returns></returns>
-    public static T GetRandomElement<T>(this List<T> collection)
+    public static T GetRandomElement<T>(this IList<T> collection)
     {
         var length = collection.Count;
         if (length == 0) return default; // no elements!
         return collection[Random.Range(0, length)];
-    }
-
-    /// <summary>
-    /// GetPrint a random element from Collection that is not in usedCollection. 
-    /// Up to caller to store this value in usedCollection
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="totalCollection"></param>
-    /// <param name="usedCollection"></param>
-    /// <returns></returns>
-    public static T GetRandomUnused<T>(T[] totalCollection,
-        T[] usedCollection)
-    {
-        //build a pool of indices that have not been used.  
-        var possibleIndices = CommunityIndiceList;
-
-        var totalCount = totalCollection.Length;
-        for (var i = 0; i < totalCount; ++i)
-        {
-            if (!Contains(usedCollection, totalCollection[i]))
-            {
-                possibleIndices.Add(i);//this index is safe to choose from
-            }
-        }
-
-        if (possibleIndices.Count == 0)
-        {
-            Debug.Log("Every index has been used in collection of count: " + totalCollection.Length);
-            return default;
-        }
-
-        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
-    }
-
-    /// <summary>
-    /// GetPrint a random element from Collection that is not in usedCollection. 
-    /// Up to caller to store this value in usedCollection
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="totalCollection"></param>
-    /// <param name="usedCollection"></param>
-    /// <returns></returns>
-    public static T GetRandomUnused<T>(List<T> totalCollection,
-        T[] usedCollection)
-    {
-        //build a pool of indices that have not been used.  
-        var possibleIndices = CommunityIndiceList;
-
-        var totalCount = totalCollection.Count;
-        for (var i = 0; i < totalCount; ++i)
-        {
-            if (!Contains(usedCollection, totalCollection[i]))
-            {
-                possibleIndices.Add(i);//this index is safe to choose from
-            }
-        }
-
-        if (possibleIndices.Count == 0)
-        {
-            Debug.Log("Every index has been used in collection of count: " + totalCollection.Count);
-            return default;
-        }
-
-        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
     }
     
     /// <summary>
@@ -363,7 +277,7 @@ public static class Utility
     /// <param name="totalCollection"></param>
     /// <param name="usedCollection"></param>
     /// <returns></returns>
-    public static T GetRandomUnused<T>(IList<T> totalCollection, List<T> usedCollection)
+    public static T GetRandomUnused<T>(IList<T> totalCollection, IList<T> usedCollection)
     {
         //build a pool of indices that have not been used.  
         var possibleIndices = CommunityIndiceList;
@@ -384,38 +298,6 @@ public static class Utility
         }
 
         return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
-    }
-
-    /// <summary>
-    /// GetPrint a random element from Collection that is not in usedCollection. 
-    /// Up to caller to store this value in usedCollection
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="totalCollection"></param>
-    /// <param name="usedCollection"></param>
-    /// <returns></returns>
-    public static T GetRandomUnused<T>(List<T> totalCollection, List<T> usedCollection)
-    {
-        //build a pool of indices that have not been used.  
-        var possibleIndices = CommunityIndiceList;
-
-        var totalCount = totalCollection.Count;
-        for (var i = 0; i < totalCount; ++i)
-        {
-            if (!usedCollection.Contains(totalCollection[i]))
-            {
-                possibleIndices.Add(i);//this index is safe to choose from
-            }
-        }
-
-        if (possibleIndices.Count == 0)
-        {
-            Debug.Log("Every index has been used in collection of count: " + totalCollection.Count);
-            return default;
-        }
-
-        return totalCollection[possibleIndices[Random.Range(0, possibleIndices.Count)]];
-
     }
 
     /// <summary>
@@ -504,14 +386,14 @@ public static class Utility
     public static IEnumerator InvokeAfterDelay(this Action callback, float delay)
     {
         yield return new WaitForSeconds(delay);
-        callback.Invoke();
+        callback();
     }
 
     public static IEnumerator InvokeAfterDelay(this Action callback,
         YieldInstruction yieldInstruction)
     {
         yield return yieldInstruction;
-        callback.Invoke();
+        callback();
     }
 
     /// <summary>
@@ -578,9 +460,7 @@ public static class Utility
     /// <param name="obj"></param>
     /// <param name="newLayer"></param>
     public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
-    {
-        SetLayerRecursively(gameObj.transform, newLayer);
-    }
+        => SetLayerRecursively(gameObj.transform, newLayer);
 
     /// <summary>
     /// Case insensitive check. True iff source == "true".
