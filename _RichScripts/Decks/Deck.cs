@@ -89,6 +89,17 @@ public class Deck<T> : RichScriptableObject
         => usedCards.Add(unusedCards.GetRemoveAt(index));
 
     /// <summary>
+    /// Recombines decks without shuffling (drawn in order of Manifest).
+    /// </summary>
+    public void ReloadDeck()
+    {
+        usedCards.Clear();
+        unusedCards.Clear();
+
+        manifest.ForEachBackwards(unusedCards.Add);
+    }
+
+    /// <summary>
     /// Recombines un/used cards and shuffles entire deck.
     /// </summary>
     public void Shuffle()
