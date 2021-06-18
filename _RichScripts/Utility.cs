@@ -242,6 +242,20 @@ public static class Utility
         return newArr;
     }
 
+    /// <summary>
+    /// Swap element at index a with element at index b.
+    /// </summary>
+    public static void Swap<T>(this IList<T> list, int a, int b)
+    {   //validate
+        list.AssertValidIndex(a);
+        list.AssertValidIndex(b);
+
+        //perform swap
+        T tmp = list[a];
+        list[a] = list[b];
+        list[b] = tmp;
+    }
+
     #endregion
 
     #region Random and Collections
@@ -590,14 +604,14 @@ public static class Utility
 
     [Conditional("UNITY_EDITOR")]//editor only
     public static void AssertValidIndex<T>(
-        ICollection<T> collection, int index)
+        this ICollection<T> collection, int index)
         => Debug.AssertFormat(index >= 0 && index < collection.Count,
             "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}].",//report index
             index, collection.Count);
 
     [Conditional("UNITY_EDITOR")]//editor only
     public static void AssertValidIndex<T>(
-        ICollection<T> collection, int index, string name)
+        this ICollection<T> collection, int index, string name)
         => Debug.AssertFormat(index >= 0 && index < collection.Count,
             "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}] " + //report index
             "on: {2}", //report name of problem mono
