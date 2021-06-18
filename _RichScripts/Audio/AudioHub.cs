@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using ScriptableObjectArchitecture;
 
 /// <summary>
 /// Play an audio clip using only a string reference to its tag.
@@ -15,12 +16,14 @@ public class AudioHub : RichMonoBehaviour
     protected struct TableEntry
     {
         public string tag;
-        public AudioClipVariable audioClipRef;
+        public AudioClipReference audioClipRef;
     }
 
     #endregion
 
     [Header("---Settings---")]
+    [Tooltip("Prefer true unless you really want this " +
+        "kind of responsibility on yourself.")]
     [SerializeField] protected bool initOnAwake = true;
     [SerializeField] protected bool isPersistentThroughScenes = true;
 

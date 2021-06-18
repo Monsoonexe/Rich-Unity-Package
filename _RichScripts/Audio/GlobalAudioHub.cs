@@ -6,13 +6,12 @@ public class GlobalAudioHub : AudioHub
 
     protected override void Awake()
     {
+        base.Awake();
         if (!InitSingleton(this, ref instance, dontDestroyOnLoad: isPersistentThroughScenes))
         {
             Destroy(this);
             return;
         }
-
-        base.Awake();
     }
 
     public static void PlayGlobalSFX(string clipTag)
