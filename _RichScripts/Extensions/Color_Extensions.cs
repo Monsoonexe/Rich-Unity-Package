@@ -3,8 +3,7 @@ using UnityEngine;
 public static class Color_Extensions
 {
     /// <summary>
-    /// Handy function to make assigning/copying vectors easier
-    /// myPostion = somePosition.With(z = 1);//same, but with different z-value
+    /// Prefer WithR(float) instead.
     /// </summary>
     /// <param name="a">Vector3 source to copy</param>
     /// <param name="x">x value, if you want</param>
@@ -15,15 +14,13 @@ public static class Color_Extensions
     public static Color With(this Color c,
         float? r = null, float? g = null, float? b = null,
         float? a = null)
-    {
-        return new Color
+        => new Color
         (
             r.HasValue ? r.Value : c.r,
             g.HasValue ? g.Value : c.g,
             b.HasValue ? b.Value : c.b,
             a.HasValue ? a.Value : c.a
         );
-    }
 
     public static Color WithR(this Color c, float r)
         => new Color(r, c.g, c.b, c.a);
