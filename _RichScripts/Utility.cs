@@ -604,14 +604,14 @@ public static class Utility
 
     [Conditional("UNITY_EDITOR")]//editor only
     public static void AssertValidIndex<T>(
-        this ICollection<T> collection, int index)
+        this IList<T> collection, int index)
         => Debug.AssertFormat(index >= 0 && index < collection.Count,
             "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}].",//report index
             index, collection.Count);
 
     [Conditional("UNITY_EDITOR")]//editor only
     public static void AssertValidIndex<T>(
-        this ICollection<T> collection, int index, string name)
+        this IList<T> collection, int index, string name)
         => Debug.AssertFormat(index >= 0 && index < collection.Count,
             "[SetAnimatorPropertiesHelper] Index out of bounds [{0} | {1}] " + //report index
             "on: {2}", //report name of problem mono
