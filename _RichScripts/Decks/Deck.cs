@@ -86,11 +86,7 @@ public class Deck<T> : RichScriptableObject
     /// Remove item from deck at given index and place it on top of discard pile.
     /// </summary>
     public void MoveCardToDiscard<T>(int index)
-    {
-        unusedCards.AssertValidIndex(index);
-        var card = unusedCards.GetRemoveAt(index);
-        usedCards.Add(card);
-    }
+        => usedCards.Add(unusedCards.GetRemoveAt(index));
 
     /// <summary>
     /// Recombines un/used cards and shuffles entire deck.
