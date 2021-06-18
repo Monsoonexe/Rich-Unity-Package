@@ -507,21 +507,30 @@ public static class Utility
     /// </summary>
     /// <param name="cycles"></param>
     /// <param name="action"></param>
-    public static void Repeat(Action action, ulong cycles)
+    public static void Repeat(Action action, int cycles)
     {
-        for (ulong i = 0; i < cycles; i++)
+        for (int i = 0; i < cycles; ++i)
             action();
     }
 
     /// <summary>
     /// A 'foreach' with a 'for' backbone
-    /// Look at source for example
     /// </summary>
-    public static void ForEach<T>(this IList<T> objects, Action<T> action)
+    public static void ForEach<T>(this IList<T> list, Action<T> action)
     {
-        for (int i = 0; i < objects.Count; i++)
-            action(objects[i]);
+        for (int i = 0; i < list.Count; ++i)
+            action(list[i]);
     }
+
+    /// <summary>
+    /// A 'foreach' with a 'for' backbone
+    /// </summary>
+    public static void ForEachBackwards<T>(this IList<T> list, Action<T> action)
+    {
+        for (int i = list.Count - 1; i >= 0; ++i)
+            action(list[i]);
+    }
+    #endregion
 
     /// <summary>
     /// Times how long the action took to complete and returns that time in milliseconds.
@@ -533,5 +542,4 @@ public static class Utility
         watch.Stop();
         return watch.ElapsedMilliseconds;
     }
-    #endregion
 }
