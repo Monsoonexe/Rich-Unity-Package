@@ -14,19 +14,18 @@ public class Deck<T> : RichScriptableObject
     public readonly List<T> unusedCards = new List<T>(); //face-down deck
     public readonly List<T> usedCards = new List<T>(); //discard pile
 
-    [AllowNesting]
     [ShowNativeProperty]
     public int CardsRemaining { get => unusedCards.Count; }
     public int TotalCardCount { get => manifest.Count; }
 
     #region Constructors
 
-    public Deck<T>(List<T> newManifest)
+    Deck(List<T> newManifest)
     {
         manifest = newManifest;
     }
 
-    public Deck<T>(T[] newManifest)
+    Deck(T[] newManifest)
     {
         manifest = new List<T>(newManifest);
     }
@@ -36,25 +35,25 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
     /// </summary>
-    public void AddToManifest<T>(T newItem)
+    public void AddToManifest(T newItem)
         => manifest.Add(newItem);
 
     /// <summary>
     /// Adds an item to be drawn next.
     /// </summary>
-    public void AddToDeckTop<T>(T newItem)
+    public void AddToDeckTop(T newItem)
         => AddToDeck(newItem, unusedCards.Count);
 
     /// <summary>
     /// Adds an item to be drawn last.
     /// </summary>
-    public void AddToDeckBottom<T>(T newItem)
+    public void AddToDeckBottom(T newItem)
         => AddToDeck(newItem, 0);
 
     /// <summary>
     /// Adds an item into the deck at a random location.
     /// </summary>
-    public void AddToDeckRandom<T>(T newItem)
+    public void AddToDeckRandom(T newItem)
         => AddToDeck(newItem, Random.Range(0, unusedCards.Count + 1));//include top of deck
 
     /// <summary>
@@ -62,7 +61,7 @@ public class Deck<T> : RichScriptableObject
     /// </summary>
     /// <param name="position">How many cards deep should it go. '0' is the top (next) card. 
     ///  Negative indicates spaces from the bottom (last).</param>
-    public void AddToDeck<T>(T newItem, int position)
+    public void AddToDeck(T newItem, int position)
     {
         manifest.Add(newItem);
 
@@ -76,7 +75,7 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Adds an item into the deck and places it in the discard pile.
     /// </summary>
-    public void AddToDiscardPile<T>(T newItem)
+    public void AddToDiscardPile(T newItem)
     {
         manifest.Add(newItem);
         usedCards.Add(newItem);
@@ -85,7 +84,7 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Remove item from deck at given index and place it on top of discard pile.
     /// </summary>
-    public void MoveCardToDiscard<T>(int index)
+    public void MoveCardToDiscard(int index)
         => usedCards.Add(unusedCards.GetRemoveAt(index));
 
     /// <summary>
@@ -155,7 +154,7 @@ public class Deck<T> : RichScriptableObject
     public T PeekAt(int i)
     {
         unusedCards.AssertValidIndex(i);
-        unusedCards[unusedCards.LastIndex() - i];
+        return unusedCards[unusedCards.LastIndex() - i];
     } 
 
     /// <summary>

@@ -109,8 +109,6 @@ public static class Utility
             list.Add(item);
     }
 
-    public static T Last<T>(this IList<T> collection) => collection[collection.Count - 1];
-
     /// <summary>
     /// Count - 1
     /// </summary>
@@ -163,7 +161,7 @@ public static class Utility
     /// <param name="lists"></param>
     /// <returns></returns>
     /// <remarks>Ignores Lists with </remarks>
-    public static List<T> GetShortestList<T>(IList<IList<T>> lists)
+    public static IList<T> GetShortestList<T>(IList<IList<T>> lists)
     {
         //first shortest path
         var shortestLength = int.MaxValue;
