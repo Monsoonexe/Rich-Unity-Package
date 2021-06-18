@@ -3,7 +3,7 @@ using UnityEngine;
 using NaughtyAttributes;
 
 /// <summary>
-/// Abstract representation of a deck of something (cards)
+/// A deck of something (cards).
 /// </summary>
 public class Deck<T> : RichScriptableObject
 {
@@ -11,13 +11,86 @@ public class Deck<T> : RichScriptableObject
     private List<T> manifest = new List<T>();
     public List<T> Manifest { get => manifest; }
 
-    public readonly List<T> unusedCards = new List<T>();
-    public readonly List<T> usedCards = new List<T>();
+    public readonly List<T> unusedCards = new List<T>(); //face-down deck
+    public readonly List<T> usedCards = new List<T>(); //discard pile
 
     [AllowNesting]
     [ShowNativeProperty]
     public int CardsRemaining { get => unusedCards.Count; }
     public int TotalCardCount { get => manifest.Count; }
+
+    #region Constructors
+
+    public Deck<T>(List<T> newManifest)
+    {
+        manifest = newManifest;
+    }
+
+    public Deck<T>(T[] newManifest)
+    {
+        manifest = new List<T>(newManifest);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
+    /// </summary>
+    public void AddToManifest<T>(T newItem)
+        => manifest.Add(newItem);
+
+    /// <summary>
+    /// Adds an item to be drawn next.
+    /// </summary>
+    public void AddToDeckTop<T>(T newItem)
+        => AddToDeck(newItem, unusedCards.Count);
+
+    /// <summary>
+    /// Adds an item to be drawn last.
+    /// </summary>
+    public void AddToDeckBottom<T>(T newItem)
+        => AddToDeck(newItem, 0);
+
+    /// <summary>
+    /// Adds an item into the deck at a random location.
+    /// </summary>
+    public void AddToDeckRandom<T>(T newItem)
+        => AddToDeck(newItem, Random.Range(0, unusedCards.Count + 1));//include top of deck
+
+    /// <summary>
+    /// Adds an item into the unused portion of the deck.
+    /// </summary>
+    /// <param name="position">How many cards deep should it go. '0' is the top (next) card. 
+    ///  Negative indicates spaces from the bottom (last).</param>
+    public void AddToDeck<T>(T newItem, int position)
+    {
+        manifest.Add(newItem);
+
+        //negative means "from the end".
+        if(position < 0)
+            position = unusedCards.LastIndex() + position;
+
+        unusedCards.Insert(position, newItem);
+    }
+
+    /// <summary>
+    /// Adds an item into the deck and places it in the discard pile.
+    /// </summary>
+    public void AddToDiscardPile<T>(T newItem)
+    {
+        manifest.Add(newItem);
+        usedCards.Add(newItem);
+    }
+
+    /// <summary>
+    /// Remove item from deck at given index and place it on top of discard pile.
+    /// </summary>
+    public void MoveCardToDiscard<T>(int index)
+    {
+        unusedCards.AssertValidIndex(index);
+        var card = unusedCards.GetRemoveAt(index);
+        usedCards.Add(card);
+    }
 
     /// <summary>
     /// Recombines un/used cards and shuffles entire deck.
@@ -68,10 +141,27 @@ public class Deck<T> : RichScriptableObject
     public U Draw<U>() where U : T => (U)Draw();
 
     /// <summary>
-    /// 0 is top of the deck.
+    /// Look at an item without moving it.
     /// </summary>
-    /// <param name="i"></param>
+    /// <param name="i">0 is top of the deck.</param>
     /// <returns></returns>
-    public T PeekAt(int i) => unusedCards[unusedCards.LastIndex() - i];
+    public T PeekAt(int i)
+    {
+        unusedCards.AssertValidIndex(i);
+        unusedCards[unusedCards.LastIndex() - i];
+    } 
 
+    /// <summary>
+    /// Look at next item without moving it.
+    /// </summary>
+    /// <returns></returns>
+    public T PeekAtTop()
+        => PeekAt(0);
+
+    /// <summary>
+    /// Look at last item without moving it.
+    /// </summary>
+    /// <returns></returns>
+    public T PeekAtBottom()
+        => PeekAt(unusedCards.LastIndex());
 }
