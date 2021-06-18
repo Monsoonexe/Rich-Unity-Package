@@ -345,6 +345,7 @@ public static class Utility
     /// <returns></returns>
     public static T GetRemoveAt<T>(this List<T> list, int i)
     {
+        list.AssertValidIndex(i);
         var el = list[i];
         list.RemoveAt(i);
         return el;
