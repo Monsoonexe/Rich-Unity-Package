@@ -20,6 +20,13 @@ public static class GameObject_Extensions
         => a.SetActive(false);
 
     /// <summary>
+    /// Shortcut for a.enabled = false;
+    /// </summary>
+    /// <param name="a"></param>
+    public static void SetActiveToggle(this GameObject a)
+        => a.SetActive(a.activeSelf);
+
+    /// <summary>
     /// Shortcut for Destroy(gameObject);
     /// </summary>
     /// <param name="a"></param>
