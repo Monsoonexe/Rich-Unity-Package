@@ -5,7 +5,7 @@ using NaughtyAttributes;
 /// <summary>
 /// Abstract representation of a deck of something (cards)
 /// </summary>
-public abstract class ADeck<T> : RichScriptableObject
+public class Deck<T> : RichScriptableObject
 {
     [SerializeField]
     private List<T> manifest = new List<T>();
@@ -14,6 +14,7 @@ public abstract class ADeck<T> : RichScriptableObject
     public readonly List<T> unusedCards = new List<T>();
     public readonly List<T> usedCards = new List<T>();
 
+    [AllowNesting]
     [ShowNativeProperty]
     public int CardsRemaining { get => unusedCards.Count; }
     public int TotalCardCount { get => manifest.Count; }

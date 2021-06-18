@@ -5,7 +5,7 @@
 /// </summary>
 [CreateAssetMenu(fileName = "DeckOfScriptableObjects",
     menuName = "ScriptableObjects/Decks/Deck of ScriptableObjects")]
-public class ScriptableObjectDeck : ADeck<ScriptableObject>
+public class ScriptableObjectDeck : Deck<ScriptableObject>
 {
 	//exists
 }
