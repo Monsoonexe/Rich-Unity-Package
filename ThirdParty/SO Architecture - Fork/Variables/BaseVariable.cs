@@ -118,20 +118,10 @@ namespace ScriptableObjectArchitecture
 
             return value;
         }
-        public virtual T SetValue(BaseVariable<T> value)
-        {
-            if (_readOnly)
-            {
-                RaiseReadonlyWarning();
-                return _value;
-            }
-            else if (Clampable && IsClamped)
-            {
-                return ClampValue(value.Value);
-            }
 
-            return value.Value;
-        }
+        public virtual T SetValue(BaseVariable<T> value)
+            => SetValue(value.Value);
+            
         protected virtual T ClampValue(T value)
         {
             return value;
