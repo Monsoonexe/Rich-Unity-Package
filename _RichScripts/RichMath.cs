@@ -4,6 +4,7 @@ using UnityEngine;
 public static class RichMath
 {
     //these functions are faster than Mathf.Clamp because they aren't marshalled.
+    const int TEN = 10;//base 10
 
     #region Clamp
 
@@ -108,6 +109,52 @@ public static class RichMath
 
         //move decimal left, truncate mantissa, move decimal back right
         return a = ((int)(a * truncator)) / truncator;
+    }
+
+    /// <summary>
+    /// 10.37565 (2) = 10.38
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="decimalDigits"></param>
+    /// <returns></returns>
+    private static float RoundToDecimal(float a, int decimalDigits)
+    {
+        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
+            return Mathf.Round(a);
+
+        const int TEN = 10;//base 10
+        var truncator = 1.0f;//start at 1 for multiply
+
+        //exponentiate to move desired portion into integer section
+        for (var i = 0; i < decimalDigits; ++i)
+            truncator *= TEN;
+
+        a = Mathf.Round(a * truncator);//round off decimals
+        
+        //move decimal point back to origin
+        return a / truncator;
+    }
+
+    public static float MoveDecimalRight(float a, int places)
+    {
+        var truncator = 1.0f;//start at 1 for multiply
+
+        //exponentiate to move desired portion into integer section
+        for (var i = 0; i < places; ++i)
+            truncator *= TEN;
+
+        return a * truncator;
+    }
+
+    public static float MoveDecimalLeft(float a, int places)
+    {
+        var truncator = 1.0f;//start at 1 for multiply
+
+        //exponentiate to move desired portion into integer section
+        for (var i = 0; i < places; ++i)
+            truncator *= TEN;
+
+        return a / truncator;
     }
 
     #region Quick Convert
