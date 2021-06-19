@@ -12,35 +12,11 @@ public abstract class ARandomGeneratorBase<TContainer, TValue> : RichScriptableO
     public TContainer[] Pool { get => availablePool; }
 
     /// <summary>
-    /// TV that displays results.
-    /// </summary>
-    protected TValue[] cachedResults; // use to reduce garbage
-
-    /// <summary>
     /// Return a randomly drawn element from array using weights.
     /// </summary>
     /// <returns></returns>
-    public virtual TValue GetNextRandom() => 
-        AWeightedProbability.GetWeightedRandomElement(this);
-
-    /// <summary>
-    /// Used to get a pool of objects.
-    /// </summary>
-    /// <param name="quantity"></param>
-    /// <returns></returns>
-    public virtual TValue[] GetNext(int quantity)
-    {
-        //get new or resize array
-        if(cachedResults == null || cachedResults.Length < quantity)
-            cachedResults = new TValue[quantity];
-
-        for(var i = 0; i < quantity; ++i)
-        {
-            cachedResults[i] = GetNextRandom();
-        }
-
-        return cachedResults;
-    }
+    public virtual TValue Draw() => 
+        this.GetWeightedRandomElement();
 
     /// <summary>
     /// Total accumulated value of all weights in pool.

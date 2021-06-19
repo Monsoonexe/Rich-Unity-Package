@@ -8,29 +8,16 @@ using NaughtyAttributes;
 public class Deck<T> : RichScriptableObject
 {
     [SerializeField]
-    private List<T> manifest = new List<T>();
+    [ReorderableList]
+    protected List<T> manifest = new List<T>();
     public List<T> Manifest { get => manifest; }
 
     public readonly List<T> unusedCards = new List<T>(); //face-down deck
     public readonly List<T> usedCards = new List<T>(); //discard pile
 
     [ShowNativeProperty]
-    public int CardsRemaining { get => unusedCards.Count; }
+    public virtual int CardsRemaining { get => unusedCards.Count; }
     public int TotalCardCount { get => manifest.Count; }
-
-    #region Constructors
-
-    Deck(List<T> newManifest)
-    {
-        manifest = newManifest;
-    }
-
-    Deck(T[] newManifest)
-    {
-        manifest = new List<T>(newManifest);
-    }
-
-    #endregion
 
     /// <summary>
     /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
@@ -90,18 +77,20 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Recombines decks without shuffling (drawn in order of Manifest).
     /// </summary>
-    public void ReloadDeck()
+    public virtual void ReloadDeck()
     {
         usedCards.Clear();
         unusedCards.Clear();
 
+        //add all cards to unused pile.
         manifest.ForEachBackwards(unusedCards.Add);
     }
 
     /// <summary>
     /// Recombines un/used cards and shuffles entire deck.
     /// </summary>
-    public void Shuffle()
+    [Button] 
+    public virtual void Shuffle()
     {
         usedCards.Clear();
         unusedCards.Clear();
@@ -118,7 +107,7 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Shuffles only remaining cards.
     /// </summary>
-    public void ShuffleRemaining()
+    public virtual void ShuffleRemaining()
     {
         var startingIndex = usedCards.Count;
         var count = unusedCards.Count; //cache cards remaining
@@ -134,12 +123,20 @@ public class Deck<T> : RichScriptableObject
         }
     }
 
-    public T Draw()
+    [Button]
+    public virtual void TestDraw()
+    {
+        var card = Draw();
+        Debug.Log(card);
+    }
+
+    public virtual T Draw()
     {
         if (unusedCards.Count == 0) return default;//index out of range failsafe.
-        
+
         //draw from highest slot to avoid shifting all elements
-        var card = unusedCards.GetRemoveAt(unusedCards.LastIndex());
+        var removeIndex = unusedCards.LastIndex();
+        var card = unusedCards.GetRemoveAt(removeIndex);
         usedCards.Add(card);
         return card;
     }

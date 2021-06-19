@@ -1,6 +1,20 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 using Random = UnityEngine.Random;
+
+/// <summary>
+/// Base class shouldn't be generic.
+/// </summary>
+/// <remarks>Done this way so base class is serializeable</remarks>
+public abstract class AWeightedProbability
+{
+    [SerializeField]
+    protected int weight;
+
+    public int Weight { get => weight; } // readonly
+
+}
 
 /// <summary>
 /// Weight and thing as a pair.
@@ -13,6 +27,8 @@ public abstract class AWeightedProbability<T> : AWeightedProbability
     protected T value;
 
     public T Value { get => value; } // readonly 
+
+    #region Constructors
 
     /// <summary>
     /// Constructor
@@ -34,6 +50,8 @@ public abstract class AWeightedProbability<T> : AWeightedProbability
         this.value = value;
     }
 
+    #endregion
+
     /// <summary>
     /// Value: xxx | Weight: xxx
     /// </summary>
@@ -45,32 +63,26 @@ public abstract class AWeightedProbability<T> : AWeightedProbability
     }
 }
 
-/// <summary>
-/// Base class shouldn't be generic.
-/// </summary>
-/// <remarks>Done this way so base class is serializeable</remarks>
-public abstract class AWeightedProbability
-{
-    [SerializeField]
-    protected int weight;
+public static class AWeightedProbability_Extensions
+{   //array shortcuts -> array.GetTotalyWeight()
 
-    public int Weight { get => weight; } // readonly
 
     /// <summary>
-    /// Sum up Weights in given collection
+    /// Get a random index using Weighted algorithm.
     /// </summary>
-    /// <param name="probabilityTemplates"></param>
-    /// <returns></returns>
-    public static int TotalWeight(AWeightedProbability[] probabilityTemplates)
+    /// <typeparam name="T"></typeparam>
+    /// <param name="items"></param>
+    /// <returns>Scales of weights do not affect performance. Guarantees 1 or less iteration. </returns>
+    public static int GetWeightedIndex(this IList<int> items)
     {
-        var totalWeight = 0;
+        var totalWeight = GetTotalWeight(items);
+        var randomValue = Random.Range(0, totalWeight) + 1;
+        var index = 0;
 
-        for (var i = 0; i < probabilityTemplates.Length; ++i)
-        {
-            totalWeight += probabilityTemplates[i].weight;
-        }
+        while (randomValue > 0)
+            randomValue -= items[index++];
 
-        return totalWeight;
+        return index - 1;
     }
 
     /// <summary>
@@ -79,9 +91,37 @@ public abstract class AWeightedProbability
     /// <typeparam name="T"></typeparam>
     /// <param name="items"></param>
     /// <returns>Scales of weights do not affect performance. Guarantees 1 or less iteration. </returns>
-    public static T GetWeightedRandomElement<T>(AWeightedProbability<T>[] items)
+    public static int GetWeightedIndex(
+        this IList<AWeightedProbability> items)
     {
-        var totalWeight = TotalWeight(items);
+        var totalWeight = GetTotalWeight(items);
+        var randomValue = Random.Range(0, totalWeight) + 1;
+        var index = 0;
+        AWeightedProbability result = null;
+
+        while (randomValue > 0)
+        {
+            result = items[index++];
+            randomValue -= result.Weight;
+        }
+
+        return index - 1;
+    }
+
+    public static int GetWeightedIndex<T>(
+        this IList<AWeightedProbability<T>> items)
+        => GetWeightedIndex((IList<AWeightedProbability>)items);
+
+    /// <summary>
+    /// Get a random element using Weighted algorithm.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="items"></param>
+    /// <returns>Scales of weights do not affect performance. Guarantees 1 or less iteration. </returns>
+    public static T GetWeightedRandomElement<T>(
+        this IList<AWeightedProbability<T>> items)
+    {
+        var totalWeight = GetTotalWeight((IList<AWeightedProbability>)items);
         var randomValue = Random.Range(0, totalWeight) + 1;
         var index = 0;
         AWeightedProbability<T> result = null;
@@ -89,7 +129,7 @@ public abstract class AWeightedProbability
         while (randomValue > 0)
         {
             result = items[index++];
-            randomValue -= result.weight;
+            randomValue -= result.Weight;
         }
 
         return result.Value;
@@ -103,7 +143,7 @@ public abstract class AWeightedProbability
     /// <param name="generator"></param>
     /// <returns></returns>
     public static TValue GetWeightedRandomElement<TContainer, TValue>(
-        ARandomGeneratorBase<TContainer, TValue> generator)
+        this ARandomGeneratorBase<TContainer, TValue> generator)
         where TContainer : AWeightedProbability<TValue>
     {
         var totalWeight = generator.TotalWeight;
@@ -115,19 +155,41 @@ public abstract class AWeightedProbability
         while (randomValue > 0)
         {
             result = items[index++];
-            randomValue -= result.weight;
+            randomValue -= result.Weight;
         }
 
         return result.Value;
     }
+    /// <summary>
+    /// Sum up Weights in given collection
+    /// </summary>
+    /// <param name="probabilityTemplates"></param>
+    /// <returns></returns>
+    public static int GetTotalWeight(this IList<int> weights)
+    {
+        var total = 0;
 
-}
+        for (var i = weights.Count; i >= 0; --i)
+            total += weights[i];
 
-public static class AWeightedProbability_Extensions
-{   //array shortcuts -> array.GetTotalyWeight()
-    public static int GetTotalWeight(this AWeightedProbability[] array) 
-        => AWeightedProbability.TotalWeight(array);
+        return total;
+    }
 
-    public static T GetWeightedRandomElement<T>(this AWeightedProbability<T>[] a)
-        => AWeightedProbability.GetWeightedRandomElement(a);
+    /// <summary>
+    /// Sum up Weights in given collection
+    /// </summary>
+    /// <param name="probabilityTemplates"></param>
+    /// <returns></returns>
+    public static int GetTotalWeight(this IList<AWeightedProbability>
+        probabilityTemplates)
+    {
+        var totalWeight = 0;
+
+        for (var i = 0; i < probabilityTemplates.Count; ++i)
+        {
+            totalWeight += probabilityTemplates[i].Weight;
+        }
+
+        return totalWeight;
+    }
 }
