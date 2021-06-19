@@ -108,10 +108,6 @@ public static class AWeightedProbability_Extensions
         return index - 1;
     }
 
-    public static int GetWeightedIndex<T>(
-        this IList<AWeightedProbability<T>> items)
-        => GetWeightedIndex((IList<AWeightedProbability>)items);
-
     /// <summary>
     /// Get a random element using Weighted algorithm.
     /// </summary>
