@@ -135,12 +135,12 @@ public class AudioManager : RichMonoBehaviour
     /// <param name="clip"></param>
     /// <param name="options"></param>
     private static void ConfigAudioSource(AudioSource source,
-        AudioClip clip, ref AudioOptions options)
+        AudioClip clip, in AudioOptions options)
     {
         //load options
         source.loop = options.loop;
         source.priority = options.priority;
-        if(options.crossfade > 0)
+        if (options.crossfade > 0)
             source.DOFade(options.volume, options.crossfade); // fade in
         else
             source.volume = options.volume;
@@ -187,7 +187,7 @@ public class AudioManager : RichMonoBehaviour
     public void PlaySFX(AudioClipReference clipRef)
         => AudioManager.PlaySFX(
             clipRef.Value, clipRef.Options);
-        
+
     public void PlaySFX(AudioClipVariable clipVar)
         => AudioManager.PlaySFX(
             clipVar.Value, clipVar.Options);
@@ -203,8 +203,8 @@ public class AudioManager : RichMonoBehaviour
     {
         if (clip == null) return AudioID.Invalid;//for safety
         var audioOptions = new AudioOptions(
-            loop: loop, pitchShift: pitchShift, crossfade: crossfade, 
-            priority: priority, volume: volume, 
+            loop: loop, pitchShift: pitchShift, crossfade: crossfade,
+            priority: priority, volume: volume,
             duration: duration == 0.0f ? clip.length : duration //validate
             );
 
@@ -220,18 +220,12 @@ public class AudioManager : RichMonoBehaviour
     {
         if (clip == null) return AudioID.Invalid;//for safety
 
-        //default values for options, iff none included.
-        if (options.priority <= 0) //clear sign this wasn't init'd
-        {
-            options.duration = clip.length;
-            options.loop = false;
-            options.pitchShift = true;
-            options.crossfade = 0.0f;
-            options.priority = 128;
-            options.volume = 1.0f;//max
-        }
         Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
             "Please call AudioManager.Init() or instantiate prefab at root.");
+
+        //default values for options, iff none included.
+        if (options.priority <= 0) //clear sign this wasn't init'd
+            options = AudioOptions.DefaultSFX;
 
         //find an audio source with the lowest volume, or that is not playing
         var size = SFXSources.Length;
@@ -263,7 +257,7 @@ public class AudioManager : RichMonoBehaviour
         var _duration = options.duration <= 0 ? clip.length : options.duration;
 
         var key = TrackAudio(source); // return a key so audio can be interrupted later
-        ConfigAudioSource(source, clip, ref options);
+        ConfigAudioSource(source, clip, in options);
 
         // if looping with duration < 0, it's up to caller to stop the clip.
         if (!options.loop || _duration > 0) //stop clip if not looping, or if looping for a specified duration
@@ -275,19 +269,13 @@ public class AudioManager : RichMonoBehaviour
         AudioOptions options = default)
     {
         if (!clip) return AudioID.Invalid;//for safety
+
         Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
             "Please call AudioManager.Init() or instantiate prefab at root.");
 
         //default values for options, iff none included.
         if (options.priority <= 0) //clear sign this wasn't init'd
-        {
-            options.loop = true;
-            options.pitchShift = false;
-            options.crossfade = 2.5f;
-            options.priority = 127;
-            options.volume = 1;
-        }
-        //Debug.Log("Crossfade Time: " + options.crossfade);
+            options = AudioOptions.DefaultBGM;
 
         //
         ActiveMusicTrack.DOFade(0, options.crossfade); // fade out current track
@@ -297,7 +285,7 @@ public class AudioManager : RichMonoBehaviour
         var key = TrackAudio(ActiveMusicTrack);
         if (!options.loop) // if it's looping, it's up to caller to stop the clip.
             Instance.StartCoroutine(RemoveSourceAfterClip(clip.length, key)); // free source after time
-        ConfigAudioSource(ActiveMusicTrack, clip, ref options);
+        ConfigAudioSource(ActiveMusicTrack, clip, in options);
         return key;
     }
 
@@ -329,14 +317,14 @@ public class AudioManager : RichMonoBehaviour
     public static void StopAllSFX()
     {
         var sources = SFXSources;
-        for(var i = sources.Length; i > 0; --i )
+        for (var i = sources.Length - 1; i >= 0; --i)
             sources[i].Stop();
     }
 
     public static void StopAllSFXFade(float fadeOutDuration)
     {
         var sources = SFXSources;
-        for (var i = sources.Length; i > 0; --i)
+        for (var i = sources.Length - 1; i >= 0; --i)
         {
             sources[i].DOFade(0, fadeOutDuration)
                 .OnComplete(sources[i].Stop);
