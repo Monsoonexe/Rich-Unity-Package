@@ -96,8 +96,7 @@ namespace ScriptableObjectArchitecture
         }
         public void RemoveListener(Action<T> action)
         {
-            if (!_typedActions.Contains(action))
-                _typedActions.Remove(action);
+            _typedActions.Remove(action);
         }
         public void Raise(T value)
         {
