@@ -25,7 +25,7 @@ public class AudioManager : RichMonoBehaviour
     private AudioSource[] SFXAudioSources;
     private static AudioSource[] SFXSources { get => Instance.SFXAudioSources; }
 
-    [SerializeField] private Vector2 pitchShiftRange = new Vector2(0.75f, 1.25f);
+    [SerializeField] private Vector2 pitchShiftRange = new Vector2(0.8f, 1.2f);
     private static Vector2 PitchShiftRange { get => Instance.pitchShiftRange; }
 
     //[Header("---Background Music Sources---")]
