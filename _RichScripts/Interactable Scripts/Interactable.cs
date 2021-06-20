@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using NaughtyAttributes;
 
 /// <summary>
 /// An IPlayerInteractable that comes with built-in behaviour and events already rigged.
@@ -39,7 +40,7 @@ public class Interactable : RichMonoBehaviour, IInteractable
     protected override void Awake()
     {
         base.Awake();
-        RegisterWithManger();
+        RegisterWithManager();
     }
 
     protected virtual void OnDestroy()
@@ -63,9 +64,9 @@ public class Interactable : RichMonoBehaviour, IInteractable
     public virtual void EndInteraction()
         => endInteractEvent.Invoke();
 
-    protected static void RegisterWithManager()
+    protected void RegisterWithManager()
         => InteractionManager.RegisterInteractable(this);
 
-    protected static void UnregisterWithManager()
+    protected void UnregisterWithManager()
         => InteractionManager.UnregisterInteractable(this);
 }
