@@ -14,7 +14,7 @@ public class AudioManager : RichMonoBehaviour
     /// True if there is an active, initialized AudioManager in the Scene.
     /// If this is false and you aren't okay with that, call AudioManager.Init().
     /// </summary>
-    public static bool IsInitialized;
+    public static bool IsInitialized { get; private set; }
 
     [Header("---Audio Manager---")]
     [SerializeField] private AudioMixer audioMixer;
