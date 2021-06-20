@@ -27,6 +27,9 @@ public class VirtualAudioSource : RichMonoBehaviour
             StopSFX();
     }
 
+    public AudioID PlayBackgroundTrack()
+        => audioID = AudioManager.PlayBackgroundTrack(clip, default);
+
     public AudioID PlayBackgroundTrack(AudioClip clip)
         => audioID = AudioManager.PlayBackgroundTrack(clip, default);
 
@@ -51,6 +54,13 @@ public class VirtualAudioSource : RichMonoBehaviour
     /// <param name="options"></param>
     public AudioID PlaySFX(AudioClip clip, AudioOptions options)
         => audioID = AudioManager.PlaySFX(clip, options);
+
+    public AudioID PlaySFXAndDestroy()
+    {
+        PlaySFX();
+        stopOnDestroy = false;
+        Destroy(this);
+    }
 
     public void StopSFX()
         => AudioManager.StopSFX(audioID, 0);
