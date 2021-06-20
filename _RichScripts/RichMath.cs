@@ -106,6 +106,16 @@ public static class RichMath
         return a / truncator;
     }
 
+    private static float GetPowerOfTen(int power)
+    {
+        var factor = 1.0f;//start at 1 for multiply
+
+        //exponentiate to move desired portion into integer section
+        for (var i = 0; i < power; ++i)
+            factor *= TEN;
+
+        return factor;
+    }
 
     public static float CeilingAtNthDecimal(float a, int decimalDigits)
     {
