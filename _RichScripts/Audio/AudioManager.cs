@@ -140,8 +140,10 @@ public class AudioManager : RichMonoBehaviour
         //load options
         source.loop = options.loop;
         source.priority = options.priority;
-        //source.volume = options.volume; // crossfade handles this, even if crossfade is 0
-        source.DOFade(options.volume, options.crossfade); // fade in
+        if(options.crossfade > 0)
+            source.DOFade(options.volume, options.crossfade); // fade in
+        else
+            source.volume = options.volume;
         source.pitch = options.pitchShift ? RandomPitchShift() : 1.0f;
         source.clip = clip;
         source.Play();
@@ -193,12 +195,6 @@ public class AudioManager : RichMonoBehaviour
     /// <summary>
     /// Different way to play a SFX if you don't want to use AudioOptions.
     /// </summary>
-    /// <param name="clip"></param>
-    /// <param name="loop"></param>
-    /// <param name="pitchShift"></param>
-    /// <param name="crossfade"></param>
-    /// <param name="priority"></param>
-    /// <param name="volume"></param>
     /// <param name="duration">If 'duration' LT 0, then it will be length of clip.</param>
     /// <returns></returns>
     public static AudioID PlaySFX(AudioClip clip, bool loop = false,
