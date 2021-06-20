@@ -26,15 +26,6 @@ public class Item : RichScriptableObject//data
     public string ID { get { return id; } } // public readonly serialized property  
 
     [SerializeField]
-    [Tooltip("Is this Item a tool, armor, consumable?")]
-    protected ItemType itemType = ItemType.Usable;
-    /// <summary>
-    /// Is this Item a tool, armor, consumable?
-    /// </summary>
-    public ItemType ItemType { get => itemType; }
-    public bool IsConsumable { get => itemType == ItemType.Consumable; }
-
-    [SerializeField]
     [Tooltip("Usually key or quest items cannot be destroyed.")]
     protected bool isDestroyable = true;
     public bool IsDestroyable { get => isDestroyable; }
@@ -108,12 +99,11 @@ public class Item : RichScriptableObject//data
     /// <param name="maxStack"></param>
     /// <param name="clip"></param>
     public static Item Construct(string name, string description,
-        ItemType type, Sprite sprite, int maxStack, AudioClipReference clip,
+        Sprite sprite, int maxStack, AudioClipReference clip,
         GameObject itemPrefab)
     {
         var newItem = CreateInstance<Item>(); //new
 
-        newItem.itemType = type;
         newItem.itemName = name;
         newItem.itemDescription = description;
         newItem.icon = sprite;
@@ -133,7 +123,6 @@ public class Item : RichScriptableObject//data
     {
         var newItem = CreateInstance<Item>();
 
-        newItem.itemType = itemToCopy.itemType;
         newItem.itemName = itemToCopy.itemName;
         newItem.itemDescription = itemToCopy.itemDescription;
         newItem.icon = itemToCopy.icon;
