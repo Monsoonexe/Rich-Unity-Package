@@ -8,6 +8,12 @@ using UnityEngine;
 [Serializable]
 public struct AudioOptions
 {
+    #region Constants
+
+    public const float DEFAULT_BGM_CROSSFADE = 2.5f;
+
+    #endregion  
+
     /// <summary>
     /// Repeat when complete.
     /// </summary>
@@ -60,7 +66,7 @@ public struct AudioOptions
 
     public AudioOptions(bool loop = false, bool pitchShift = true, 
         float volume = 1.0f, int priority = 128, 
-        float duration = 1.0f, float crossfade = 0.0f)
+        float duration = -1.0f, float crossfade = 0.0f)
     {
         this.loop = loop;
         this.pitchShift = pitchShift;
@@ -72,7 +78,33 @@ public struct AudioOptions
 
     #endregion
 
-    public static AudioOptions Default { get => new AudioOptions(
-        loop: false, pitchShift: true, priority: 128, duration: -1, 
-        crossfade: 0); }
+    /// <summary>
+    /// Default options suitable for sound effects.
+    /// </summary>
+    public static AudioOptions DefaultSFX
+    {
+        get => new AudioOptions
+        (
+            loop: false, 
+            pitchShift: true, 
+            priority: 128, 
+            duration: -1.0f, 
+            crossfade: 0.0f, 
+            volume: 1.0f
+        );
+    }
+
+    /// <summary>
+    /// Default options suitable for background music.
+    /// </summary>
+    public static AudioOptions DefaultBGM
+    {
+        get => new AudioOptions
+        (
+            loop: true, 
+            pitchShift: false, 
+            priority: 127,
+            crossfade: DEFAULT_BGM_CROSSFADE
+        );
+    }
 }

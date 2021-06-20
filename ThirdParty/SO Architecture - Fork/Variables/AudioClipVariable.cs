@@ -11,7 +11,7 @@ namespace ScriptableObjectArchitecture
         [Header("---Clip Options---")]
         [Tooltip("Note, changes to Options does not Raise events.")]
         [SerializeField]
-        private AudioOptions defaultOptions = AudioOptions.Default;
+        private AudioOptions defaultOptions = AudioOptions.DefaultSFX;
 
         /// <summary>
         /// AudioClip options that indicate how this clip should be played.
