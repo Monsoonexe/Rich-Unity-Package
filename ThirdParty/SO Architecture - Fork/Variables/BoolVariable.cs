@@ -13,28 +13,28 @@ namespace ScriptableObjectArchitecture
         private readonly List<Action<bool>> _invertedActions 
             = new List<Action<bool>>();
 
-        public override object BaseValue
-        {
-            set
-            {
-                base.BaseValue = value;
-                RaiseInverted(!_value);
-            }
-        }
         public void AddInvertedListener(Action<bool> action)
         {
             if (!_invertedActions.Contains(action))
                 _invertedActions.Add(action);
         }
+        public void RemoveAllInvertedListeners()
+        {
+            _invertedActions.Clear();
+        }
         public void RemoveInvertedListener(Action<bool> action)
         {
-            if (!_invertedActions.Contains(action))
-                _invertedActions.Remove(action);
+            _invertedActions.Remove(action);
+        }
+        public override void Raise()
+        {
+            base.Raise();
+            RaiseInverted(!_value);
         }
         public void RaiseInverted(bool invertedValue)
         {
             for (var i = _invertedActions.Count - 1; i >= 0; --i)
-                _invertedActions[i].Invoke(invertedValue);
+                _invertedActions[i](invertedValue);
         }
 
         public bool InvertedValue { get => !Value; }

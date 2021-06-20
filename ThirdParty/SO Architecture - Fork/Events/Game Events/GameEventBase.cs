@@ -13,6 +13,7 @@ namespace ScriptableObjectArchitecture
 
         public void Raise(T value)
         {
+            Raise();
             AddStackTrace(value);
 
             for (int i = _typedListeners.Count - 1; i >= 0; i--)
@@ -34,8 +35,7 @@ namespace ScriptableObjectArchitecture
         }
         public void RemoveListener(IGameEventListener<T> listener)
         {
-            if (_typedListeners.Contains(listener))
-                _typedListeners.Remove(listener);
+            _typedListeners.Remove(listener);
         }
         public void AddListener(System.Action<T> action)
         {
@@ -44,8 +44,7 @@ namespace ScriptableObjectArchitecture
         }
         public void RemoveListener(System.Action<T> action)
         {
-            if (_typedActions.Contains(action))
-                _typedActions.Remove(action);
+            _typedActions.Remove(action);
         }
         public override string ToString()
         {
@@ -75,7 +74,7 @@ namespace ScriptableObjectArchitecture
 #endif
         }
 
-        public void Raise()
+        public virtual void Raise()
         {
             AddStackTrace();
 
@@ -92,8 +91,7 @@ namespace ScriptableObjectArchitecture
         }
         public void RemoveListener(IGameEventListener listener)
         {
-            if (_listeners.Contains(listener))
-                _listeners.Remove(listener);
+            _listeners.Remove(listener);
         }
         public void AddListener(System.Action action)
         {
@@ -102,13 +100,12 @@ namespace ScriptableObjectArchitecture
         }
         public void RemoveListener(System.Action action)
         {
-            if (_actions.Contains(action))
-                _actions.Remove(action);
+            _actions.Remove(action);
         }
         public void RemoveAll()
         {
-            _listeners.RemoveRange(0, _listeners.Count);
-            _actions.RemoveRange(0, _listeners.Count);
+            _listeners.Clear();
+            _actions.Clear();
         }
     } 
 }

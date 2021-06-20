@@ -24,7 +24,6 @@ namespace ScriptableObjectArchitecture
             {
                 _value = SetValue(value);
                 Raise();
-                Raise(_value);
             }
         }
         public virtual T MinClampValue
@@ -70,7 +69,6 @@ namespace ScriptableObjectArchitecture
             {
                 _value = SetValue((T)value);
                 Raise();
-                Raise(_value);
             }
         }
 
@@ -97,6 +95,11 @@ namespace ScriptableObjectArchitecture
         public void RemoveListener(Action<T> action)
         {
             _typedActions.Remove(action);
+        }
+        public override void Raise()
+        {
+            base.Raise();
+            Raise(_value);
         }
         public void Raise(T value)
         {
