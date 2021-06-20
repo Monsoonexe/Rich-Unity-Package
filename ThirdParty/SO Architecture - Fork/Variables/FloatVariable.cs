@@ -97,12 +97,12 @@ namespace ScriptableObjectArchitecture
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
 
-        private float GetPowerOfTen(int power)
+        private static float GetPowerOfTen(int power)
         {
             var factor = 1.0f;//start at 1 for multiply
 
             //exponentiate to move desired portion into integer section
-            for (var i = 0; i < decimalDigits; ++i)
+            for (var i = 0; i < power; ++i)
                 factor *= TEN;
 
             return factor;
