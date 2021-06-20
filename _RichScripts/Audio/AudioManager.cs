@@ -394,7 +394,7 @@ public class AudioManager : RichMonoBehaviour
 /// <summary>
 /// Handy class to do fancy things like myClip.PlayBackgroundTrack();
 /// </summary>
-public static class Audio_Extensions
+public static class AudioClip_Extensions
 {
     public static AudioID PlayBackgroundTrack(this AudioClip clip,
         AudioOptions options = default)
