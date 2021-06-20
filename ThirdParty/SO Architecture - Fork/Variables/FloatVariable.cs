@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -17,44 +18,25 @@ namespace ScriptableObjectArchitecture
             Default = 0,
 
             /// <summary>
-            /// Raise to nearest integer greater than f.
-            /// </summary>
-            CeilingToInt,
-
-            /// <summary>
-            /// Lower to nearest integer smaller than f.
-            /// </summary>
-            FloorToInt,
-
-            /// <summary>
-            /// Round to nearest integer.
-            /// </summary>
-            RoundToInt,
-
-            /// <summary>
             /// Ceiling at the nth decimal place.
             /// </summary>
-            CeilingAtDecimal,
+            Ceiling,
 
             /// <summary>
             /// Floor at the nth decimal place.
             /// </summary>
-            FloorAtDecimal,
+            Floor,
 
             /// <summary>
             /// Round to nth decimal place.
             /// </summary>
-            RoundToDecimal,
-
-            /// <summary>
-            /// Cut mantissa off after x places.
-            /// </summary>
-            Truncate
+            Round,
         }
 
         public EMantissaBehaviour mantissaBehaviour 
             = EMantissaBehaviour.Default;
 
+        [Range(0, 8)]
         public int decimalDigits = 2;
 
         public override bool Clampable { get { return true; } }
@@ -76,7 +58,7 @@ namespace ScriptableObjectArchitecture
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
-        public override float SetValue(float value)
+        protected override float SetValue(float value)
         {
             if (_readOnly)
             {
@@ -92,25 +74,14 @@ namespace ScriptableObjectArchitecture
             {
                 case EMantissaBehaviour.Default:
                     break;
-                case EMantissaBehaviour.Truncate:
-                    value = TruncateMantissa(value, decimalDigits);
+                case EMantissaBehaviour.Round:
+                    value = (float)Math.Round(
+                        value, decimalDigits, MidpointRounding.AwayFromZero);
                     break;
-                case EMantissaBehaviour.RoundToDecimal:
-                    value = RoundToDecimal(value, decimalDigits);
-                    break;
-                case EMantissaBehaviour.RoundToInt:
-                    value = Mathf.Round(value);
-                    break;
-                case EMantissaBehaviour.CeilingToInt:
-                    value = Mathf.Ceil(value);
-                    break;
-                case EMantissaBehaviour.FloorToInt:
-                    value = Mathf.Floor(value);
-                    break;
-                case EMantissaBehaviour.CeilingAtDecimal:
+                case EMantissaBehaviour.Ceiling:
                     value = CeilingAtNthDecimal(value, decimalDigits);
                     break;
-                case EMantissaBehaviour.FloorAtDecimal:
+                case EMantissaBehaviour.Floor:
                     value = FloorAtNthDecimal(value, decimalDigits);
                     break;
             }
@@ -135,42 +106,6 @@ namespace ScriptableObjectArchitecture
                 factor *= TEN;
 
             return factor;
-        }
-
-        /// <summary>
-        /// 10.37435 (1) = 10.3
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="decimalDigits"></param>
-        /// <returns></returns>
-        private float TruncateMantissa(float a, int decimalDigits)
-        {
-            if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-                return (int)a;
-
-            var truncator = GetPowerOfTen(decimalDigits);
-
-            //move decimal left, truncate mantissa, move decimal back right
-            return a = ((int)(a * truncator)) / truncator;
-        }
-
-        /// <summary>
-        /// 10.37565 (2) = 10.38
-        /// </summary>
-        /// <param name="a"></param>
-        /// <param name="decimalDigits"></param>
-        /// <returns></returns>
-        private float RoundToDecimal(float a, int decimalDigits)
-        {
-            if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-                return Mathf.Round(a);
-
-            var truncator = GetPowerOfTen(decimalDigits);
-
-            a = Mathf.Round(a * truncator);//round off decimals
-            
-            //move decimal point back to origin
-            return a / truncator;
         }
 
         private float CeilingAtNthDecimal(float a, int decimalDigits)

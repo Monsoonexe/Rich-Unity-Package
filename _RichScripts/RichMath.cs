@@ -62,54 +62,16 @@ public static class RichMath
 
     #endregion
 
+    #region Min/Max
+
     public static int Min(int x, int y) => x < y ? x : y;
     public static int Max(int x, int y) => x > y ? x : y;
     public static float Min(float x, float y) => x < y ? x : y;
     public static float Max(float x, float y) => x > y ? x : y;
 
-    /// <summary>
-    /// 10.37435 (1) = 10.3
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="decimalDigits"></param>
-    /// <returns></returns>
-    public static float TruncateMantissa(this ref float a, int decimalDigits)
-    {
-        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-            return (int)a;
+    #endregion
 
-        const int TEN = 10;//base 10
-        var truncator = 1.0f;//start at 1 for multiply
-
-        //exponentiate to move desired portion into integer section
-        for (var i = 0; i < decimalDigits; ++i)
-            truncator *= TEN;
-
-        //move decimal left, truncate mantissa, move decimal back right
-        return a = ((int)(a * truncator)) / truncator;
-    }
-
-    /// <summary>
-    /// 10.37435 (1) = 10.3
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="decimalDigits"></param>
-    /// <returns></returns>
-    public static float TruncateMantissa(float a, int decimalDigits)
-    {
-        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-            return (int)a;
-
-        const int TEN = 10;//base 10
-        var truncator = 1.0f;//start at 1 for multiply
-
-        //exponentiate to move desired portion into integer section
-        for (var i = 0; i < decimalDigits; ++i)
-            truncator *= TEN;
-
-        //move decimal left, truncate mantissa, move decimal back right
-        return a = ((int)(a * truncator)) / truncator;
-    }
+    #region Rounding
 
     /// <summary>
     /// 10.37565 (2) = 10.38
@@ -117,23 +79,10 @@ public static class RichMath
     /// <param name="a"></param>
     /// <param name="decimalDigits"></param>
     /// <returns></returns>
-    private static float RoundToDecimal(float a, int decimalDigits)
-    {
-        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
-            return Mathf.Round(a);
-
-        const int TEN = 10;//base 10
-        var truncator = 1.0f;//start at 1 for multiply
-
-        //exponentiate to move desired portion into integer section
-        for (var i = 0; i < decimalDigits; ++i)
-            truncator *= TEN;
-
-        a = Mathf.Round(a * truncator);//round off decimals
-        
-        //move decimal point back to origin
-        return a / truncator;
-    }
+    public static float Round(float a, int decimalDigits)
+        => (float)Math.Round(
+            a, decimalDigits, 
+            MidpointRounding.AwayFromZero);//Like elementary school
 
     public static float MoveDecimalRight(float a, int places)
     {
@@ -156,6 +105,37 @@ public static class RichMath
 
         return a / truncator;
     }
+
+
+    public static float CeilingAtNthDecimal(float a, int decimalDigits)
+    {
+        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
+            return Mathf.Ceil(a);
+
+        var factor = GetPowerOfTen(decimalDigits);
+
+        a *= factor;//move decimal place right
+        a = Mathf.Ceil(a);//ceil
+        a /= factor;//move decimal place left
+
+        return a;
+    }
+
+    public static float FloorAtNthDecimal(float a, int decimalDigits)
+    {
+        if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
+            return Mathf.Floor(a);
+
+        var factor = GetPowerOfTen(decimalDigits);
+
+        a *= factor;//move decimal place right
+        a = Mathf.Floor(a);//ceil
+        a /= factor;//move decimal place left
+
+        return a;
+    }
+
+    #endregion
 
     #region Quick Convert
 

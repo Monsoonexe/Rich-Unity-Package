@@ -31,21 +31,24 @@ namespace ScriptableObjectArchitecture.Editor
         {
             if (TargetFloatVar.ReadOnly) return;
 
-            var beh = TargetFloatVar.mantissaBehaviour 
+            var behaviour = TargetFloatVar.mantissaBehaviour 
                 = (FloatVariable.EMantissaBehaviour)
                 EditorGUILayout.EnumPopup("MantissaBehaviour", 
                 TargetFloatVar.mantissaBehaviour);
 
             //draw decimal points
-            if(!(beh == FloatVariable.EMantissaBehaviour.Default
-                || beh == FloatVariable.EMantissaBehaviour.FloorToInt
-                || beh == FloatVariable.EMantissaBehaviour.CeilingToInt
-                || beh == FloatVariable.EMantissaBehaviour.RoundToInt))
+            if(behaviour != FloatVariable.EMantissaBehaviour.Default)
             {
-                EditorGUILayout.PropertyField(_decimalDigits);
-                serializedObject.ApplyModifiedProperties();
+                using(var scope = new EditorGUI.ChangeCheckScope())
+                {
+                    EditorGUILayout.PropertyField(_decimalDigits);//draw 
+                    if (scope.changed)
+                    {
+                        serializedObject.ApplyModifiedProperties();
+                        TargetFloatVar.Value = TargetFloatVar.Value; //force update
+                    }
+                }
             }
         }
-        
     }
 }
