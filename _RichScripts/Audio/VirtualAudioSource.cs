@@ -55,7 +55,7 @@ public class VirtualAudioSource : RichMonoBehaviour
     public AudioID PlaySFX(AudioClip clip, AudioOptions options)
         => audioID = AudioManager.PlaySFX(clip, options);
 
-    public AudioID PlaySFXAndDestroy()
+    public void PlaySFXAndDestroy()
     {
         PlaySFX();
         stopOnDestroy = false;
