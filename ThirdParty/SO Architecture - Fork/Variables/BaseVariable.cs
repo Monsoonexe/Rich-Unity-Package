@@ -104,7 +104,13 @@ namespace ScriptableObjectArchitecture
             for (var i = _typedActions.Count - 1; i >= 0; --i)
                 _typedActions[i].Invoke(value);               
         }
-        public virtual T SetValue(T value)
+        /// <summary>
+        /// Processes new values. Does not actually change Value property.
+        /// Applies clamps, checks for readonly.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns>Value after processing.</returns>
+        protected virtual T SetValue(T value)
         {
             if (_readOnly)
             {
@@ -119,9 +125,6 @@ namespace ScriptableObjectArchitecture
             return value;
         }
 
-        public virtual T SetValue(BaseVariable<T> value)
-            => SetValue(value.Value);
-            
         protected virtual T ClampValue(T value)
         {
             return value;
