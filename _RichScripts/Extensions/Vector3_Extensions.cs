@@ -40,4 +40,24 @@ public static class Vector3_Extensions
     //Vector3 myVec = new Vector3(myTransform.position.x, 150, myTransform.position.z);
 
     //Vector3 otherVec = myTransform.position.With(y: 150);
+    public static Vector3 CircleWrap(this Vector3 a)
+    {
+        if (a.y > 180)
+            a.y -= 360;
+
+        if (a.x > 180)
+            a.x -= 360;
+
+        if (a.z > 180)
+            a.z -= 360;
+
+        if (a.y < -180)
+            a.y += 360;
+
+        if (a.x < -180)
+            a.x += 360;
+
+        if (a.z < -180)
+            a.z += 360;
+    }
 }
