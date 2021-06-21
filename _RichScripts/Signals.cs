@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Explore.Events
+namespace Signals
 {
     /// <summary>
     /// Base interface for Signals
@@ -41,7 +41,7 @@ namespace Explore.Events
     /// <summary>
     /// Signals main facade class for global, game-wide signals
     /// </summary>
-    public static class Signals
+    public static class GlobalSignals
     {
         private static readonly SignalHub hub = new SignalHub();
 
