@@ -6,6 +6,25 @@ public static class RichMath
     //these functions are faster than Mathf.Clamp because they aren't marshalled.
     const int TEN = 10;//base 10
 
+    //Returns a position between 4 Vector3 with Catmull-Rom spline algorithm
+    //http://www.iquilezles.org/www/articles/minispline/minispline.htm
+    /// <summary>
+    /// 
+    /// </summary>
+    public static Vector3 CatmullRomPosition(float t, in Vector3 p0, in Vector3 p1, in Vector3 p2, in Vector3 p3)
+    {
+        //The coefficients of the cubic polynomial (except the 0.5f * which I added later for performance)
+        Vector3 a = 2f * p1;
+        Vector3 b = p2 - p0;
+        Vector3 c = 2f * p0 - 5f * p1 + 4f * p2 - p3;
+        Vector3 d = -p0 + 3f * p1 - 3f * p2 + p3;
+
+        //The cubic polynomial: (a + b * t + c * t^2 + d * t^3) / 2
+        Vector3 pos = 0.5f * (a + (b * t) + (c * (t * t)) + (d * (t * t * t)));
+
+        return pos;
+    }
+
     #region Clamp
 
     /// <summary>
