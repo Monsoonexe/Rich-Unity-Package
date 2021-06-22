@@ -59,5 +59,7 @@ public static class Vector3_Extensions
 
         if (a.z < -180)
             a.z += 360;
+            
+        return a;
     }
 }
