@@ -59,7 +59,7 @@ public class FontSetterWindow : EditorWindow
         sceneTexts = null;
     }
 
-    [MenuItem("CoinFlipTools/Font Setter Window")]
+    [MenuItem("RichUtilities/Font Setter Window")]
 	private static void Init()
 	{
 		Instance = EditorWindow.GetWindow<FontSetterWindow>(true, "FontSetterWindow", true);

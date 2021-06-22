@@ -6,7 +6,7 @@ public class PrefabGeneratorWindow : EditorWindow
 {
     private string pathName = "Prefabs/";
 
-    [MenuItem("Custom Utilites/Mass Prefab Generator")]
+    [MenuItem("RichUtilities/Mass Prefab Generator")]
     public static void ShowWindow()
     {
         GetWindow(typeof(PrefabGeneratorWindow));
