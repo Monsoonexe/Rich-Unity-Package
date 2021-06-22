@@ -17,13 +17,13 @@ public class DelayEvent : RichMonoBehaviour
 
     protected override void Awake()
     {
-        if(messageTrigger = MessageTrigger.Awake)
+        if(messageTrigger == MessageTrigger.Awake)
             CallEvent();
     }
 
     private void Start()
     {
-        if(messageTrigger = MessageTrigger.Start)
+        if(messageTrigger == MessageTrigger.Start)
             CallEvent();        
     }
 
