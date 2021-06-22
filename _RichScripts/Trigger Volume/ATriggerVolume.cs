@@ -39,7 +39,6 @@ public abstract class ATriggerVolume : RichMonoBehaviour
     {
         if (other.CompareTag(reactToTag))
         {
-            ++triggerCount;
             exitEvent.Invoke();
         }
     }
