@@ -25,7 +25,7 @@ public static class GameObject_Extensions
     /// </summary>
     /// <param name="a"></param>
     public static void SetActiveToggle(this GameObject a)
-        => a.SetActive(a.activeSelf);
+        => a.SetActive(!a.activeSelf);
 
     /// <summary>
     /// Shortcut for Destroy(gameObject);
