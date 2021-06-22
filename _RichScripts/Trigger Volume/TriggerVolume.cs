@@ -11,4 +11,10 @@ public class TriggerVolume : ATriggerVolume
 
     protected void OnTriggerExit(Collider other)
         => HandleExitCollision(other.gameObject);
+
+    protected virtual void OnCollisionEnter(Collision collision)
+        => HandleEnterCollision(collision.gameObject);
+
+    protected virtual void OnCollisionExit(Collision collision)
+        => HandleExitCollision(collision.gameObject);
 }
