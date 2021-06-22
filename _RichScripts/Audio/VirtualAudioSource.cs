@@ -6,6 +6,7 @@ using ScriptableObjectArchitecture;
 /// Helpful for rigging events and prefabs to audio that aren't
 /// yet aware of an AudioManager in a scene.
 /// </summary>
+/// <remarks>Useful because UnityEvents can't see extension methods</remarks>
 /// <seealso cref="AudioManager"/>
 public class VirtualAudioSource : RichMonoBehaviour
 {
