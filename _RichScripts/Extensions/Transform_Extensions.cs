@@ -46,4 +46,35 @@ public static class Transform_Extensions
         
         return Mathf.Atan2(targetsRelativePosition.x, targetsRelativePosition.y) * Mathf.Rad2Deg;//get arc tan, then convert to degrees
     }
+
+    /// <summary>
+    /// Perform an action on every Transform on each of its children, etc, recursively.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="newLayer"></param>
+    public static void ForEachChildRecursive(this Transform obj, Action<Transform> action)
+    {
+        var childCount = obj.childCount;
+        for (var i = childCount - 1; i >= 0; --i)
+        {
+            var child = obj.GetChild(i);
+            ForEachTransformRecursive(child, action);
+        }
+    }
+
+    /// <summary>
+    /// Perform an action on this Transform and every Transform on each of its children, etc, recursively.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="newLayer"></param>
+    public static void ForEachTransformRecursive(this Transform obj, Action<Transform> action)
+    {
+        action(obj); //perform 
+        var childCount = obj.childCount;
+        for (var i = childCount - 1; i >= 0; --i)
+        {
+            var child = obj.GetChild(i);
+            ForEachTransformRecursive(child, action);
+        }
+    }
 }

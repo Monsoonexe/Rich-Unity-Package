@@ -32,4 +32,20 @@ public static class GameObject_Extensions
     /// <param name="a"></param>
     public static void Destroy(this GameObject a)
         => Destroy(a);
+
+    /// <summary>
+    /// Perform an action on every Transform on each of its children, etc, recursively.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="newLayer"></param>
+    public static void ForEachChildRecursive(this GameObject obj, Action<Transform> action)
+    {
+        var transform = obj.GetComponent<Transform>();
+        var childCount = transform.childCount;
+        for (var i = childCount - 1; i >= 0; --i)
+        {
+            var child = transform.GetChild(i);
+            ForEachTransformRecursive(child, action);
+        }
+    }
 }
