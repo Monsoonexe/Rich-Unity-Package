@@ -2,7 +2,7 @@
 
 namespace UnityStandardAssets.Utility
 {
-	public class SmoothFollow : MonoBehaviour
+	public class SmoothFollow : RichMonoBehaviour
 	{
 
 		// The target we are following
@@ -19,9 +19,6 @@ namespace UnityStandardAssets.Utility
 		private float rotationDamping;
 		[SerializeField]
 		private float heightDamping;
-
-		// Use this for initialization
-		void Start() { }
 
 		// Update is called once per frame
 		void LateUpdate()
@@ -48,8 +45,7 @@ namespace UnityStandardAssets.Utility
 
 			// Set the position of the camera on the x-z plane to:
 			// distance meters behind the target
-			transform.position = target.position;
-			transform.position -= currentRotation * Vector3.forward * distance;
+			transform.position = target.position - currentRotation * Vector3.forward * distance;
 
 			// Set the height of the camera
 			transform.position = new Vector3(transform.position.x ,currentHeight , transform.position.z);
