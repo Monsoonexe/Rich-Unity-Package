@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /// <summary>
 /// 
@@ -45,7 +46,7 @@ public static class GameObject_Extensions
         for (var i = childCount - 1; i >= 0; --i)
         {
             var child = transform.GetChild(i);
-            ForEachTransformRecursive(child, action);
+            child.ForEachTransformRecursive(action);
         }
     }
 }
