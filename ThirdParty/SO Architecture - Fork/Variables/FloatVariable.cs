@@ -55,6 +55,7 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
+        public override bool IsInitializeable { get => !_readOnly; }
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
@@ -97,12 +98,12 @@ namespace ScriptableObjectArchitecture
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
 
-        private static float GetPowerOfTen(int power)
+        private float GetPowerOfTen(int power)
         {
             var factor = 1.0f;//start at 1 for multiply
 
             //exponentiate to move desired portion into integer section
-            for (var i = 0; i < power; ++i)
+            for (var i = 0; i < decimalDigits; ++i)
                 factor *= TEN;
 
             return factor;

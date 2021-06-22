@@ -8,5 +8,6 @@ namespace ScriptableObjectArchitecture
         order = SOArchitecture_Utility.ASSET_MENU_ORDER_COLLECTIONS + 7)]
     public sealed class CharVariable : BaseVariable<char>
     {
+        public override bool IsInitializeable { get => !_readOnly; }
     } 
 }

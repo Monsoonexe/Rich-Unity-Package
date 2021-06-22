@@ -8,5 +8,6 @@ namespace ScriptableObjectArchitecture
         order = SOArchitecture_Utility.ASSET_MENU_ORDER_COLLECTIONS + 10)]
     public sealed class Vector2Variable : BaseVariable<Vector2>
     {
+        public override bool IsInitializeable { get => !_readOnly; }
     } 
 }

@@ -24,5 +24,6 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
+        public override bool IsInitializeable { get => !_readOnly; }
     } 
 }

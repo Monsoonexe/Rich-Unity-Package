@@ -24,6 +24,7 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
+        public override bool IsInitializeable { get => !_readOnly; }
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 

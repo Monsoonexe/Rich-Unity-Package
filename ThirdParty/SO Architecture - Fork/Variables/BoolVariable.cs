@@ -10,6 +10,7 @@ namespace ScriptableObjectArchitecture
         order = SOArchitecture_Utility.ASSET_MENU_ORDER_COLLECTIONS + 5)]
     public sealed class BoolVariable : BaseVariable<bool>
     {
+        public override bool IsInitializeable { get => !_readOnly; }
         private readonly List<Action<bool>> _invertedActions 
             = new List<Action<bool>>();
 
