@@ -18,6 +18,8 @@ namespace UnityStandardAssets.Utility
 		[SerializeField]
 		private float heightDamping;
 
+        public float Height { get => height; set => height = value; }
+
 		// Update is called once per frame
 		void LateUpdate()
 		{
