@@ -30,10 +30,7 @@ namespace ScriptableObjectArchitecture
         public override void Raise()
         {
             base.Raise();
-            RaiseInverted(!_value);
-        }
-        public void RaiseInverted(bool invertedValue)
-        {
+            var invertedValue = !_value;
             for (var i = _invertedActions.Count - 1; i >= 0; --i)
                 _invertedActions[i](invertedValue);
         }
