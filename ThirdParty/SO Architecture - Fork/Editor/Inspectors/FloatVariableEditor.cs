@@ -23,6 +23,7 @@ namespace ScriptableObjectArchitecture.Editor
             DrawValue();
             DrawClampedFields();
             DrawReadonlyField();
+            DrawInitializeFields();
             DrawMantissaBehaviour();
             DrawDeveloperDescription();
         }
