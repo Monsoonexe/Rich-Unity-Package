@@ -102,7 +102,7 @@ namespace ScriptableObjectArchitecture
         {
             _actions.Remove(action);
         }
-        public void RemoveAll()
+        public virtual void RemoveAllListeners()
         {
             _listeners.Clear();
             _actions.Clear();
