@@ -15,3 +15,11 @@ public class RichScriptableObject : ScriptableObject
 #endif
 
 }
+
+public class RichScriptableObject <T> : RichScriptableObject
+{
+    [SerializeField]
+    private T _value;
+
+    public virtual T Value { get => _value; set => _value = value; }
+}
