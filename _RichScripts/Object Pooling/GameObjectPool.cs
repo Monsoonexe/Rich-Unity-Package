@@ -67,7 +67,7 @@ public class GameObjectPool : RichMonoBehaviour
             InitPool();
     }
 
-    protected GameObject CreatePoolable()
+    private GameObject CreatePoolable()
     {
         if (maxAmount >= 0 && PopulationCount >= maxAmount)
             return null; //at max capacity
@@ -79,9 +79,18 @@ public class GameObjectPool : RichMonoBehaviour
         return newGameObj;
     }
 
+    public GameObject AddItems(int amount = 1)
+    {
+        for(var i = amount - 1; i >= 0; --i)
+            {
+                var obj = CreatePoolable();
+                if(obj != null)
+                    Enpool(obj);
+            }
+    }
+
     /// <summary>
     /// Take an item out of the pool.
-    /// Note: does NOT call SetActive().
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool()
@@ -98,12 +107,13 @@ public class GameObjectPool : RichMonoBehaviour
             InitPoolableMethod(depooledItem);
         }
 
+        poolable.SetActive(true);//behaves like Instantiate();
+
         return depooledItem;
     }
 
     /// <summary>
     /// Take an item out of the pool and place at world space with rotation.
-    /// Note: does NOT call SetActive(). 
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool(Transform handle)
@@ -126,7 +136,6 @@ public class GameObjectPool : RichMonoBehaviour
 
     /// <summary>
     /// Take an item out of the pool and place at world space with rotation.
-    /// Note: does NOT call SetActive().
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool(Transform handle, bool setParent)
@@ -141,7 +150,6 @@ public class GameObjectPool : RichMonoBehaviour
 
     /// <summary>
     /// Take an item out of the pool and place at world space.
-    /// Note: does NOT call SetActive().
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool(Vector3 position)
@@ -157,7 +165,6 @@ public class GameObjectPool : RichMonoBehaviour
 
     /// <summary>
     /// Take an item out of the pool and set at world space with orientation.
-    /// Note: does NOT call SetActive().
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool(Vector3 position, Quaternion rotation)
@@ -174,7 +181,6 @@ public class GameObjectPool : RichMonoBehaviour
 
     /// <summary>
     /// Take an item out of the pool and GetComponent{T} on it.
-    /// Note: does NOT call SetActive().
     /// </summary>
     /// <returns>Newly de-pool object or null if the Component wasn't found.</returns>
     public T Depool<T>() where T : Component
