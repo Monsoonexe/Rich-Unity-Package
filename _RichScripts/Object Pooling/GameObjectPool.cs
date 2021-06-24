@@ -103,7 +103,7 @@ public class GameObjectPool : RichMonoBehaviour
 
     /// <summary>
     /// Take an item out of the pool and place at world space with rotation.
-    /// Note: does NOT call SetActive(). Does NOT change parentage.
+    /// Note: does NOT call SetActive(). 
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
     public GameObject Depool(Transform handle)
@@ -115,6 +115,11 @@ public class GameObjectPool : RichMonoBehaviour
             trans.position = handle.position;
             trans.rotation = handle.rotation;
             trans.parent = handle;
+
+            //maybe this is faster?
+            //trans.parent = handle;
+            //trans.position = Vector3.zero;
+            //trans.rotation = Quaternion.identity;
         }
         return obj;
     }
@@ -180,6 +185,24 @@ public class GameObjectPool : RichMonoBehaviour
             component = obj.GetComponent<T>();
         return component;
     }
+
+    /// <summary>
+    /// Useful for delegates/events.
+    /// lol. doodee pool.
+    /// </summary>
+    public void DoDepool() => Depool();
+
+    /// <summary>
+    /// Useful for delegates/events.
+    /// lol. doodee pool.
+    /// </summary>
+    public void DoDepool(Transform handle) => Depool(handle);
+
+    /// <summary>
+    /// Useful for delegates/events.
+    /// lol. doodee pool.
+    /// </summary>
+    public void DoDepool(Vector3 point) => Depool(point);
 
     /// <summary>
     /// Add an item back into the pool.
