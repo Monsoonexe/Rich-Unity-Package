@@ -34,6 +34,30 @@ public class GameObjectSpawner : RichMonoBehaviour
     }
 
     /// <summary>
+    /// Spawn a new instance at World Origin.
+    /// </summary>
+    public Transform SpawnNew(GameObject prefab, Vector3 position)
+    {
+        var newInstance = Instantiate(prefab, position, Quaternion.Identity);
+        var newITransform = newInstance.GetComponent<Transform>();
+        newITransform.SetParent(spawnableParent);
+
+        return newITransform;
+    }
+
+    /// <summary>
+    /// Spawn a new instance at World Origin.
+    /// </summary>
+    public Transform SpawnNew(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        var newInstance = Instantiate(prefab, position, rotation);
+        var newITransform = newInstance.GetComponent<Transform>();
+        newITransform.SetParent(spawnableParent);
+
+        return newITransform;
+    }
+
+    /// <summary>
     /// Spawn at this Spawner's location.
     /// </summary>
     /// <returns></returns>
@@ -42,10 +66,7 @@ public class GameObjectSpawner : RichMonoBehaviour
 
     public Transform SpawnNewHere(GameObject prefab)
     {
-        var place = myTransform;
-        var newObjTrans = SpawnNew(prefab);
-        newObjTrans.position = place.position;
-        newObjTrans.rotation = place.rotation;
+        var newObjTrans = SpawnNew(prefab, myTransform.position, myTransform.rotation);
         return newObjTrans;
     }
 
