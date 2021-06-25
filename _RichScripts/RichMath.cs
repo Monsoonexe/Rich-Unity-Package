@@ -6,6 +6,9 @@ public static class RichMath
     //these functions are faster than Mathf.Clamp because they aren't marshalled.
     const int TEN = 10;//base 10
 
+    public static readonly float RAD_2_DEG = 180 / Mathf.PI;
+    public static readonly float DEG_2_RAD = Mathf.PI / 180;
+
     //Returns a position between 4 Vector3 with Catmull-Rom spline algorithm
     //http://www.iquilezles.org/www/articles/minispline/minispline.htm
     /// <summary>
@@ -175,7 +178,7 @@ public static class RichMath
     /// <returns></returns>
     public static float ToDeg(this float v)
     {
-        return v * 180 / Mathf.PI;
+        return v * RAD_2_DEG;
     }
     /// <summary>
     /// Converts radians to degrees
@@ -184,7 +187,7 @@ public static class RichMath
     /// <returns></returns>
     public static double ToDeg(this double v)
     {
-        return v * 180 / Mathf.PI;
+        return v * RAD_2_DEG;
     }
     /// <summary>
     /// Converts degrees to radians
@@ -193,7 +196,7 @@ public static class RichMath
     /// <returns></returns>
     public static float ToRad(this float v)
     {
-        return v * Mathf.PI / 180;
+        return v * DEG_2_RAD;
     }
     /// <summary>
     /// Converts degrees to radians
@@ -202,8 +205,8 @@ public static class RichMath
     /// <returns></returns>
     public static double ToRad(this double v)
     {
-        return v * Mathf.PI / 180;
+        return v * DEG_2_RAD;
     }
-
+    
     #endregion
 }
