@@ -19,7 +19,10 @@ public class RichScriptableObject : ScriptableObject
 public class RichScriptableObject <T> : RichScriptableObject
 {
     [SerializeField]
-    private T _value;
+    protected T _value;
 
     public virtual T Value { get => _value; set => _value = value; }
+    
+    public static implicit operator T (RichScriptableObject<T> a)
+        => a.Value;
 }
