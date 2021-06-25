@@ -158,7 +158,7 @@ public class PoolablePool : RichMonoBehaviour
             if (initStragety == InitStrategy.EAGER)
                     InitPoolableMethod(newP);
 
-            pool.Push(newP);
+            Enpool(newP);
         }
     }
 
