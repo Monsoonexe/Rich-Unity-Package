@@ -58,6 +58,18 @@ public class HardpointController : RichMonoBehaviour
             AudioManager.PlaySFX(bangSound, laserSoundOptions); // can include options
         }
     }
+    
+    public void FireWeapon(Transform target)
+    {
+        if (CanShoot())
+        {
+            nextShootTime = Time.time + shotDelay;
+            var nextSpawnPoint = GetNextSpawnPoint();
+            nextSpawnPoint.LookAt(target);//point at target to fine-tune aim.
+            launcher.Launch(nextSpawnPoint); // do the thing
+            AudioManager.PlaySFX(bangSound, laserSoundOptions); // can include options
+        }
+    }
 
     /// <summary>
     /// Get the next point at which to spawn a projectile.
