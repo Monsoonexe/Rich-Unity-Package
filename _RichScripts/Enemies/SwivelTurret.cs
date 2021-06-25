@@ -24,7 +24,7 @@ public class SwivelTurret : RichMonoBehaviour
     private float raycastInterval = 1.0f;
 
     [SerializeField]
-    private float raycastDistance = 1000;
+    private float lineOfSightDistance = 50;
 
     [SerializeField]
     private LayerMask raycastLayers = -1;
@@ -36,6 +36,7 @@ public class SwivelTurret : RichMonoBehaviour
     [Header("---Prefab Refs---")]
     [SerializeField]
     [Required]
+    [Tooltip("Can be baseTransform, but will rotate entire object.")]
     private Transform turretTransform;//pitch on X //CAN BE THE SAME OBJECT AS BASE, IF NO SEPARATE TURRET.  WHOLE OBJECT WILL ROTATE AS EXPECTED
 
     [SerializeField]
@@ -47,7 +48,7 @@ public class SwivelTurret : RichMonoBehaviour
     public bool TargetInEngagementRange { get => targetInEngagementRange; }
 
     //member Components
-    private Collider myCollider;
+    private SphereCollider rangeDetectCollider;
 
     //runtime data
     private Coroutine raycastIntervalRoutine;
@@ -56,8 +57,11 @@ public class SwivelTurret : RichMonoBehaviour
     protected override void Awake()
     {
         base.Awake();
-        myCollider = GetComponent<Collider>();
-        myCollider.isTrigger = true;//verify
+        rangeDetectCollider = GetComponent<SphereCollider>();
+        rangeDetectCollider.isTrigger = true;//verify
+        Debug.Assert(lineOfSightDistance <= rangeDetectCollider.radius,
+            "[SwivelTurret] line-of-sight distance is larger than " +
+            "range detection collider radius.", this);
     }
 
     private void Start()
@@ -134,9 +138,9 @@ public class SwivelTurret : RichMonoBehaviour
         //check line of sight
         if (Physics.Raycast(
             turretTransform.position,
-            turretTransform.forward, 
+            directionToTarget, 
             out raycastHitInfo,
-            raycastDistance, 
+            lineOfSightDistance, 
             raycastLayers,
             queryTriggers))
         {
@@ -144,7 +148,7 @@ public class SwivelTurret : RichMonoBehaviour
             if (raycastHitInfo.collider.transform == attackTarget)
             {
                 //Debug.Log("Time To ZAPPPPPPPPPPPPPPPP!");
-                hardpoint.FireWeapon();
+                hardpoint.FireWeapon(attackTarget);
             }
             else
             {

@@ -9,7 +9,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
     [MinValue(0)]
     public float lifetime = 10f;
 
-    public GameObjectPool PoolOwner { get; set; }
+    public PoolablePool PoolOwner { get; set; }
 
     [ShowNativeProperty]
     public bool InUse { get; private set;}

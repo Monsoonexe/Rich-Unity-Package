@@ -54,7 +54,7 @@ public class Projectile : Poolable
             Destroy(impactMarker, explosionLifetime); //TODO how can I use a 'static' pool??
         }
 
-        Destroy(this.gameObject);
+        ReturnToPool();
     }
 
     virtual protected void OnTriggerEnter(Collider col)
