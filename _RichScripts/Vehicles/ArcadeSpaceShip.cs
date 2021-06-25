@@ -7,31 +7,24 @@ using NaughtyAttributes;
 [RequireComponent(typeof(Rigidbody))]
 public class ArcadeSpaceShip : RichMonoBehaviour
 {
+    /* To dampen, decrease the 'gravity' 
+     * field of the Axis in the Input Manager.
+     * I find 1 - 2 works well
+    */
+
     [Header("---Speed Settings---")]
     [SerializeField] private float maxSpeed = 50;
     [SerializeField] private float speed = 0;
     [SerializeField] private float acceleration = 5;
 
     [Header("---Pitch Settings---")]
-    [SerializeField] private float pitchSpeed = 50;
-
-    [Tooltip("TODO....")]
-    [ReadOnly]
-    [SerializeField] private float pitchDamping = 0;
+    [SerializeField] private float pitchSpeed = 55;
 
     [Header("---Yaw Settings---")]
-    [SerializeField] private float yawSpeed = 15;
-
-    [Tooltip("TODO....")]
-    [ReadOnly]
-    [SerializeField] private float yawDamping = 0;
+    [SerializeField] private float yawSpeed = 40;
 
     [Header("---Roll Settings---")]
-    [SerializeField] private float rollSpeed = 25;
-
-    [Tooltip("TODO....")]
-    [ReadOnly]
-    [SerializeField] private float rollDamping = 0;
+    [SerializeField] private float rollSpeed = 120;
 
     [Header("---Brakes Settings---")]
     [SerializeField] private float inertialDampenersEffect = 0.7f;
@@ -125,7 +118,6 @@ public class ArcadeSpaceShip : RichMonoBehaviour
 
             speed = Mathf.Lerp(speed, targetSpeed, fixedDeltaTime);
         }
-
         else if (IsBraking)
         {
             speed *= inertialDampenersEffect;
