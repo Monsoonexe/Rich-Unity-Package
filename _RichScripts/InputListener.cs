@@ -13,14 +13,14 @@ public class InputListener : RichMonoBehaviour
 
     [Header("---Settings---")]
     [SerializeField]
-    private bool useKeyCode = false;
+    private bool useKeyCode = true;
 
     [ShowIf("useKeyCode")]
     [SerializeField]
     private KeyCode keycode = KeyCode.Space;
 
     [SerializeField]
-    private bool useButton = true;
+    private bool useButton = false;
 
     [ShowIf("useButton")]
     [InputAxis]
