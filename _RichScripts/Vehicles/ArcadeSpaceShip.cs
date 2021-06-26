@@ -185,19 +185,9 @@ public class ArcadeSpaceShip : RichMonoBehaviour
         {
             //add forward or backward
             var targetSpeed = speed + throttleInput * acceleration;
-            Debug.Log("Throttle: " + targetSpeed);
             targetSpeed = RichMath.Clamp(targetSpeed, -maxSpeed, maxSpeed);
 
             speed = Mathf.Lerp(speed, targetSpeed, fixedDeltaTime);
-
-            //this is bullshit!!!!!
-            //why doesn't it clamp to maxSpeed???
-            //why doesn't changing speedMod OR Time.deltaTime do ANYTHING????
-            //speed = Mathf.SmoothDamp(speed, targetSpeed,
-            //    ref speedVelocity, speedMod,
-            //    maxSpeed, Time.deltaTime * speedMod);
-
-            Debug.Log("after damping: " + speed);
         }
         else if (IsBraking)
         {
