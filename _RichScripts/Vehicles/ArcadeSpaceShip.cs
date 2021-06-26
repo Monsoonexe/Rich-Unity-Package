@@ -4,6 +4,7 @@ using NaughtyAttributes;
 /// <summary>
 /// No Neutonian Physics.
 /// </summary>
+/// <seealso cref="SpaceShipController"/>
 [RequireComponent(typeof(Rigidbody))]
 public class ArcadeSpaceShip : RichMonoBehaviour
 {
@@ -13,21 +14,25 @@ public class ArcadeSpaceShip : RichMonoBehaviour
     */
 
     [Header("---Speed Settings---")]
-    [SerializeField] private float maxSpeed = 50;
-    [SerializeField] private float speed = 0;
-    [SerializeField] private float acceleration = 5;
+    public float maxSpeed = 50;
+
+    [Header("---Throttle Settings---")]
+    public float acceleration = 5;
 
     [Header("---Pitch Settings---")]
-    [SerializeField] private float pitchSpeed = 55;
+    public float pitchSpeed = 55;
 
     [Header("---Yaw Settings---")]
-    [SerializeField] private float yawSpeed = 40;
+    public float yawSpeed = 40;
 
     [Header("---Roll Settings---")]
-    [SerializeField] private float rollSpeed = 120;
+    public float rollSpeed = 120;
 
     [Header("---Brakes Settings---")]
-    [SerializeField] private float inertialDampenersEffect = 0.7f;
+    public float inertialDampenersEffect = 0.7f;
+
+    [Header("---Lateral Thruster Settings---")]
+    public Vector2 lateralThrustSpeed = new Vector2(3, 3);
 
     //member Components
     private Rigidbody myRigidbody;
@@ -40,29 +45,64 @@ public class ArcadeSpaceShip : RichMonoBehaviour
     {
         get => pitchYawRollInput;
         set => pitchYawRollInput = value;
-    } 
+    }
+
+    /// <summary>
+    /// Movement around x-axis.
+    /// </summary>
     public float PitchInput
     {
         get => pitchYawRollInput.x;
         set => pitchYawRollInput.x = value;
     }
-    public float RollInput
-    {
-        get => pitchYawRollInput.z;
-        set => pitchYawRollInput.z = value;
-    }
+
+    /// <summary>
+    /// Movement around y-axis.
+    /// </summary>
     public float YawInput
     {
         get => pitchYawRollInput.y;
         set => pitchYawRollInput.y = value;
     }
 
+    /// <summary>
+    /// Movement around z-axis.
+    /// </summary>
+    public float RollInput
+    {
+        get => pitchYawRollInput.z;
+        set => pitchYawRollInput.z = value;
+    }
+
     public float ThrottleInput { get; set; }
     public bool IsBraking { get; set; }
+
+    /// <summary>
+    /// For up/down and left/right lateral movement.
+    /// </summary>
+    public Vector2 LateralThrustInput
+    {
+        get => lateralThrustInput;
+        set => lateralThrustInput = value;
+    }
+    public float HorizontalThrustInput
+    {
+        get => lateralThrustInput.x;
+        set => lateralThrustInput.x = value;
+    }
+    public float VerticalThrustInput
+    {
+        get => lateralThrustInput.y;
+        set => lateralThrustInput.y = value;
+    }
 
     //runtime data
     private float fixedDeltaTime;
     private Vector3 pitchYawRollInput;
+    private float speed = 0;
+    public float CurrentSpeed { get => speed; }
+    private float speedVelocity;
+    private Vector2 lateralThrustInput;
 
     protected override void Awake()
     {
@@ -84,14 +124,45 @@ public class ArcadeSpaceShip : RichMonoBehaviour
             );
 
         var rotateQuat = Quaternion.Euler(rotateVector);
-        myRigidbody.MoveRotation(myRigidbody.rotation * rotateQuat);
+        //myRigidbody.MoveRotation(myRigidbody.rotation * rotateQuat);
+        //^^ moved next to MovePosition for better locality.
 
         HandleThrottle(ThrottleInput);
 
-        //do actual move
+        //up/down, left/right
+        //vertical thrust input mod
+        var verticalThrustMod = lateralThrustInput.y 
+            * lateralThrustSpeed.y;
+
+        var verticalThrustersVector 
+            = myTransform.up * verticalThrustMod;
+
+        //horizontal thrust input mod
+        var horizontalThrustMod = lateralThrustInput.x
+            * lateralThrustSpeed.x;
+
+        var horizontalThrustersVector
+            = myTransform.right * horizontalThrustMod;
+
+        //main thruster
+        var forwardThrustVector = myTransform.forward
+            * speed;
+
+        //all combined movement
+        var stepVector = verticalThrustersVector 
+            + horizontalThrustersVector + forwardThrustVector;
+
+        //scaled
+        stepVector *= fixedDeltaTime;
+
+        //final offsets applied to current values.
+        var finalMovement = myTransform.position + stepVector;
+        var finalRotation = myRigidbody.rotation * rotateQuat;
+
+        //do actual transformations
         //cachedTransform.Translate(cachedTransform.forward * Time.deltaTime * speed, Space.World);
-        myRigidbody.MovePosition(myTransform.position + myTransform.forward
-            * (fixedDeltaTime * speed));
+        myRigidbody.MovePosition(finalMovement);
+        myRigidbody.MoveRotation(finalRotation);
     }
 
     private void HandleInertialDampener()
@@ -114,9 +185,19 @@ public class ArcadeSpaceShip : RichMonoBehaviour
         {
             //add forward or backward
             var targetSpeed = speed + throttleInput * acceleration;
-            targetSpeed = Mathf.Clamp(targetSpeed, -maxSpeed, maxSpeed);
+            Debug.Log("Throttle: " + targetSpeed);
+            targetSpeed = RichMath.Clamp(targetSpeed, -maxSpeed, maxSpeed);
 
             speed = Mathf.Lerp(speed, targetSpeed, fixedDeltaTime);
+
+            //this is bullshit!!!!!
+            //why doesn't it clamp to maxSpeed???
+            //why doesn't changing speedMod OR Time.deltaTime do ANYTHING????
+            //speed = Mathf.SmoothDamp(speed, targetSpeed,
+            //    ref speedVelocity, speedMod,
+            //    maxSpeed, Time.deltaTime * speedMod);
+
+            Debug.Log("after damping: " + speed);
         }
         else if (IsBraking)
         {
@@ -124,22 +205,4 @@ public class ArcadeSpaceShip : RichMonoBehaviour
         }
     }
 
-    public void UpdateInput(bool apply,
-        float throttle, Vector3 pitchYawRoll)
-    {
-        pitchYawRollInput = pitchYawRoll;
-        ThrottleInput = throttle;
-        IsBraking = apply;
-    }
-
-    public void UpdateInput(bool apply,
-        float throttle, float pitch,
-        float yaw, float roll)
-    {
-        pitchYawRollInput.x = pitch;
-        pitchYawRollInput.y = yaw;
-        pitchYawRollInput.z = roll;
-        ThrottleInput = throttle;
-        IsBraking = apply;
-    }
 }

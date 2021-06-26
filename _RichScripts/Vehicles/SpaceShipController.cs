@@ -30,6 +30,16 @@ public class SpaceShipController : RichMonoBehaviour
     [InputAxis]
     private string brakesName = "InertialDampener";
 
+    [Foldout("---Input Axes---")]
+    [SerializeField]
+    [InputAxis]
+    private string verticalThrustInputName = "Vertical Thrusters";
+
+    [Foldout("---Input Axes---")]
+    [SerializeField]
+    [InputAxis]
+    private string horizontalThrustInputName = "Horizontal Thrusters";
+
     #endregion
 
     [Header("---Resources---")]
@@ -44,14 +54,20 @@ public class SpaceShipController : RichMonoBehaviour
         var yawInput = Input.GetAxis(yawInputName);
         var rollInput = Input.GetAxis(rollInputName);
         var throttleInput = Input.GetAxis(throttleInputName);
+        var verticalThrustInput = Input.GetAxis(verticalThrustInputName);
+        var horizontalThrustInput = Input.GetAxis(horizontalThrustInputName);
         var isBraking = Input.GetButton(brakesName);
 
         //combine
-        var inputVector = new Vector3(pitchInput, yawInput, rollInput);
+        var inputVector = new Vector3(
+            pitchInput, yawInput, rollInput);
+        var lateralVector = new Vector2(
+            horizontalThrustInput, verticalThrustInput);
 
         //Drive
         spaceShip.IsBraking = isBraking;
         spaceShip.ThrottleInput = throttleInput;
         spaceShip.PitchYawRollInput = inputVector;
+        spaceShip.LateralThrustInput = lateralVector;
     }
 }
