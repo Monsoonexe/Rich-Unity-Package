@@ -19,12 +19,20 @@ public abstract class ATriggerVolume : RichMonoBehaviour
     [ReadOnly]
     public int triggerCount = 0;
 
-    [Header("---Events---")]
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent enterEvent = new UnityEvent();
 
+    [Foldout("---Events---")]
     [SerializeField]
     protected UnityEvent exitEvent = new UnityEvent();
+
+    [Button(null, EButtonEnableMode.Playmode)]
+    public void ForceCollide()
+    {
+        ++triggerCount;
+        enterEvent.Invoke();
+    }
 
     protected void HandleEnterCollision(GameObject other)
     {
