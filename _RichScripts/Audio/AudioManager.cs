@@ -70,7 +70,7 @@ public class AudioManager : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AudioManager] Too many AudioManagers in the Scene! Destroying: " +
+            Debug.LogWarning("[AudioManager] Singleton: Too many AudioManagers in the Scene! Destroying: " +
                 current.name, current);
             Destroy(current.gameObject); // there can only be one!
         }
