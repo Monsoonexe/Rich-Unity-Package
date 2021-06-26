@@ -164,6 +164,8 @@ public class SwivelTurret : RichMonoBehaviour
 
     private void HandleTargetTracking()
     {
+        if (targetInEngagementRange == false) return;
+        
         var deltaTime = Time.deltaTime; //cache
         //get relative position of target 
         var relative = myTransform.InverseTransformPoint(attackTarget.position);
