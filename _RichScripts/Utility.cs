@@ -369,6 +369,29 @@ public static class Utility
             result += Random.Range(1, upperRandomLimit);
         return result;
     }
+    
+    /// <summary>
+    /// Shuffle elements in the collection.
+    /// </summary>
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        var count = list.Count;
+        for (var i = 0; i < count; ++i)
+        {
+            var randomIndex = Random.Range(0, count);
+            list.Swap(i, randomIndex);
+        }
+    }
+
+    /// <summary>
+    /// Shuffle elements in the collection n times.
+    /// 7 has been proven to be a good amount.
+    /// </summary>
+    public static void Shuffle<T>(this IList<T> list, int repeat)
+    {
+        for (var i = 0; i < repeat; ++i)
+            list.Shuffle();
+    }
 
     public static int RollDie(int sides) => Random.Range(1, sides + 1);
 
