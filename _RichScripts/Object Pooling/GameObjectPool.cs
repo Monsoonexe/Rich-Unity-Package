@@ -79,7 +79,7 @@ public class GameObjectPool : RichMonoBehaviour
         return newGameObj;
     }
 
-    public GameObject AddItems(int amount = 1)
+    public void AddItems(int amount = 1)
     {
         for(var i = amount - 1; i >= 0; --i)
             {
@@ -107,7 +107,7 @@ public class GameObjectPool : RichMonoBehaviour
             InitPoolableMethod(depooledItem);
         }
 
-        poolable.SetActive(true);//behaves like Instantiate();
+        depooledItem.SetActive(true);//behaves like Instantiate();
 
         return depooledItem;
     }
@@ -242,8 +242,8 @@ public class GameObjectPool : RichMonoBehaviour
             if (initStragety == InitStrategy.EAGER)
                 InitPoolableMethod(newP);
 
-            pool.Push(poolable);
-            poolable.SetActive(false);
+            pool.Push(newP);
+            newP.SetActive(false);
         }
     }
 
