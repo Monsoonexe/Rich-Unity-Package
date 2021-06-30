@@ -18,9 +18,9 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObject objectPrefab;
 
     [Header("---Pool Base Settings---")]
-    public bool InitOnAwake = true;
+    public bool initOnAwake = true;
 
-    public bool createWhenEmpty = true;
+    public bool createWhenEmpty = false;
 
     [SerializeField]
     protected InitStrategy initStragety = InitStrategy.EAGER;
@@ -63,7 +63,7 @@ public class GameObjectPool : RichMonoBehaviour
     {
         base.Awake();
         manifest = new List<GameObject>(maxAmount);
-        if(InitOnAwake)
+        if(initOnAwake)
             InitPool();
     }
 
