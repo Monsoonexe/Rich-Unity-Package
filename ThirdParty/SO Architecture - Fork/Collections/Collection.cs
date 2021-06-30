@@ -79,5 +79,7 @@ namespace ScriptableObjectArchitecture
         {
             return "Collection<" + typeof(T) + ">(" + Count + ")";
         }
+        public static implicit operator List<T> (Collection<T> a)
+            => a._list;
     } 
 }
