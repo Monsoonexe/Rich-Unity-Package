@@ -7,8 +7,6 @@ using NaughtyAttributes;
 /// </summary>
 public class LevelController : RichMonoBehaviour
 {
-    public static int currentSceneIndex = 0;
-
     //member functions for events to hook onto.
 
     public void LoadLevel(SceneVariable sceneVariable)
@@ -28,15 +26,15 @@ public class LevelController : RichMonoBehaviour
     [Button]
     public static void LoadNextLevel()
     {
-        ++currentSceneIndex;
-        SceneManager.LoadScene(currentSceneIndex);
+        var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex + 1);
     }
 
     [Button]
     public static void LoadPreviousLevel()
     {
-        --currentSceneIndex;
-        SceneManager.LoadScene(currentSceneIndex);
+        var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex - 1);
     }
 
     [Button]
