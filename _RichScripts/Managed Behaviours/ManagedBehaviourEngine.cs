@@ -7,10 +7,12 @@ using NaughtyAttributes;
 using Debug = UnityEngine.Debug;
 
 /*  developer notes:
- *  consider LinkedList if lots of remove/add.
- * 
- * need to find a way to add serialized listeners
- */ 
+ *  consider Dictionary if lots of remove/add (slow iteration!).
+ *  consider LinkedList if size is a problem.
+ *  
+ *  Specific calls are faster. Prefer: 
+ *  ManagedBehaviourEngine.AddManagedListener((IManagedUpdate)this);
+ */
 
 namespace RichPackage.Managed
 {
@@ -28,13 +30,13 @@ namespace RichPackage.Managed
         private List<AManagedBehaviour> staticBehaviours
             = new List<AManagedBehaviour>();
 
-        private static readonly List<IManagedPreAwake> preAwakeListeners
+        private static List<IManagedPreAwake> preAwakeListeners
             = new List<IManagedPreAwake>(STARTING_SIZE);
 
-        private static readonly List<IManagedAwake> awakeListeners
+        private static List<IManagedAwake> awakeListeners
             = new List<IManagedAwake>(STARTING_SIZE);
 
-        private static readonly List<IManagedStart> startListeners
+        private static List<IManagedStart> startListeners
             = new List<IManagedStart>(STARTING_SIZE);
 
         private static readonly List<IManagedEarlyUpdate> earlyUpdateListeners
@@ -55,6 +57,20 @@ namespace RichPackage.Managed
         private static readonly List<IManagedOnApplicationQuit> quitListeners
             = new List<IManagedOnApplicationQuit>(STARTING_SIZE);
 
+        #region Time Fields
+
+        /// <summary>
+        /// Same as Time.deltaTime except cached, so no marshalling.
+        /// </summary>
+        public static float DeltaTime;
+
+        /// <summary>
+        /// Same as Time.fixedDeltaTime except cached, so no marshalling.
+        /// </summary>
+        public static float FixedDeltaTime;
+
+        #endregion  
+
         #region Unity Callbacks
 
         protected override void Awake()
@@ -66,6 +82,9 @@ namespace RichPackage.Managed
             {
                 Debug.Log("[ManagedBehaviourEngine] Singleton violation. " +
                     "Disabling this duplicate.", this);
+
+                this.enabled = false;
+                return;
             }
 
             var i = 0;//cache
@@ -92,10 +111,20 @@ namespace RichPackage.Managed
             var count = startListeners.Count;
             for (var i = 0; i < count; ++i)
                 startListeners[i].ManagedStart();
+
+            //clear initializer lists because they'll never be fired again
+            preAwakeListeners.Clear();
+            preAwakeListeners = null;
+            awakeListeners.Clear();
+            awakeListeners = null;
+            startListeners.Clear();
+            startListeners = null;
         }
 
         private void Update()
         {
+            DeltaTime = Time.deltaTime; //update time step
+
             //EarlyUpdate()
             var count = earlyUpdateListeners.Count;
             for (var i = 0; i < count; ++i)
@@ -105,10 +134,14 @@ namespace RichPackage.Managed
             count = updateListeners.Count;
             for (var i = 0; i < count; ++i)
                 updateListeners[i].ManagedUpdate();
+            
+            //late update here?
         }
 
         private void FixedUpdate()
         {
+            FixedDeltaTime = Time.fixedDeltaTime; //update time step
+
             //FixedUpdate()
             var count = fixedUpdateListeners.Count;
             for (var i = 0; i < count; ++i)
@@ -143,39 +176,43 @@ namespace RichPackage.Managed
 
         #region Add Listeners
 
-        public static void AddManagedListener(IManagedPreAwake behaviour)
-        {
-            AssertSingletonExists();
-            Debug.Assert(!preAwakeListeners.Contains(behaviour),
-                "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
-                " Check your subscription logic, fool!");
+        //These should not be called at runtime! only work on static behaviours.
+        //public static void AddManagedListener(IManagedPreAwake behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    Debug.Assert(!preAwakeListeners.Contains(behaviour),
+        //        "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
+        //        " Check your subscription logic, fool!");
 
-            preAwakeListeners.Add(behaviour);
-        }
-        public static void AddManagedListener(IManagedAwake behaviour)
-        {
-            AssertSingletonExists();
-            Debug.Assert(!awakeListeners.Contains(behaviour),
-                "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
-                " Check your subscription logic, fool!");
+        //    preAwakeListeners.Add(behaviour);
+        //}
+        //public static void AddManagedListener(IManagedAwake behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    Debug.Assert(!awakeListeners.Contains(behaviour),
+        //        "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
+        //        " Check your subscription logic, fool!");
 
-            awakeListeners.Add(behaviour);
-        }
-        public static void AddManagedListener(IManagedStart behaviour)
-        {
-            AssertSingletonExists();
-            Debug.Assert(!startListeners.Contains(behaviour),
-                "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
-                " Check your subscription logic, fool!");
+        //    awakeListeners.Add(behaviour);
+        //}
+        //public static void AddManagedListener(IManagedStart behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    Debug.Assert(!startListeners.Contains(behaviour),
+        //        "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
+        //        " Check your subscription logic, fool!");
 
-            startListeners.Add(behaviour);
-        }
+        //    startListeners.Add(behaviour);
+        //}
+
         public static void AddManagedListener(IManagedEarlyUpdate behaviour)
         {
             AssertSingletonExists();
             Debug.Assert(!earlyUpdateListeners.Contains(behaviour),
                 "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
                 " Check your subscription logic, fool!");
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
 
             earlyUpdateListeners.Add(behaviour);
         }
@@ -185,6 +222,8 @@ namespace RichPackage.Managed
             Debug.Assert(!updateListeners.Contains(behaviour),
                 "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
                 " Check your subscription logic, fool!");
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
 
             updateListeners.Add(behaviour);
         }
@@ -194,6 +233,8 @@ namespace RichPackage.Managed
             Debug.Assert(!fixedUpdateListeners.Contains(behaviour),
                 "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
                 " Check your subscription logic, fool!");
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
 
             fixedUpdateListeners.Add(behaviour);
         }
@@ -203,6 +244,8 @@ namespace RichPackage.Managed
             Debug.Assert(!lateUpdateListeners.Contains(behaviour),
                 "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
                 " Check your subscription logic, fool!");
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
 
             lateUpdateListeners.Add(behaviour);
         }
@@ -212,6 +255,8 @@ namespace RichPackage.Managed
             Debug.Assert(!pauseListeners.Contains(behaviour),
                 "[ManagedBehaviourEngine] Duplicate behaviour being subscribed!" +
                 " Check your subscription logic, fool!");
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
 
             pauseListeners.Add(behaviour);
         }
@@ -230,14 +275,17 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void AddManagedListener(IManagedBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                AddManagedListener(a);
-            else if (behaviour is IManagedAwake b)
-                AddManagedListener(b);
-            else if (behaviour is IManagedStart c)
-                AddManagedListener(c);
-            else if (behaviour is IManagedEarlyUpdate d)
+            //TODO - exception on subscribe Initializer
+            //if (behaviour is IManagedPreAwake a)
+            //    AddManagedListener(a);
+            //else if (behaviour is IManagedAwake b)
+            //    AddManagedListener(b);
+            //else if (behaviour is IManagedStart c)
+            //    AddManagedListener(c);
+            if (behaviour is IManagedEarlyUpdate d)
                 AddManagedListener(d);
             else if (behaviour is IManagedUpdate e)
                 AddManagedListener(e);
@@ -256,13 +304,16 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void AddManagedListener(AManagedBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                AddManagedListener(a);
-            if (behaviour is IManagedAwake b)
-                AddManagedListener(b);
-            if (behaviour is IManagedStart c)
-                AddManagedListener(c);
+            //TODO - exception on subscribe Initializer
+            //if (behaviour is IManagedPreAwake a)
+            //    AddManagedListener(a);
+            //if (behaviour is IManagedAwake b)
+            //    AddManagedListener(b);
+            //if (behaviour is IManagedStart c)
+            //    AddManagedListener(c);
             if (behaviour is IManagedEarlyUpdate d)
                 AddManagedListener(d);
             if (behaviour is IManagedUpdate e)
@@ -282,13 +333,16 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void AddManagedListener(MonoBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                AddManagedListener(a);
-            if (behaviour is IManagedAwake b)
-                AddManagedListener(b);
-            if (behaviour is IManagedStart c)
-                AddManagedListener(c);
+            //TODO - exception on subscribe Initializer
+            //if (behaviour is IManagedPreAwake a)
+            //    AddManagedListener(a);
+            //if (behaviour is IManagedAwake b)
+            //    AddManagedListener(b);
+            //if (behaviour is IManagedStart c)
+            //    AddManagedListener(c);
             if (behaviour is IManagedEarlyUpdate d)
                 AddManagedListener(d);
             if (behaviour is IManagedUpdate e)
@@ -307,12 +361,29 @@ namespace RichPackage.Managed
 
         #region Remove Listeners
 
+        //These should not be called at runtime! only work on static behaviours.
+        //public static void RemoveManagedListener(IManagedPreAwake behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    preAwakeListeners.Remove(behaviour);
+        //}
+        //public static void RemoveManagedListener(IManagedAwake behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    awakeListeners.Remove(behaviour);
+        //}
+        //public static void RemoveManagedListener(IManagedStart behaviour)
+        //{
+        //    AssertSingletonExists();
+        //    startListeners.Remove(behaviour);
+        //}
+
         public static void RemoveAllManagedListeners()
         {
             instance?.staticBehaviours.Clear();
-            preAwakeListeners.Clear();
-            awakeListeners.Clear();
-            startListeners.Clear();
+            preAwakeListeners?.Clear();
+            awakeListeners?.Clear();
+            startListeners?.Clear();
             earlyUpdateListeners.Clear();
             updateListeners.Clear();
             fixedUpdateListeners.Clear();
@@ -320,49 +391,46 @@ namespace RichPackage.Managed
             pauseListeners.Clear();
             quitListeners.Clear();
         }
-        public static void RemoveManagedListener(IManagedPreAwake behaviour)
-        {
-            AssertSingletonExists();
-            preAwakeListeners.Remove(behaviour);
-        }
-        public static void RemoveManagedListener(IManagedAwake behaviour)
-        {
-            AssertSingletonExists();
-            awakeListeners.Remove(behaviour);
-        }
-        public static void RemoveManagedListener(IManagedStart behaviour)
-        {
-            AssertSingletonExists();
-            startListeners.Remove(behaviour);
-        }
         public static void RemoveManagedListener(IManagedEarlyUpdate behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             earlyUpdateListeners.Remove(behaviour);
         }
         public static void RemoveManagedListener(IManagedUpdate behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             updateListeners.Remove(behaviour);
         }
         public static void RemoveManagedListener(IManagedFixedUpdate behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             fixedUpdateListeners.Remove(behaviour);
         }
         public static void RemoveManagedListener(IManagedLateUpdate behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             lateUpdateListeners.Remove(behaviour);
         }
         public static void RemoveManagedListener(IManagedOnApplicationPause behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             pauseListeners.Remove(behaviour);
         }
         public static void RemoveManagedListener(IManagedOnApplicationQuit behaviour)
         {
             AssertSingletonExists();
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             quitListeners.Remove(behaviour);
         }
         /// <summary>
@@ -371,14 +439,16 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void RemoveManagedListener(IManagedBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                RemoveManagedListener(a);
-            else if (behaviour is IManagedAwake b)
-                RemoveManagedListener(b);
-            else if (behaviour is IManagedStart c)
-                RemoveManagedListener(c);
-            else if (behaviour is IManagedEarlyUpdate d)
+            //if (behaviour is IManagedPreAwake a)
+            //    RemoveManagedListener(a);
+            //else if (behaviour is IManagedAwake b)
+            //    RemoveManagedListener(b);
+            //else if (behaviour is IManagedStart c)
+            //    RemoveManagedListener(c);
+            if (behaviour is IManagedEarlyUpdate d)
                 RemoveManagedListener(d);
             else if (behaviour is IManagedUpdate e)
                 RemoveManagedListener(e);
@@ -397,13 +467,15 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void RemoveManagedListener(AManagedBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                RemoveManagedListener(a);
-            if (behaviour is IManagedAwake b)
-                RemoveManagedListener(b);
-            if (behaviour is IManagedStart c)
-                RemoveManagedListener(c);
+            //if (behaviour is IManagedPreAwake a)
+            //    RemoveManagedListener(a);
+            //if (behaviour is IManagedAwake b)
+            //    RemoveManagedListener(b);
+            //if (behaviour is IManagedStart c)
+            //    RemoveManagedListener(c);
             if (behaviour is IManagedEarlyUpdate d)
                 RemoveManagedListener(d);
             if (behaviour is IManagedUpdate e)
@@ -423,13 +495,15 @@ namespace RichPackage.Managed
         /// <param name="behaviour"></param>
         public static void RemoveManagedListener(MonoBehaviour behaviour)
         {
+            Debug.Assert(behaviour != null,
+                "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            if (behaviour is IManagedPreAwake a)
-                RemoveManagedListener(a);
-            if (behaviour is IManagedAwake b)
-                RemoveManagedListener(b);
-            if (behaviour is IManagedStart c)
-                RemoveManagedListener(c);
+            //if (behaviour is IManagedPreAwake a)
+            //    RemoveManagedListener(a);
+            //if (behaviour is IManagedAwake b)
+            //    RemoveManagedListener(b);
+            //if (behaviour is IManagedStart c)
+            //    RemoveManagedListener(c);
             if (behaviour is IManagedEarlyUpdate d)
                 RemoveManagedListener(d);
             if (behaviour is IManagedUpdate e)
@@ -457,6 +531,11 @@ namespace RichPackage.Managed
 #endif
         }
 
+        /// <summary>
+        /// Creates a new instance in the scene if one doesn't already exist.
+        /// </summary>
+        /// <returns></returns>
+        [ContextMenu("Tools/Create ManagedBehaviourEngine Instance")]
         public static ManagedBehaviourEngine Construct()
         {
             if (!instance)
