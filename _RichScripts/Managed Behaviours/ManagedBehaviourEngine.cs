@@ -12,6 +12,8 @@ using Debug = UnityEngine.Debug;
  *  
  *  Specific calls are faster. Prefer: 
  *  ManagedBehaviourEngine.AddManagedListener((IManagedUpdate)this);
+ * 
+ *  TODO - can an IManagedBehaviour be cast to multiple?????
  */
 
 namespace RichPackage.Managed
