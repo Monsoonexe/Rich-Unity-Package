@@ -3,11 +3,13 @@
 namespace RichPackage.Managed
 {
     /// <summary>
-    /// This class is more of an example than a base class.
+    /// Can be statically assigned to the Engine to get ManagedInitializer callbacks.
     /// </summary>
+    /// <see cref="ManagedBehaviourEngine"/>
+    /// <see cref="IManagedBehaviour"/>
     public abstract class AManagedBehaviour 
-        : RichMonoBehaviour, 
-         IManagedUpdate, IManagedStart
+        : RichMonoBehaviour, IManagedBehaviour
+         //IManagedUpdate, IManagedStart
     {
         /*  should include Initializers (e.g. Awake())
          *  if this is a dynamic object. Otherwise, can use
@@ -28,14 +30,14 @@ namespace RichPackage.Managed
             ManagedBehaviourEngine.RemoveManagedListener(this);
         }
 
-        public void ManagedUpdate()
-        {
-            //update
-        }
+        //public void ManagedUpdate()
+        //{
+        //    //update
+        //}
 
-        public void ManagedStart()
-        {
-            //start
-        }
+        //public void ManagedStart()
+        //{
+        //    //start
+        //}
     }
 }

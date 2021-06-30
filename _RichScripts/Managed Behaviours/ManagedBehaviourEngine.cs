@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using NaughtyAttributes;
 
 //clarifications
 using Debug = UnityEngine.Debug;
@@ -12,7 +11,9 @@ using Debug = UnityEngine.Debug;
  *  
  *  Specific calls are faster. Prefer: 
  *  ManagedBehaviourEngine.AddManagedListener((IManagedUpdate)this);
- * 
+ *  
+ *  
+ *  
  *  TODO - can an IManagedBehaviour be cast to multiple?????
  */
 
@@ -27,19 +28,21 @@ namespace RichPackage.Managed
         private static ManagedBehaviourEngine instance;
         private const int STARTING_SIZE = 10;
 
+        #region Listener List Fields
+
         [SerializeField]
         [Tooltip("These can be set at Edit time and will be properly configured.")]
         private List<AManagedBehaviour> staticBehaviours
             = new List<AManagedBehaviour>();
 
-        private static List<IManagedPreAwake> preAwakeListeners
-            = new List<IManagedPreAwake>(STARTING_SIZE);
+        private List<IManagedPreAwake> preAwakeListeners
+            = new List<IManagedPreAwake>();
 
-        private static List<IManagedAwake> awakeListeners
-            = new List<IManagedAwake>(STARTING_SIZE);
+        private List<IManagedAwake> awakeListeners
+            = new List<IManagedAwake>();
 
-        private static List<IManagedStart> startListeners
-            = new List<IManagedStart>(STARTING_SIZE);
+        private List<IManagedStart> startListeners
+            = new List<IManagedStart>();
 
         private static readonly List<IManagedEarlyUpdate> earlyUpdateListeners
             = new List<IManagedEarlyUpdate>(STARTING_SIZE);
@@ -58,6 +61,8 @@ namespace RichPackage.Managed
 
         private static readonly List<IManagedOnApplicationQuit> quitListeners
             = new List<IManagedOnApplicationQuit>(STARTING_SIZE);
+
+        #endregion
 
         #region Time Fields
 
@@ -121,6 +126,11 @@ namespace RichPackage.Managed
             awakeListeners = null;
             startListeners.Clear();
             startListeners = null;
+        }
+
+        private void OnDestroy()
+        {
+            RemoveAllManagedListeners();
         }
 
         private void Update()
@@ -383,9 +393,9 @@ namespace RichPackage.Managed
         public static void RemoveAllManagedListeners()
         {
             instance?.staticBehaviours.Clear();
-            preAwakeListeners?.Clear();
-            awakeListeners?.Clear();
-            startListeners?.Clear();
+            instance?.preAwakeListeners?.Clear();
+            instance?.awakeListeners?.Clear();
+            instance?.startListeners?.Clear();
             earlyUpdateListeners.Clear();
             updateListeners.Clear();
             fixedUpdateListeners.Clear();
@@ -450,6 +460,7 @@ namespace RichPackage.Managed
             //    RemoveManagedListener(b);
             //else if (behaviour is IManagedStart c)
             //    RemoveManagedListener(c);
+
             if (behaviour is IManagedEarlyUpdate d)
                 RemoveManagedListener(d);
             else if (behaviour is IManagedUpdate e)
@@ -528,9 +539,7 @@ namespace RichPackage.Managed
                 "[ManagedBehaviourEngine] No instance in scene! " +
                 "One is being created for you now, but it won't be done during build.");
 
-#if UNITY_EDITOR
             Construct();
-#endif
         }
 
         /// <summary>
