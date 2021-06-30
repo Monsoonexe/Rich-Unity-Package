@@ -1,5 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 /// <summary>
 /// 
@@ -19,27 +20,26 @@ public class LevelController : RichMonoBehaviour
     public void LoadLevel(int index)
         => SceneManager.LoadScene(index);
 
-    public void LoadNextLevel_()
-        => LoadNextLevel();//forward call to static member
+    private void Start()
+    {
+        currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+    }
 
-    public void LoadPreviousLevel_()
-        => LoadPreviousLevel();//forward call to static member
-
-    public void ReloadCurrentLevel_()
-        => ReloadCurrentLevel();//forward call to static member
-
+    [Button]
     public static void LoadNextLevel()
     {
         ++currentSceneIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
 
+    [Button]
     public static void LoadPreviousLevel()
     {
         --currentSceneIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
 
+    [Button]
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().name);
