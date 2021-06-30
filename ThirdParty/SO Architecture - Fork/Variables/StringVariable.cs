@@ -9,5 +9,9 @@ namespace ScriptableObjectArchitecture
     public sealed class StringVariable : BaseVariable<string>
     {
         public override bool IsInitializeable { get => !_readOnly; }
+        public override string ToString()
+        {
+            return _value == null ? "null" : _value;
+        }
     } 
 }
