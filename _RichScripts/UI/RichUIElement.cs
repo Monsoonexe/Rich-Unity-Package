@@ -31,7 +31,7 @@ public class RichUIElement : RichMonoBehaviour
     /// <summary>
     /// Show if hidden, hide if shown.
     /// </summary>
-    public virtual void ToggleVisuals() => ToggleVisuals(gameObject.activeSelf);
+    public virtual void ToggleVisuals() => ToggleVisuals(!gameObject.activeSelf);
 
     [ContextMenu("Show")]
     public void Show() => ToggleVisuals(true);
