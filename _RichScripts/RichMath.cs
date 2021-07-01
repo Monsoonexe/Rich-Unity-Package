@@ -57,13 +57,16 @@ public static class RichMath
 
     #region Absolute Value
 
+    /// <summary>
+    /// Runs ~twice as fast as Mathf.Abs().
+    /// </summary>
+    /// <returns>Because Mathf.Abs() is managed code.</returns>
     public static int AbsoluteValue(int i)
         => i >= 0 ? i : -i;
 
     /// <summary>
     /// Runs ~twice as fast as Mathf.Abs().
     /// </summary>
-    /// <param name="f"></param>
     /// <returns>Because Mathf.Abs() is managed code.</returns>
     public static float AbsoluteValue(float f)
         => f >= 0 ? f : -f;
