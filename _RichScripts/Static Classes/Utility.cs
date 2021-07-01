@@ -18,21 +18,6 @@ public static class Utility
     //stuff we can all use!
     #region Communal Properties
 
-    private static StringBuilder communityStringBuilder = new StringBuilder();
-
-    /// <summary>
-    /// Community String Builder (so you don't have to 'new' one).
-    /// Just don't bet it will hold its data. Always safe to use right away.
-    /// </summary>
-    public static StringBuilder CommunityStringBuilder
-    {
-        get
-        {
-            communityStringBuilder.Clear(); // clear so it's safe to sue
-            return communityStringBuilder;
-        }
-    }
-
     private static List<int> communityIndiceList = new List<int>(4);
 
     /// <summary>
