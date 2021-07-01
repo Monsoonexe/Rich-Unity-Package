@@ -31,6 +31,7 @@ public class GameObjectPool : RichMonoBehaviour
     [SerializeField]
     [Tooltip("less than 0 means 'no limit'.")]
     private int maxAmount = 10;
+    public int MaxAmount { get => maxAmount; }
 
     [Tooltip("[Optional]")]
     public Transform poolParent = null;
