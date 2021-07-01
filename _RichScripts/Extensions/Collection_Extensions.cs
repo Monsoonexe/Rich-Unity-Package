@@ -14,6 +14,24 @@ using Debug = UnityEngine.Debug;
 public static class Collection_Extensions
 {
     #region Collection Helpers
+    
+    /// <summary>
+    /// Sets first null item to 'newItem'. O(n) time b.c doesn't cache index.
+    /// </summary>
+    /// <typeparam name="T">Must be class.</typeparam>
+    public static void Add<T>(this T[] array, T newItem)
+        where T : class
+    {
+        var count = array.Length;
+        for(var i = 0; i < count; ++i)
+        {
+            if (array[i] == null)
+            {
+                array[i] = newItem;
+                return;
+            }
+        }
+    }
 
     public static void AddIfNew<T>(this List<T> list, T item)
     {
@@ -247,6 +265,19 @@ public static class Collection_Extensions
     /// <param name="col"></param>
     /// <returns></returns>
     public static int LastIndex(this IList col) => col.Count - 1;
+
+    /// <summary>
+    /// Remove each item and perform an action on it. O(n) time.
+    /// </summary>
+    public static void RemoveWhile<T>(this List<T> col, 
+        Action<T> action)
+    {
+        while(col.Count > 0)
+        {   //iterate backwards to avoid shifting each element as you remove.
+            var item = col.GetRemoveLast();
+            action(item);
+        }
+    }
 
     /// <summary>
     /// Swap element at index a with element at index b.
