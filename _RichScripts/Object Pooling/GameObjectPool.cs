@@ -2,6 +2,7 @@
 using UnityEngine;
 
 public delegate void InitPooledGameObjectMethod(GameObject poolable);
+//TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
 
 /// <summary>
 /// Base Class for ObjectPool System
@@ -71,7 +72,14 @@ public class GameObjectPool : RichMonoBehaviour
     private GameObject CreatePoolable()
     {
         if (maxAmount >= 0 && PopulationCount >= maxAmount)
+        {
+            Debug.Log("[" + name + "] Pool is exhausted. "
+                + "Count: " + maxAmount 
+                + ". Consider increasing 'maxAmount' or setting 'createWhenEmpty'."
+                , this);
+
             return null; //at max capacity
+        }
 
         var newGameObj = Instantiate(objectPrefab, poolParent);
 
@@ -220,6 +228,12 @@ public class GameObjectPool : RichMonoBehaviour
         Debug.Assert(poolable != null,
             "[GameObjectPool] Trying to Enpool null!", this);
 
+        Debug.AssertFormat(manifest.Contains(poolable),
+            "[GameObjectPool] This item is not included on this Pool's manifest. " +
+            "This item probably belongs to another Pool. " + 
+            "pendingPoolable: {0}. Pool: {1}. manifest[0] {2}.",
+            poolable, gameObject, manifest[0]);
+
         if (!pool.Contains(poolable))//guard against multiple entries
         {
             pool.Push(poolable);
@@ -271,5 +285,4 @@ public class GameObjectPool : RichMonoBehaviour
         for (var i = 0; i < count; ++i)
             Enpool(manifest[i]);
     }
-
 }
