@@ -5,7 +5,9 @@
 /// </summary>
 public static class CommunityStringBuilder
 {
-    private static readonly StringBuilder communityStringBuilder = new StringBuilder(10);
+    private const int STARTING_AMOUNT = 16; //salt to needs of project.
+    private static readonly StringBuilder communityStringBuilder 
+        = new StringBuilder(STARTING_AMOUNT);
 
     /// <summary>
     /// Community String Builder (so you don't have to 'new' one).
@@ -19,10 +21,4 @@ public static class CommunityStringBuilder
             return communityStringBuilder;
         }
     }
-
-    #region Constructors
-
-
-
-    #endregion
 }
