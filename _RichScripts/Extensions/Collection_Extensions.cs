@@ -88,7 +88,7 @@ public static class Collection_Extensions
         IList<T> usedCollection)
     {
         //build a pool of indices that have not been used.  
-        var possibleIndices = Utility.CommunityIndiceList;
+        var possibleIndices = CommunalLists.Get<int>();
 
         var totalCount = totalCollection.Count;
         for (var i = 0; i < totalCount; ++i)

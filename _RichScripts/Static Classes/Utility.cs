@@ -18,21 +18,6 @@ public static class Utility
     //stuff we can all use!
     #region Communal Properties
 
-    private static List<int> communityIndiceList = new List<int>(4);
-
-    /// <summary>
-    /// Community indice list (so you don't have to 'new' one).
-    /// Just don't bet it will hold its data. Always safe to use right away.
-    /// </summary>
-    public static List<int> CommunityIndiceList
-    {
-        get
-        {
-            communityIndiceList.Clear(); // clear so it's safe to sue
-            return communityIndiceList;
-        }
-    }
-
     public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
 
     #endregion
