@@ -5,7 +5,7 @@ public delegate void InitPooledGameObjectMethod(GameObject poolable);
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
 
 /// <summary>
-/// Base Class for ObjectPool System
+/// Pools a GameObject Prefab. Depool() replaces Instantiate(), and Enpool() replaces Destroy().
 /// </summary>
 public class GameObjectPool : RichMonoBehaviour
 {
@@ -218,9 +218,12 @@ public class GameObjectPool : RichMonoBehaviour
     /// lol. doodee pool.
     /// </summary>
     public void DoDepool(Vector3 point) => Depool(point);
+    
+    public void Enpool(MonoBehaviour poolable)
+        => Enpool(poolable.gameObject);
 
     /// <summary>
-    /// Add an item back into the pool.
+    /// Add an item back into the pool. This replaces Destroy().
     /// </summary>
     /// <param name="poolable"></param>
     public void Enpool(GameObject poolable)
