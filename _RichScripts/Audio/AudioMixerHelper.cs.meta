@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a89d8df660a8c46479c651fd4772904b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - musicVolume: {fileID: 11400000, guid: 8a143d3836ecfa54598c4abc10e0e231, type: 2}
+  - sfxVolume: {fileID: 11400000, guid: d0251115bbf7c334ab7fa98130b93f1a, type: 2}
+  - voiceVolume: {fileID: 11400000, guid: cce9ce25ad1c980449a4b85738787952, type: 2}
+  - masterVolume: {fileID: 11400000, guid: 3138b86c4ac2c914ba6080d6942abf35, type: 2}
+  - mainMixer: {fileID: 24100000, guid: 4129050f4664c8c45a957b9207fb31b6, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
