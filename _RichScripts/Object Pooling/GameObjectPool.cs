@@ -15,10 +15,10 @@ public class GameObjectPool : RichMonoBehaviour
         LAZY = 1 //init as you go
     }
 
-    [Header("---Prefab Pool Resources---")]
+    [Header("---Resources---")]
     public GameObject objectPrefab;
 
-    [Header("---Pool Base Settings---")]
+    [Header("---Settings---")]
     public bool initOnAwake = true;
 
     public bool createWhenEmpty = false;
