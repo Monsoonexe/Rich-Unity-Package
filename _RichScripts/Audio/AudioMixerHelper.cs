@@ -9,9 +9,15 @@ using NaughtyAttributes;
 /// <seealso cref="AudioManager"/>
 public class AudioMixerHelper : RichMonoBehaviour
 {
+    public enum InitSettings
+    {
+        LoadVariablesIntoMixer,
+        LoadMixerIntoVariables
+    }
+
     [Header("---Settings---")]
     [Tooltip("Init Variables with values in Mixer.")]
-    public bool initVariablesFromMixerSettings = true;
+    public InitSettings initSettings = InitSettings.LoadMixerIntoVariables;
 
     [Header("---Volume Resources---")]
     [SerializeField]
@@ -72,8 +78,21 @@ public class AudioMixerHelper : RichMonoBehaviour
 
     private void Start()
     {
-        if(initVariablesFromMixerSettings)
-            LoadVariablesWithMixerSettings();
+        switch(initSettings)
+        {
+            case InitSettings.LoadMixerIntoVariables:
+                LoadMixerValuesIntoVariables();
+                break;
+            case InitSettings.LoadVariablesIntoMixer:
+                mainMixer.SetFloat(masterVolumeProperty, masterVolume);
+                mainMixer.SetFloat(musicVolumeProperty, musicVolume);
+                mainMixer.SetFloat(sfxVolumeProperty, sfxVolume);
+                mainMixer.SetFloat(voiceVolumeProperty, voiceVolume);
+                break;
+            default:
+                Debug.LogError("[AudioMixerHelper] Unreachable code detected!!!!", this);
+                break;
+        }
     }
 
     private void OnDestroy()
@@ -86,7 +105,7 @@ public class AudioMixerHelper : RichMonoBehaviour
     }
 
     [Button]
-    private void LoadVariablesWithMixerSettings()
+    private void LoadMixerValuesIntoVariables()
     {
         LoadValueFromMixer(masterVolumeProperty, masterVolume);
         LoadValueFromMixer(musicVolumeProperty, musicVolume);
@@ -116,11 +135,11 @@ public class AudioMixerHelper : RichMonoBehaviour
         variable.Value = propertyValue;
     }
 
-    [Button]
-    private void ValidateMixer()
-    {
-        //TODO make sure that AudioMixer has all the appropriate settings
-    }
+    //[Button]
+    //private void ValidateMixer()
+    //{
+    //    //TODO make sure that AudioMixer has all the appropriate settings
+    //}
 
     #region Event Handlers
 
