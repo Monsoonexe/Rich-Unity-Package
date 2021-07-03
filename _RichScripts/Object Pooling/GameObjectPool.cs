@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public delegate void InitPooledGameObjectMethod(GameObject poolable);
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
@@ -16,6 +17,7 @@ public class GameObjectPool : RichMonoBehaviour
     }
 
     [Header("---Resources---")]
+    [ShowAssetPreview]
     public GameObject objectPrefab;
 
     [Header("---Settings---")]
