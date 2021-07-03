@@ -205,7 +205,7 @@ public class AudioManager : RichMonoBehaviour
         var audioOptions = new AudioOptions(
             loop: loop, pitchShift: pitchShift, crossfade: crossfade,
             priority: priority, volume: volume,
-            duration: duration == 0.0f ? clip.length : duration //validate
+            duration: duration //validate
             );
 
         return PlaySFX(clip, audioOptions);
