@@ -22,7 +22,15 @@ public static class Utility
 
     #endregion
 
+    /// <summary>
+    /// 0-based index, similar to how 2-d, Row-Major arrays work.
+    /// </summary>
+    /// <example>RowColumnToIndex(1, 2, 3) = 5 </example>
+    public static int RowColumnToIndex(int row, int column, int columnCount)
+        => row * columnCount + column;
+
     #region Random 
+
     /// <summary>
     /// Has an n probability of returning 'true'.
     /// </summary>
