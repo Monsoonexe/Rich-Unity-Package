@@ -12,8 +12,15 @@ public class GameObjectPool : RichMonoBehaviour
 {
     public enum InitStrategy
     {
-        EAGER = 0, //init right away
-        LAZY = 1 //init as you go
+        /// <summary>
+        /// Init right away when item created.
+        /// </summary>
+        OnCreate = 0,
+
+        /// <summary>
+        /// Init each time item is depooled.
+        /// </summary>
+        OnDepool = 1
     }
 
     [Header("---Resources---")]
@@ -26,7 +33,7 @@ public class GameObjectPool : RichMonoBehaviour
     public bool createWhenEmpty = false;
 
     [SerializeField]
-    protected InitStrategy initStragety = InitStrategy.EAGER;
+    protected InitStrategy initStragety = InitStrategy.OnCreate;
 
     [SerializeField]
     private int startingAmount = 6;
@@ -113,7 +120,7 @@ public class GameObjectPool : RichMonoBehaviour
         else if(createWhenEmpty)
             depooledItem = CreatePoolable();
         
-        if(depooledItem != null && initStragety == InitStrategy.LAZY)
+        if(depooledItem != null && initStragety == InitStrategy.OnDepool)
         {
             InitPoolableMethod(depooledItem);
         }
@@ -220,7 +227,7 @@ public class GameObjectPool : RichMonoBehaviour
     /// lol. doodee pool.
     /// </summary>
     public void DoDepool(Vector3 point) => Depool(point);
-    
+
     public void Enpool(MonoBehaviour poolable)
         => Enpool(poolable.gameObject);
 
@@ -246,6 +253,9 @@ public class GameObjectPool : RichMonoBehaviour
         }
     }
 
+    public void ForEachItem(System.Action<GameObject> action)
+        => manifest.ForEach(action);
+
     /// <summary>
     /// Create entire pool
     /// </summary>
@@ -259,7 +269,7 @@ public class GameObjectPool : RichMonoBehaviour
         {
             var newP = CreatePoolable();
 
-            if (initStragety == InitStrategy.EAGER)
+            if (initStragety == InitStrategy.OnCreate)
                 InitPoolableMethod(newP);
 
             pool.Push(newP);
