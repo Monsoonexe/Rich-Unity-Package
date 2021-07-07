@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Holds commonly used string values to help avoid excess garbage generation.
@@ -26,9 +27,6 @@ public static class ConstStrings
     /// </summary>
     public static readonly string INPUT_SUBMIT = "Submit";
 
-    //common keys
-    public static readonly string INPUT_INTERACT_KEY = "E";
-
     //common prompts
     public static readonly string INFO = "Info";
     public static readonly string NO = "No";
@@ -42,8 +40,16 @@ public static class ConstStrings
     public static readonly string SPACE_SLASH_SPACE = " / ";
     public static readonly string SPACE = " ";
 
-    //punctuation
-    public static readonly string EXCLAMATION_POINT = "!";
+    //const chars
+    public const char COLON = ':';
+    public const char DOLLAR_SIGN = '$';
+    public const char EXCLAMATION = '!';
+    public const char MINUS = '-';
+    public const char NEW_LINE = '\n';
+    public const char NULL = '\0';
+    public const char PERIOD = '.';
+    public const char PLUS = '+';
+    public const char QUESTION_MARK = '?';
 
     //multiplier
     public static readonly string X_UPPER = "X";
@@ -55,11 +61,14 @@ public static class ConstStrings
     /// </summary>
     public static readonly string[] NUMBER_STRINGS;
 
+    public static readonly Dictionary<int, string>
+        cachedStringDictionary;
+
     /// <summary>
     ///  0 - 100 covers all times, dates, and percentages and only costs
     ///  about 204 bytes (I think)
     /// </summary>
-    public const int NUMBER_STRINGS_LIMIT = 1000;
+    public const int NUMBER_STRINGS_LIMIT = 100;//salt to needs of project.
 
     /// <summary>
     /// Always returns a string, either a cached one if it's range or a 
@@ -70,18 +79,27 @@ public static class ConstStrings
     /// <returns>TODO cache new strings.</returns>
     public static string GetCachedString(int num)
     {
-//#if UNITY_EDITOR
-//        if(num > NUMBER_STRINGS_LIMIT)
-//        {
-//            Debug.Log("[ConstStrings] "+ num.ToString() + 
-//                " not in constant string array, so a new string was " +
-//                "generated. If this happens quite often, consider increasing " +
-//                "NUMBER_STRINGS_LIMIT: (" + NUMBER_STRINGS_LIMIT.ToString() + 
-//                ") or making a dictionary to track new entries.");
-//        }
-//#endif
-        return (num <= NUMBER_STRINGS_LIMIT && num >= 0) ?
-            NUMBER_STRINGS[num] : num.ToString();//garbage
+        //#if UNITY_EDITOR
+        //        if(num > NUMBER_STRINGS_LIMIT)
+        //        {
+        //            Debug.Log("[ConstStrings] "+ num.ToString() + 
+        //                " not in constant string array, so a new string was " +
+        //                "generated. If this happens quite often, consider increasing " +
+        //                "NUMBER_STRINGS_LIMIT: (" + NUMBER_STRINGS_LIMIT.ToString() + 
+        //                ") or making a dictionary to track new entries.");
+        //        }
+        //#endif
+        string str = null;
+        if (num <= NUMBER_STRINGS_LIMIT && num >= 0) //O(1)
+            str = NUMBER_STRINGS[num];
+        else if(cachedStringDictionary.TryGetValue(num, out str)) //O(1)
+        {
+            //if it worked, str contains the requested string.
+        }
+        else
+            str = num.ToString();//garbage
+
+        return str;
     }
 
     #region Constructor
@@ -94,6 +112,12 @@ public static class ConstStrings
         {
             NUMBER_STRINGS[i] = i.ToString();//cache string versions of common numbers
         }
+
+        //thousands and other int-keyed strings.
+        cachedStringDictionary = new Dictionary<int, string>(10);
+
+        for (var i = 2000; i < 10001; i += 1000)
+            cachedStringDictionary.Add(i, i.ToString());
     }
 
     #endregion
