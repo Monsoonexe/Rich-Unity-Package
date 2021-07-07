@@ -7,7 +7,10 @@ using ScriptableObjectArchitecture;
 
 public class AudioManager : RichMonoBehaviour
 {
-    //static variables
+    //consts
+    private static readonly string AUDIO_MANAGER = "AudioManager";
+
+    //singleton
     private static AudioManager Instance;
 
     /// <summary>
@@ -178,7 +181,15 @@ public class AudioManager : RichMonoBehaviour
     public static void Init()
     {
         if (!Instance)
-            new GameObject("AudioManager").AddComponent<AudioManager>();
+        {
+            var prefab = Resources.Load<AudioManager>(AUDIO_MANAGER);
+#if UNITY_EDITOR
+            UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
+#else
+            Instantiate(prefab);
+            //new GameObject(AUDIO_MANAGER).AddComponent<AudioManager>();
+#endif
+        }
     }
 
     public void PlaySFX(AudioClip clip)
