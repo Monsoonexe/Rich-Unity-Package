@@ -12,7 +12,7 @@ using Debug = UnityEngine.Debug;
  *  Specific calls are faster. Prefer: 
  *  ManagedBehaviourEngine.AddManagedListener((IManagedUpdate)this);
  *  
- *  
+ *  You would do well to place this in the UnityExecutionOrder before 'defaultTime'.
  *  
  *  TODO - can an IManagedBehaviour be cast to multiple?????
  */
@@ -27,6 +27,7 @@ namespace RichPackage.Managed
     {
         private static ManagedBehaviourEngine instance;
         private const int STARTING_SIZE = 10;
+        private static bool isQuitting = false;
 
         #region Listener List Fields
 
@@ -178,6 +179,7 @@ namespace RichPackage.Managed
 
         private void OnApplicationQuit()
         {
+            isQuitting = true;
             //OnApplicationQuit()
             var count = quitListeners.Count;
             for (var i = 0; i < count; ++i)
@@ -535,6 +537,7 @@ namespace RichPackage.Managed
         [Conditional("UNITY_EDITOR")]
         private static void AssertSingletonExists()
         {
+            if (isQuitting) return;
             Debug.Assert(instance,
                 "[ManagedBehaviourEngine] No instance in scene! " +
                 "One is being created for you now, but it won't be done during build.");
@@ -547,13 +550,13 @@ namespace RichPackage.Managed
         /// </summary>
         /// <returns></returns>
         [ContextMenu("Tools/Create ManagedBehaviourEngine Instance")]
-        public static ManagedBehaviourEngine Construct()
+        public static void Construct()
         {
+            if (isQuitting) return;
             if (!instance)
                 instance = new GameObject("ManagedBehaviourEngine")
                     .AddComponent<ManagedBehaviourEngine>();
-
-            return instance;
+            
         }
     }
 }
