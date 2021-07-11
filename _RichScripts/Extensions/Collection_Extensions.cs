@@ -54,6 +54,20 @@ public static class Collection_Extensions
             "on: {2}", //report name of problem mono
             index, collection.Count, name);
 
+
+    #region Average
+
+    public static int Average(this IList<int> col)
+        => col.Sum() / col.Count;
+
+    public static float Average(this IList<float> col)
+        => col.Sum() / col.Count;
+
+    public static double Average(this IList<double> col)
+        => col.Sum() / col.Count;
+
+    #endregion 
+
     /// <summary>
     /// Returns 'true' if at least 1 item in array Equals() given item.
     /// </summary>
@@ -278,6 +292,45 @@ public static class Collection_Extensions
             action(item);
         }
     }
+    #region Summation
+
+    public static int Sum(this IList<int> col)
+    {
+        var sum = 0;
+        var count = col.Count;
+        for (var i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
+    public static uint Sum(this IList<uint> col)
+    {
+        uint sum = 0;
+        var count = col.Count;
+        for (var i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
+    public static float Sum(this IList<float> col)
+    {
+        var sum = 0.0f;
+        var count = col.Count;
+        for (var i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
+    public static double Sum(this IList<double> col)
+    {
+        var sum = 0.0d;
+        var count = col.Count;
+        for (var i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
+    #endregion
 
     /// <summary>
     /// Swap element at index a with element at index b.
