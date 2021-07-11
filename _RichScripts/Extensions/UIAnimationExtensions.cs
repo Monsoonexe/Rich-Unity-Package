@@ -11,7 +11,8 @@ public static class UIAnimationExtensions
     /// </summary>
     /// <param name="_transform"></param>
     /// <returns>The tween for your own animation use.</returns>
-    public static Tween Animate_CenterZoomIn(this Transform _transform,
+    /// <remarks>Combination of Horizontal and Vertical</remarks>
+    public static Tweener Animate_ZoomIn(this Transform _transform,
         float duration = 0.5f)
     {
         var scale = _transform.localScale;
@@ -24,7 +25,8 @@ public static class UIAnimationExtensions
     /// </summary>
     /// <param name="_transform"></param>
     /// <returns>The tween for your own animation use.</returns>
-    public static Tween Animate_CenterZoomOut(this Transform _transform,
+    /// <remarks>Combination of Horizontal and Vertical</remarks>
+    public static Tweener Animate_ZoomOut(this Transform _transform,
         float duration = 0.5f)
     {
         var preservedScale = _transform.localScale;
@@ -42,12 +44,12 @@ public static class UIAnimationExtensions
     /// </summary>
     /// <param name="_transform"></param>
     /// <returns>The tween for your own animation use.</returns>
-    public static Tween Animate_CenterExpandVert(this Transform _transform,
+    public static Tweener Animate_ExpandHorizontal(this Transform _transform,
         float duration = 0.5f)
     {
         var scale = _transform.localScale;
-        _transform.localScale = scale.With(y: 0);//shrink
-        return _transform.DOScaleY(scale.y, duration);//scale y value
+        _transform.localScale = scale.WithX(0);//shrink
+        return _transform.DOScaleX(scale.x, duration);//scale y value
     }
 
     /// <summary>
@@ -55,7 +57,42 @@ public static class UIAnimationExtensions
     /// </summary>
     /// <param name="_transform"></param>
     /// <returns>The tween for your own animation use.</returns>
-    public static Tween Animate_CenterCollapseVert(this Transform _transform,
+    public static Tweener Animate_CollapseHorizontal(this Transform _transform,
+        float duration = 0.5f)
+    {
+        var preservedScale = _transform.localScale;
+
+        void ResetScale() => _transform.localScale = preservedScale;//local function for callack
+
+        var tween = _transform.DOScaleX(0, duration);//scale y value
+        tween.onComplete += ResetScale;//fix scale on complete
+        return tween;
+    }
+
+    /// <summary>
+    /// Assumes scale is currently where it will be when open, shrinks, then scales back up.
+    /// </summary>
+    /// <param name="_transform"></param>
+    /// <returns>The tween for your own animation use.</returns>
+    public static Tweener Animate_ExpandVertical(this Transform _transform,
+        float duration = 0.5f)
+    {
+        var preservedScale = _transform.localScale;
+
+        void ResetScale() => _transform.localScale = preservedScale;//local function for callack
+
+        _transform.localScale = preservedScale.WithY(0);//start fully shrunk
+        var tween = _transform.DOScaleY(preservedScale.y, duration);//scale y value
+        tween.onComplete += ResetScale;
+        return tween;
+    }
+
+    /// <summary>
+    /// Assumes scale is currently where it will be when open, shrinks, then scales back up.
+    /// </summary>
+    /// <param name="_transform"></param>
+    /// <returns>The tween for your own animation use.</returns>
+    public static Tweener Animate_CollapseVertical(this Transform _transform,
         float duration = 0.5f)
     {
         var preservedScale = _transform.localScale;
@@ -67,10 +104,10 @@ public static class UIAnimationExtensions
         return tween;
     }
 
-    public static Tween Animate_FadeIn(this CanvasGroup cg, float duration)
+    public static Tweener Animate_FadeIn(this CanvasGroup cg, float duration)
         => cg.DOFade(1, duration);
 
-    public static Tween Animate_FadeOut(this CanvasGroup cg, float duration)
+    public static Tweener Animate_FadeOut(this CanvasGroup cg, float duration)
         => cg.DOFade(0, duration);
 
     /// <summary>
@@ -80,7 +117,7 @@ public static class UIAnimationExtensions
     /// <param name="rot"></param>
     /// <param name="dur"></param>
     /// <returns></returns>
-    public static Tween DOLocalRotateBy(this Transform tran, Vector3 rot, float dur)
+    public static Tweener DOLocalRotateBy(this Transform tran, Vector3 rot, float dur)
     {
         var targetRotation = tran.localEulerAngles + rot;
         return tran.DOLocalRotate(targetRotation, dur);
