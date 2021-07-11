@@ -10,10 +10,6 @@ using ScriptableObjectArchitecture;
                  menuName = "ScriptableObjects/Item")]
 public class Item : RichScriptableObject//data
 {   //please update Constructors when adding properties!
-    /// <summary>
-    /// Community StringBuilder object.
-    /// </summary>
-    protected static readonly StringBuilder sb = new StringBuilder();
     public const int MAX_STACK_AMOUNT = 9999;
 
     [Header("---Item---")]
