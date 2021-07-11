@@ -36,6 +36,7 @@ public class GameObjectPool : RichMonoBehaviour
     protected InitStrategy initStragety = InitStrategy.OnCreate;
 
     [SerializeField]
+    [Min(0)]
     private int startingAmount = 6;
 
     [SerializeField]
