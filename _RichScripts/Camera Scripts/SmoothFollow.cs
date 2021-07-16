@@ -5,7 +5,8 @@ namespace UnityStandardAssets.Utility
 	public class SmoothFollow : RichMonoBehaviour
 	{
 		// The target we are following
-		public Transform target;
+		public Transform followTarget;
+        public Transform lookTarget;
 		// The distance in the x-z plane to the target
 		[SerializeField]
 		private float distance = 10.0f;
@@ -13,22 +14,22 @@ namespace UnityStandardAssets.Utility
 		[SerializeField]
 		private float height = 5.0f;
 
+        public float Height { get => height; set => height = value; }
+
 		[SerializeField]
 		private float rotationDamping;
 		[SerializeField]
 		private float heightDamping;
 
-        public float Height { get => height; set => height = value; }
-
 		// Update is called once per frame
 		void LateUpdate()
 		{
 			// Early out if we don't have a target
-			if (!target) return;
+			if (!followTarget) return;
 
 			// Calculate the current rotation angles
-			var wantedRotationAngle = target.eulerAngles.y;
-			var wantedHeight = target.position.y + height;
+			var wantedRotationAngle = followTarget.eulerAngles.y;
+			var wantedHeight = followTarget.position.y + height;
 
 			var currentRotationAngle = transform.eulerAngles.y;
 			var currentHeight = transform.position.y;
@@ -50,24 +51,25 @@ namespace UnityStandardAssets.Utility
 
 			// Set the position of the camera on the x-z plane to:
 			// distance meters behind the target
-			var targetPos = target.position - currentRotation 
+			var targetPos = followTarget.position - currentRotation 
                 * Vector3.forward * distance;
 
             // Set the height of the camera
             transform.position = targetPos.WithY(currentHeight);
 
-			// Always look at the target
-			transform.LookAt(target);
+			// point at the target
+            if(lookTarget)
+			    transform.LookAt(lookTarget);
 		}
 
         public void SnapUpdate()
         {
             // Early out if we don't have a target
-            if (!target) return;
+            if (!followTarget) return;
 
             // Calculate the current rotation angles
-            var wantedRotationAngle = target.eulerAngles.y;
-            var wantedHeight = target.position.y + height;
+            var wantedRotationAngle = followTarget.eulerAngles.y;
+            var wantedHeight = followTarget.position.y + height;
 
             var currentRotationAngle = transform.eulerAngles.y;
             var currentHeight = transform.position.y;
@@ -83,14 +85,15 @@ namespace UnityStandardAssets.Utility
 
             // Set the position of the camera on the x-z plane to:
             // distance meters behind the target
-            var targetPos = target.position - currentRotation
+            var targetPos = followTarget.position - currentRotation
                 * Vector3.forward * distance;
 
             // Set the height of the camera
             transform.position = targetPos.WithY(currentHeight);
 
-            // Always look at the target
-            transform.LookAt(target);
+            // point at the target
+            if (lookTarget)
+                transform.LookAt(lookTarget);
         }
 	}
 }
