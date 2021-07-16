@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace ScriptableObjectArchitecture
@@ -14,7 +14,7 @@ namespace ScriptableObjectArchitecture
         public void Raise(T value)
         {
             Raise();
-            AddStackTrace(value);
+            //AddStackTrace(value);
 
             for (int i = _typedListeners.Count - 1; i >= 0; i--)
                 _typedListeners[i].OnEventRaised(value);
