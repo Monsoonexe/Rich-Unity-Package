@@ -6,13 +6,12 @@ using ScriptableObjectArchitecture;
 /// Helpful for rigging events and prefabs to audio that aren't
 /// yet aware of an AudioManager in a scene.
 /// </summary>
-/// <remarks>Useful because UnityEvents can't see extension methods</remarks>
 /// <seealso cref="AudioManager"/>
 public class VirtualAudioSource : RichMonoBehaviour
 {
     public AudioClipReference clip;
     public bool playOnAwake = false;
-    public bool stopOnDestroy = false;
+    public bool stopOnDisable = false;
 
     private AudioID audioID;
 
@@ -22,9 +21,9 @@ public class VirtualAudioSource : RichMonoBehaviour
             PlaySFX(clip.Value, clip.Options);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        if (stopOnDestroy)
+        if (stopOnDisable)
             StopSFX();
     }
 
@@ -59,7 +58,7 @@ public class VirtualAudioSource : RichMonoBehaviour
     public void PlaySFXAndDestroy()
     {
         PlaySFX();
-        stopOnDestroy = false;
+        stopOnDisable = false;
         Destroy(this);
     }
 
