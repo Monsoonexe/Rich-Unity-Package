@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 
 [SelectionBase]
 public class RichMonoBehaviour : MonoBehaviour
@@ -8,6 +9,13 @@ public class RichMonoBehaviour : MonoBehaviour
     [SerializeField]
     [TextArea]
     private string developerDescription = "Please enter a description or a note.";
+
+    /// <summary>
+    /// This call will be stripped out of Builds. Use anywhere.
+    /// </summary>
+    [Conditional("UNITY_EDITOR")]
+    public void SetDevDescription(string value)
+        => developerDescription = value;
 #pragma warning restore
 #endif
 
