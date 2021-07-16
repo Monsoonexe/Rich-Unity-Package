@@ -8,59 +8,38 @@ using UnityEngine.Events;
 [RequireComponent(typeof(Collider))]
 public class MouseUnityEvent : RichMonoBehaviour
 {
-    [SerializeField]
-    private UnityEvent onMouseDownEvent 
-        = new UnityEvent();
+    public UnityEvent onMouseDownEvent = new UnityEvent();
 
-    public UnityEvent OnMouseDownEvent
+    public UnityEvent onMouseUpAsButtonEvent = new UnityEvent();
+
+    public UnityEvent onMouseEnterEvent = new UnityEvent();
+
+    public UnityEvent onMouseExitEvent = new UnityEvent();
+
+    public bool IsInteractable
     {
-        get => onMouseDownEvent;
+        get => myCollider.enabled;
+        set => myCollider.enabled = value;
     }
 
-    [SerializeField]
-    private UnityEvent onMouseEnterEvent 
-        = new UnityEvent();
+    //member components
+    private Collider myCollider;
 
-    public UnityEvent OnMouseEnterEvent
+    protected override void Awake()
     {
-        get => onMouseEnterEvent;
+        base.Awake();
+        myCollider = GetComponent<Collider>();
     }
 
-    [SerializeField]
-    private UnityEvent onMouseExitEvent 
-        = new UnityEvent();
+    public void OnMouseDown()
+        => onMouseDownEvent.Invoke();
 
-    public UnityEvent OnMouseExitEvent
-    {
-        get => onMouseExitEvent;
-    }
+    public void OnMouseUpAsButton()
+        => onMouseUpAsButtonEvent.Invoke();
 
-    [SerializeField]
-    private UnityEvent onMouseUpAsButtonEvent 
-        = new UnityEvent();
+    public void OnMouseEnter()
+        => onMouseEnterEvent.Invoke();
 
-    public UnityEvent OnMouseUpAsButtonEvent
-    {
-        get => onMouseUpAsButtonEvent;
-    }
-
-    private void OnMouseDown()
-    {
-        onMouseDownEvent.Invoke();
-    }
-
-    private void OnMouseEnter()
-    {
-        onMouseEnterEvent.Invoke();
-    }
-
-    private void OnMouseExit()
-    {
-        onMouseExitEvent.Invoke();
-    }
-
-    private void OnMouseUpAsButton()
-    {
-        onMouseUpAsButtonEvent.Invoke();
-    }
+    public void OnMouseExit()
+        => onMouseExitEvent.Invoke();
 }
