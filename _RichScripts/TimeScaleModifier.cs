@@ -8,7 +8,7 @@ using NaughtyAttributes;
 public class TimeScaleModifier : RichMonoBehaviour
 {
     [SerializeField]
-    private FloatReference timeScale;
+    private FloatReference timeScale = new FloatReference(1);
 
     /// <summary>
     /// Setting this value updates Time.timeScale immediately.
@@ -24,13 +24,9 @@ public class TimeScaleModifier : RichMonoBehaviour
         TimeScale = newValue;
     }
 
-    private void Start()
-    {
-        UpdateTimeScale();
-    }
-
     private void OnEnable()
     {
+        UpdateTimeScale();
         //only works if using a FloatVariable, not Reference
         timeScale.AddListener(UpdateTimeScale);
     }
