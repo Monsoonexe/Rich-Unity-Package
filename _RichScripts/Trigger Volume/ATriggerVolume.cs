@@ -36,7 +36,7 @@ public abstract class ATriggerVolume : RichMonoBehaviour
 
     protected void HandleEnterCollision(GameObject other)
     {
-        if (other.CompareTag(reactToTag))
+        if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
         {
             ++triggerCount;
             enterEvent.Invoke();
@@ -45,7 +45,7 @@ public abstract class ATriggerVolume : RichMonoBehaviour
 
     protected void HandleExitCollision(GameObject other)
     {
-        if (other.CompareTag(reactToTag))
+        if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
         {
             exitEvent.Invoke();
         }
