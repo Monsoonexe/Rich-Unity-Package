@@ -4,6 +4,7 @@ using NaughtyAttributes;
 
 public delegate void InitPooledGameObjectMethod(GameObject poolable);
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
+//TODO: ability to pre-spawn items in the Editor.
 
 /// <summary>
 /// Pools a GameObject Prefab. Depool() replaces Instantiate(), and Enpool() replaces Destroy().
@@ -101,11 +102,11 @@ public class GameObjectPool : RichMonoBehaviour
     public void AddItems(int amount = 1)
     {
         for(var i = amount - 1; i >= 0; --i)
-            {
-                var obj = CreatePoolable();
-                if(obj != null)
-                    Enpool(obj);
-            }
+        {
+            var obj = CreatePoolable();
+            if(obj != null)
+                Enpool(obj);
+        }
     }
 
     /// <summary>
@@ -121,12 +122,12 @@ public class GameObjectPool : RichMonoBehaviour
         else if(createWhenEmpty)
             depooledItem = CreatePoolable();
         
-        if(depooledItem != null && initStragety == InitStrategy.OnDepool)
+        if(depooledItem != null)
         {
-            InitPoolableMethod(depooledItem);
+            if(initStragety == InitStrategy.OnDepool)
+                InitPoolableMethod(depooledItem);
+            depooledItem.SetActive(true);//behaves like Instantiate();
         }
-
-        depooledItem.SetActive(true);//behaves like Instantiate();
 
         return depooledItem;
     }
@@ -289,6 +290,7 @@ public class GameObjectPool : RichMonoBehaviour
         {
             var poolable = pool.Pop();//trim excess
             manifest.Remove(poolable);
+            Destroy(poolable.gameObject);
         }
 
         manifest.TrimExcess();
