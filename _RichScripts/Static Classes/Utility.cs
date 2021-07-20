@@ -35,7 +35,7 @@ public static class Utility
     /// Has an n probability of returning 'true'.
     /// </summary>
     /// <returns></returns>
-    public static bool Chance(double n) => Random.Range(0, 1) <= n;
+    public static bool Chance(float n) => Random.Range(0f, 1f) <= n;
     
     public static int RollDice(int dice, int sides, int mod = 0)
     {   //validate
