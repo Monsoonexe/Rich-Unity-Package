@@ -12,7 +12,7 @@ public abstract class ARandomGenerator_Inspector : Editor
             var entry = weightPool[i];
             var weight = entry.Weight;
 
-            GUILayout.Label(string.Format("#{0}: \t{1}/{2}\t{3}%",
+            GUILayout.Label(string.Format("#{0, 3}: \t{1, 6}/{2, -6}{3, 15}%",
                 i, weight, totalWeight, (float)weight / (float)totalWeight * 100));
         }
     }
