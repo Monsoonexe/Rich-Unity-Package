@@ -9,6 +9,11 @@ public class VariableText : RichUIElement<BaseVariable>
     [SerializeField]
     [Required]
     protected TextMeshProUGUI tmp;
+    
+    private void Reset()
+    {
+        tmp = GetComponent<TextMeshProUGUI>();
+    }
 
     protected override void SubscribeToEvents()
     {
