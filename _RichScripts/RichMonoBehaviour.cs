@@ -9,15 +9,20 @@ public class RichMonoBehaviour : MonoBehaviour
     [SerializeField]
     [TextArea]
     private string developerDescription = "Please enter a description or a note.";
+#pragma warning restore
+#endif
 
     /// <summary>
     /// This call will be stripped out of Builds. Use anywhere.
     /// </summary>
+    /// <param name="newDes"></param>
     [Conditional("UNITY_EDITOR")]
-    public void SetDevDescription(string value)
-        => developerDescription = value;
-#pragma warning restore
+    public void SetDevDescription(string newDes)
+    {
+#if UNITY_EDITOR
+        developerDescription = newDes;
 #endif
+    }
 
     /// <summary>
     /// Cached Transform.
