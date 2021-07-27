@@ -18,11 +18,6 @@ public class LevelController : RichMonoBehaviour
     public void LoadLevel(int index)
         => SceneManager.LoadScene(index);
 
-    private void Start()
-    {
-        currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-    }
-
     [Button]
     public static void LoadNextLevel()
     {
