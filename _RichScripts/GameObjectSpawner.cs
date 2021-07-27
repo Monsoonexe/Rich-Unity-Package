@@ -38,7 +38,7 @@ public class GameObjectSpawner : RichMonoBehaviour
     /// </summary>
     public Transform SpawnNew(GameObject prefab, Vector3 position)
     {
-        var newInstance = Instantiate(prefab, position, Quaternion.Identity);
+        var newInstance = Instantiate(prefab, position, Quaternion.identity);
         var newITransform = newInstance.GetComponent<Transform>();
         newITransform.SetParent(spawnableParent);
 
