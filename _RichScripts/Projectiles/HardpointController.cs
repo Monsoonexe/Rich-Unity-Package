@@ -10,11 +10,14 @@ public class HardpointController : RichMonoBehaviour
     /// <summary>
     /// Time until next Shot can be fired.
     /// </summary>
-    public float CooldownTime { get
+    public float CooldownTime 
+    { 
+        get
         {
             var cooldown = nextShootTime - Time.time;
             return cooldown < 0 ? 0 : cooldown;
-        } }
+        } 
+    }
 
     [Header("---Scene Refs---")]
     [SerializeField] private Transform[] projectileSpawnPoints;
@@ -44,7 +47,7 @@ public class HardpointController : RichMonoBehaviour
         projSpawnPointCount = projectileSpawnPoints.Length;
     }
 
-    protected virtual bool CanShoot()
+    public virtual bool CanShoot()
     {
         return Time.time > nextShootTime;
     }
