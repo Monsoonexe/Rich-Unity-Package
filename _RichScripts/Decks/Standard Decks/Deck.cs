@@ -101,7 +101,7 @@ public class Deck<T> : RichScriptableObject
 
         //randomly fill deck (shuffle)
         for (var i = 0; i < TotalCardCount; ++i)
-            unusedCards.Add(usedCards.RemoveRandomElement());
+            unusedCards.Add(usedCards.GetRemoveRandomElement());
     }
 
     /// <summary>
