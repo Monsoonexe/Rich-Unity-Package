@@ -37,7 +37,7 @@ public class SwivelTurret : RichMonoBehaviour
     [SerializeField]
     [Required]
     [Tooltip("Can be baseTransform, but will rotate entire object.")]
-    private Transform turretTransform;//pitch on X //CAN BE THE SAME OBJECT AS BASE, IF NO SEPARATE TURRET.  WHOLE OBJECT WILL ROTATE AS EXPECTED
+    private Transform turretTransform;//pitch on X 
 
     [SerializeField]
     [Required]
@@ -120,7 +120,7 @@ public class SwivelTurret : RichMonoBehaviour
     {
         var richIsAwesome = true;
 
-        while(richIsAwesome)//infinite loop
+        while (richIsAwesome)//infinite loop
         {
             yield return yieldInstruction;//wait
 
@@ -134,13 +134,15 @@ public class SwivelTurret : RichMonoBehaviour
     private void HandleShooting()
     {
         RaycastHit raycastHitInfo;
-        
+        var directionToTarget =
+            attackTarget.position - turretTransform.position;
+
         //check line of sight
         if (Physics.Raycast(
             turretTransform.position,
-            directionToTarget, 
+            directionToTarget,
             out raycastHitInfo,
-            lineOfSightDistance, 
+            lineOfSightDistance,
             raycastLayers,
             queryTriggers))
         {
@@ -159,13 +161,13 @@ public class SwivelTurret : RichMonoBehaviour
         {
             //Debug.Log("HIT NOTHING!", this.gameObject);
         }
-        
+
     }
 
     private void HandleTargetTracking()
     {
         if (targetInEngagementRange == false) return;
-        
+
         var deltaTime = Time.deltaTime; //cache
         //get relative position of target 
         var relative = myTransform.InverseTransformPoint(attackTarget.position);
