@@ -3,7 +3,7 @@
 /// </summary>
 public interface IPoolable
 {
-    GameObjectPool PoolOwner { get; set; }
+    PoolablePool PoolOwner { get; set; }
     bool InUse { get; } // has been Depooled and is doing its thing.
     void OnCreate(); //when created
     void OnEnpool(); //into pool

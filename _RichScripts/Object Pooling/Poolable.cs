@@ -14,6 +14,7 @@ public class Poolable : RichMonoBehaviour, IPoolable
     [ShowNativeProperty]
     public bool InUse { get; private set;}
 
+    PoolablePool IPoolable.PoolOwner { get; set; }
     private Coroutine lifetimeCoroutine;
 
     public virtual void OnCreate()
