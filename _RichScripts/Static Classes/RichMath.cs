@@ -212,4 +212,12 @@ public static class RichMath
     }
     
     #endregion
+
+    public static int GreatestCommonDenominator(int a, int b)
+    {
+        //base case
+        if(a == 0) return b;
+        else if (b == 0) return a;
+        return GreatestCommonDenominator(b, a % b);
+    }
 }
