@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8767560996311779481}
-  - component: {fileID: 8767560996311779480}
+  - component: {fileID: 1031449242618384303}
   - component: {fileID: 189960602381664152}
   m_Layer: 0
   m_Name: AudioManager
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8767560996311779480
+--- !u!114 &1031449242618384303
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,18 +41,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8767560996311779473}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7808bf82f61e74ab7b8c15117b3240, type: 3}
+  m_Script: {fileID: 11500000, guid: 2586ec89e02c27e4ca82cb6affec532a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developerDescription: 'I handle playing audio! I''m so helpful!
-
-    First two
-    sources are Background.
-
-    Next 5 are for SFX'
+  developerDescription: Please enter a description or a note.
   audioMixer: {fileID: 24100000, guid: 4129050f4664c8c45a957b9207fb31b6, type: 2}
   sfxAudioSourceCount: 6
-  pitchShiftRange: {x: 0.8, y: 1.75}
+  pitchShiftRange: {x: 0.8, y: 1.2}
 --- !u!114 &189960602381664152
 MonoBehaviour:
   m_ObjectHideFlags: 0
