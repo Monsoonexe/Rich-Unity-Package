@@ -148,8 +148,8 @@ public class CraftingRecipe : RichScriptableObject
     {
         var newObj = CreateInstance<CraftingRecipe>();//create
         //create copies of arrays for safety
-        newObj.materials = mats.CloneArray();//construct
-        newObj.results = rults.CloneArray();
+        newObj.materials = (ItemStack[])mats.Clone();//construct
+        newObj.results = (ItemStack[])rults.Clone();
 
         return newObj;//return ref
     }
