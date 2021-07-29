@@ -26,12 +26,11 @@ public class GameObjectPool : RichMonoBehaviour
 
     [Header("---Resources---")]
     [ShowAssetPreview]
+    [Required]
     public GameObject objectPrefab;
 
     [Header("---Settings---")]
     public bool initOnAwake = true;
-
-    public bool createWhenEmpty = false;
 
     [SerializeField]
     protected InitStrategy initStragety = InitStrategy.OnCreate;
@@ -42,6 +41,7 @@ public class GameObjectPool : RichMonoBehaviour
 
     [SerializeField]
     [Tooltip("less than 0 means 'no limit'.")]
+    [Min(-1)]
     private int maxAmount = 10;
     public int MaxAmount { get => maxAmount; }
 
@@ -55,7 +55,11 @@ public class GameObjectPool : RichMonoBehaviour
 
     //runtime data
     private Stack<GameObject> pool; //stack has better locality than queue
-    private List<GameObject> manifest;
+    private IList<GameObject> manifest;
+    /// <summary>
+    /// Every GameObject Managed by this pool, non- and active alike.
+    /// </summary>
+    public List<GameObject> Manifest { get => manifest; }
 
     /// <summary>
     /// Total items this Pool tracks.
@@ -76,7 +80,7 @@ public class GameObjectPool : RichMonoBehaviour
     {
         base.Awake();
         manifest = new List<GameObject>(maxAmount);
-        if(initOnAwake)
+        if (initOnAwake)
             InitPool();
     }
 
@@ -85,7 +89,7 @@ public class GameObjectPool : RichMonoBehaviour
         if (maxAmount >= 0 && PopulationCount >= maxAmount)
         {
             Debug.Log("[" + name + "] Pool is exhausted. "
-                + "Count: " + maxAmount 
+                + "Count: " + ConstStrings.GetCachedString(maxAmount)
                 + ". Consider increasing 'maxAmount' or setting 'createWhenEmpty'."
                 , this);
 
@@ -95,16 +99,16 @@ public class GameObjectPool : RichMonoBehaviour
         var newGameObj = Instantiate(objectPrefab, poolParent);
 
         manifest.Add(newGameObj);//track
-        
+
         return newGameObj;
     }
 
     public void AddItems(int amount = 1)
     {
-        for(var i = amount - 1; i >= 0; --i)
+        for (var i = amount - 1; i >= 0; --i)
         {
             var obj = CreatePoolable();
-            if(obj != null)
+            if (obj != null)
                 Enpool(obj);
         }
     }
@@ -119,12 +123,12 @@ public class GameObjectPool : RichMonoBehaviour
 
         if (pool.Count > 0)
             depooledItem = pool.Pop();
-        else if(createWhenEmpty)
-            depooledItem = CreatePoolable();
-        
-        if(depooledItem != null)
+        else
+            depooledItem = CreatePoolable(); //or not
+
+        if (depooledItem != null)
         {
-            if(initStragety == InitStrategy.OnDepool)
+            if (initStragety == InitStrategy.OnDepool)
                 InitPoolableMethod(depooledItem);
             depooledItem.SetActive(true);//behaves like Instantiate();
         }
@@ -139,7 +143,7 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObject Depool(Transform handle)
     {
         var obj = Depool();
-        if(obj != null)
+        if (obj != null)
         {
             var trans = obj.GetComponent<Transform>();
             trans.position = handle.position;
@@ -161,7 +165,7 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObject Depool(Transform handle, bool setParent)
     {
         GameObject obj = null;
-        if(setParent)
+        if (setParent)
             obj = Depool(handle);
         else
             obj = Depool(handle.position, handle.rotation);
@@ -175,7 +179,7 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObject Depool(Vector3 position)
     {
         var obj = Depool();
-        if(obj != null)
+        if (obj != null)
         {
             var trans = obj.GetComponent<Transform>();
             trans.position = position;
@@ -190,7 +194,7 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObject Depool(Vector3 position, Quaternion rotation)
     {
         var obj = Depool();
-        if(obj != null)
+        if (obj != null)
         {
             var trans = obj.GetComponent<Transform>();
             trans.position = position;
@@ -207,7 +211,7 @@ public class GameObjectPool : RichMonoBehaviour
     {
         T component = null;
         var obj = Depool();
-        if(obj)
+        if (obj)
             component = obj.GetComponent<T>();
         return component;
     }
@@ -244,7 +248,7 @@ public class GameObjectPool : RichMonoBehaviour
 
         Debug.AssertFormat(manifest.Contains(poolable),
             "[GameObjectPool] This item is not included on this Pool's manifest. " +
-            "This item probably belongs to another Pool. " + 
+            "This item probably belongs to another Pool. " +
             "pendingPoolable: {0}. Pool: {1}. manifest[0] {2}.",
             poolable, gameObject, manifest[0]);
 
@@ -254,9 +258,6 @@ public class GameObjectPool : RichMonoBehaviour
             poolable.SetActive(false);
         }
     }
-
-    public void ForEachItem(System.Action<GameObject> action)
-        => manifest.ForEach(action);
 
     /// <summary>
     /// Create entire pool
