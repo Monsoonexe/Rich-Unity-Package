@@ -14,6 +14,7 @@ namespace ScriptableObjectArchitecture
 
         [SerializeField]
         protected bool _useConstant = false;
+        public bool UseConstant { get => _useConstant; }
         [SerializeField]
         protected TBase _constantValue = default(TBase);
         [SerializeField]
