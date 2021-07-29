@@ -57,22 +57,22 @@ namespace ScriptableObjectArchitecture
         }
         public void AddListener(IGameEventListener listener)
         {
-            if (_variable != null)
+            if (!(_variable == null || _useConstant))
                 _variable.AddListener(listener);
         }
         public void RemoveListener(IGameEventListener listener)
         {
-            if (_variable != null)
+            if (!(_variable == null || _useConstant))
                 _variable.RemoveListener(listener);
         }
         public void AddListener(System.Action action)
         {
-            if (_variable != null)
+            if (!(_variable == null || _useConstant))
                 _variable.AddListener(action);
         }
         public void RemoveListener(System.Action action)
         {
-            if (_variable != null)
+            if (!(_variable == null || _useConstant))
                 _variable.RemoveListener(action);
         }
         public override string ToString()
