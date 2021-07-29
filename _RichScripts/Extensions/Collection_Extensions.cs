@@ -83,6 +83,39 @@ public static class Collection_Extensions
                 return true;
         return false;
     }
+    
+    /// <summary>
+    /// Returns the first item that the query returns true.
+    /// </summary>
+    public static T Find<T>(this IList<T> list, Predicate<T> query)
+    {
+        var count = list.Count;
+        for (var i = 0; i < count; ++i)
+            if (query(list[i]))
+                return list[i];
+        return default;
+    }
+
+    /// <summary>
+    /// Returns the first item that the query returns true.
+    /// </summary>
+    public static bool TryFind<T>(this IList<T> list, Predicate<T> query,
+        out T foundItem)
+    {
+        foundItem = default;
+        bool found = false;
+        var count = list.Count;
+        for (var i = 0; i < count; ++i)
+        {
+            if (query(list[i]))
+            {
+                foundItem = list[i];
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
 
     /// <summary>
     /// Returns a random element from array, or default if collection is empty.
