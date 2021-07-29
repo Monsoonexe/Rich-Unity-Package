@@ -15,6 +15,17 @@ public class SpawnCounter : RichMonoBehaviour
 
     //member Components
     private GameObjectPool objectPool;
+
+    public int Count
+    {
+        get => targetData.Value;
+        set
+        {
+            targetData.Value = value;
+            if (targetData.UseConstant) //manually update if not a ref
+                UpdateSpawnCount();
+        }
+    }
     
     protected override void Awake()
     {
