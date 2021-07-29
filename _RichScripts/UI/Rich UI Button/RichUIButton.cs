@@ -12,8 +12,11 @@ public class RichUIButton : ARichUIButton
     /// <summary>
     /// call base.OnEnable() to auto subscribe to button
     /// </summary>
-    private void OnEnable()
-        => myButton.onClick.AddListener(OnButtonClick);
+    protected override void OnEnable()
+    {
+        myButton.onClick.AddListener(OnButtonClick);
+        UpdateUI();
+    }
 
     /// <summary>
     /// call base.OnDisable() to auto unsubscribe from button
@@ -61,7 +64,10 @@ public abstract class RichUIButton<TPayload> : ARichUIButton
     /// call base.OnEnable() to auto subscribe to button
     /// </summary>
     protected virtual void OnEnable()
-        => myButton.onClick.AddListener(OnButtonClick);
+    {
+        myButton.onClick.AddListener(OnButtonClick);
+        UpdateUI();
+    }
 
     /// <summary>
     /// call base.OnDisable() to auto unsubscribe from button

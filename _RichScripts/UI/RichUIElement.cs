@@ -11,7 +11,7 @@ public class RichUIElement : RichMonoBehaviour
 {
     public RectTransform rectTransform { get => (RectTransform)myTransform; }
 
-    protected virtual void Start()
+    protected virtual void OnEnable()
     {
         UpdateUI();
     }
@@ -56,7 +56,7 @@ public class RichUIElement<T> : RichUIElement
     [Required]
     public T targetData;
 
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
         SubscribeToEvents();
         UpdateUI();
