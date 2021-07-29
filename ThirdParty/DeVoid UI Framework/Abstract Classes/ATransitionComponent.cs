@@ -11,9 +11,15 @@ public abstract class ATransitionComponent : RichMonoBehaviour
     /// </summary>
     [Tooltip("How many seconds to complete the Animation.")]
     [SerializeField]
+    [Min(0)]
     protected float duration = 0.5f;
 
     public float Duration { get => duration; }
+    
+    protected virtual void Reset()
+    {
+        SetDevDescription("Animates a UI element.");
+    }
 
     /// <summary>
     /// 
