@@ -93,6 +93,18 @@ public static class RichMath
     public static int Max(int x, int y) => x > y ? x : y;
     public static float Min(float x, float y) => x < y ? x : y;
     public static float Max(float x, float y) => x > y ? x : y;
+    
+    /// <summary>
+    /// Returns true if x is in inverval [min, max].
+    /// </summary>
+    public static bool IsWithin(int x, int min, int max)
+        => (x >= min && x <= max);
+
+    /// <summary>
+    /// Returns true if x is in inverval [min, max].
+    /// </summary>
+    public static bool IsWithin(float x, float min, float max)
+        => (x >= min && x <= max);
 
     #endregion
 
