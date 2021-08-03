@@ -55,11 +55,11 @@ public class GameObjectPool : RichMonoBehaviour
 
     //runtime data
     private Stack<GameObject> pool; //stack has better locality than queue
-    private IList<GameObject> manifest;
+    private List<GameObject> manifest;
     /// <summary>
     /// Every GameObject Managed by this pool, non- and active alike.
     /// </summary>
-    public List<GameObject> Manifest { get => manifest; }
+    public IList<GameObject> Manifest { get => manifest; }
 
     /// <summary>
     /// Total items this Pool tracks.
@@ -76,31 +76,39 @@ public class GameObjectPool : RichMonoBehaviour
     /// </summary>
     public int InUseCount { get => manifest.Count - pool.Count; }
 
+    private void Reset()
+    {
+        SetDevDescription("I replace Instantiate with a pool of objects. " +
+            "I'm doing my part to reduce garbage generation.");
+        poolParent = GetComponent<Transform>();
+    }
+
     protected override void Awake()
     {
         base.Awake();
-        manifest = new List<GameObject>(maxAmount);
+        var poolSize = RichMath.Max(startingAmount, maxAmount);
+        manifest = new List<GameObject>(poolSize);
         if (initOnAwake)
             InitPool();
     }
 
     private GameObject CreatePoolable()
     {
+        GameObject newGameObject = null;//return value
         if (maxAmount >= 0 && PopulationCount >= maxAmount)
         {
             Debug.Log("[" + name + "] Pool is exhausted. "
                 + "Count: " + ConstStrings.GetCachedString(maxAmount)
                 + ". Consider increasing 'maxAmount' or setting 'createWhenEmpty'."
                 , this);
-
-            return null; //at max capacity
+        }
+        else
+        {
+            newGameObject = Instantiate(objectPrefab, poolParent);
+            manifest.Add(newGameObject);//track
         }
 
-        var newGameObj = Instantiate(objectPrefab, poolParent);
-
-        manifest.Add(newGameObj);//track
-
-        return newGameObj;
+        return newGameObject;
     }
 
     public void AddItems(int amount = 1)
