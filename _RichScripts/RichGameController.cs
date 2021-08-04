@@ -7,6 +7,18 @@ using Signals;
 /// </summary>
 public class RichGameController : RichMonoBehaviour
 {
+    /// <summary>
+    /// Time.deltaTime that has been cached and un-marshalled.
+    /// </summary>
+    public static float DeltaTime { get; private set; }
+
+    /// <summary>
+    /// Time.time that has been cached and un-marshalled.
+    /// </summary>
+    public static float Time { get; private set; }
+    
+    public static float FixedDeltaTime { get; private set; }
+
     protected override void Awake()
     {
         GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
@@ -15,11 +27,6 @@ public class RichGameController : RichMonoBehaviour
     private void OnDestroy()
     {
         GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
-    }
-
-    private void OnEnable()
-    {
-        
     }
 
     public void QuitGame()
@@ -31,10 +38,22 @@ public class RichGameController : RichMonoBehaviour
         Application.Quit();
     }
 
+    public void Update()
+    {
+        //cache time values to de-marshal them once
+        DeltaTime = UnityEngine.Time.deltaTime;
+        Time = UnityEngine.Time.time;
+    }
+    
+    private void FixedUpdate()
+    {
+        //cache time values to de-marshal them once
+        FixedDeltaTime = UnityEngine.Time.fixedDeltaTime;
+    }
+
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().name);
-
 }
 
 /// <summary>
