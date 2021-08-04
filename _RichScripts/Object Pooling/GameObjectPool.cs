@@ -2,7 +2,7 @@
 using UnityEngine;
 using NaughtyAttributes;
 
-public delegate void InitPooledGameObjectMethod(GameObject poolable);
+public delegate void GameObjectMethod(GameObject poolable);
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
 //TODO: ability to pre-spawn items in the Editor.
 
@@ -49,9 +49,21 @@ public class GameObjectPool : RichMonoBehaviour
     public Transform poolParent = null;
 
     /// <summary>
-    /// [Optional] Something special to be performed on new entries.
+    /// [Optional] Something special to be performed when new items are created.
     /// </summary>
-    public InitPooledGameObjectMethod InitPoolableMethod = (p) => p = null;//no-op so never null
+    public GameObjectMethod InitPoolableMethod = (p) => p = null;//no-op so delegate never null
+
+    /// <summary>
+    /// [Optional] What should be done when item is Depooled?
+    /// By default calls SetActive(true);
+    /// </summary>
+    public GameObjectMethod OnDepoolMethod = (p) => p.SetActive(true);
+
+    /// <summary>
+    /// [Optional] What should be done when item is Enpooled?
+    /// By default calls SetActive(false);
+    /// </summary>
+    public GameObjectMethod OnEnpoolMethod = (p) => p.SetActive(false);
 
     //runtime data
     private Stack<GameObject> pool; //stack has better locality than queue
@@ -138,7 +150,7 @@ public class GameObjectPool : RichMonoBehaviour
         {
             if (initStragety == InitStrategy.OnDepool)
                 InitPoolableMethod(depooledItem);
-            depooledItem.SetActive(true);//behaves like Instantiate();
+            OnDepoolMethod(depooledItem);//by default SetsActive(true), like Instantiate
         }
 
         return depooledItem;
@@ -263,7 +275,7 @@ public class GameObjectPool : RichMonoBehaviour
         if (!pool.Contains(poolable))//guard against multiple entries
         {
             pool.Push(poolable);
-            poolable.SetActive(false);
+            OnEnpoolMethod(poolable);//by default sets inactive.
         }
     }
 
@@ -284,7 +296,7 @@ public class GameObjectPool : RichMonoBehaviour
                 InitPoolableMethod(newP);
 
             pool.Push(newP);
-            newP.SetActive(false);
+            OnEnpoolMethod(newP);//SetActive(false) by default
         }
     }
 
