@@ -63,7 +63,9 @@ public class RaycastDetector : RichMonoBehaviour
     private void Start()
     {
         yieldInterval = new WaitForSeconds(raycastPollInterval);
-        OnHitDetected += RaiseUnityEvent;//
+
+        //Rig unity event to Action so it's never null.
+        OnHitDetected += (in RaycastHit tossValue) => onDetected.Invoke();//
     }
 
     private void OnEnable()
@@ -76,13 +78,6 @@ public class RaycastDetector : RichMonoBehaviour
     {
         StopAllCoroutines();
     }
-
-    /// <summary>
-    /// Used to rig unity event to Action with arg so never null.
-    /// </summary>
-    /// <param name="disregardedValue"></param>
-    protected void RaiseUnityEvent(in RaycastHit disregardedValue)
-        => onDetected.Invoke();
 
     /// <summary>
     /// Raise an event when something is hit and is on given layer mask.
