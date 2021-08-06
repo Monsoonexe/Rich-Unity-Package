@@ -4,7 +4,7 @@
 /// I am a utility class to hold tweens so you don't have to!
 /// </summary>
 /// <seealso cref="ApexTweens"/>
-public class TweenHolder : ApexMonoBehaviour
+public class TweenHolder : RichMonoBehaviour
 {
     private void Reset()
     { 
