@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using RichPackage.Tweening;
 
 /// <summary>
 /// Every x seconds, spawn a new hazard.
@@ -11,15 +12,9 @@ public class SpawnOnTimer : RichMonoBehaviour
     private Vector2 randomTimeIntervalBounds = new Vector2(1.5f, 4.0f);
 
     [SerializeField]
-    private bool shouldOverrideDirection = true;
-
-    [SerializeField]
-    private Vector3 directionOverride = new Vector3(1, 0, 0);
-
-    [SerializeField]
     [Tooltip("-1 means immortal.")]
     [Min(-1)]
-    private float hazardLifetime = 10.0f;
+    private float itemLifetime = 10.0f;
 
     [Header("---Prefab Refs---")]
     [SerializeField]
@@ -30,10 +25,12 @@ public class SpawnOnTimer : RichMonoBehaviour
     private void Reset()
     {
         SetDevDescription("I spawn items from a pool at time intervals.");
+        spawnPoint = GetComponent<Transform>();
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         hazardPool = GetComponent<GameObjectPool>();
         InitNextSpawn();
     }
@@ -44,34 +41,27 @@ public class SpawnOnTimer : RichMonoBehaviour
         var randomDelay = randomTimeIntervalBounds.RandomRange();
 
         //wait that much time, then call this method
-        ApexTweens.InvokeAfterDelay(SpawnNextHazard, randomDelay);
+        RichTweens.InvokeAfterDelay(SpawnNextHazard, randomDelay);
     }
 
     private void SpawnNextHazard()
     {
         //(instantiate)
-        var newHazard = hazardPool.Depool(
+        var newItem = hazardPool.Depool(
             spawnPoint.position, Quaternion.identity);
 
         //check if pool is exhausted.
-        if (!newHazard)
+        if (!newItem)
         {   //pool is empty, consider raising limits
             //try again later
             InitNextSpawn();//chain forever
             return;
         }
 
-        if(shouldOverrideDirection)
-        {
-            var hazard = newHazard.GetComponent<ProjectileHazard>();
-            if (hazard != null)
-                hazard.moveVector = directionOverride;
-        }
-
         //reclaim after some time (unless immortal)
-        if(hazardLifetime > 0)
-            ApexTweens.InvokeAfterDelay(
-                () => hazardPool.Enpool(newHazard), hazardLifetime);
+        if(itemLifetime > 0)
+            RichTweens.InvokeAfterDelay(
+                () => hazardPool.Enpool(newItem), itemLifetime);
 
         InitNextSpawn();//chain forever
     }
