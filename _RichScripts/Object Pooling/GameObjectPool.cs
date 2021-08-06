@@ -196,7 +196,7 @@ public class GameObjectPool : RichMonoBehaviour
     /// Take an item out of the pool and place at world space.
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
-    public GameObject Depool(Vector3 position)
+    public GameObject Depool(in Vector3 position)
     {
         var obj = Depool();
         if (obj != null)
@@ -211,7 +211,7 @@ public class GameObjectPool : RichMonoBehaviour
     /// Take an item out of the pool and set at world space with orientation.
     /// </summary>
     /// <returns>Newly de-pool object.</returns>
-    public GameObject Depool(Vector3 position, Quaternion rotation)
+    public GameObject Depool(in Vector3 position, in Quaternion rotation)
     {
         var obj = Depool();
         if (obj != null)
@@ -252,7 +252,7 @@ public class GameObjectPool : RichMonoBehaviour
     /// Useful for delegates/events.
     /// lol. doodee pool.
     /// </summary>
-    public void DoDepool(Vector3 point) => Depool(point);
+    public void DoDepool(in Vector3 point) => Depool(point);
 
     public void Enpool(MonoBehaviour poolable)
         => Enpool(poolable.gameObject);
