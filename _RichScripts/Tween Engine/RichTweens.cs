@@ -21,7 +21,7 @@ namespace RichPackage.Tweening
             this Transform transform, Vector3 targetPoint,
             float duration, Action onComplete = null)
         {
-            var startTime = ApexGameController.UpTime;
+            var startTime = RichGameController.Time;
             var endTime = startTime + duration;
             var runtime = 0.0f;
 
@@ -31,7 +31,7 @@ namespace RichPackage.Tweening
             {
                 yield return null; //wait for next frame.
 
-                runtime += ApexGameController.DeltaTime;//frame rate independent
+                runtime += RichGameController.DeltaTime;//frame rate independent
                 var percentComplete = runtime / duration;
 
                 transform.position = Vector3.Lerp(
@@ -70,10 +70,10 @@ namespace RichPackage.Tweening
 
         private static IEnumerator InvokeAfterDelayRoutine(Action callback, float delay)
         {
-            var callTime = ApexGameController.UpTime + delay;
+            var callTime = RichGameController.Time + delay;
 
             do yield return null;
-            while (ApexGameController.UpTime < callTime);
+            while (RichGameController.Time < callTime);
 
             callback();
         }
