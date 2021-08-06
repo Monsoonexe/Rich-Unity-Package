@@ -39,7 +39,7 @@ public class Gravity : RichMonoBehaviour
         HandleGroundDetection();
         if(!IsGrounded)
         {
-            var step = gravityVector * ApexGameController.FixedDeltaTime;
+            var step = gravityVector * RichGameController.FixedDeltaTime;
             myTransform.position += step;
         }
     }
