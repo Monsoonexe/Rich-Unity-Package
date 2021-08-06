@@ -2,9 +2,6 @@
 using System.Diagnostics;
 using UnityEngine;
 
-//clarifications
-using Debug = UnityEngine.Debug;
-
 /*  developer notes:
  *  consider Dictionary if lots of remove/add (slow iteration!).
  *  consider LinkedList if size is a problem.
@@ -19,6 +16,9 @@ using Debug = UnityEngine.Debug;
 
 namespace RichPackage.Managed
 {
+    //clarifications
+    using Debug = UnityEngine.Debug;
+    
     /// <summary>
     /// Managed callbacks are faster than UnityCallbacks (by about 3x!).
     /// Subscribe to these events instead to speed things up.
