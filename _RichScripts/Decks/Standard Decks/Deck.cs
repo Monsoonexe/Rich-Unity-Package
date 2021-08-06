@@ -5,19 +5,16 @@ using NaughtyAttributes;
 /// <summary>
 /// A deck of something (cards).
 /// </summary>
-public class Deck<T> : RichScriptableObject
+/// <seealso cref="SequentialDeck{T}"/>
+/// <seealso cref="StackedDeck{TContainer, TValue}"/>
+/// <seealso cref="CardGenerator{TContainer, TValue}"/>
+public class Deck<T> : ADeck<T>
 {
-    [SerializeField]
-    [ReorderableList]
-    protected List<T> manifest = new List<T>();
-    public List<T> Manifest { get => manifest; }
-
     public readonly List<T> unusedCards = new List<T>(); //face-down deck
     public readonly List<T> usedCards = new List<T>(); //discard pile
 
     [ShowNativeProperty]
-    public virtual int CardsRemaining { get => unusedCards.Count; }
-    public int TotalCardCount { get => manifest.Count; }
+    public override int CardsRemaining { get => unusedCards.Count; }
 
     /// <summary>
     /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
@@ -68,6 +65,17 @@ public class Deck<T> : RichScriptableObject
         usedCards.Add(newItem);
     }
 
+    public override T Draw()
+    {
+        if (unusedCards.Count == 0) return default;//index out of range failsafe.
+
+        //draw from highest slot to avoid shifting all elements
+        var removeIndex = unusedCards.LastIndex();
+        var card = unusedCards.GetRemoveAt(removeIndex);
+        usedCards.Add(card);
+        return card;
+    }
+
     /// <summary>
     /// Remove item from deck at given index and place it on top of discard pile.
     /// </summary>
@@ -77,7 +85,7 @@ public class Deck<T> : RichScriptableObject
     /// <summary>
     /// Recombines decks without shuffling (drawn in order of Manifest).
     /// </summary>
-    public virtual void ReloadDeck()
+    public override void Reload()
     {
         usedCards.Clear();
         unusedCards.Clear();
@@ -90,24 +98,25 @@ public class Deck<T> : RichScriptableObject
     /// Recombines un/used cards and shuffles entire deck.
     /// </summary>
     [Button] 
-    public virtual void Shuffle()
+    public override void Shuffle()
     {
         usedCards.Clear();
         unusedCards.Clear();
+        var deckSize = TotalDeckSize;
 
         //temporarily use used cards array (stage)
-        for (var i = 0; i < TotalCardCount; ++i)
+        for (var i = 0; i < deckSize; ++i)
             usedCards.Add(manifest[i]);
 
         //randomly fill deck (shuffle)
-        for (var i = 0; i < TotalCardCount; ++i)
+        for (var i = 0; i < deckSize; ++i)
             unusedCards.Add(usedCards.GetRemoveRandomElement());
     }
 
     /// <summary>
     /// Shuffles only remaining cards.
     /// </summary>
-    public virtual void ShuffleRemaining()
+    public override void ShuffleRemaining()
     {
         var startingIndex = usedCards.Count;
         var count = unusedCards.Count; //cache cards remaining
@@ -122,26 +131,6 @@ public class Deck<T> : RichScriptableObject
             unusedCards.Add(usedCards.GetRemoveAt(randIndex));//get a random element within temp array bounds
         }
     }
-
-    [Button]
-    public virtual void TestDraw()
-    {
-        var card = Draw();
-        Debug.Log(card);
-    }
-
-    public virtual T Draw()
-    {
-        if (unusedCards.Count == 0) return default;//index out of range failsafe.
-
-        //draw from highest slot to avoid shifting all elements
-        var removeIndex = unusedCards.LastIndex();
-        var card = unusedCards.GetRemoveAt(removeIndex);
-        usedCards.Add(card);
-        return card;
-    }
-
-    public U Draw<U>() where U : T => (U)Draw();
 
     /// <summary>
     /// Look at an item without moving it.

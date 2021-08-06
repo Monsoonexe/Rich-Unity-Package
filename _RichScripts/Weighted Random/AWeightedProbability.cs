@@ -66,25 +66,6 @@ public abstract class AWeightedProbability<T> : AWeightedProbability
 public static class AWeightedProbability_Extensions
 {   //array shortcuts -> array.GetTotalyWeight()
 
-
-    /// <summary>
-    /// Get a random index using Weighted algorithm.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="items"></param>
-    /// <returns>Scales of weights do not affect performance. Guarantees 1 or less iteration. </returns>
-    public static int GetWeightedIndex(this IList<int> items)
-    {
-        var totalWeight = GetTotalWeight(items);
-        var randomValue = Random.Range(0, totalWeight) + 1;
-        var index = 0;
-
-        while (randomValue > 0)
-            randomValue -= items[index++];
-
-        return index - 1;
-    }
-
     /// <summary>
     /// Get a random element using Weighted algorithm.
     /// </summary>
@@ -155,20 +136,6 @@ public static class AWeightedProbability_Extensions
         }
 
         return result.Value;
-    }
-    /// <summary>
-    /// Sum up Weights in given collection
-    /// </summary>
-    /// <param name="probabilityTemplates"></param>
-    /// <returns></returns>
-    public static int GetTotalWeight(this IList<int> weights)
-    {
-        var total = 0;
-
-        for (var i = weights.Count; i >= 0; --i)
-            total += weights[i];
-
-        return total;
     }
 
     /// <summary>
