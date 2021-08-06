@@ -7,8 +7,6 @@
 public class CardGenerator<TContainer, TValue> : StackedDeck<TContainer, TValue>
     where TContainer : AWeightedProbability<TValue>
 {
-    public override int CardsRemaining { get => stackedDeck.unusedCards.Count; }
-
     public override TValue Draw()
     {
         var deck = stackedDeck.unusedCards;
