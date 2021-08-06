@@ -5,59 +5,78 @@ using NaughtyAttributes;
 /// <summary>
 /// Not every card has the same probability of being drawn.
 /// </summary>
-public class StackedDeck<TContainer, TValue> : Deck <TValue>
+public class StackedDeck<TContainer, TValue> : ADeck<TValue>
     where TContainer : AWeightedProbability<TValue>
 {
     [SerializeField]
-    [Expandable]
-    protected Deck<TContainer> stackedDeck = null;
+    [ReorderableList]
+    protected List<TContainer> weightedManifest = new List<TContainer>();
 
-    public override int CardsRemaining
+    /// <summary>
+    /// face-down deck
+    /// </summary>
+    public readonly List<TContainer> unusedCards = new List<TContainer>();
+
+    /// <summary>
+    /// discard pile
+    /// </summary>
+    public readonly List<TContainer> usedCards = new List<TContainer>();
+
+    [ShowNativeProperty]
+    public override int CardsRemaining { get => unusedCards.Count; }
+
+    private void OnValidate()
     {
-        get
-        {
-            if (stackedDeck == null)
-                return 0;
-            else
-                return stackedDeck.unusedCards.Count;
-        }
+        manifest.Clear();// reload card values
+        var len = weightedManifest.Count;
+        for (var i = 0; i < len; ++i)
+            manifest.Add(weightedManifest[i].Value); //add card to manifest
     }
 
     public override TValue Draw()
     {
-        var deck = stackedDeck.unusedCards;
+        var deck = unusedCards;
         if (deck.Count == 0) return default;
 
         var iCard = GetWeightedIndex(deck);
         var cardAt = deck[iCard];
-        stackedDeck.MoveCardToDiscard(iCard);
+        MoveCardToDiscard(iCard);
         return cardAt.Value;
     }
 
-    public override void ReloadDeck()
+    /// <summary>
+    /// Remove item from deck at given index and place it on top of discard pile.
+    /// </summary>
+    public void MoveCardToDiscard(int index)
+        => usedCards.Add(unusedCards.GetRemoveAt(index));
+
+    public override void Reload()
     {
-        stackedDeck.ReloadDeck();
+        usedCards.Clear();
+        unusedCards.Clear();
+
+        //add all cards to unused pile
+        weightedManifest.ForEachBackwards(unusedCards.Add);
     }
 
-    public override void Shuffle()
-    {
-        stackedDeck.Shuffle();
-    }
+    /// <summary>
+    /// Shuffling has no effect on a weighted random deck but is not an error to do so.
+    /// </summary>
+    public override void Shuffle() { } //nada
 
-    public override void ShuffleRemaining()
-    {
-        stackedDeck.ShuffleRemaining();
-    }
+    /// <summary>
+    /// Shuffling has no effect on a weighted random deck but is not an error to do so.
+    /// </summary>
+    public override void ShuffleRemaining() { } //nada
 
     protected static int GetTotalWeight(IList<TContainer>
         probabilityTemplates)
     {
         var totalWeight = 0;
+        var length = probabilityTemplates.Count;
 
-        for (var i = 0; i < probabilityTemplates.Count; ++i)
-        {
+        for (var i = 0; i < length; ++i)
             totalWeight += probabilityTemplates[i].Weight;
-        }
 
         return totalWeight;
     }

@@ -8,11 +8,14 @@ public class SequentialDeck<T> : Deck<T>
 {
     public override void Shuffle()
     {
-        ReloadDeck();
+        Reload();
     }
 
+    /// <summary>
+    /// This has no effect on a Sequential Deck but is not an error to do so.
+    /// </summary>
     public override void ShuffleRemaining()
     {
-        ReloadDeck();
+        //shuffling has no random effect
     }
 }
