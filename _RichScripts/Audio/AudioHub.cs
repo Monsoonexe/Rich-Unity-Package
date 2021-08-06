@@ -31,10 +31,9 @@ public class AudioHub : RichMonoBehaviour
     [SerializeField]
     protected TableEntry[] clipEntries;
 
-    public bool IsInitialized { get; private set; }
-
     //runtime data
     protected Dictionary<string, TableEntry> audioClipTable;
+    public bool IsInitialized { get; private set; }
 
     protected override void Awake()
     {
@@ -45,7 +44,7 @@ public class AudioHub : RichMonoBehaviour
             Inititialize();
     }
 
-    [Button("Inititialize", EButtonEnableMode.Playmode)]
+    [Button(null, EButtonEnableMode.Playmode)]
     public void Inititialize()
     {
         var entries = clipEntries.Length;
@@ -59,14 +58,29 @@ public class AudioHub : RichMonoBehaviour
     {
         //validation
         Debug.Assert(AudioManager.IsInitialized,
-            "[GlobalAudioRefs] AudioManager not initialized. Not in scene?");
+            "[AudioHub] AudioManager not initialized. Not in scene?");
         Debug.Assert(IsInitialized,
             "[AudioHub] Being used without being Init'd: " + this.name, this);
 
         if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
             entry.audioClipRef.PlaySFX();//actually do the thing
         else
-            Debug.LogWarningFormat("[GlobalAudioRefs] Requested clip '{0}' not found on {1}.",
+            Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
+                clipTag, name);
+    }
+
+    public void PlayAudioClipSFX(string clipTag, in AudioOptions options)
+    {
+        //validation
+        Debug.Assert(AudioManager.IsInitialized,
+            "[AudioHub] AudioManager not initialized. Not in scene?");
+        Debug.Assert(IsInitialized,
+            "[AudioHub] Being used without being Init'd: " + this.name, this);
+
+        if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
+            entry.audioClipRef.PlaySFX(options);//actually do the thing
+        else
+            Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
                 clipTag, name);
     }
 
