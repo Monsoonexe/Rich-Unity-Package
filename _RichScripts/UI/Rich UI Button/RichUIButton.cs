@@ -63,7 +63,7 @@ public abstract class RichUIButton<TPayload> : ARichUIButton
     /// <summary>
     /// call base.OnEnable() to auto subscribe to button
     /// </summary>
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
         myButton.onClick.AddListener(OnButtonClick);
         UpdateUI();
