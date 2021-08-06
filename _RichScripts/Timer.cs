@@ -14,21 +14,26 @@ public class Timer : RichMonoBehaviour
     /// <summary>
     /// Total duration of timer. TOP
     /// </summary>
+    [Tooltip("Total duration of timer. TOP")]
     public float TimerDuration = 0;
 
     /// <summary>
     /// Time remaining on current loop. COUNTDOWN
     /// </summary>
+    [Tooltip("Time remaining on current loop. COUNTDOWN")]
     public float TimeRemaining = 0;
 
     /// <summary>
-    /// Accumulated time that has elapsed since last Restart(), or Init()
+    /// Accumulated time that has elapsed since last Restart() or Init().
     /// </summary>
     public float TimeEllapsed { get; private set; }
 
     /// <summary>
-    /// 
+    /// 0 will effectively pause effect but won't pause coroutine.
     /// </summary>
+    [Tooltip("0 will effectively pause effect but won't pause coroutine.")]
+    public float timeScale = 1.0f;
+
     [ShowNativeProperty]
     public float PercentComplete { get => (TimerDuration - TimeRemaining) / TimerDuration; }
 
@@ -65,6 +70,9 @@ public class Timer : RichMonoBehaviour
     /// <param name="loop">Auto-repeat at end?</param>
     public void Initialize(float duration, Action callback, bool loop = false)
     {
+        Debug.Assert(callback != null,
+            "Callback is null and shouldn't be.", this);
+
         OnTimerExpire.RemoveAllListeners();
         OnTimerExpire.AddListener(callback.Invoke);//
         Initialize(duration, loop);//forward call
@@ -110,19 +118,21 @@ public class Timer : RichMonoBehaviour
     /// and calculating the runtime values in the functions.</remarks>
     private IEnumerator TickTimer()
     {
-        do
+        do // loop timer
         {
             TimeRemaining = TimerDuration;//reset timer
             TimeEllapsed = 0;
+
+            //countdown loop
             while (TimeRemaining > 0)
             {
                 yield return null;//wait for next frame
-                var deltaTime = Time.deltaTime;
+                var deltaTime = Time.deltaTime * timeScale;
                 TimeEllapsed += deltaTime;//track total time (in case duration was modified while running)
                 TimeRemaining -= deltaTime;//tick... tick... tick...
             }
 
-            onTimerExpire.Invoke(); //raise event
+            onTimerExpire.Invoke(); //ring ring ring
         } while (loop);
     }
 
@@ -133,9 +143,7 @@ public class Timer : RichMonoBehaviour
     /// </summary>
     /// <returns></returns>
     public static Timer Construct()
-    {
-        return new GameObject("Timer").AddComponent<Timer>();
-    }
+        => new GameObject(typeof(Timer).Name).AddComponent<Timer>();
 
     #endregion
 
