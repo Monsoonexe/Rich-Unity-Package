@@ -12,7 +12,16 @@ public class StackedDeck<TContainer, TValue> : Deck <TValue>
     [Expandable]
     protected Deck<TContainer> stackedDeck = null;
 
-    public override int CardsRemaining { get => stackedDeck.unusedCards.Count; }
+    public override int CardsRemaining
+    {
+        get
+        {
+            if (stackedDeck == null)
+                return 0;
+            else
+                return stackedDeck.unusedCards.Count;
+        }
+    }
 
     public override TValue Draw()
     {
