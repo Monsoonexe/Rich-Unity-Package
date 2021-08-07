@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 /// <summary>
 /// Displays an IntVariable's value with a TMP.
 /// </summary>
-/// <seealso cref="VariableTextUIController"/>
+/// <seealso cref="VariableText"/>
+/// <seealso cref="FormattableIntUIElement"/>
 public class VariableIntText : RichUIElement<IntVariable>
 {
-    /*TODO 
-     * Configuration: just show number
-     * Config: cur / max
-     * Config: min / cur / max
-     */
-
     [Header("---Scene Refs---")]
     [SerializeField]
+    [Required]
     [Tooltip("Update this text element with target data.")]
     protected TextMeshProUGUI textElement;
     
@@ -34,6 +31,7 @@ public class VariableIntText : RichUIElement<IntVariable>
         targetData.RemoveListener(UpdateUI);
     }
 
+    [Button]
     public override void UpdateUI()
     {
         textElement.text = ConstStrings.GetCachedString(targetData);
