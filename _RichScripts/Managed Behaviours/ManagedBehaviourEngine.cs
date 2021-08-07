@@ -549,7 +549,9 @@ namespace RichPackage.Managed
         /// Creates a new instance in the scene if one doesn't already exist.
         /// </summary>
         /// <returns></returns>
-        [ContextMenu("Tools/Create ManagedBehaviourEngine Instance")]
+        #if UNITY_EDITOR
+        [UnityEditor.MenuItem("Tools/ManagedBehaviourEngine/Create Instance")]
+        #endif
         public static void Construct()
         {
             if (isQuitting) return;
