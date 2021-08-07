@@ -107,7 +107,7 @@ public class AudioManager : RichMonoBehaviour
             {
                 SFXAudioSources[i].outputAudioMixerGroup = sfxGroup;
             }
-            var bgGroup = audioMixer.FindMatchingGroups("Background Music")[0];
+            var bgGroup = audioMixer.FindMatchingGroups("Music")[0];
             backgroundMusicTrackA.outputAudioMixerGroup = bgGroup;
             backgroundMusicTrackB.outputAudioMixerGroup = bgGroup;
         }
