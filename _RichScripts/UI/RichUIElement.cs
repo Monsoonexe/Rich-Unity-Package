@@ -31,12 +31,13 @@ public class RichUIElement : RichMonoBehaviour
     /// <summary>
     /// Show if hidden, hide if shown.
     /// </summary>
+    [Button]
     public virtual void ToggleVisuals() => ToggleVisuals(!gameObject.activeSelf);
 
-    [ContextMenu("Show")]
+    [Button]
     public void Show() => ToggleVisuals(true);
 
-    [ContextMenu("Hide")]
+    [Button]
     public void Hide() => ToggleVisuals(false);
     
     /// <summary>
@@ -48,12 +49,13 @@ public class RichUIElement : RichMonoBehaviour
     }
 }
 
-public class RichUIElement<T> : RichUIElement
+public abstract class RichUIElement<T> : RichUIElement
 {
     /// <summary>
     /// The data that this UI Element should show.
     /// </summary>
     [Required]
+    [Expandable]
     public T targetData;
 
     protected override void OnEnable()
@@ -67,13 +69,7 @@ public class RichUIElement<T> : RichUIElement
         UnsubscribeFromEvents();
     }
 
-    protected virtual void SubscribeToEvents()
-    {
+    protected abstract void SubscribeToEvents();
 
-    }
-
-    protected virtual void UnsubscribeFromEvents()
-    {
-
-    }
+    protected abstract void UnsubscribeFromEvents();
 }
