@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using NaughtyAttributes;
 
 public abstract class ARichUIButton : RichUIElement
 {
@@ -13,20 +14,37 @@ public abstract class ARichUIButton : RichUIElement
 
     [Header("---Button---")]
     [SerializeField]
+    [Required]
     protected Button myButton;
+    public Button Button { get => myButton; }
     public bool ButtonEnabled => myButton.enabled;
 
     [SerializeField]
+    [Required]
     protected Image myImage;
     public Image Image { get => myImage; }
     public bool ImageEnabled => myImage.enabled;
     public Sprite Sprite => myImage.sprite;
 
     [SerializeField]
+    [Required]
     protected TextMeshProUGUI myText;
     public TextMeshProUGUI Label { get => myText; }
     public string Text => myText.text;
     public bool TextEnabled => myText.enabled;
+
+    public bool IsInteractable
+    {
+        get => myButton.interactable;
+        set => myButton.interactable = value;
+    }
+    
+    private void Reset()
+    {
+        myButton = GetComponent<Button>();
+        myImage = GetComponent<Image>();
+        myText = GetComponentInChildren<TextMeshProUGUI>();
+    }
 
     /// <summary>
     /// Please call base.Awake() for maximum ease.
@@ -40,7 +58,7 @@ public abstract class ARichUIButton : RichUIElement
             myButton = GetComponent<Button>(); //keep looking
             if (!myButton)
             {
-                myButton =GetComponentInChildren<Button>(); // don't give up!
+                myButton = GetComponentInChildren<Button>(); // don't give up!
             }
         }
 
