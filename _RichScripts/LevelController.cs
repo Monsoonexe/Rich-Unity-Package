@@ -35,5 +35,5 @@ public class LevelController : RichMonoBehaviour
     [Button]
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
-            SceneManager.GetActiveScene().name);
+            SceneManager.GetActiveScene().buildIndex);
 }
