@@ -3,7 +3,8 @@
 /// </summary>
 public struct AudioID
 {
-    public static uint IDCounter = 1;
+    private static uint IDCounter = 1;
+    public const int INVALID_ID = 0;
 
     public readonly uint ID;
 
@@ -19,8 +20,8 @@ public struct AudioID
     /// <summary>
     /// Returns a new AudioID of 0, which is a flag it's invalid.
     /// </summary>
-    public static AudioID Invalid { get => new AudioID(0); }
-    public static uint GetNextID() => IDCounter++; 
-    public static AudioID GetNextKey() => new AudioID(GetNextID()); 
+    public static AudioID Invalid { get => new AudioID(INVALID_ID); }
+    //private static uint GetNextID() => IDCounter++; 
+    public static AudioID GetNextKey() => new AudioID(IDCounter++); 
     public static implicit operator uint(AudioID a) => a.ID;
 }

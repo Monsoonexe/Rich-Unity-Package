@@ -37,10 +37,11 @@ public class AudioManager : RichMonoBehaviour
     { get => Instance.backgroundMusicTrackA; }
 
     private AudioSource backgroundMusicTrackB;
-    private static AudioSource BackGroundMusicTrackB
+    private static AudioSource BackgroundMusicTrackB
     { get => Instance.backgroundMusicTrackB; }
 
     private static AudioSource ActiveMusicTrack;
+    private static float cachedPausedMusicVolume;
 
     /// <summary>
     /// This is so the caller can query the sound after the fact, like for interruping a spell.
@@ -60,6 +61,8 @@ public class AudioManager : RichMonoBehaviour
     {
         if (Instance == this)
             IsInitialized = false;//no more active audio manager in scene.
+        StopAllCoroutines();
+        sourceDictionary.Clear();
     }
 
     private static void InitSingleton(AudioManager current)
@@ -144,7 +147,10 @@ public class AudioManager : RichMonoBehaviour
         source.loop = options.loop;
         source.priority = options.priority;
         if (options.crossfade > 0)
+        {
+            source.volume = 0;
             source.DOFade(options.volume, options.crossfade); // fade in
+        }
         else
             source.volume = options.volume;
         source.pitch = options.pitchShift ? RandomPitchShift() : 1.0f;
@@ -158,16 +164,15 @@ public class AudioManager : RichMonoBehaviour
     /// <param name="clipLength"></param>
     /// <param name="key"></param>
     /// <returns></returns>
-    private static IEnumerator RemoveSourceAfterClip(float clipLength, AudioID key)
+    private static IEnumerator RemoveSourceAfterClip(float clipLength, 
+        AudioID key, AudioSource)
     {
+        //TODO - don't 'new' 
         yield return new WaitForSeconds(clipLength); // wait until duration over
 
-        if (sourceDictionary.TryGetValue(key.ID, out AudioSource ass))
-        {
-            sourceDictionary.Remove(key.ID);
-            if (ass.loop == true)//only need to stop if looping.
-                ass.Stop();
-        }
+        sourceDictionary.Remove(key.ID);
+        if (source.loop)//only need to stop if looping.
+            source.Stop();
     }
 
     #region API
@@ -191,6 +196,8 @@ public class AudioManager : RichMonoBehaviour
 #endif
         }
     }
+
+    public static bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }
 
     public void PlaySFX(AudioClip clip)
         => AudioManager.PlaySFX(clip);
@@ -241,7 +248,7 @@ public class AudioManager : RichMonoBehaviour
         //find an audio source with the lowest volume, or that is not playing
         var size = SFXSources.Length;
         var sources = SFXSources;
-        var lowestVolume = 1.0f;// note not used at all
+        var lowestVolume = 1.0f;
         var lowestIndex = 0;
         AudioSource source = null;
 
@@ -269,11 +276,42 @@ public class AudioManager : RichMonoBehaviour
 
         var key = TrackAudio(source); // return a key so audio can be interrupted later
         ConfigAudioSource(source, clip, in options);
-
-        // if looping with duration < 0, it's up to caller to stop the clip.
-        if (!options.loop || _duration > 0) //stop clip if not looping, or if looping for a specified duration
-            Instance.StartCoroutine(RemoveSourceAfterClip(_duration, key)); // free source after time
+        
+        //loop and duration <= 0 implies "play this track until I say stop"
+        if(!(options.loop && options.duration <= 0))
+            Instance.StartCoroutine(
+                RemoveSourceAfterClip(_duration, key, source)); // free source after time
         return key;
+    }
+
+    public static void PauseBackgroundTrack()
+    {
+        ActiveMusicTrack.Pause();
+    }
+
+    public static void PauseBackgroundTrack(float fadeDuration)
+    {
+        Debug.Assert(fadeDuration > 0,
+            "Invalid fadeDuration: " + fadeDuration + ". Expected positive value.");
+
+        cachedPausedMusicVolume = ActiveMusicTrack.volume;
+        ActiveMusicTrack.DOFade(0, fadeDuration)
+            .OnComplete(ActiveMusicTrack.Pause);
+    }
+
+    public static void ResumeBackgroundTrack()
+    {
+        ActiveMusicTrack.Play();
+    }
+
+    public static void ResumeBackgroundTrack(float fadeDuration)
+    {
+        Debug.Assert(fadeDuration > 0,
+            "Invalid fadeDuration: " + fadeDuration + ". Expected positive value.");
+
+        ActiveMusicTrack.volume = 0;
+        ActiveMusicTrack.Play();
+        ActiveMusicTrack.DOFade(cachedPausedMusicVolume, fadeDuration);
     }
 
     public static AudioID PlayBackgroundTrack(AudioClip clip,
@@ -291,11 +329,11 @@ public class AudioManager : RichMonoBehaviour
         //
         ActiveMusicTrack.DOFade(0, options.crossfade); // fade out current track
         ActiveMusicTrack = ActiveMusicTrack == BackgroundMusicTrackA ? // switch active track
-            BackGroundMusicTrackB : BackgroundMusicTrackA; // just alternate tracks
+            BackgroundMusicTrackB : BackgroundMusicTrackA; // just alternate tracks
 
         var key = TrackAudio(ActiveMusicTrack);
         if (!options.loop) // if it's looping, it's up to caller to stop the clip.
-            Instance.StartCoroutine(RemoveSourceAfterClip(clip.length, key)); // free source after time
+            Instance.StartCoroutine(RemoveSourceAfterClip(clip.length, key, source)); // free source after time
         ConfigAudioSource(ActiveMusicTrack, clip, in options);
         return key;
     }
@@ -307,21 +345,17 @@ public class AudioManager : RichMonoBehaviour
     public static void StopSFX(AudioID key, float fadeOutDuration = 0.0f)
     {
         var id = key.ID;
-        if (id < 0) return;//check for invalid key
+        if (id == AudioID.Invalid) return;//check for invalid key
 
         var found = sourceDictionary.TryGetValue(id, out AudioSource source);
 
-        if (found && source)
+        if (found)
         {
-            if (fadeOutDuration > 0.01f)
-            {
-                source.DOFade(0, fadeOutDuration);
-            }
-            else
-            {
-                source.Stop();
-            }
             sourceDictionary.Remove(id);
+            if (fadeOutDuration > 0.01f)
+                source.DOFade(0, fadeOutDuration);
+            else
+                source.Stop();
         }
     }
 
@@ -332,7 +366,7 @@ public class AudioManager : RichMonoBehaviour
             sources[i].Stop();
     }
 
-    public static void StopAllSFXFade(float fadeOutDuration)
+    public static void StopAllSFX(float fadeOutDuration)
     {
         var sources = SFXSources;
         for (var i = sources.Length - 1; i >= 0; --i)
@@ -345,16 +379,25 @@ public class AudioManager : RichMonoBehaviour
     public static void StopAllBackground()
     {
         BackgroundMusicTrackA.Stop();
-        BackGroundMusicTrackB.Stop();
+        BackgroundMusicTrackB.Stop();
     }
 
-    public static void StopAllBackgroundFade(float fadeDuration)
+    public static void StopAllBackground(float fadeDuration)
     {
-        BackgroundMusicTrackA.DOFade(0, fadeDuration)
-            .OnComplete(BackgroundMusicTrackA.Stop);
-        BackGroundMusicTrackB.DOFade(0, fadeDuration)
-            .OnComplete(BackGroundMusicTrackB.Stop);
+        if(BackgroundMusicTrackA.isPlaying)
+            BackgroundMusicTrackA.DOFade(0, fadeDuration)
+                .OnComplete(BackgroundMusicTrackA.Stop);
+
+        if (BackgroundMusicTrackB.isPlaying)
+            BackgroundMusicTrackB.DOFade(0, fadeDuration)
+                .OnComplete(BackgroundMusicTrackB.Stop);
     }
+
+    public void MuteBackgroundTrack(bool muted)
+        => ActiveMusicTrack.mute = muted;
+
+    public void ToggleMuteBackgroundTrack()
+        => ActiveMusicTrack.mute = !ActiveMusicTrack.mute;
 
     #endregion
 }
