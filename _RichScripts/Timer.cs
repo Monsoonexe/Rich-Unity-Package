@@ -2,42 +2,18 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using ScriptableObjectArchitecture;
 using NaughtyAttributes;
 
 /// <summary>
-/// A mostly-accurate timer Mono.
+/// A pretty-accurate timer Mono.
+/// Counts down and raises an event when timer hits 0. Can loop.
 /// </summary>
 public class Timer : RichMonoBehaviour
 {
-    private Coroutine timerRoutine;
-
-    /// <summary>
-    /// Total duration of timer. TOP
-    /// </summary>
-    [Tooltip("Total duration of timer. TOP")]
-    public float TimerDuration = 0;
-
-    /// <summary>
-    /// Time remaining on current loop. COUNTDOWN
-    /// </summary>
-    [Tooltip("Time remaining on current loop. COUNTDOWN")]
-    public float TimeRemaining = 0;
-
-    /// <summary>
-    /// Accumulated time that has elapsed since last Restart() or Init().
-    /// </summary>
-    public float TimeEllapsed { get; private set; }
-
-    /// <summary>
-    /// 0 will effectively pause effect but won't pause coroutine.
-    /// </summary>
-    [Tooltip("0 will effectively pause effect but won't pause coroutine.")]
-    public float timeScale = 1.0f;
+    private bool paused = false;
 
     [ShowNativeProperty]
-    public float PercentComplete { get => (TimerDuration - TimeRemaining) / TimerDuration; }
-
-    private bool paused = false;
     public bool Paused
     {
         get => paused;
@@ -50,12 +26,52 @@ public class Timer : RichMonoBehaviour
         }
     }
 
+    [Header("---Settings---")]
     public bool loop = false;
 
-    [Header("---Events---")]
+    /// <summary>
+    /// Total duration of timer. TOP
+    /// </summary>
+    [Tooltip("Total duration of timer. TOP")]
+    public float TimerDuration = 0;
+
+    /// <summary>
+    /// Time remaining on current loop. COUNTDOWN
+    /// </summary>
+    [Tooltip("Time remaining on current loop. COUNTDOWN")]
+    public FloatReference TimeRemaining = new FloatReference(0);
+
+    /// <summary>
+    /// Accumulated time that has elapsed since last Restart() or Init().
+    /// Not guaranteed to be equal to TimerDuration at end of timer due to deltaTime.
+    /// </summary>
+    [ShowNativeProperty]
+    public float TimeEllapsed { get; private set; }
+
+    /// <summary>
+    /// 0 will effectively pause effect but won't pause coroutine.
+    /// </summary>
+    [Tooltip("0 will effectively pause effect but won't pause coroutine.")]
+    public float timeScale = 1.0f;
+
+    [ShowNativeProperty]
+    public float PercentComplete
+    {
+        get => (TimerDuration - TimeRemaining) / TimerDuration;
+    }
+
+    [Foldout("---Events---")]
     [SerializeField]
     private UnityEvent onTimerExpire = new UnityEvent();
     public UnityEvent OnTimerExpire { get => onTimerExpire; }
+
+    //runtime data
+    private Coroutine timerRoutine;
+
+    private void Reset()
+    {
+        SetDevDescription("Counts down and raises an event when timer hits 0. Can loop.");
+    }
 
     private void OnDisable()
     {
@@ -96,6 +112,7 @@ public class Timer : RichMonoBehaviour
     public void Restart()
         => Initialize(TimerDuration, loop);
     
+    [Button("Start", EButtonEnableMode.Playmode)]
     public void Resume()
     {
         paused = false;
@@ -107,7 +124,7 @@ public class Timer : RichMonoBehaviour
     /// </summary>
     public void ForceCompleteEventually()
     {
-        TimeRemaining = 0;
+        TimeRemaining.Value = 0;
     }
 
     /// <summary>
@@ -120,18 +137,18 @@ public class Timer : RichMonoBehaviour
     {
         do // loop timer
         {
-            TimeRemaining = TimerDuration;//reset timer
+            TimeRemaining.Value = TimerDuration;//reset timer
             TimeEllapsed = 0;
 
             //countdown loop
             while (TimeRemaining > 0)
             {
                 yield return null;//wait for next frame
-                var deltaTime = Time.deltaTime * timeScale;
-                TimeEllapsed += deltaTime;//track total time (in case duration was modified while running)
-                TimeRemaining -= deltaTime;//tick... tick... tick...
+                var scaledDeltaTime = RichAppController.DeltaTime * timeScale;
+                TimeEllapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
+                TimeRemaining.Value -= scaledDeltaTime;//tick... tick... tick...
             }
-
+            TimeRemaining.Value = 0;//set to prevent overshoot
             onTimerExpire.Invoke(); //ring ring ring
         } while (loop);
     }
