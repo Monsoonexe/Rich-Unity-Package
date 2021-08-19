@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   developerDescription: Please enter a description
+  targetData: {fileID: 0}
   myImage: {fileID: 1263785297958966565}
-  sourceValue: {fileID: 0}
 --- !u!114 &1263785297958966565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,7 +72,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a202efd49d4b2a4c87c4c4ea231854b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f82ba0c04f3d2b24690a1421fbca8e50, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
