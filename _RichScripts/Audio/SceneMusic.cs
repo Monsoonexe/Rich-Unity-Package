@@ -1,16 +1,20 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 namespace ProjectEmpiresEdge.Audio
 {
     public class SceneMusic : RichMonoBehaviour
     {
-        [Header("---Scene Audio---")]
-        [SerializeField] private AudioClipReference music;
+        [Header("---Resources---")]
+        [Required]
+        public AudioClipReference music;
+        public AudioClip Clip {get => music.Value; set => music.Value = value;}
 
-        [SerializeField] private bool playOnAwake = false;
+        [Header("---Settings---")]
+        public bool playOnAwake = true;
 
-        [SerializeField] private AudioOptions options = AudioOptions.DefaultBGM;
+        public AudioOptions options = AudioOptions.DefaultBGM;
 
         private AudioID audioID;
 
