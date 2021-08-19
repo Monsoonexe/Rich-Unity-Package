@@ -3,7 +3,11 @@ using TMPro;
 using ScriptableObjectArchitecture;
 using NaughtyAttributes;
 
-public class VariableText : RichUIElement<BaseVariable>
+/// <summary>
+/// Updates a Text element based on value of a Variable.
+/// </summary>
+[SelectionBase]
+public class VariableText : VariableUIElement<BaseVariable>
 {
     [Header("---Scene Refs---")]
     [SerializeField]
@@ -12,17 +16,8 @@ public class VariableText : RichUIElement<BaseVariable>
     
     private void Reset()
     {
+        SetDevDescription("Updates a Text element based on value of a Variable.");
         tmp = GetComponent<TextMeshProUGUI>();
-    }
-
-    protected override void SubscribeToEvents()
-    {
-        targetData.AddListener(UpdateUI);
-    }
-
-    protected override void UnsubscribeFromEvents()
-    {
-        targetData.RemoveListener(UpdateUI);
     }
 
     /// <summary>
