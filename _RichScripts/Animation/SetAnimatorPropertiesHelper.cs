@@ -46,6 +46,12 @@ public class SetAnimatorPropertiesHelper : RichMonoBehaviour
     [SerializeField]
     private PropertyStruct[] properties = null;
 
+    private void Reset()
+    {
+        SetDevDescription("I help rig an Animator to UnityEvents! Rig me to SetBool, or SetFloat.");
+        animator = GetComponent<Animator>();
+    }
+    
     protected override void Awake()
     {
         base.Awake();
