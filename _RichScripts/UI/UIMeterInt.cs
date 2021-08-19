@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using ScriptableObjectArchitecture;
+using NaughtyAttributes;
 
 /// <summary>
 /// Controls a meter fill amount between min and max
 /// </summary>
 [SelectionBase]
-public class UIMeterInt : RichUIElement<IntVariable>
+public class UIMeterInt : VariableUIElement<IntVariable>
 {
     [Header("---Prefab Refs---")]
     [SerializeField]
+    [Required]
     private Image myImage;
 
     /// <summary>
@@ -27,16 +28,6 @@ public class UIMeterInt : RichUIElement<IntVariable>
     {
         if (targetData != null && !targetData.Clampable)
             Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + targetData.name, this);
-    }
-
-    protected override void SubscribeToEvents()
-    {
-        targetData.AddListener(UpdateUI);
-    }
-
-    protected override void UnsubscribeFromEvents()
-    {
-        targetData.RemoveListener(UpdateUI);
     }
 
     /// <summary>
