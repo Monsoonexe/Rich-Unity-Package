@@ -39,7 +39,7 @@ public class Gravity : RichMonoBehaviour
         HandleGroundDetection();
         if(!IsGrounded)
         {
-            var step = gravityVector * RichGameController.FixedDeltaTime;
+            var step = gravityVector * RichAppController.FixedDeltaTime;
             myTransform.position += step;
         }
     }

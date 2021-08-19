@@ -5,7 +5,7 @@ using Signals;
 /// <summary>
 /// 
 /// </summary>
-public class RichGameController : RichMonoBehaviour
+public class RichAppController : RichMonoBehaviour
 {
     /// <summary>
     /// Time.deltaTime that has been cached and un-marshalled.
@@ -18,6 +18,11 @@ public class RichGameController : RichMonoBehaviour
     public static float Time { get; private set; }
     
     public static float FixedDeltaTime { get; private set; }
+
+    private void Reset()
+    {
+        SetDevDescription("I control app-level stuff");
+    }
 
     protected override void Awake()
     {
@@ -53,7 +58,7 @@ public class RichGameController : RichMonoBehaviour
 
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
-            SceneManager.GetActiveScene().name);
+            SceneManager.GetActiveScene().buildIndex);
 }
 
 /// <summary>
