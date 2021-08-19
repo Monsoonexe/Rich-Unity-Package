@@ -36,29 +36,7 @@ public class RichMonoBehaviour : MonoBehaviour
     public new Transform transform { get => myTransform; }
 
     protected virtual void Awake()
-        => myTransform = this.GetComponent<Transform>();
-
-    /// <summary>
-    /// Delete this Mono's GameObject.
-    /// </summary>
-    /// <remarks>Useful for hooking to event.</remarks>
-    public void DestroyGameObject() => Destroy(gameObject);
-    public void DestroyComponent() => Destroy(this);
-    public void DontDestroyOnLoad()
-    {
-        myTransform.SetParent(null);
-        DontDestroyOnLoad(gameObject);
-    }
-
-    //useful for delegates and events
-    public void Enable() => this.enabled = true;
-    public void Disable() => this.enabled = false;
-    public void SetEnabled(bool enabled) => this.enabled = enabled;
-
-    //useful for delegates and events
-    public void SetActiveTrue() => gameObject.SetActive(true);
-    public void SetActiveFalse() => gameObject.SetActive(false);
-    public void SetActive(bool active) => gameObject.SetActive(active);
+        => myTransform = GetComponent<Transform>();
 
     /// <summary>
     /// Set a reference to a singleton to the given instance if valid.
