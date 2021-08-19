@@ -8,6 +8,7 @@ using ScriptableObjectArchitecture;
 /// </summary>
 /// <remarks>Kind of gangster since it steps over the owner
 /// of the TMPText, but at least it only changes color.</remarks>
+[SelectionBase]
 public class PayoutBehaviour : RichMonoBehaviour
 {
     [Header("---Settings---")]

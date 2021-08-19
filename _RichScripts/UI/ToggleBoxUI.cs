@@ -5,6 +5,7 @@ using ScriptableObjectArchitecture;
 /// <summary>
 /// Say something!
 /// </summary>
+[SelectionBase]
 public class ToggleBoxUI : VariableText
 {
     [Header("---Toggle State---")]

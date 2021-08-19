@@ -2,6 +2,7 @@
 using TMPro;
 using ScriptableObjectArchitecture;
 
+[SelectionBase]
 [RequireComponent(typeof(TMP_InputField))]
 public class InputFieldToScriptable : RichUIElement<BaseVariable>
 {

@@ -6,6 +6,7 @@ using NaughtyAttributes;
 /// <summary>
 /// Writes int with settings to a single ui text.
 /// </summary>
+[SelectionBase]
 public class FormattableIntUIElement : RichUIElement<IntVariable>
 {
     private enum Format
