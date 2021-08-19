@@ -8,7 +8,8 @@ using NaughtyAttributes;
 /// </summary>
 /// <seealso cref="VariableText"/>
 /// <seealso cref="FormattableIntUIElement"/>
-public class VariableIntText : RichUIElement<IntVariable>
+[SelectionBase]
+public class VariableIntText : VariableUIElement<IntVariable>
 {
     [Header("---Scene Refs---")]
     [SerializeField]
@@ -18,23 +19,12 @@ public class VariableIntText : RichUIElement<IntVariable>
     
     private void Reset()
     {
+        SetDevDescription("Displays an IntVariable's value with a TMP.");
         textElement = GetComponent<TextMeshProUGUI>();
-    }
-
-    protected override void SubscribeToEvents()
-    {
-        targetData.AddListener(UpdateUI);
-    }
-
-    protected override void UnsubscribeFromEvents()
-    {
-        targetData.RemoveListener(UpdateUI);
     }
 
     [Button]
     public override void UpdateUI()
-    {
-        textElement.text = ConstStrings.GetCachedString(targetData);
-    }
+        => textElement.text = ConstStrings.GetCachedString(targetData);
 
 }
