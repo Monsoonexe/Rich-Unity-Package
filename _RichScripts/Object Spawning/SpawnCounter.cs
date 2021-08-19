@@ -26,17 +26,18 @@ public class SpawnCounter : RichMonoBehaviour
                 UpdateSpawnCount();
         }
     }
-    
+
     protected override void Awake()
     {
         base.Awake();
         objectPool = GetComponent<GameObjectPool>();
-        objectPool.poolParent = myTransform;
+        objectPool.InitPool();
     }
 
     private void OnEnable()
     {
         targetData.AddListener(UpdateSpawnCount);
+        UpdateSpawnCount();
     }
     private void OnDisable()
     {
@@ -47,18 +48,22 @@ public class SpawnCounter : RichMonoBehaviour
     public void UpdateSpawnCount()
     {
         //need to create more
-        while(targetData.Value > objectPool.InUseCount)
+        while (targetData.Value > objectPool.InUseCount)
         {
             var item = objectPool.Depool();//(spawn)
             if (item == null) break;//pool is exhausted
         }
 
         //have too many
-        while(targetData.Value < objectPool.InUseCount)
+        while (targetData.Value < objectPool.InUseCount)
         {
-            var itemInUse = objectPool.Manifest.Find(
-                (obj) => obj.activeSelf == true);//look for an active item
-            if (itemInUse == null) break;//break if 0
+            //local function to avoid lambda
+            bool IsGameObjectActive(GameObject obj)
+                => obj.activeSelf == true;
+
+            //look for an active item
+            var itemInUse = objectPool.Manifest.Find(IsGameObjectActive);
+            if (itemInUse == null) break;//break if not found
             objectPool.Enpool(itemInUse);//return to pool (despawn)
         }
     }
