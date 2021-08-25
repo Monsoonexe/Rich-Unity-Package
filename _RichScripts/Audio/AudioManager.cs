@@ -5,11 +5,16 @@ using UnityEngine.Audio;
 using DG.Tweening;
 using ScriptableObjectArchitecture;
 
+/* TODO - cache fade tweens for less overhead
+ * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
+ */ 
+
+/// <summary>
+/// This class handles pooling AudioSources for static audio (audio not 
+/// affected by distance from Listener).
+/// </summary>
 public class AudioManager : RichMonoBehaviour
 {
-    //consts
-    private static readonly string AUDIO_MANAGER = "AudioManager";
-
     //singleton
     private static AudioManager Instance;
 
@@ -19,17 +24,20 @@ public class AudioManager : RichMonoBehaviour
     /// </summary>
     public static bool IsInitialized { get; private set; }
 
-    [Header("---Audio Manager---")]
-    [SerializeField] private AudioMixer audioMixer;
+    [Header("---Settings---")]
+    [SerializeField] private int sfxAudioSourceCount = 6;
 
-    [SerializeField]
-    private int sfxAudioSourceCount = 6;
-
-    private AudioSource[] SFXAudioSources;
-    private static AudioSource[] SFXSources { get => Instance.SFXAudioSources; }
+    [SerializeField] private Ease fadeEase = Ease.Linear;
+    private static Ease FadeEase => Instance.fadeEase;
 
     [SerializeField] private Vector2 pitchShiftRange = new Vector2(0.8f, 1.2f);
     private static Vector2 PitchShiftRange { get => Instance.pitchShiftRange; }
+
+    [Header("---Resources---")]
+    [SerializeField] private AudioMixer audioMixer;
+
+    private AudioSource[] SFXAudioSources;
+    private static AudioSource[] SFXSources { get => Instance.SFXAudioSources; }
 
     //[Header("---Background Music Sources---")]
     private AudioSource backgroundMusicTrackA;
@@ -149,7 +157,8 @@ public class AudioManager : RichMonoBehaviour
         if (options.crossfade > 0)
         {
             source.volume = 0;
-            source.DOFade(options.volume, options.crossfade); // fade in
+            source.DOFade(options.volume, options.crossfade)
+                .SetEase(FadeEase); // fade in
         }
         else
             source.volume = options.volume;
@@ -165,7 +174,7 @@ public class AudioManager : RichMonoBehaviour
     /// <param name="key"></param>
     /// <returns></returns>
     private static IEnumerator RemoveSourceAfterClip(float clipLength, 
-        AudioID key, AudioSource)
+        AudioID key, AudioSource source)
     {
         //TODO - don't 'new' 
         yield return new WaitForSeconds(clipLength); // wait until duration over
@@ -187,12 +196,11 @@ public class AudioManager : RichMonoBehaviour
     {
         if (!Instance)
         {
-            var prefab = Resources.Load<AudioManager>(AUDIO_MANAGER);
+            var prefab = Resources.Load<AudioManager>("AudioManager");
 #if UNITY_EDITOR
             UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
 #else
             Instantiate(prefab);
-            //new GameObject(AUDIO_MANAGER).AddComponent<AudioManager>();
 #endif
         }
     }
@@ -248,7 +256,7 @@ public class AudioManager : RichMonoBehaviour
         //find an audio source with the lowest volume, or that is not playing
         var size = SFXSources.Length;
         var sources = SFXSources;
-        var lowestVolume = 1.0f;
+        var lowestPriority = 255; //[0 - 255]
         var lowestIndex = 0;
         AudioSource source = null;
 
@@ -262,10 +270,10 @@ public class AudioManager : RichMonoBehaviour
                 break;
             }
 
-            //try to override quietest volume
-            else if (source.volume < lowestVolume)
+            //try to override lowest priority
+            else if (source.priority < lowestPriority)
             {
-                lowestVolume = source.volume;
+                lowestPriority = source.priority;
                 lowestIndex = i;
             }
         }
@@ -296,6 +304,7 @@ public class AudioManager : RichMonoBehaviour
 
         cachedPausedMusicVolume = ActiveMusicTrack.volume;
         ActiveMusicTrack.DOFade(0, fadeDuration)
+            .SetEase(FadeEase)
             .OnComplete(ActiveMusicTrack.Pause);
     }
 
@@ -311,7 +320,8 @@ public class AudioManager : RichMonoBehaviour
 
         ActiveMusicTrack.volume = 0;
         ActiveMusicTrack.Play();
-        ActiveMusicTrack.DOFade(cachedPausedMusicVolume, fadeDuration);
+        ActiveMusicTrack.DOFade(cachedPausedMusicVolume, fadeDuration)
+            .SetEase(FadeEase);
     }
 
     public static AudioID PlayBackgroundTrack(AudioClip clip,
@@ -327,13 +337,15 @@ public class AudioManager : RichMonoBehaviour
             options = AudioOptions.DefaultBGM;
 
         //
-        ActiveMusicTrack.DOFade(0, options.crossfade); // fade out current track
+        ActiveMusicTrack.DOFade(0, options.crossfade)
+            .SetEase(FadeEase); // fade out current track
         ActiveMusicTrack = ActiveMusicTrack == BackgroundMusicTrackA ? // switch active track
             BackgroundMusicTrackB : BackgroundMusicTrackA; // just alternate tracks
 
         var key = TrackAudio(ActiveMusicTrack);
         if (!options.loop) // if it's looping, it's up to caller to stop the clip.
-            Instance.StartCoroutine(RemoveSourceAfterClip(clip.length, key, source)); // free source after time
+            Instance.StartCoroutine(RemoveSourceAfterClip(
+                clip.length, key, ActiveMusicTrack)); // free source after time
         ConfigAudioSource(ActiveMusicTrack, clip, in options);
         return key;
     }
@@ -353,7 +365,8 @@ public class AudioManager : RichMonoBehaviour
         {
             sourceDictionary.Remove(id);
             if (fadeOutDuration > 0.01f)
-                source.DOFade(0, fadeOutDuration);
+                source.DOFade(0, fadeOutDuration)
+                .SetEase(FadeEase);
             else
                 source.Stop();
         }
@@ -372,6 +385,7 @@ public class AudioManager : RichMonoBehaviour
         for (var i = sources.Length - 1; i >= 0; --i)
         {
             sources[i].DOFade(0, fadeOutDuration)
+                .SetEase(FadeEase)
                 .OnComplete(sources[i].Stop);
         }
     }
@@ -386,10 +400,12 @@ public class AudioManager : RichMonoBehaviour
     {
         if(BackgroundMusicTrackA.isPlaying)
             BackgroundMusicTrackA.DOFade(0, fadeDuration)
+                .SetEase(FadeEase)
                 .OnComplete(BackgroundMusicTrackA.Stop);
 
         if (BackgroundMusicTrackB.isPlaying)
             BackgroundMusicTrackB.DOFade(0, fadeDuration)
+                .SetEase(FadeEase)
                 .OnComplete(BackgroundMusicTrackB.Stop);
     }
 
