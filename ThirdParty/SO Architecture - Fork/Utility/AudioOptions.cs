@@ -11,6 +11,7 @@ public struct AudioOptions
     #region Constants
 
     public const float DEFAULT_BGM_CROSSFADE = 2.5f;
+    public const int PRIORITY_UI = 50;
 
     #endregion  
 
@@ -47,10 +48,10 @@ public struct AudioOptions
     public float volume;
 
     /// <summary>
-    /// 1 (high) - 256 (low).
+    /// 0 (high) - 255 (low).
     /// </summary>
-    [Tooltip("1 (hi) - 256 (lo).")]
-    [Range(1, 256)]
+    [Tooltip("0 (hi) - 255 (lo).")]
+    [Range(0, 255)]
     public int priority;
 
     #region Constructors
