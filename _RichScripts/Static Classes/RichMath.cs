@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 public static class RichMath
 {
@@ -33,25 +34,31 @@ public static class RichMath
     /// <summary>
     /// Clamps IComparable value
     /// </summary> 
-    public static T Clamp<T>(T value, T min, T max) where T : IComparable<T>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Clamp<T>(T value, T min, T max) 
+        where T : IComparable<T>
         => value.CompareTo(max) > 0 ?
             max : value.CompareTo(min) < 0 ?
             min : value;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Clamp(int value, int min, int max)
-        => value.CompareTo(max) > 0 ?
-            max : value.CompareTo(min) < 0 ?
-            min : value;
+        => value > max ? max 
+            : value < min ? min 
+            : value;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max)
-        => value.CompareTo(max) > 0 ?
-            max : value.CompareTo(min) < 0 ?
-            min : value;
+        => value > max ? max 
+            : value < min ? min 
+            : value;
 
-    public static double Clamp(double value, double min, double max)
-        => value.CompareTo(max) > 0 ?
-            max : value.CompareTo(min) < 0 ?
-            min : value;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double Clamp(double value, double min, 
+        double max)
+        => value > max ? max 
+            : value < min ? min 
+            : value;
 
     #endregion
 
@@ -61,6 +68,7 @@ public static class RichMath
     /// Runs ~twice as fast as Mathf.Abs().
     /// </summary>
     /// <returns>Because Mathf.Abs() is managed code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int AbsoluteValue(int i)
         => i >= 0 ? i : -i;
 
@@ -68,20 +76,26 @@ public static class RichMath
     /// Runs ~twice as fast as Mathf.Abs().
     /// </summary>
     /// <returns>Because Mathf.Abs() is managed code.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float AbsoluteValue(float f)
         => f >= 0 ? f : -f;
 
-    public static Vector2 AbsoluteValue(this Vector2 v)
-        => new Vector2(AbsoluteValue(v.x), AbsoluteValue(v.y));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector2 AbsoluteValue(in Vector2 v)
+        => new Vector2(AbsoluteValue(v.x), 
+            AbsoluteValue(v.y));
 
-    public static Vector3 AbsoluteValue(Vector3 v)
-        => new Vector3(AbsoluteValue(v.x), AbsoluteValue(v.y), AbsoluteValue(v.z));
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Vector3 AbsoluteValue(in Vector3 v)
+        => new Vector3(AbsoluteValue(v.x), 
+            AbsoluteValue(v.y), AbsoluteValue(v.z));
 
     /// <summary>
     /// f = |f|
     /// </summary>
     /// <param name="f"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetAbsoluteValue(this ref float f)
         => f = f >= 0 ? f : -f;
 
@@ -89,20 +103,29 @@ public static class RichMath
 
     #region Min/Max
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Min(int x, int y) => x < y ? x : y;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Max(int x, int y) => x > y ? x : y;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Min(float x, float y) => x < y ? x : y;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Max(float x, float y) => x > y ? x : y;
-    
+
     /// <summary>
     /// Returns true if x is in inverval [min, max].
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsWithin(int x, int min, int max)
         => (x >= min && x <= max);
 
     /// <summary>
     /// Returns true if x is in inverval [min, max].
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsWithin(float x, float min, float max)
         => (x >= min && x <= max);
 
@@ -116,10 +139,13 @@ public static class RichMath
     /// <param name="a"></param>
     /// <param name="decimalDigits"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Round(float a, int decimalDigits)
-        => (float)Math.Round(a, decimalDigits, 
+        => (float)Math.Round(
+            a, decimalDigits, 
             MidpointRounding.AwayFromZero);//Like elementary school
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float MoveDecimalRight(float a, int places)
     {
         var truncator = 1.0f;//start at 1 for multiply
@@ -131,6 +157,7 @@ public static class RichMath
         return a * truncator;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float MoveDecimalLeft(float a, int places)
     {
         var truncator = 1.0f;//start at 1 for multiply
@@ -142,6 +169,7 @@ public static class RichMath
         return a / truncator;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static float GetPowerOfTen(int power)
     {
         var factor = 1.0f;//start at 1 for multiply
@@ -190,45 +218,40 @@ public static class RichMath
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToDeg(this float v)
-    {
-        return v * RAD_2_DEG;
-    }
+        => v * RAD_2_DEG;
+    
     /// <summary>
     /// Converts radians to degrees
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double ToDeg(this double v)
-    {
-        return v * RAD_2_DEG;
-    }
+        => v * RAD_2_DEG;
+
     /// <summary>
     /// Converts degrees to radians
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float ToRad(this float v)
-    {
-        return v * DEG_2_RAD;
-    }
+        => v * DEG_2_RAD;
+
     /// <summary>
     /// Converts degrees to radians
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double ToRad(this double v)
-    {
-        return v * DEG_2_RAD;
-    }
+        => v * DEG_2_RAD;
     
     #endregion
 
     public static int GreatestCommonDenominator(int a, int b)
-    {
-        //base case
-        if(a == 0) return b;
-        else if (b == 0) return a;
-        return GreatestCommonDenominator(b, a % b);
-    }
+        => a == 0 ? b : b == 0 ? a 
+            : GreatestCommonDenominator(b, a % b);
 }
