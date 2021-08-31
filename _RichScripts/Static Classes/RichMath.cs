@@ -117,8 +117,7 @@ public static class RichMath
     /// <param name="decimalDigits"></param>
     /// <returns></returns>
     public static float Round(float a, int decimalDigits)
-        => (float)Math.Round(
-            a, decimalDigits, 
+        => (float)Math.Round(a, decimalDigits, 
             MidpointRounding.AwayFromZero);//Like elementary school
 
     public static float MoveDecimalRight(float a, int places)
