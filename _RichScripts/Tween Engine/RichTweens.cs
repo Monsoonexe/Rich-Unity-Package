@@ -2,6 +2,12 @@
 using System.Collections;
 using UnityEngine;
 
+/*
+    TODO - make sure RichAppController exists in scene.
+
+
+*/
+
 namespace RichPackage.Tweening
 {
     public static class RichTweens
@@ -51,12 +57,11 @@ namespace RichPackage.Tweening
 
         public static void Init()
         {
-            if (IsInitialized) return;
-
-            var tweenObj = new GameObject("RichTween Utility");
-            tweenHolder = tweenObj.AddComponent<TweenHolder>();
-            UnityEngine.Object.DontDestroyOnLoad(tweenObj);
-            IsInitialized = true;
+            if (!IsInitialized)
+            {
+                tweenHolder = TweenHolder.Construct();
+                IsInitialized = true;
+            }
         }
 
         /// <summary>

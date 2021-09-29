@@ -27,4 +27,12 @@ public class TweenHolder : RichMonoBehaviour
     {
         StopAllCoroutines();
     }
+    
+    public static TweenHolder Construct()
+    {
+        var tweenObj = new GameObject("RichTween TweenHolder");
+        var tweenHolder = tweenObj.AddComponent<TweenHolder>();
+        DontDestroyOnLoad(tweenObj);
+        return tweenHolder;
+    }
 }
