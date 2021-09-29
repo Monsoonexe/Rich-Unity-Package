@@ -29,4 +29,6 @@ public abstract class ATransitionComponent : RichMonoBehaviour
     public abstract void Animate(Transform targetXform, Action onCompleteCallback = null);
 
     public abstract void Stop();
+    
+    public void Play() => Animate(myTransform);
 }
