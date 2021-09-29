@@ -5,9 +5,30 @@ using ScriptableObjectArchitecture;
 
 namespace RichPackage.Editor
 {
+    using Debug = UnityEngine.Debug;
     public static class SceneMenu
-    {
+    {        
+        private const string scriptFilePath = "Assets/RichPackage/Editor/SceneMenu.cs";
+
         #region Menu Items
+        [MenuItem("Scenes/Open SceneMenu.cs")]
+        public static void OpenSceneMenuScript()
+        {
+            var scriptFile = AssetDatabase.LoadAssetAtPath<MonoScript>(
+                scriptFilePath);
+
+            if(scriptFile == null)
+            {
+                //complain
+                Debug.Log("SceneMenu.cs not found! Check path at "
+                + scriptFilePath);
+            }
+            else
+            {
+                //open script in default IDE [Visual Studio]
+                AssetDatabase.OpenAsset(scriptFile);
+            }
+        }
 
         [MenuItem("Scenes/Reload Current Scene")]
         public static void ReloadCurrentScene()
@@ -23,11 +44,11 @@ namespace RichPackage.Editor
         public static void LoadScene(string scenePath)
         {
             //prompt to save
-            EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
-
-            //actually change scenes
-            EditorSceneManager.OpenScene(scenePath);
-        }
+            if(EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                //actually change scenes
+                EditorSceneManager.OpenScene(scenePath);
+            }//if "cancel", do not change scenes.
 
         /// <summary>
         /// Load a scene and prompt User to save the scene.
