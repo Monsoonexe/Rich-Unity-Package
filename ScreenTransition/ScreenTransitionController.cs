@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 using NaughtyAttributes;
+using Sirenix.OdinInspector;
+
+//clarifications
+using Button = Sirenix.OdinInspector.ButtonAttribute;
+using Required = Sirenix.OdinInspector.RequiredAttribute;
 
 /* TODO - Spawn from Resources
  * Fix [Button] attributes not working
@@ -19,7 +24,7 @@ namespace RichPackage.UI
         private const float DEFAULT_DURATION = 1.0f;
 
         [Header("---Prefab Refs---")]
-        [SerializeField]
+        [SerializeField, Required]
         private Animator myAnimator;
 
         /// <summary>
@@ -39,43 +44,52 @@ namespace RichPackage.UI
         #region Animator Params
 
         //parameters
-        [Header("---Parameters---")]
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int FADE_IN;
         public int FadeInMessage { get => FADE_IN; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int FADE_OUT;
         public int FadeOutMessage { get => FADE_OUT; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int HIDE;
         public int HideMessage { get => HIDE; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int HORIZONTAL_WIPE_IN;
         public int HorizontalWipeInMessage { get => HORIZONTAL_WIPE_IN; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int HORIZONTAL_WIPE_OUT;
         public int HorizontalWipeOutMessage { get => HORIZONTAL_WIPE_OUT; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int SHOW;
         public int ShowMessage { get => SHOW; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int SPIN_LOCK_IN;
         public int SpinLockInMessage { get => SPIN_LOCK_IN; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int SPIN_LOCK_OUT;
         public int SpinLockOutMessage { get => SPIN_LOCK_OUT; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int VERTICAL_WIPE_IN;
         public int VerticalWipeInMessage { get => VERTICAL_WIPE_IN; }
 
+        [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam("myAnimator")]
         private int VERTICAL_WIPE_OUT;
         public int VerticalWipeOutMessage { get => VERTICAL_WIPE_OUT; }
@@ -119,10 +133,16 @@ namespace RichPackage.UI
         #region Transition API
 
         /// <summary>
-        /// Use at own risk. Prefer to use explicit functions instead.
+        /// Can call string directly if known. Otherwise, just use a function.
         /// </summary>
-        /// <param name="trigger"></param>
+        [Button, DisableInEditorMode]
         public void TriggerTransition(string trigger)
+            => myAnimator.SetTrigger(trigger);
+
+        /// <summary>
+        /// Can call string directly if known. Otherwise, just use a function.
+        /// </summary>
+        public void TriggerTransition(int trigger)
             => myAnimator.SetTrigger(trigger);
 
         /// <summary>
@@ -135,43 +155,54 @@ namespace RichPackage.UI
             myAnimator.SetTrigger(trigger);
         }
 
-        [Button(null, EButtonEnableMode.Editor)]
+        /// <summary>
+        /// Can call string directly if known. Otherwise, just use a function.
+        /// </summary>
+        public void TriggerTransition(int trigger, float duration)
+        {
+            SetAnimationSpeed(duration);
+            myAnimator.SetTrigger(trigger);
+        }
+
+        [Button, DisableInEditorMode, ButtonGroup("IN")]
         public void FadeIn()
             => myAnimator.SetTrigger(FADE_IN);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode, ButtonGroup("OUT")]
         public void FadeOut()
             => myAnimator.SetTrigger(FADE_OUT);
 
-        [Button(null, EButtonEnableMode.Playmode)]
-        public void HideScene()
-            => myAnimator.SetTrigger(HIDE);
-
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button("HorWipeIn"), DisableInEditorMode, ButtonGroup("IN")]
         public void HorizontalWipeIn()
             => myAnimator.SetTrigger(HORIZONTAL_WIPE_IN);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button("HorWipeOut"), DisableInEditorMode, ButtonGroup("OUT")]
         public void HorizontalWipeOut()
             => myAnimator.SetTrigger(HORIZONTAL_WIPE_OUT);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode, ButtonGroup("OUT")]
+        public void HideScene()
+            => myAnimator.SetTrigger(HIDE);
+
+        [Button, DisableInEditorMode, ButtonGroup("IN")]
         public void ShowScene()
             => myAnimator.SetTrigger(SHOW);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode, ButtonGroup("IN")]
         public void SpinLockIn()
             => myAnimator.SetTrigger(SPIN_LOCK_IN);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode, ButtonGroup("OUT")]
         public void SpinLockOut()
             => myAnimator.SetTrigger(SPIN_LOCK_OUT);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button("VertWipeIn"), DisableInEditorMode,
+            ButtonGroup("IN")]
         public void VerticalWipeIn()
             => myAnimator.SetTrigger(VERTICAL_WIPE_IN);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button("VertWipeOut"), DisableInEditorMode,
+            ButtonGroup("OUT")]
         public void VerticalWipeOut()
             => myAnimator.SetTrigger(VERTICAL_WIPE_OUT);
 
