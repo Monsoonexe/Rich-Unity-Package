@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using ScriptableObjectArchitecture;
 
 public delegate void RaycastListener(in RaycastHit hitInfo);
 
@@ -46,8 +46,11 @@ public class RaycastDetector : RichMonoBehaviour
     [Header("---Events---")]
     [SerializeField]
     protected UnityEvent onDetected = new UnityEvent();
+    public UnityEvent OnDetected => onDetected;
 
-    public UnityEvent OnDetected { get => onDetected; }
+    [SerializeField]
+    private BoolUnityEvent raycastUpdateEvent = new BoolUnityEvent();
+    public BoolUnityEvent RaycastUpdateEvent => raycastUpdateEvent;
 
     public event RaycastListener OnHitDetected;
 
@@ -91,6 +94,8 @@ public class RaycastDetector : RichMonoBehaviour
             detectDistance, raycastLayerMask,
             detectTriggers);
 
+        //alert
+        raycastUpdateEvent.Invoke(rayHitSomething);
         if (rayHitSomething)
             OnHitDetected(hitInfo);
     }
