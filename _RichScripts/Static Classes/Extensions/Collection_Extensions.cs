@@ -54,6 +54,17 @@ public static class Collection_Extensions
             "on: {2}", //report name of problem mono
             index, collection.Count, name);
 
+    /// <summary>
+    /// Returns 'true' if the dictionary contains the given key, which indicates the value was removed.
+    /// Otherwise, returns false. Will not throw exception if key does not exist.
+    /// </summary>
+    public static bool Remove<TKey, UValue>(this Dictionary<TKey, UValue> dic, 
+        TKey key, out UValue value)
+    {
+        var found = dic.TryGetValue(key, out value);
+        if(found) dic.Remove(key);
+        return found;
+    }
 
     #region Average
 
