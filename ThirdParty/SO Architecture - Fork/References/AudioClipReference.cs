@@ -8,7 +8,10 @@ namespace ScriptableObjectArchitecture
         private AudioOptions options = AudioOptions.DefaultSFX;
 
         public AudioClipReference() : base() { }
-        public AudioClipReference(AudioClip value) : base(value) { }
+        public AudioClipReference(AudioClip value) : base(value)
+        {
+            options = AudioOptions.DefaultSFX;
+        }
 
         public AudioClipReference(AudioClip value, AudioOptions options)
             : base(value)
