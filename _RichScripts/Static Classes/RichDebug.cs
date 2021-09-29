@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using UnityEngine;
 
-namespace RichPackage.Debug
+namespace RichPackage.RichDebug
 {
     using Debug = UnityEngine.Debug;//clarify which static class
 
