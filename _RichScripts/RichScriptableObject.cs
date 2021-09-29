@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 
 /// <summary>
 /// Common base class for scriptable objects.
@@ -6,13 +7,21 @@
 public class RichScriptableObject : ScriptableObject
 {
 #if UNITY_EDITOR
-    [SerializeField]
-    [TextArea]
-#pragma warning disable 0414
-    private string developerDescription = "Enter a description";
-#pragma warning restore 
-
+    [SerializeField, TextArea]
+    private string developerDescription = "Please enter a description or a note.";
 #endif
+
+    /// <summary>
+    /// This call will be stripped out of Builds. Use anywhere.
+    /// </summary>
+    /// <param name="newDes"></param>
+    [Conditional("UNITY_EDITOR")]
+    public void SetDevDescription(string newDes)
+    {
+#if UNITY_EDITOR
+        developerDescription = newDes;
+#endif
+    }
 
 }
 

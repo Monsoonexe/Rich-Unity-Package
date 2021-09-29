@@ -5,11 +5,8 @@ using UnityEngine;
 public class RichMonoBehaviour : MonoBehaviour
 {
 #if UNITY_EDITOR
-#pragma warning disable 0414
-    [SerializeField]
-    [TextArea]
+    [SerializeField, TextArea]
     private string developerDescription = "Please enter a description or a note.";
-#pragma warning restore
 #endif
 
     /// <summary>
@@ -45,7 +42,8 @@ public class RichMonoBehaviour : MonoBehaviour
     /// <param name="instance"></param>
     /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
     /// <returns>False if a SingletonError occured.</returns>
-    protected static bool InitSingleton<T>(T instance, ref T singletonRef, bool dontDestroyOnLoad = true)
+    protected static bool InitSingleton<T>(T instance, ref T singletonRef, 
+        bool dontDestroyOnLoad = true)
         where T : RichMonoBehaviour
     {
         var valid = true; //return value
