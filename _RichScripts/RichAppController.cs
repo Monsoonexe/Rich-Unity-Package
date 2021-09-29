@@ -1,12 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Signals;
 
 /// <summary>
-/// 
+/// I control the application-level behaviour.
 /// </summary>
+/// <seealso cref="GameController"/>
 public class RichAppController : RichMonoBehaviour
 {
+    private static RichAppController instance;
+    public static RichAppController Instance => instance;
+
     /// <summary>
     /// Time.deltaTime that has been cached and un-marshalled.
     /// </summary>
@@ -19,6 +24,16 @@ public class RichAppController : RichMonoBehaviour
     
     public static float FixedDeltaTime { get; private set; }
 
+    /// <summary>
+    /// Another way to subscribe to SceneManager.sceneLoaded event.
+    /// </summary>
+    public event Action OnLevelLoaded;
+
+    private void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
+    {
+        OnLevelLoaded?.Invoke();
+    }
+
     private void Reset()
     {
         SetDevDescription("I control app-level stuff");
@@ -26,12 +41,16 @@ public class RichAppController : RichMonoBehaviour
 
     protected override void Awake()
     {
+        base.Awake();
+        instance = this;//low-key singleton
         GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
+        SceneManager.sceneLoaded += SceneLoadedHandler;
     }
 
     private void OnDestroy()
     {
         GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
+        SceneManager.sceneLoaded -= SceneLoadedHandler;
     }
 
     public void QuitGame()
