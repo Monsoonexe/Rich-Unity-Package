@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using UnityEngine;
 
 namespace RichPackage.RichDebug
 {
@@ -11,12 +10,10 @@ namespace RichPackage.RichDebug
     /// </summary>
     public static class RichDebug
     {
-        public const string UNITY_EDITOR = "UNITY_EDITOR";
-
         /// <summary>
         /// Only Logs in Editor. Removed from Builds.
         /// </summary>
-        [Conditional(UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void EditorLog(string message)
         {
             Debug.Log(message);
@@ -25,7 +22,7 @@ namespace RichPackage.RichDebug
         /// <summary>
         /// Only Logs in Editor. Removed from Builds.
         /// </summary>
-        [Conditional(UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void EditorLog(string message, UnityEngine.Object context)
         {
             Debug.Log(message, context);
@@ -37,18 +34,18 @@ namespace RichPackage.RichDebug
         /// results in your build.
         /// </summary>
         /// <param name="editorAction"></param>
-        [Conditional(UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void OnlyDoInEditor(Action editorAction)
             => editorAction();
 
-        [Conditional(UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void AssertNotNull<T>(T someRef)
             where T : class
             => Debug.AssertFormat(someRef != null,
                 "Reference not set for: {0} ",
                 typeof(T).Name);
 
-        [Conditional(UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void AssertMyRefNotNull<T, U>(T caller, U someRef)
             where T : class
             => Debug.AssertFormat(someRef != null,
