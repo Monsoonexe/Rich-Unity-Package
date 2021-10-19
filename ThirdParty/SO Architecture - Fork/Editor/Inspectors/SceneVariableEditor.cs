@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 
 namespace ScriptableObjectArchitecture.Editor
 {
@@ -22,8 +23,24 @@ namespace ScriptableObjectArchitecture.Editor
             serializedObject.Update();
 
             DrawValue();
-            DrawDeveloperDescription();
-        }
+			EditorGUILayout.Space(15);
+			DrawDeveloperDescription();
+			EditorGUILayout.Space(10);
+			var sceneVariable = (SceneVariable)target;
+			//button to open scene
+			if (!string.IsNullOrEmpty(sceneVariable.Value.ScenePath))
+			{
+				if (GUILayout.Button("Open Scene"))
+				{
+					//prompt to save
+					if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+					{
+						//actually change scenes
+						EditorSceneManager.OpenScene(sceneVariable.Value.ScenePath);
+					}//if "cancel", do not change scenes.
+				}
+			}
+		}
         protected override void DrawValue()
         {
             var sceneVariable = (SceneVariable)target;
@@ -31,14 +48,14 @@ namespace ScriptableObjectArchitecture.Editor
             if (sceneVariable.Value.Scene == null)
             {
                 EditorGUILayout.HelpBox(SCENE_NOT_ASSIGNED_WARNING, MessageType.Warning);
-            }
-            else if (!sceneVariable.Value.IsSceneInBuildSettings)
+			}
+			else if (!sceneVariable.Value.IsSceneEnabled)
+			{
+				EditorGUILayout.HelpBox(SCENE_NOT_ENABLED_IN_BUILD_SETTINGS_WARNING, MessageType.Warning);
+			}
+			else if (!sceneVariable.Value.IsSceneInBuildSettings)
             {
                 EditorGUILayout.HelpBox(SCENE_NOT_IN_BUILD_SETTINGS_WARNING, MessageType.Warning);
-            }
-            else if(!sceneVariable.Value.IsSceneEnabled)
-            {
-                EditorGUILayout.HelpBox(SCENE_NOT_ENABLED_IN_BUILD_SETTINGS_WARNING, MessageType.Warning);
             }
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(sceneInfoProperty);
@@ -46,9 +63,6 @@ namespace ScriptableObjectArchitecture.Editor
             {
                 EditorUtility.SetDirty(target);
             }
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
         }
 
         public override bool RequiresConstantRepaint()
