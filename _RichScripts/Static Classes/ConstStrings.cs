@@ -7,6 +7,8 @@ using UnityEngine;
 /// <seealso cref="Utility"/>
 public static class ConstStrings
 {
+    public const string UNITY_EDITOR = "UNITY_EDITOR"; //used in [Conditional]
+    
     //common tags
     public static readonly string TAG_PLAYER = "Player";
     public static readonly string TAG_MAIN_CAMERA = "MainCamera";
