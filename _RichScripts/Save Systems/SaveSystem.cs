@@ -87,7 +87,11 @@ namespace RichPackage.SaveSystem
 			var singletonWorked = InitSingleton(this, ref instance, 
 				dontDestroyOnLoad: true); //ensure only one of these exists
 
-			if (!singletonWorked) return; //quit here if this was the duplicate that should be destroyed
+			if (!singletonWorked)
+			{
+				Destroy(this);
+				return; //quit here if this was the duplicate that should be destroyed
+			}
 
 			if (deleteOnPlay)
 				DeleteSave();
@@ -103,14 +107,14 @@ namespace RichPackage.SaveSystem
 		{
 			//subscribe to events
 			GlobalSignals.Get<SaveGame>().AddListener(Save);
-			RichAppController.Instance.OnLevelLoaded += Load;
+			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
 		}
 
 		private void OnDisable()
 		{
 			//unsubscribe from events
 			GlobalSignals.Get<SaveGame>().RemoveListener(Save);
-			RichAppController.Instance.OnLevelLoaded -= Load;
+			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
 		}
 
 		/// <summary>
@@ -120,6 +124,12 @@ namespace RichPackage.SaveSystem
 		private void LoadSaveFile(string fileName)
 		{
 			SaveFile = new ES3File(fileName);
+		}
+
+		public void DeleteSave(int slot)
+		{
+			saveGameSlotIndex = slot;
+			DeleteSave();
 		}
 
 		[Button]
@@ -150,7 +160,7 @@ namespace RichPackage.SaveSystem
 			//flag to indicate there is indeed some save data
 			SaveFile.Save(HAS_SAVE_DATA_KEY, true);
 
-			//call custom save logic on 
+			//broadcast save command
 			GlobalSignals.Get<SaveStateToFile>().Dispatch(SaveFile);
 
 			SaveFile.Sync();//synchronize file (like stamping)
@@ -172,6 +182,7 @@ namespace RichPackage.SaveSystem
 
 			SaveFile.Sync();//make sure up to date
 
+			//broadcast load command
 			GlobalSignals.Get<LoadStateFromFile>().Dispatch(SaveFile);
 
 			//load player inventory

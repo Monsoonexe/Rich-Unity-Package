@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 using Sirenix.OdinInspector;
 using Signals;
 using RichPackage.SaveSystem.Signals;
 
 namespace RichPackage.SaveSystem
 {
+	using Debug = UnityEngine.Debug;
 	/* private struct SaveData 
 	 * {
 	 *		data goes here
@@ -22,6 +24,8 @@ namespace RichPackage.SaveSystem
 	public abstract class ASaveableMonoBehaviour : RichMonoBehaviour
 	{
 		[SerializeField]
+		[CustomContextMenu("Set to Name", "SetDefaultSaveID")]
+		[CustomContextMenu("Set to GUID", "SetSaveIDToGUID")]
 		[Tooltip("Must be unique to all other saveables!")]
 		protected string saveID;
 
@@ -32,7 +36,7 @@ namespace RichPackage.SaveSystem
 
 		protected virtual void Reset()
 		{
-			saveID = gameObject.name;
+			SetDefaultSaveID();
 		}
 
 		protected virtual void OnEnable()
@@ -49,6 +53,18 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<LoadStateFromFile>().RemoveListener(LoadState);
 		}
 
+		public virtual void SetDefaultSaveID()
+		{
+			saveID = gameObject.name;
+			Editor_PrintIDIsUnique();
+		}
+
+		public void SetSaveIDToGUID()
+		{
+			saveID = System.Guid.NewGuid().ToString();
+			Editor_PrintIDIsUnique();
+		}
+
 		/// <summary>
 		/// Must be overriden with proper derived type of <cref="SaveData"/>
 		/// </summary>
@@ -61,25 +77,24 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		/// <param name="saveFile"></param>
 		public abstract void LoadState(ES3File saveFile);
-			//=> mySaveData = saveFile.Load(saveID, mySaveData);
+			//=> mySaveData = saveFile.Load(saveID, mySaveData); //recommended code
 
 		public void DeleteState(ES3File saveFile)
 			=> saveFile.DeleteKey(saveID);
 
-#if UNITY_EDITOR
 		[Button("Is ID Unique?")]
+		[Conditional(ConstStrings.UNITY_EDITOR)]
 		public void Editor_PrintIDIsUnique()
 		{
 			if (IsSaveIDUnique(this))
 			{
-				Debug.Log("I am unique!");
+				Debug.Log("ID is unique (in this scene)!");
 			}
 			else
 			{
 				Debug.Log("Name collision! uniqueID is already taken.");
 			}
 		}
-#endif
 
 		public static bool IsSaveIDUnique(ASaveableMonoBehaviour query)
 		{
