@@ -68,8 +68,6 @@ public class FadeScreenTransition : ATransitionComponent, IAnimate
         canvasGroup.alpha = cachedAlpha; //leave it how you found it
     }
 
-    public void Play() => Animate(myTransform);
-
     public override void Stop()
         => animationTween?.Kill();
 }
