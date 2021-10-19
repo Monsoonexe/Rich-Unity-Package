@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -39,7 +40,8 @@ public static class GameObject_Extensions
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="newLayer"></param>
-    public static void ForEachChildRecursive(this GameObject obj, Action<Transform> action)
+    public static void ForEachChildRecursive(this GameObject obj, 
+        Action<Transform> action)
     {
         var transform = obj.GetComponent<Transform>();
         var childCount = transform.childCount;
@@ -48,5 +50,23 @@ public static class GameObject_Extensions
             var child = transform.GetChild(i);
             child.ForEachTransformRecursive(action);
         }
+    }
+
+    /// <summary>
+    /// Get a new List each TComponent that is on each the root of each GameObject.
+    /// </summary>
+    /// <typeparam name="TComponent"></typeparam>
+    /// <param name="gameObjects"></param>
+    /// <returns>A list of non-null component references.</returns>
+    public static List<TComponent> GetComponents<TComponent>
+        (this IList<GameObject> gameObjects)
+        where TComponent : Component
+    {
+        int count = gameObjects.Count;
+        List<TComponent> components = new List<TComponent>(count);
+        for(int i = 0; i < count; ++i)
+            if(gameObjects[i].TryGetComponent(out TComponent comp))
+                components.Add(comp);
+        return components;
     }
 }
