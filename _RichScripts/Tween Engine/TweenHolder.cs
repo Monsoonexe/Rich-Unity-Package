@@ -1,4 +1,5 @@
-﻿using UnityEngine.SceneManagement;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// I am a utility class to hold tweens so you don't have to!

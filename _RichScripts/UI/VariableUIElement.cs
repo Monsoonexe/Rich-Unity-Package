@@ -1,4 +1,5 @@
-﻿using ScriptableObjectArchitecture;
+﻿using UnityEngine;
+using ScriptableObjectArchitecture;
 
 /// <summary>
 /// Class that shows data based on a BaseVariable.

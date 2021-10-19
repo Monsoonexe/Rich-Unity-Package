@@ -2,7 +2,7 @@
 using UnityEngine;
 using DG.Tweening;
 using NaughtyAttributes;
-using RichPackage.Debug;
+using RichPackage.RichDebug;
 
 /// <summary>
 /// Fades a CanvasGroup in/out.

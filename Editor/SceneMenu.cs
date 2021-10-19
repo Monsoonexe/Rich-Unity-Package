@@ -34,22 +34,22 @@ namespace RichPackage.Editor
         public static void ReloadCurrentScene()
             => LoadScene(SceneManager.GetActiveScene());
 
-        #endregion
+		#endregion
 
-        #region Internal Functions
+		#region Internal Functions
 
-        /// <summary>
-        /// Load a scene and prompt User to save the scene.
-        /// </summary>
-        public static void LoadScene(string scenePath)
-        {
-            //prompt to save
-            if(EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
-            {
-                //actually change scenes
-                EditorSceneManager.OpenScene(scenePath);
-            }//if "cancel", do not change scenes.
-
+		/// <summary>
+		/// Load a scene and prompt User to save the scene.
+		/// </summary>
+		public static void LoadScene(string scenePath)
+		{
+			//prompt to save
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+			{
+				//actually change scenes
+				EditorSceneManager.OpenScene(scenePath);
+			}//if "cancel", do not change scenes.
+		}
         /// <summary>
         /// Load a scene and prompt User to save the scene.
         /// </summary>
