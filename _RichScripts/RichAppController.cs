@@ -24,19 +24,9 @@ public class RichAppController : RichMonoBehaviour
     
     public static float FixedDeltaTime { get; private set; }
 
-    /// <summary>
-    /// Another way to subscribe to SceneManager.sceneLoaded event.
-    /// </summary>
-    public event Action OnLevelLoaded;
-
-    private void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
-    {
-        OnLevelLoaded?.Invoke();
-    }
-
     private void Reset()
     {
-        SetDevDescription("I control app-level stuff");
+        SetDevDescription("I control the application-level behaviour.");
     }
 
     protected override void Awake()
@@ -75,6 +65,10 @@ public class RichAppController : RichMonoBehaviour
         FixedDeltaTime = UnityEngine.Time.fixedDeltaTime;
     }
 
+    private void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
+        => GlobalSignals.Get<SceneLoadedSignal>().Dispatch();
+
+
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().buildIndex);
@@ -89,3 +83,8 @@ public class RequestQuitGameSignal : ASignal { }
 /// Dispatched when the Player has requested to close the app.
 /// </summary>
 public class GameIsQuittingSignal : ASignal { }
+
+/// <summary>
+/// Dispatched by SceneManager.sceneLoaded when such.
+/// </summary>
+public class SceneLoadedSignal : ASignal { }
