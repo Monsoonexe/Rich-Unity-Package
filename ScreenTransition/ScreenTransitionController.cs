@@ -6,10 +6,6 @@ using Sirenix.OdinInspector;
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
 
-/* TODO - Spawn from Resources
- * Fix [Button] attributes not working
- */ 
-
 namespace RichPackage.UI
 {
     /// <summary>
