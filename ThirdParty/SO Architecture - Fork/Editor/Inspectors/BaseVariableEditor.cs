@@ -136,8 +136,13 @@ namespace ScriptableObjectArchitecture.Editor
             }
         }
         protected void DrawDeveloperDescription()
-        {
-            EditorGUILayout.PropertyField(_developerDescription);
+		{
+			using (var scope = new EditorGUI.ChangeCheckScope())
+			{
+				EditorGUILayout.PropertyField(_developerDescription);
+				if(scope.changed)
+					serializedObject.ApplyModifiedProperties();
+			}
         }
     }
 }
