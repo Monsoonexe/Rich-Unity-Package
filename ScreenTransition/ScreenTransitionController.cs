@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using NaughtyAttributes;
 using Sirenix.OdinInspector;
 
 //clarifications
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
+
+/* Callback system for OnTransitionEnd
+ * 
+ */ 
 
 namespace RichPackage.UI
 {
@@ -90,7 +95,9 @@ namespace RichPackage.UI
         private int VERTICAL_WIPE_OUT;
         public int VerticalWipeOutMessage { get => VERTICAL_WIPE_OUT; }
 
-        #endregion
+		#endregion
+
+		//public static event Action TransitionEndEvent;
 
         private void Reset()
         {
