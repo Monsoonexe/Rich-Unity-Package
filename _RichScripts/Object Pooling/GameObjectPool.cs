@@ -66,7 +66,7 @@ public class GameObjectPool : RichMonoBehaviour
     public GameObjectMethod OnEnpoolMethod = (p) => p.SetActive(false);
 
     //runtime data
-    private Stack<GameObject> pool; //stack has better locality than queue
+    private Stack<GameObject> pool = new Stack<GameObject>(); //stack has better locality than queue
     private List<GameObject> manifest;
     /// <summary>
     /// Every GameObject Managed by this pool, non- and active alike.
@@ -98,8 +98,6 @@ public class GameObjectPool : RichMonoBehaviour
     protected override void Awake()
     {
         base.Awake();
-        var poolSize = RichMath.Max(startingAmount, maxAmount);
-        manifest = new List<GameObject>(poolSize);
         if (initOnAwake)
             InitPool();
     }
@@ -172,8 +170,8 @@ public class GameObjectPool : RichMonoBehaviour
 
             //maybe this is faster?
             //trans.parent = handle;
-            //trans.position = Vector3.zero;
-            //trans.rotation = Quaternion.identity;
+            //trans.localPosition = Vector3.zero;
+            //trans.localRotation = Quaternion.identity;
         }
         return obj;
     }
@@ -283,9 +281,10 @@ public class GameObjectPool : RichMonoBehaviour
     /// Create entire pool
     /// </summary>
     public void InitPool()
-    {
-        maxAmount = maxAmount < startingAmount ? startingAmount : maxAmount;
-        pool = new Stack<GameObject>(maxAmount);
+	{
+		int poolSize = RichMath.Max(startingAmount, maxAmount);
+		manifest = new List<GameObject>(poolSize);
+        pool = new Stack<GameObject>(poolSize);
 
         //preload pool
         for (var i = startingAmount; i > 0; --i)
