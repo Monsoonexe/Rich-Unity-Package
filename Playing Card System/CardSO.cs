@@ -1,27 +1,38 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
+using Sirenix.OdinInspector;
 
-[CreateAssetMenu(menuName = "ScriptableObjects/New Card", fileName = "Card_V_S")]
-public class CardSO : ScriptableObject
+[CreateAssetMenu(menuName = "ScriptableObjects/New Card", fileName = "Card_R_S")]
+public class CardSO : RichScriptableObject
 {
     /// <summary>
     /// Rank Numeric value (1-13) 1:A, 11: J, 12: Q, 13: K.
     /// </summary>
-    public int value;
+	[FormerlySerializedAs("value")]
+    [SerializeField] private int rank;
+	public int Rank => rank; //serialized readonly property pattern
 
     /// <summary>
     /// Suit (heart, spade, club)
     /// </summary>
-    public ESuit suit;
+    [SerializeField] private ESuit suit;
+	public ESuit Suit => suit;
 
     /// <summary>
     /// Front-facing card art.
     /// </summary>
-    public Sprite faceImage;
+    [SerializeField, Required, PreviewField] private Sprite faceImage;
+	public Sprite FaceImage => faceImage;
+
+	private void Reset()
+	{
+		SetDevDescription("I'm data about an individual card in a deck.");
+	}
 
     public override string ToString()
     {
-        var outputString = new System.Text.StringBuilder();
-        outputString.Append(ConvertValueToString(value));
+		var outputString = CommunityStringBuilder.Instance;
+        outputString.Append(ConvertValueToString(rank));
         outputString.Append(" of ");
         outputString.Append(suit.ToString());
 
@@ -34,13 +45,13 @@ public class CardSO : ScriptableObject
     /// <param name="cardA"></param>
     /// <param name="cardB"></param>
     /// <returns>Returns null if cards have same value.</returns>
-    public static CardSO GetLargerValue(CardSO cardA, CardSO cardB)
+    public static CardSO GetLargerRank(CardSO cardA, CardSO cardB)
     {
-        if(cardA.value > cardB.value)//if A is larger
+        if(cardA.rank > cardB.rank)//if A is larger
         {
             return cardA;
         }
-        else if(cardB.value > cardA.value)//if B is larger
+        else if(cardB.rank > cardA.rank)//if B is larger
         {
             return cardB;
         }
@@ -79,26 +90,7 @@ public class CardSO : ScriptableObject
     /// <param name="cardB"></param>
     /// <returns>True if both value and suit match.</returns>
     public static bool Equals(CardSO cardA, CardSO cardB)
-    {
-        var cardsAreSame = true;//prove me wrong
-
-        //compare suit -- clubs to hearts
-        if (cardA.suit != cardB.suit)
-        {
-            cardsAreSame = false;
-            Debug.Log("Cards are not equal: different Suits.");//output to console for developer's sake
-        }
-
-        //compare value 10 to K
-        if (cardA.value != cardB.value)
-        {
-            cardsAreSame = false;
-            Debug.Log("Cards are not equal: different Values.");
-
-        }
-
-        return cardsAreSame;
-    }
+		=> (cardA.suit == cardB.suit) && (cardA.rank == cardB.rank);
 
     public static string ConvertValueToString(int value)
     {

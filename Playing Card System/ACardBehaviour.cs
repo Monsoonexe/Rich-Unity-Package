@@ -9,7 +9,7 @@ public abstract class ACardBehaviour : RichMonoBehaviour
 	public abstract Sprite BackSprite { get; set; }
 
 	public virtual void UpdateVisuals(CardSO newCard)
-		=> FrontSprite = newCard.faceImage;
+		=> FrontSprite = newCard.FaceImage;
 
 	private void Reset()
 	{
