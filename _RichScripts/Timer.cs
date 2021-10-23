@@ -164,6 +164,20 @@ namespace RichPackage
 		public static Timer Construct()
 			=> new GameObject(typeof(Timer).Name).AddComponent<Timer>();
 
+		/// <summary>
+		/// Creates a new inactive Timer.
+		/// </summary>
+		/// <returns></returns>
+		public static Timer Construct(GameObject ownerGameObject)
+			=> ownerGameObject.AddComponent<Timer>();
+
+		/// <summary>
+		/// Creates a new inactive Timer.
+		/// </summary>
+		/// <returns></returns>
+		public static Timer Construct(Component siblingComponent)
+			=> siblingComponent.gameObject.AddComponent<Timer>();
+
 		#endregion
 
 		#region Testing
