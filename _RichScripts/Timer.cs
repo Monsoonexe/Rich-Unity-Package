@@ -24,7 +24,7 @@ namespace RichPackage
 				if (value == true)
 					Stop();
 				else
-					Resume();
+					StartTimer();
 			}
 		}
 
@@ -86,22 +86,24 @@ namespace RichPackage
 		/// <param name="duration">Length of timer.</param>
 		/// <param name="callback">Override current callback with this one.</param>
 		/// <param name="loop">Auto-repeat at end?</param>
-		public void Initialize(float duration, Action callback, bool loop = false)
+		public void Initialize(float duration, Action callback, 
+			bool loop = false, bool startNow = true)
 		{
 			Debug.Assert(callback != null,
 				"Callback is null and shouldn't be.", this);
 
 			OnTimerExpire.RemoveAllListeners();
 			OnTimerExpire.AddListener(callback.Invoke);//
-			Initialize(duration, loop);//forward call
+			Initialize(duration, loop, startNow);//forward call
 		}
 
-		public void Initialize(float duration, bool loop = false)
+		public void Initialize(float duration, 
+			bool loop = false, bool startNow = true)
 		{
 			TimerDuration = duration;
 			this.loop = loop;
-			paused = false;
-			timerRoutine = StartCoroutine(TickTimer());
+			if(startNow)
+				StartTimer();
 		}
 
 		public void Stop()
@@ -112,10 +114,10 @@ namespace RichPackage
 		}
 
 		public void Restart()
-			=> Initialize(TimerDuration, loop);
+			=> Initialize(TimerDuration, loop, startNow: true);
 
 		[Button("Start", EButtonEnableMode.Playmode)]
-		public void Resume()
+		public void StartTimer()
 		{
 			paused = false;
 			timerRoutine = StartCoroutine(TickTimer());
@@ -179,17 +181,5 @@ namespace RichPackage
 			=> siblingComponent.gameObject.AddComponent<Timer>();
 
 		#endregion
-
-		#region Testing
-#if UNITY_EDITOR
-
-		public void Test1SecondTimer()
-		{
-
-		}
-
-#endif
-		#endregion
-
 	}
 }
