@@ -32,7 +32,7 @@ public class CardSO : RichScriptableObject
     public override string ToString()
     {
 		var outputString = CommunityStringBuilder.Instance;
-        outputString.Append(ConvertValueToString(rank));
+        outputString.Append(ConvertRankToString(rank));
         outputString.Append(" of ");
         outputString.Append(suit.ToString());
 
@@ -92,34 +92,34 @@ public class CardSO : RichScriptableObject
     public static bool Equals(CardSO cardA, CardSO cardB)
 		=> (cardA.suit == cardB.suit) && (cardA.rank == cardB.rank);
 
-    public static string ConvertValueToString(int value)
+    public static string ConvertRankToString(int rank)
     {
-        string valueAsString;
+        string rankAsString;
 
         //convert face card values
-        switch (value)
+        switch (rank)
         {
             case 1:
-                valueAsString = "Ace";
+                rankAsString = "Ace";
                 break;
 
             case 11:
-                valueAsString = "Jack";
+                rankAsString = "Jack";
                 break;
 
             case 12:
-                valueAsString = "Queen";
+                rankAsString = "Queen";
                 break;
 
             case 13:
-                valueAsString = "King";
+                rankAsString = "King";
                 break;
 
             default:
-                valueAsString = value.ToString();
+                rankAsString = rank.ToString();
                 break;
         }
 
-        return valueAsString;
+        return rankAsString;
     }
 }
