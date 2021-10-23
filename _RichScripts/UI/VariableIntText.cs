@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Displays an IntVariable's value with a TMP.
@@ -12,8 +12,7 @@ using NaughtyAttributes;
 public class VariableIntText : VariableUIElement<IntVariable>
 {
     [Header("---Scene Refs---")]
-    [SerializeField]
-    [Required]
+    [SerializeField, Required]
     [Tooltip("Update this text element with target data.")]
     protected TextMeshProUGUI textElement;
     
