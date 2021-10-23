@@ -122,4 +122,8 @@ public class CardSO : RichScriptableObject
 
         return rankAsString;
     }
+
+	//auto conversions for simplicity
+	public static implicit operator int (CardSO a) => a.Rank;
+	public static implicit operator Sprite(CardSO a) => a.FaceImage;
 }
