@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Common base class for UI elements. Comes with some a handy Hide/Show interface.
@@ -55,7 +55,6 @@ public abstract class RichUIElement<T> : RichUIElement
     /// The data that this UI Element should show.
     /// </summary>
     [Required]
-    [Expandable]
     public T targetData;
 
     protected override void OnEnable()

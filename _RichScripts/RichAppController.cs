@@ -35,9 +35,15 @@ public class RichAppController : RichMonoBehaviour
         instance = this;//low-key singleton
         GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
         SceneManager.sceneLoaded += SceneLoadedHandler;
-    }
+		DG.Tweening.DOTween.Init();
+		DG.Tweening.DOTween.SetTweensCapacity(500, 20);
+	}
 
-    private void OnDestroy()
+	private void Start()
+	{
+	}
+
+	private void OnDestroy()
     {
         GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
         SceneManager.sceneLoaded -= SceneLoadedHandler;
