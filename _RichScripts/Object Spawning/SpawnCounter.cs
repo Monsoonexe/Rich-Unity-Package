@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Always keeps given number of items spawned.
@@ -45,12 +44,13 @@ public class SpawnCounter : RichMonoBehaviour
         targetData.AddListener(UpdateSpawnCount);
         UpdateSpawnCount();
     }
+
     private void OnDisable()
     {
         targetData.RemoveListener(UpdateSpawnCount);
     }
 
-    [Button(null, EButtonEnableMode.Playmode)]
+    [Button, DisableInEditorMode]
     public void UpdateSpawnCount()
     {
         //need to create more

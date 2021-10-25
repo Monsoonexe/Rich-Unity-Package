@@ -17,6 +17,9 @@ public static class Utility
     //stuff we can all use!
     #region Communal Properties
 
+	/// <summary>
+	/// Communnal property.
+	/// </summary>
     public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
 
     #endregion
@@ -36,6 +39,10 @@ public static class Utility
     /// <returns></returns>
     public static bool Chance(float n) => Random.Range(0f, 1f) <= n;
     
+	/// <param name="dice">[0, inf)</param>
+	/// <param name="sides">[1, inf)</param>
+	/// <param name="mod">(whatever, whatever)</param>
+	/// <returns>e.g. 2d6 + mod</returns>
     public static int RollDice(int dice, int sides, int mod = 0)
     {   //validate
         Debug.Assert(dice >= 0 && sides > 0, "[Utility] Invalid RollDice input: " 
@@ -47,7 +54,6 @@ public static class Utility
             result += Random.Range(1, upperRandomLimit);
         return result;
     }
-    
 
     public static int RollDie(int sides) => Random.Range(1, sides + 1);
 
