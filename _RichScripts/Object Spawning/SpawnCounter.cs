@@ -3,8 +3,9 @@ using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 
 /// <summary>
-/// Always keeps given number of items spawned.
+/// Always keeps given number of items spawned. Pairs well with LayoutGroups.
 /// </summary>
+/// <seealso cref="UICounter"/>
 [RequireComponent(typeof(GameObjectPool))]
 public class SpawnCounter : RichMonoBehaviour
 {
