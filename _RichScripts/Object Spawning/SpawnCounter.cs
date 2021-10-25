@@ -27,7 +27,13 @@ public class SpawnCounter : RichMonoBehaviour
         }
     }
 
-    protected override void Awake()
+	private void Reset()
+	{
+		SetDevDescription("Always keeps given number of items spawned." +
+			" Useful for things like life counters.");
+	}
+
+	protected override void Awake()
     {
         base.Awake();
         objectPool = GetComponent<GameObjectPool>();
