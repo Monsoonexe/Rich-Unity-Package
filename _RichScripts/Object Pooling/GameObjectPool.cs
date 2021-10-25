@@ -278,6 +278,7 @@ public class GameObjectPool : RichMonoBehaviour
     /// </summary>
     public void InitPool()
 	{
+		initOnAwake = false; //to prevent double-init'g
 		int poolSize = RichMath.Max(startingAmount, maxAmount);
 		manifest = new List<GameObject>(poolSize);
         pool = new Stack<GameObject>(poolSize);
@@ -294,6 +295,13 @@ public class GameObjectPool : RichMonoBehaviour
             OnEnpoolMethod(newP);//SetActive(false) by default
         }
     }
+
+	public void InitPool(int startingAmount, int maxAmount)
+	{
+		this.startingAmount = startingAmount;
+		this.maxAmount = maxAmount;
+		InitPool();
+	}
 
     /// <summary>
     /// Resize the pool.
