@@ -29,8 +29,8 @@ public class BoolDisplayer : RichUIElement<BoolVariable>
     }
     public override void UpdateUI()
     {
-        //determine which message to print.
-        var outString = string.Empty;
+		//determine which message to print.
+		string outString = null;
         if (targetData.Value == true)
             outString = trueMessage;
         else
