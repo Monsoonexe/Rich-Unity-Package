@@ -54,7 +54,9 @@ public class UICounter : VariableUIElement<IntVariable>
 	protected override void Awake()
 	{
 		base.Awake();
-		objectPool.InitPool();
+
+		//configure objectPool
+		objectPool.InitPool(maxSpawns, maxSpawns);
 	}
 
 	public override void UpdateUI()
