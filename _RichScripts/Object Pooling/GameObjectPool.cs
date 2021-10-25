@@ -32,18 +32,14 @@ public class GameObjectPool : RichMonoBehaviour
     [Header("---Settings---")]
     public bool initOnAwake = true;
 
-    [SerializeField]
-    protected InitStrategy initStragety = InitStrategy.OnCreate;
+    public InitStrategy initStragety = InitStrategy.OnCreate;
 
-    [SerializeField]
     [Min(0)]
-    private int startingAmount = 6;
+    public int startingAmount = 6;
 
-    [SerializeField]
     [Tooltip("less than 0 means 'no limit'.")]
     [Min(-1)]
-    private int maxAmount = 10;
-    public int MaxAmount { get => maxAmount; }
+    public int maxAmount = 10;
 
     [Tooltip("[Optional]")]
     public Transform poolParent = null;
@@ -319,8 +315,8 @@ public class GameObjectPool : RichMonoBehaviour
 
     public void ReturnAllToPool()
     {
-        var count = manifest.Count;
-        for (var i = 0; i < count; ++i)
+		//iterate backwards to preserve stack order
+        for (var i = manifest.Count - 1; i >= 0; --i)
             Enpool(manifest[i]);
     }
 }
