@@ -61,7 +61,8 @@ public class AnimatedCardUI : CardBehaviourUI
 			flipSequence.Join(transform.DOPunchScale(
 				punchScale, flipDuration, punchVibrato)); //combine into single animation
 		}
-		flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
+		//flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
+		flipSequence.OnStart(onFlipFaceUpCompleteEvent.Invoke);
 
 		return flipSequence;
 	}
