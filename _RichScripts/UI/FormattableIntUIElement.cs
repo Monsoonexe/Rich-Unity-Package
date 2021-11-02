@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Writes int with settings to a single ui text.
@@ -9,7 +9,7 @@ using NaughtyAttributes;
 [SelectionBase]
 public class FormattableIntUIElement : RichUIElement<IntVariable>
 {
-    private enum Format
+    private enum EFormat
     {
         /// <summary>
         /// just show current value
@@ -39,14 +39,39 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
         /// <summary>
         /// min / curr
         /// </summary>
-        Min_Curr = 5
+        Min_Curr = 5,
+
+        /// <summary>
+        /// X 256
+        /// </summary>
+        Prefix_Curr = 6,
+
+        /// <summary>
+        /// 256 lives
+        /// </summary>
+        Curr_Suffix = 7,
+
+        /// <summary>
+        /// X 256 lives
+        /// </summary>
+        Prefix_Curr_Suffix = 8,
     }
 
     [Header("---Settings---")]
     [SerializeField]
-    private Format format = Format.Curr_Max;
+    private EFormat format = EFormat.Curr_Max;
 
+		[HideIf("@UsePrefix || UseSuffix")]
     public string separatorString = " / ";
+
+		[ShowIf("@UsePrefix")]
+		public string prefixString = string.Empty;
+
+		[ShowIf("@UseSuffix")]
+		public string suffixString = string.Empty;
+
+		public bool UsePrefix => format == EFormat.Prefix_Curr || format == EFormat.Prefix_Curr_Suffix;
+		public bool UseSuffix => format == EFormat.Curr_Suffix || format == EFormat.Prefix_Curr_Suffix;
 
     [Header("---Prefab Refs---")]
     [SerializeField]
@@ -55,25 +80,25 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
 
     private void Reset()
     {
-        SetDevDescription("I help format integers! I'm so helpful!");
-        readoutUIElement = GetComponent<TextMeshProUGUI>(); //assume you want this one
+			SetDevDescription("I help format integers! I'm so helpful!");
+			readoutUIElement = GetComponent<TextMeshProUGUI>(); //assume you want this one
     }
 
     protected override void SubscribeToEvents()
     {
-        targetData.AddListener(UpdateUI);
+			targetData.AddListener(UpdateUI);
     }
 
     protected override void UnsubscribeFromEvents()
     {
-        targetData.RemoveListener(UpdateUI);
+			targetData.RemoveListener(UpdateUI);
     }
 
     public override void ToggleVisuals()
-        => this.enabled = readoutUIElement.enabled = !readoutUIElement.enabled;
+			=> this.enabled = readoutUIElement.enabled = !readoutUIElement.enabled;
 
     public override void ToggleVisuals(bool active)
-        => this.enabled = readoutUIElement.enabled = active;
+			=> this.enabled = readoutUIElement.enabled = active;
 
     public override void UpdateUI()
     {
@@ -83,12 +108,12 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
 
         switch (format)
         {
-            case Format.Single: // 999
+            case EFormat.Single: // 999
                 outputString = ConstStrings
                     .GetCachedString(targetData);
                 break;
 
-            case Format.Curr_Max: // 450 / 1000
+            case EFormat.Curr_Max: // 450 / 1000
                 strBuilder
                     .Append(ConstStrings.GetCachedString(
                         targetData.Value))
@@ -98,7 +123,7 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
                 outputString = strBuilder.ToString();
                 break;
 
-            case Format.Max_Curr_Min: // 0 / 50 / 100
+            case EFormat.Max_Curr_Min: // 0 / 50 / 100
                 strBuilder
                     .Append(ConstStrings.GetCachedString(
                         targetData.MaxClampValue))
@@ -111,36 +136,51 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
                 outputString = strBuilder.ToString();
                 break;
 
-            case Format.Min_Curr_Max: // 0 / 50 / 100
+            case EFormat.Min_Curr_Max: // 0 / 50 / 100
                 strBuilder
-                    .Append(ConstStrings.GetCachedString(
-                        targetData.MinClampValue))
-                    .Append(separatorString)
-                    .Append(ConstStrings.GetCachedString(
-                        targetData.Value))
-                    .Append(separatorString)
-                    .Append(ConstStrings.GetCachedString(
-                        targetData.MaxClampValue));
+									.Append(ConstStrings.GetCachedString(
+											targetData.MinClampValue))
+									.Append(separatorString)
+									.Append(ConstStrings.GetCachedString(
+											targetData.Value))
+									.Append(separatorString)
+									.Append(ConstStrings.GetCachedString(
+											targetData.MaxClampValue));
                 outputString = strBuilder.ToString();
                 break;
 
-            case Format.Min_Max: // 0 / 100
-                strBuilder.Append(ConstStrings.GetCachedString(
-                        targetData.MinClampValue))
-                    .Append(separatorString)
-                    .Append(ConstStrings.GetCachedString(
-                        targetData.MaxClampValue));
-                outputString = strBuilder.ToString();
-                break;
+            case EFormat.Min_Max: // 0 / 100
+							strBuilder.Append(ConstStrings.GetCachedString(
+									targetData.MinClampValue))
+								.Append(separatorString)
+								.Append(ConstStrings.GetCachedString(
+									targetData.MaxClampValue));
+							outputString = strBuilder.ToString();
+							break;
 
-            case Format.Min_Curr: // 0 / 9
-                strBuilder.Append(ConstStrings.GetCachedString(
-                        targetData.MinClampValue))
-                    .Append(separatorString)
-                    .Append(ConstStrings.GetCachedString(
-                        targetData.Value));
-                outputString = strBuilder.ToString();
-                break;
+            case EFormat.Min_Curr: // 0 / 9
+							strBuilder.Append(ConstStrings.GetCachedString(
+									targetData.MinClampValue))
+								.Append(separatorString)
+								.Append(ConstStrings.GetCachedString(
+									targetData.Value));
+							outputString = strBuilder.ToString();
+							break;
+
+            case EFormat.Prefix_Curr: // X 999
+							outputString = prefixString + ConstStrings.GetCachedString(targetData.Value);
+							break;
+
+						case EFormat.Curr_Suffix: // 999 lives
+							outputString = ConstStrings.GetCachedString(targetData.Value) + suffixString;
+							break;
+
+						case EFormat.Prefix_Curr_Suffix: // X 999 lives
+							strBuilder.Append(prefixString)
+								.Append(ConstStrings.GetCachedString(targetData.Value))
+								.Append(suffixString);
+							outputString = strBuilder.ToString();
+							break;
 
             default:
                 Debug.LogErrorFormat("[{0}] Format enum not accounted for: {1}. " +
