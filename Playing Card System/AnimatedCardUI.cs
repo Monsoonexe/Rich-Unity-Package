@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using DG.Tweening;
 using Sirenix.OdinInspector;
+using ScriptableObjectArchitecture;
 
 /*TODO - Use composition to implement both sprite and ui versions
  * 
@@ -27,6 +28,10 @@ public class AnimatedCardUI : CardBehaviourUI
 	public Vector3 punchScale = new Vector3(0.25f, 0.25f, 0);
 	public int punchVibrato = 5;
 
+	[Title("Audio")]
+	[SerializeField, Required]
+	private AudioClipVariable flipSound;
+
 	[FoldoutGroup("Events")]
 	[SerializeField]
 	private UnityEvent onFlipFaceDownCompleteEvent;
@@ -51,6 +56,7 @@ public class AnimatedCardUI : CardBehaviourUI
 
 		Tweener flipTween = transform.DOLocalRotate(
 			faceUpRotation, flipDuration)
+			.OnStart(flipSound.DoPlaySFX)
 			.SetEase(flipEase);
 
 		flipSequence.Append(flipTween);
@@ -73,6 +79,7 @@ public class AnimatedCardUI : CardBehaviourUI
 		Tweener flipTween = transform.DOLocalRotate(
 			faceDownRotation, flipDuration)
 			.SetEase(flipEase)
+			.OnStart(flipSound.DoPlaySFX)
 			.OnComplete(onFlipFaceDownCompleteEvent.Invoke);
 
 		return flipTween;
