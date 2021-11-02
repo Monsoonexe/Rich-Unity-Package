@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Sets the timeScale.
@@ -37,7 +37,7 @@ public class TimeScaleModifier : RichMonoBehaviour
         timeScale.RemoveListener(UpdateTimeScale);
     }
 
-    [Button]
+    [Button, DisableInEditorMode]
     public void UpdateTimeScale()
     {
         Time.timeScale = timeScale;
