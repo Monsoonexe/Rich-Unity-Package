@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using UnityEngine;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 
 /// <summary>
@@ -6,23 +7,31 @@ using Sirenix.OdinInspector;
 /// </summary>
 public class TweenShaker : RichMonoBehaviour
 {
+	public const float DEFAULT_SHAKE_STRENGTH = 1.0f;
+	public const int DEFAULT_SHAKE_VIBRATO = 10;
+	public const float DEFAULT_SHAKE_DURATION = 0.5f;
+	public const float DEFAULT_SHAKE_RANDOMNESS = 90f;
+	public const bool DEFAULT_SHAKE_SNAP = false;
+	public const bool DEFAULT_SHAKE_FADE_OUT = true;
+
 	[Title("Animation Options")]
+	public Transform target;
 	public bool playOnAwake = false;
-	public float shakeDuration = 1.0f;
+	public float shakeDuration = DEFAULT_SHAKE_STRENGTH;
 
 	#region Shake Position
 	[BoxGroup("SHAKE_POSITION")]
 	public bool shouldShakePosition;
 	[BoxGroup("SHAKE_POSITION"), ShowIf("@shouldShakePosition")]
-	public float shakePositionStrength = 1.0f;
+	public float shakePositionStrength = DEFAULT_SHAKE_STRENGTH;
 	[BoxGroup("SHAKE_POSITION"), ShowIf("@shouldShakePosition")]
-	public int shakePositionVibrato = 10;
+	public int shakePositionVibrato = DEFAULT_SHAKE_VIBRATO;
 	[BoxGroup("SHAKE_POSITION"), ShowIf("@shouldShakePosition")]
-	public float shakePositionRandomness = 90;
+	public float shakePositionRandomness = DEFAULT_SHAKE_RANDOMNESS;
 	[BoxGroup("SHAKE_POSITION"), ShowIf("@shouldShakePosition")]
-	public bool shakeSnap = false;
+	public bool shakeSnap = DEFAULT_SHAKE_SNAP;
 	[BoxGroup("SHAKE_POSITION"), ShowIf("@shouldShakePosition")]
-	public bool shakePositionFadeOut = true;
+	public bool shakePositionFadeOut = DEFAULT_SHAKE_FADE_OUT;
 	#endregion
 
 	#region Shake Rotation
@@ -56,11 +65,13 @@ public class TweenShaker : RichMonoBehaviour
 	private void Reset()
 	{
 		SetDevDescription("I do a shake tween animation.");
+		target = GetComponent<Transform>();
 	}
 
 	protected override void Awake()
 	{
 		base.Awake();
+		if(target == null) target = myTransform;
 		if (playOnAwake) Shake();
 	}
 
@@ -96,6 +107,23 @@ public class TweenShaker : RichMonoBehaviour
 		return transform.DOShakeRotation(shakeDuration,
 				shakeRotationStrength, shakeRotationVibrato,
 				shakeRotationRandomness, shakeRotationFadeOut);
+	}
+
+	public Tweener SetAndShakePosition(
+		float duration = DEFAULT_SHAKE_DURATION,
+		float strength = DEFAULT_SHAKE_STRENGTH,
+		int vibrato = DEFAULT_SHAKE_VIBRATO,
+		float randomness = DEFAULT_SHAKE_RANDOMNESS,
+		bool fadeOut = DEFAULT_SHAKE_FADE_OUT,
+		bool snap = DEFAULT_SHAKE_SNAP)
+	{
+		shakeDuration = duration;
+		shakePositionStrength = strength;
+		shakePositionVibrato = vibrato;
+		shakePositionRandomness = randomness;
+		shakePositionFadeOut = fadeOut;
+		shakeSnap = snap;
+		return ShakePosition();
 	}
 
 	[Button, DisableInEditorMode]
