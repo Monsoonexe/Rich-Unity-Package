@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// 
+/// Custom helper mehtods for Vector2s.
 /// </summary>
 public static class Vector2_Extensions
 {
@@ -10,6 +10,12 @@ public static class Vector2_Extensions
     /// </summary>
     public static float RandomRange(this Vector2 range)
         => Random.Range(range.x, range.y);
+
+    /// <Summmary>
+    /// Calculates |x - y|.
+    /// </Summmary>
+    public static float Range(this Vector2 a)
+        => RichMath.AbsoluteValue(a.x - a.y);
 
     public static Vector2 WithX(this Vector2 a, float x)
         => new Vector2(x, a.y);
