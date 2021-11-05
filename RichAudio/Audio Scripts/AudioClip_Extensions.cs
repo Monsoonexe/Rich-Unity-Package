@@ -35,4 +35,7 @@ public static class AudioClip_Extensions
 
     public static void StopSFX(this AudioID id, float fadeOutDuration = 0.0f)
         => AudioManager.StopSFX(id, fadeOutDuration);
+
+    public static void RestartSFX(this AudioID id)
+        => AudioManager.RestartSFX(id);
 }

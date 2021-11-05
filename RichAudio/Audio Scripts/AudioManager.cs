@@ -308,6 +308,31 @@ public class AudioManager : RichMonoBehaviour
             .OnComplete(ActiveMusicTrack.Pause);
     }
 
+    /// <summary>
+    /// Restart the clip with the given ID if it is playing.
+    /// </summary>
+    public static void RestartSFX(AudioID key)
+    {
+        //check key is valid and source is active
+        if (key != AudioID.Invalid 
+            && sourceDictionary.TryGetValue(key.ID, 
+                out AudioSource source))
+        {
+            source.Stop();
+            source.Play();
+        }
+    }
+    
+    public static void RestartBGM()
+    {
+        AudioSource source = ActiveMusicTrack;
+        if(source != null)
+        {
+            source.Stop();
+            source.Play();
+        }
+    }
+
     public static void ResumeBackgroundTrack()
     {
         ActiveMusicTrack.Play();
