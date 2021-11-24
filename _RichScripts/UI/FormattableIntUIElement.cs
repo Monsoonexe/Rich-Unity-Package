@@ -100,6 +100,7 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
     public override void ToggleVisuals(bool active)
 			=> this.enabled = readoutUIElement.enabled = active;
 
+    [Button]
     public override void UpdateUI()
     {
         //all data into a single string
