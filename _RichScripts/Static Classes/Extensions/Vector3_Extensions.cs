@@ -32,6 +32,33 @@ public static class Vector3_Extensions
 
     public static Vector3 WithZ(this Vector3 a, float z)
         => new Vector3(a.x, a.y, z);
+	
+    /// <summary>
+    /// Handy function to make assigning/copying vectors easier
+    /// myPostion = somePosition.With(z = 1);//same, but with different z-value
+    /// </summary>
+    /// <param name="a">Vector3 source to copy</param>
+    /// <param name="x">x value, if you want</param>
+    /// <param name="y">y value, if you want</param>
+    /// <param name="z">z value, if you want</param>
+    /// <returns></returns>
+    public static Vector3Int With(this Vector3Int a,
+        int? x = null, int? y = null, int? z = null)
+    {
+        return new Vector3Int(
+            x.HasValue ? x.Value : a.x,
+            y.HasValue ? y.Value : a.y,
+            z.HasValue ? z.Value : a.z);
+    }
+
+    public static Vector3Int WithX(this Vector3Int a, int x)
+        => new Vector3Int(x, a.y, a.z);
+
+    public static Vector3Int WithY(this Vector3Int a, int y)
+        => new Vector3Int(a.x, y, a.z);
+
+    public static Vector3Int WithZ(this Vector3Int a, int z)
+        => new Vector3Int(a.x, a.y, z);
 
     //can be called as Vector3_Extensions.With(a, ....), but that's ugly, so the 'this'
     //keyword allows you to call the method from an instance, like a.With(...);
