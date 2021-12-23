@@ -3,6 +3,7 @@ using UnityEngine;
 using Signals;
 using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
+using UnityConsole;
 
 namespace RichPackage.SaveSystem
 { 
@@ -188,5 +189,63 @@ namespace RichPackage.SaveSystem
 			//load player inventory
 			Debug.Log("Loaded");
 		}
+		
+		#region Console Commands
+
+		[ConsoleCommand("save")]
+		public static void Save_()
+		{
+			if (Instance)
+				Instance.Save();
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("saveSlot")]
+		public static void Save_(int slot)
+		{
+			if (Instance)
+				Instance.Save(slot);
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("load")]
+		public static void Load_()
+		{
+			if(Instance)
+				Instance.Load();
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("loadSlot")]
+		public static void Load_(int slot)
+		{
+			if(Instance)
+				Instance.Load(slot);
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("deleteSave")]
+		public static void DeleteSave_()
+		{
+			if (Instance)
+				Instance.DeleteSave();
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("deleteSaveSlot")]
+		public static void DeleteSave_(int slot)
+		{
+			if (Instance)
+				Instance.DeleteSave(slot);
+			else
+				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		#endregion
 	}
 }
