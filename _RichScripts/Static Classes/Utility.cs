@@ -3,10 +3,13 @@ using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 using DG.Tweening;
+using RichPackage;
 
 //clarifications between UnityEngine and System classes
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
+
+//TODO - Add to RichPackage namespace
 
 /// <summary>
 /// 
@@ -14,16 +17,6 @@ using Random = UnityEngine.Random;
 /// <seealso cref="ConstStrings"/>
 public static class Utility
 {
-    //stuff we can all use!
-    #region Communal Properties
-
-	/// <summary>
-	/// Communnal property.
-	/// </summary>
-    public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
-
-    #endregion
-
     /// <summary>
     /// 0-based index, similar to how 2-d, Row-Major arrays work.
     /// </summary>
@@ -95,7 +88,7 @@ public static class Utility
 
     public static IEnumerator InvokeAtEndOfFrame(this Action callback)
     {
-        yield return WaitForEndOfFrame;
+        yield return CommonYieldInstructions.WaitForEndOfFrame;
         callback();
     }
 
