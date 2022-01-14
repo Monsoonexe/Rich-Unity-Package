@@ -104,6 +104,8 @@ public static class ConstStrings
         return str;
     }
 
+    public static string ToStringCached(this int num) => GetCachedString(num);
+
     #region Constructor
 
     static ConstStrings()
