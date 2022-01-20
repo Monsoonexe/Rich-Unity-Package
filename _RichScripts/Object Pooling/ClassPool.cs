@@ -4,6 +4,11 @@ using System.Collections.Generic;
 public class ClassPool<T>
     where T : class, new()
 {
+    /// <summary>
+    /// Shared class if you don't want to instantiate your own.
+    /// </summary>
+    public static readonly ClassPool<T> Shared = new ClassPool<T>();
+
     private Stack<T> pool;
 
     /// <summary>
