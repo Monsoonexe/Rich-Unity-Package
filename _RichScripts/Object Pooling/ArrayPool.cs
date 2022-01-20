@@ -56,10 +56,19 @@ namespace RichPackage
             return new T[minSize];
         }
 
-        public void Return(T[] array)
+        /// <summary>
+        /// Returns a buffer to the pool.
+        /// </summary>
+        /// <param name="buffer">The buffer to return to the pool.</param>
+        /// <param name="clear">If true, the buffer will be cleared before being added. This is good practice for reference types.</param>
+        public void Return(T[] array, bool clear = false)
         {
             if (MaxBucketCapacity < 0 || _pool.Count < MaxBucketCapacity)
+            {
                 _pool.Add(array);
+                if(clear)
+                    Array.Clear(array, 0, array.Length);
+            }
             else //drop smallest array
             {
                 T[] shortestItem = _pool.GetShortestList();
@@ -67,6 +76,8 @@ namespace RichPackage
                 {
                     _pool.Remove(shortestItem);
                     _pool.Add(array);
+                    if(clear)
+                        Array.Clear(array, 0, array.Length);
                 }
             }
         }
