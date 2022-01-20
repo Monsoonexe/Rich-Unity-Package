@@ -341,8 +341,7 @@ public static class Collection_Extensions
     public static int Sum(this IList<int> col)
     {
         var sum = 0;
-        var count = col.Count;
-        for (var i = count - 1; i >= 0; --i)
+        for (var i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -350,8 +349,7 @@ public static class Collection_Extensions
     public static uint Sum(this IList<uint> col)
     {
         uint sum = 0;
-        var count = col.Count;
-        for (var i = count - 1; i >= 0; --i)
+        for (var i = col.Count; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -359,8 +357,7 @@ public static class Collection_Extensions
     public static float Sum(this IList<float> col)
     {
         var sum = 0.0f;
-        var count = col.Count;
-        for (var i = count - 1; i >= 0; --i)
+        for (var i = col.Count; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -368,8 +365,7 @@ public static class Collection_Extensions
     public static double Sum(this IList<double> col)
     {
         var sum = 0.0d;
-        var count = col.Count;
-        for (var i = count - 1; i >= 0; --i)
+        for (var i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -399,7 +395,7 @@ public static class Collection_Extensions
     /// </summary>
     public static void Shuffle<T>(this IList<T> list)
     {
-        var count = list.Count;
+        var count = list.Count; //cache for less function overhead on every iteration
         for (var i = 0; i < count; ++i)
         {
             var randomIndex = Random.Range(0, count);
@@ -426,7 +422,8 @@ public static class Collection_Extensions
     /// </summary>
     public static void ForEach<T>(this IList<T> list, Action<T> action)
     {
-        for (int i = 0; i < list.Count; ++i)
+        int count = list.Count; //cache for less function overhead on every iteration
+        for (int i = 0; i < count; ++i)
             action(list[i]);
     }
 
