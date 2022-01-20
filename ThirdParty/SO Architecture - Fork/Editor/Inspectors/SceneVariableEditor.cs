@@ -30,7 +30,7 @@ namespace ScriptableObjectArchitecture.Editor
 			//button to open scene
 			if (!string.IsNullOrEmpty(sceneVariable.Value.ScenePath))
 			{
-				if (GUILayout.Button("Open Scene"))
+				if (!Application.isPlaying && GUILayout.Button("Open Scene"))
 				{
 					//prompt to save
 					if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
