@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 
-public class ClassPool<T> 
-    where T : class
+public class ClassPool<T>
+    where T : class, new()
 {
     private Stack<T> pool;
 
