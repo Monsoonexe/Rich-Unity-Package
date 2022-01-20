@@ -136,7 +136,7 @@ public static class Collection_Extensions
     {
         foundItem = default;
         bool found = false;
-        var count = list.Count;
+        int count = list.Count;
         for (var i = 0; i < count; ++i)
         {
             if (query(list[i]))
@@ -148,6 +148,26 @@ public static class Collection_Extensions
         }
         return found;
     }
+    
+    public static bool TryFindAndRemove<T>(this List<T> list, 
+        Predicate<T> query, out T foundItem)
+	{
+        bool found = false;
+        foundItem = default;
+
+        //iterate backwards to reduce left-shifts of elements after removal.
+        for(int i = list.Count - 1; i >= 0; --i)
+		{
+            if(query(list[i]))
+			{
+                foundItem = list[i];
+                found = true;
+                break;
+			}
+		}
+
+        return found;
+	}
 
     /// <summary>
     /// Returns a random element from array, or default if collection is empty.
@@ -199,7 +219,7 @@ public static class Collection_Extensions
     public static T GetRemoveAt<T>(this List<T> list, int i)
     {
         list.AssertValidIndex(i);
-        var el = list[i];
+        T el = list[i];
         list.RemoveAt(i);
         return el;
     }
@@ -220,7 +240,7 @@ public static class Collection_Extensions
     public static T GetRemoveRandomElement<T>(this List<T> list)
     {
         var randomIndex = Random.Range(0, list.Count);
-        var randomElement = list[randomIndex];
+        T randomElement = list[randomIndex];
         list.RemoveAt(randomIndex);
         return randomElement;
     }
@@ -238,7 +258,7 @@ public static class Collection_Extensions
 
         //compute
         var randomIndex = Random.Range(start, end);
-        var randomElement = list[randomIndex];
+        T randomElement = list[randomIndex];
         list.RemoveAt(randomIndex);
         return randomElement;
     }
@@ -274,8 +294,7 @@ public static class Collection_Extensions
         for (var i = 0; i < count; ++i)
         {
             var workingCount = lists[i].Count;
-            if (workingCount > 0 && // must have at least one waypoint
-                    workingCount < shortestLength)
+            if (workingCount < shortestLength)
             {
                 shortestIndex = i;
                 shortestLength = workingCount;
@@ -307,7 +326,7 @@ public static class Collection_Extensions
     {
         if (a.Count != b.Count) return false;
 
-        foreach (var item in a)
+        foreach (T item in a)
         {
             if (!b.Contains(item))
                 return false;
