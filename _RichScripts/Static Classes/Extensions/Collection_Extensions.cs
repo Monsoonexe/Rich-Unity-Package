@@ -96,6 +96,27 @@ public static class Collection_Extensions
     }
     
     /// <summary>
+    /// Returns 'true' if all elements of each IList are equivalent, otherwise returns 'false'.
+    /// </summary>
+    public static bool SequenceEqual<T>(this IList<T> a, IList<T> b)
+    {
+        int aCount = a.Count; //cache to reduce function overhead
+        int bCount = b.Count;
+        bool equivalent = true; //return value
+        if (aCount == bCount)
+            return false;
+        for (int i = 0; i < aCount; i++)
+        {
+            if (!a[i].Equals(b[i]))
+            {
+                equivalent = false;
+                break;
+            }
+        }
+        return equivalent;
+    }
+    
+    /// <summary>
     /// Returns the first item that the query returns true.
     /// </summary>
     public static T Find<T>(this IList<T> list, Predicate<T> query)
