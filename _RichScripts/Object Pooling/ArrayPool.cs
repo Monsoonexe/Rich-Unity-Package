@@ -40,7 +40,8 @@ namespace RichPackage
         /// <returns>A buffer of at least 'minSize' from the pool.</returns>
         public T[] Rent(int minSize, bool clear = false)
         {
-            for (int i = 0; i < _pool.Count; ++i)
+            //iterate backwards to reduce left-shifts of elements after removal.
+            for (int i = _pool.Count - 1; i >= 0; --i)
             {
                 if (_pool[i].Length >= minSize)
                 {
