@@ -8,8 +8,7 @@ using NaughtyAttributes;
 /// </summary>
 public abstract class ATriggerVolume : RichMonoBehaviour
 {
-    [SerializeField]
-    [Tag]
+    [SerializeField, Tag]
     protected string reactToTag = "Player";
 
     /// <summary>
@@ -28,11 +27,10 @@ public abstract class ATriggerVolume : RichMonoBehaviour
     protected UnityEvent exitEvent = new UnityEvent();
 
     [Button(null, EButtonEnableMode.Playmode)]
-    public void ForceCollide()
-    {
-        ++triggerCount;
-        enterEvent.Invoke();
-    }
+    public void ForceEnter() => enterEvent.Invoke();
+
+    [Button(null, EButtonEnableMode.Playmode)]
+    public void ForceExit() => exitEvent.Invoke();
 
     protected void HandleEnterCollision(GameObject other)
     {
