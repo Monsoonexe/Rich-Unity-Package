@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using ScriptableObjectArchitecture;
 using NaughtyAttributes;
+
+//TODO - decouple from Poolable
+//decouple from explosion prefab
+//filter layers at runtime
+//raise CollideEvent with collision info
 
 [RequireComponent(typeof(Collider))]
 public class Projectile : Poolable
@@ -30,6 +36,9 @@ public class Projectile : Poolable
     [SerializeField]
     protected AudioClipReference impactSound;
 
+    [Header("---Events---")]
+    public UnityEvent OnCollideEvent = new UnityEvent();
+
     // Update is called once per frame
     private void Update()
     {
@@ -53,7 +62,7 @@ public class Projectile : Poolable
             impactMarker.name = "Impact Marker";
             Destroy(impactMarker, explosionLifetime); //TODO how can I use a 'static' pool??
         }
-
+        OnCollideEvent.Invoke();
         ReturnToPool();
     }
 
