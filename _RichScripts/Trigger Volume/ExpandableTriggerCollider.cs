@@ -1,25 +1,30 @@
-﻿using System.Collections.Generic;
+﻿//credit: William Lau
+
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
-/// Trigger Collider that expands its radius when the player is within promixity.
+/// Trigger Collider that expands its radius when something is within promixity.
 /// Note: Must use a sphere collider.
 /// </summary>
 [RequireComponent(typeof(SphereCollider))]
-public class ExpandableTriggerCollider : TriggerCollider
+public class ExpandableTriggerCollider : TriggerVolume
 {
     [Header("Expansion Settings")]
-    [Range(1f, 2f)] public float expansionFactor;
+    [Min(0))] public float expandedRadius = 10f;
 
     private SphereCollider sphereCollider;
     private float radiusOrigin;
 
-    #region Initialization
-    void OnEnable()
+	protected override void Awake()
     {
+        base.Awake();
         sphereCollider = (SphereCollider)triggerCollider;
         radiusOrigin = sphereCollider.radius;
+    }
+
+	#region Initialization
+	void OnEnable()
+    {
         OnEnter.AddListener(Expand);
         OnExit.AddListener(Contract);
     }
@@ -37,8 +42,7 @@ public class ExpandableTriggerCollider : TriggerCollider
     /// </summary>
     public void Expand()
     {
-        Debug.Log("Expanded");
-        sphereCollider.radius = radiusOrigin * expansionFactor;
+        sphereCollider.radius = expandedRadius;
     }
 
     /// <summary>
@@ -46,7 +50,6 @@ public class ExpandableTriggerCollider : TriggerCollider
     /// </summary>
     public void Contract()
     {
-        Debug.Log("Contracted");
         sphereCollider.radius = radiusOrigin;
     }
     #endregion
