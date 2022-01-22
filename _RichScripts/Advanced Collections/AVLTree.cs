@@ -293,12 +293,12 @@ public class AVLTree<T> where T : IComparable
             ++Count;
             current = newNode;
         }
-        else if ((compareResult = newNode.data.CompareTo(current.data)) < 0)//stash result and check if less than 0
+        else if ((compareResult = newNode.data.CompareTo(current.data)) <= 0)//stash result and check if less than 0
         {
             RecursiveInsert(ref current.left, newNode);
             BalanceTree(ref current);
         }
-        else if (compareResult > 0)
+        else
         {
             RecursiveInsert(ref current.right, newNode);
             BalanceTree(ref current);
