@@ -1,18 +1,30 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
+using Sirenix.OdinInspector;
+
+//TODO - configure InputField input schema to fit data type.
 
 [SelectionBase]
-[RequireComponent(typeof(TMP_InputField))]
 public class InputFieldToScriptable : RichUIElement<BaseVariable>
 {
     //member Components
+    [SerializeField, Required]
     private TMP_InputField inputField;
+
+    protected virtual void Reset()
+    {
+        SetDevDescription("Synchronizes a ScriptableObject with input from InputField.");
+        inputField = GetComponent<TMP_InputField>();
+    }
 
     protected override void Awake()
     {
         base.Awake();
-        inputField = GetComponent<TMP_InputField>();
+        if(inputField == null)
+            inputField = GetComponent<TMP_InputField>();
+
+        Debug.Assert(inputField != null, "InputField is not set.", this);
     }
 
     protected override void SubscribeToEvents()
@@ -25,6 +37,7 @@ public class InputFieldToScriptable : RichUIElement<BaseVariable>
         inputField.onEndEdit.RemoveListener(UpdateData);
     }
 
+    [Button]
     public override void UpdateUI()
     {
         inputField.text = targetData.ToString();
