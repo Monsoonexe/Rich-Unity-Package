@@ -41,19 +41,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5994351521694301746}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4920df6c78eb514eb98c6eae0a20acc, type: 3}
+  m_Script: {fileID: 11500000, guid: ec0dcbbdf86467d4ba3ecf9bb6d24248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developerDescription: Reacts to things with given tag. Check Layer and "staticness"
-    if not behaving as expected.
+  developerDescription: Please enter a description or a note.
   reactToTag: Player
+  triggerCount: 0
   enterEvent:
     m_PersistentCalls:
       m_Calls: []
   exitEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  loiterEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!135 &5994351521694301748
