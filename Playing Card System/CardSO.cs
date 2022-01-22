@@ -24,7 +24,7 @@ public class CardSO : RichScriptableObject
     [SerializeField, Required, PreviewField] private Sprite faceImage;
 	public Sprite FaceImage => faceImage;
 
-	private void Reset()
+	protected virtual void Reset()
 	{
 		SetDevDescription("I'm data about an individual card in a deck.");
 	}
