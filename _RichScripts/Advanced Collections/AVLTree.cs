@@ -6,12 +6,6 @@ using System.Collections.Generic;
  *  fixme - AddIfNew() costs 2 traversals
  */
 
-/// <summary>
-/// Target {compare} Item.If value >= 1, then testItem is greater than other. <br/>
-/// If value == 0, then testItem is equal to other. <br/>
-/// If value <= -1, then testItem is less than other. <br/>
-/// </summary>
-public delegate int Comparer(T testItem);
 
 /// <summary>
 /// Self-balancing AVL tree. Search is Log2(n).
@@ -23,6 +17,12 @@ public delegate int Comparer(T testItem);
 /// No duplicates allowed!</remarks>
 public class AVLTree<T> where T : IComparable
 {
+    /// <summary>
+    /// Target {compare} Item.If value >= 1, then testItem is greater than other. <br/>
+    /// If value == 0, then testItem is equal to other. <br/>
+    /// If value <= -1, then testItem is less than other. <br/>
+    /// </summary>
+    //public delegate int Comparer(T testItem);
     class AVLNode<TNode> where TNode : IComparable
     {
         #region Properties
@@ -64,7 +64,7 @@ public class AVLTree<T> where T : IComparable
     /// <summary>
     /// Quick calculation of the height. Upper bound: Height <= 1.441 * Log2(Count)
     /// </summary>
-    public int HeightEstimate => Math.Log2(Count) * 1.441f;
+    public int HeightEstimate => (int)(Math.Round(Math.Log2(Count) * 1.441f, MidpointRounding.AwayFromZero));
 
     #endregion
 
@@ -99,17 +99,20 @@ public class AVLTree<T> where T : IComparable
     /// <summary>
     /// Insert an item into the data set. O(Log2(n))
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="data">Data to add.</param>
     public void Add(in T data)
     {
         RecursiveInsert(ref root, new AVLNode<T>(data));
     }
 
-    public void AddIfNew(in T data)
-    {   //2 traversals unless optimized
-        if (!Contains(data))
-            Add(data);
-    }
+
+    /// <summary>
+    /// Insert an item into the data set. O(Log2(n))
+    /// </summary>
+    /// <param name="data">Data to add.</param>
+    /// <returns>True if data does not already exist and was just added.</returns>
+    public bool TryAddIfNew(in T data)
+        => TryAddIfNew(ref root, data);
 
     /// <summary>
     /// 
@@ -212,33 +215,10 @@ public class AVLTree<T> where T : IComparable
         out T value)
     {
         var found = TryInOrderSearch(//arbitrarily use this method
-            predicate, out value);
+        predicate, out value);
         if (found)
             Remove(ref root, value);//requires another shorter search
         return found;
-    }
-
-    /// <summary>
-    /// Returns the item that matches given predicate,
-    /// or 'default'. If {Type} is a class, 'value' can be a
-    /// partially-complete record.
-    /// </summary>
-    /// <param name="comparer">Target {comp} Item.</param>
-    /// <param name="value">Condition.</param>
-    /// <returns>True if item was found and removed.</returns>
-    public bool TryGetRemove(Comparer comparer,
-        out T value)
-    {
-        value = default;
-        //costs 2 traversals unless I make a special find-remove recursive function
-        var foundNode = FindNode(comparer, root);
-        var nodeWasFound = foundNode != null; //cache for return
-        if (nodeWasFound)
-        {
-            value = foundNode.data;
-            Remove(ref root, value);//requires another search
-        }
-        return nodeWasFound;
     }
 
     /// <summary>
@@ -258,40 +238,28 @@ public class AVLTree<T> where T : IComparable
         return searchSuccessful;
     }
 
-    /// <summary>
-    /// Returns the item that compared equal or 'default'. 
-    /// If {Type} is a class, 'value' can be a
-    /// partially-complete record.
-    /// </summary>
-    /// <param name="comparer">Target {comp} Item.</param>
-    public bool TryFind(Comparer compareMethod, 
-        out T value)
+    private bool TryAddIfNew(ref AVLNode<T> currentNode, in T data)
     {
-        value = default;
-        var foundNode = FindNode(compareMethod, root);
-        bool searchSuccessful = foundNode != null;
-        if (searchSuccessful)
-            value = foundNode.data;
-        return searchSuccessful;
-    }
-
-    /// <summary>
-    /// Recuresive binary search based on how item 
-    /// compares in a given method.
-    /// </summary>
-    /// <returns>Null if not found.</returns>
-    private static AVLNode<T> FindNode(Comparer compareMethod,
-        AVLNode<T> current)
-    {
-        if (current == null) return null; //not found
-
-        var compareResult = compareMethod(current.data);
-        if (compareResult > 0)
-            return FindNode(compareMethod, current.right);
-        else if (compareResult < 0)
-            return FindNode(compareMethod, current.left);
+        if(currentNode == null)
+        {
+            RecursiveInsert(ref currentNode, new AVLNode<T>(data));
+            return true;
+        }
         else
-            return current; // found!
+        {
+            if(data.CompareTo(currentNode.data) < 0)
+            {
+                return TryAddIfNew(ref currentNode.left, data);
+            }
+            else if(data.CompareTo(currentNode.data) > 0)
+            {
+                return TryAddIfNew(ref currentNode.right, data);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     private AVLNode<T> FindNode(in T target)
