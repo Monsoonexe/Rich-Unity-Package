@@ -7,21 +7,22 @@ using System.Collections.Generic;
  */
 
 /// <summary>
+/// Target {compare} Item.If value >= 1, then testItem is greater than other. <br/>
+/// If value == 0, then testItem is equal to other. <br/>
+/// If value <= -1, then testItem is less than other. <br/>
+/// </summary>
+public delegate int Comparer(T testItem);
+
+/// <summary>
 /// Self-balancing AVL tree. Search is Log2(n).
 /// Creates garbage on remove.
 /// </summary>
-/// <typeparam name="T">Class or Struct.</typeparam>
+/// <typeparam name="T">Class or Struct that impements the <see name="IComparable"/see> interface.</typeparam>
 /// <remarks>Don't modify the IComparable pivot value while
 /// the item is in a tree. Will break BST aspect.
 /// No duplicates allowed!</remarks>
-class AVLTree<T> where T : IComparable
+public class AVLTree<T> where T : IComparable
 {
-    /// <summary>
-    /// Target {compare} Item.
-    /// </summary>
-    /// <param name="testItem"></param>
-    /// <returns></returns>
-    public delegate int Comparer(T testItem);
     class AVLNode<TNode> where TNode : IComparable
     {
         #region Properties
@@ -48,15 +49,22 @@ class AVLTree<T> where T : IComparable
 
     private AVLNode<T> root;
 
+    //private Class
+
     /// <summary>
     /// Count of items in tree.
     /// </summary>
     public int Count { get; private set; }
 
     /// <summary>
-    /// Roughly 1.44 * Log2(Count)
+    /// Height <= 1.441 * Log2(Count)
     /// </summary>
     public int Height { get => GetHeight(root); }
+
+    /// <summary>
+    /// Quick calculation of the height. Upper bound: Height <= 1.441 * Log2(Count)
+    /// </summary>
+    public int HeightEstimate => Math.Log2(Count) * 1.441f;
 
     #endregion
 
@@ -74,10 +82,22 @@ class AVLTree<T> where T : IComparable
             Add(source[i]);
     }
 
+    public AVLTree(in IEnumerable<T> source)
+    {
+        foreach (var item in source)
+            Add(item);
+    }
+
+    public AVLTree(in ICollection<T> source)
+    {
+        foreach (var item in source)
+            Add(item);
+    }
+
     #endregion
 
     /// <summary>
-    /// 
+    /// Insert an item into the data set. O(Log2(n))
     /// </summary>
     /// <param name="data"></param>
     public void Add(in T data)
@@ -249,7 +269,7 @@ class AVLTree<T> where T : IComparable
     {
         value = default;
         var foundNode = FindNode(compareMethod, root);
-        var searchSuccessful = foundNode != null;
+        bool searchSuccessful = foundNode != null;
         if (searchSuccessful)
             value = foundNode.data;
         return searchSuccessful;
@@ -273,6 +293,9 @@ class AVLTree<T> where T : IComparable
         else
             return current; // found!
     }
+
+    private AVLNode<T> FindNode(in T target)
+        => FindNode(target, root);
 
     /// <summary>
     /// Recursive binary search.
@@ -517,13 +540,13 @@ class AVLTree<T> where T : IComparable
 
     private static int GetHeight(AVLNode<T> current)
     {
-        var height = 0;
+        int height = 0;
 
         if (current != null)
         {
-            var l = GetHeight(current.left);
-            var r = GetHeight(current.right);
-            var m = l.CompareTo(r) > 0 ? l : r;//max
+            int l = GetHeight(current.left);
+            int r = GetHeight(current.right);
+            int m = l.CompareTo(r) > 0 ? l : r;//max
             height = m + 1;
         }
 
