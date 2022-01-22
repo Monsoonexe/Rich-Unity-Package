@@ -64,7 +64,7 @@ public class AVLTree<T> where T : IComparable
     /// <summary>
     /// Quick calculation of the height. Upper bound: Height <= 1.441 * Log2(Count)
     /// </summary>
-    public int HeightEstimate => (int)(Math.Round(Math.Log2(Count) * 1.441f, MidpointRounding.AwayFromZero));
+    public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, MidpointRounding.AwayFromZero));
 
     #endregion
 
