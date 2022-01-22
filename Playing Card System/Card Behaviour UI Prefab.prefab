@@ -83,7 +83,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1976186112653293098}
-  - component: {fileID: 589181597756202519}
+  - component: {fileID: -4536872494118387415}
   m_Layer: 5
   m_Name: Card Behaviour UI Prefab
   m_TagString: Untagged
@@ -112,7 +112,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &589181597756202519
+--- !u!114 &-4536872494118387415
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -121,10 +121,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3056543916870748587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6eb1f9097a308c246ba6f5450ff238fe, type: 3}
+  m_Script: {fileID: 11500000, guid: f2cc7aec40bc51546968b8ea09d394b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developerDescription: I'm the UI-space representation of a card!
+  developerDescription: I'm the world-space representation of a card!
   frontImage: {fileID: 5628524386764584856}
   backImage: {fileID: 4482285124078637306}
 --- !u!1 &7271275401121690708
