@@ -11,6 +11,7 @@ namespace RichPackage
     /// can improve performance in situations where arrays are created and destroyed frequently, <br/>
     /// resulting in significant memory pressure on the garbage collector.
     /// </summary>
+    /// <seealso cref="ClassPool{T}"/>
     public class ArrayPool<T>
     {
         public static ArrayPool<T> Shared { get; } = new ArrayPool<T>();
