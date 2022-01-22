@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using RichPackage;
 
 /*  TODO - pool Nodes in stack to reduce garbage / fragmentation
  *  FixMe - TryFindRemove() costs 2 traversals, one for find, one to delete
  *  fixme - AddIfNew() costs 2 traversals
  */
 
+//Removing is just an illusion and doesn't actually work.
 
 /// <summary>
 /// Self-balancing AVL tree. Search is Log2(n).
@@ -17,12 +19,6 @@ using System.Collections.Generic;
 /// No duplicates allowed!</remarks>
 public class AVLTree<T> where T : IComparable
 {
-    /// <summary>
-    /// Target {compare} Item.If value >= 1, then testItem is greater than other. <br/>
-    /// If value == 0, then testItem is equal to other. <br/>
-    /// If value <= -1, then testItem is less than other. <br/>
-    /// </summary>
-    //public delegate int Comparer(T testItem);
     class AVLNode<TNode> where TNode : IComparable
     {
         #region Properties
@@ -37,19 +33,36 @@ public class AVLTree<T> where T : IComparable
 
         #region Constructors
 
-        public AVLNode(TNode data)
+        public AVLNode(in TNode data)
         {
             this.data = data;
         }
 
         #endregion
+
+        /// <summary>
+        /// Resets node to default state.
+        /// </summary>
+        /// <param name="node"></param>
+        public static void ResetNode(AVLNode<T> node)
+        {
+            node.left = null;
+            node.right = null;
+            node.data = default; //release memory, if applicable
+        }
     }
 
     #region Properties
 
     private AVLNode<T> root;
 
-    //private Class
+    private static readonly ClassPool<AVLNode<T>> nodePool
+        = new ClassPool<AVLNode<T>>(
+            maxCount: -1, 
+            preInit: 32, 
+            factoryMethod: () => new AVLNode<T>(default),
+            enpoolMethod: AVLNode<T>.ResetNode
+            );
 
     /// <summary>
     /// Count of items in tree.
@@ -64,7 +77,8 @@ public class AVLTree<T> where T : IComparable
     /// <summary>
     /// Quick calculation of the height. Upper bound: Height <= 1.441 * Log2(Count)
     /// </summary>
-    public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, MidpointRounding.AwayFromZero));
+    public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, 
+        MidpointRounding.AwayFromZero));
 
     #endregion
 
@@ -102,9 +116,10 @@ public class AVLTree<T> where T : IComparable
     /// <param name="data">Data to add.</param>
     public void Add(in T data)
     {
-        RecursiveInsert(ref root, new AVLNode<T>(data));
+        var newNode = nodePool.Depool();
+        newNode.data = data;
+        RecursiveInsert(ref root, newNode);
     }
-
 
     /// <summary>
     /// Insert an item into the data set. O(Log2(n))
@@ -115,15 +130,12 @@ public class AVLTree<T> where T : IComparable
         => TryAddIfNew(ref root, data);
 
     /// <summary>
-    /// 
+    /// Check if the given key is equal to any item inside this tree.
     /// </summary>
     /// <param name="key"></param>
+    /// <returns>True if this tree contains at least one node with the given key.</returns>
     public bool Contains(in T key)
-    {
-        var foundNode = FindNode(key, root);
-        return foundNode != null
-            && foundNode.data.CompareTo(key) == 0;
-    }
+        => FindNode(key, root) != null;
 
     /// <summary>
     /// Remove node with target data.
@@ -180,12 +192,29 @@ public class AVLTree<T> where T : IComparable
                 {
                     //delete its inorder successor
                     AVLNode<T> parent = current.right;
+                    AVLNode<T> removeNode = current;
                     while (parent.left != null)
+                    {
+                        removeNode = parent;
                         parent = parent.left;
-                    current.data = parent.data;
+                    }
+                    current.data = parent.data; //data is effectively removed, but not node.
+
+                    if (removeNode == current)
+                    {
+                        var deadNode = removeNode.right;
+                        removeNode.right = deadNode.right; //release
+                        nodePool.Enpool(deadNode);
+                    }
+                    else
+                    {
+                        var deadNode = removeNode.left;
+                        removeNode.left = deadNode.left; //release
+                        nodePool.Enpool(deadNode);
+                    }
 
                     //rebalancing
-                    Remove(ref current.right, current.data);
+                    //Remove(ref current.right, current.data);
                     if (BalanceFactor(current) == 2)
                     {
                         if (BalanceFactor(current.left) >= 0)
@@ -196,7 +225,10 @@ public class AVLTree<T> where T : IComparable
                 }
                 else //if current.right == null
                 {
+                    var deadNode = current;
                     current = current.left;
+                    nodePool.Enpool(deadNode);
+
                     return;
                 }
             }
@@ -211,13 +243,16 @@ public class AVLTree<T> where T : IComparable
     /// <param name="predicate">Condition.</param>
     /// <param name="value">Condition.</param>
     /// <returns>True if item was found and removed.</returns>
-    public bool TryGetRemove(Predicate<T> predicate, 
+    public bool TryGetRemove(Predicate<T> predicate,
         out T value)
     {
         var found = TryInOrderSearch(//arbitrarily use this method
         predicate, out value);
         if (found)
+        {
+            --Count; // assume it was found, and backtrack if not
             Remove(ref root, value);//requires another shorter search
+        }
         return found;
     }
 
@@ -240,18 +275,20 @@ public class AVLTree<T> where T : IComparable
 
     private bool TryAddIfNew(ref AVLNode<T> currentNode, in T data)
     {
-        if(currentNode == null)
+        if (currentNode == null)
         {
-            RecursiveInsert(ref currentNode, new AVLNode<T>(data));
+            var newNode = nodePool.Depool();
+            newNode.data = data;
+            RecursiveInsert(ref currentNode, newNode);
             return true;
         }
         else
         {
-            if(data.CompareTo(currentNode.data) < 0)
+            if (data.CompareTo(currentNode.data) < 0)
             {
                 return TryAddIfNew(ref currentNode.left, data);
             }
-            else if(data.CompareTo(currentNode.data) > 0)
+            else if (data.CompareTo(currentNode.data) > 0)
             {
                 return TryAddIfNew(ref currentNode.right, data);
             }
@@ -262,22 +299,21 @@ public class AVLTree<T> where T : IComparable
         }
     }
 
-    private AVLNode<T> FindNode(in T target)
-        => FindNode(target, root);
+    private AVLNode<T> FindNode(in T target) => FindNode(target, root);
 
     /// <summary>
     /// Recursive binary search.
     /// </summary>
     /// <param name="target">Partially-filled record.</param>
     /// <returns>Null if not found.</returns>
-    private static AVLNode<T> FindNode(in T target, 
+    private static AVLNode<T> FindNode(in T target,
         AVLNode<T> current)
     {
         if (current == null) return null;
 
         var compareResult = target.CompareTo(current.data);
         if (compareResult > 0)
-            return FindNode(target, current.right); 
+            return FindNode(target, current.right);
         else if (compareResult < 0)
             return FindNode(target, current.left);
         else
@@ -339,7 +375,7 @@ public class AVLTree<T> where T : IComparable
         Predicate<T> predicate, out T value)
     {
         value = default;
-        return TryInOrderSearch(root, 
+        return TryInOrderSearch(root,
             predicate, ref value);
     }
 
@@ -350,7 +386,7 @@ public class AVLTree<T> where T : IComparable
         if (current != null)
         {
             //check left
-            if(TryInOrderSearch(current.left, 
+            if (TryInOrderSearch(current.left,
                 predicate, ref value))
                 return true;
 
@@ -362,7 +398,7 @@ public class AVLTree<T> where T : IComparable
             }
 
             //check right
-            if (TryInOrderSearch(current.right, 
+            if (TryInOrderSearch(current.right,
                 predicate, ref value))
                 return true;
         }
@@ -404,7 +440,7 @@ public class AVLTree<T> where T : IComparable
         Predicate<T> predicate, out T value)
     {
         value = default;
-        return TryPostOrderSearch(root, 
+        return TryPostOrderSearch(root,
             predicate, ref value);
     }
 
@@ -540,27 +576,15 @@ public class AVLTree<T> where T : IComparable
         int balanceFactor = BalanceFactor(current);
 
         if (balanceFactor > 1)
-        {
             if (BalanceFactor(current.left) > 0)
-            {
                 current = RotateLL(current);
-            }
             else
-            {
                 current = RotateLR(current);
-            }
-        }
         else if (balanceFactor < -1)
-        {
             if (BalanceFactor(current.right) > 0)
-            {
                 current = RotateRL(current);
-            }
             else
-            {
                 current = RotateRR(current);
-            }
-        }
     }
 
     #endregion
