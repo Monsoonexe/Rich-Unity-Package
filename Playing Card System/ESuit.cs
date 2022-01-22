@@ -3,5 +3,6 @@
     DIAMONDS,
     CLUBS,
     HEARTS,
-    SPADES
+    SPADES,
+    JOKER = 99
 }
