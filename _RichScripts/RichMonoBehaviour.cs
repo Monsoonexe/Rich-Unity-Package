@@ -61,6 +61,15 @@ public class RichMonoBehaviour : MonoBehaviour
         return valid;
     }
 
+    [Conditional("UNITY_EDITOR")]
+    public void MarkDirtySafely()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+    }
+
     public static T Construct<T>() where T : RichMonoBehaviour
         => new GameObject().AddComponent<T>();
 
