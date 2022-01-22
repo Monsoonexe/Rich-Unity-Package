@@ -120,6 +120,8 @@ namespace RichPackage
 		public void StartTimer()
 		{
 			paused = false;
+			if (timerRoutine != null) //prevent multiple coroutines.
+				StopCoroutine(timerRoutine);
 			timerRoutine = StartCoroutine(TickTimer());
 		}
 
