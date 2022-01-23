@@ -21,6 +21,34 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
 	private string minString;
 	private string maxString;
 
+#if UNITY_EDITOR
+
+	/// <summary>
+	/// Shows example output in Inspector.
+	/// </summary>
+	[ReadOnly, ShowInInspector, PropertyTooltip("Shows example output.")]
+	private string OutputString
+	{
+		get
+		{
+			try
+			{
+				SetTargetData(targetData); //refresh cached values
+				return string.Format(
+					formatString,
+					minString,
+					targetData.Value.ToString(),
+					maxString);
+			}
+			catch (System.Exception ex) 
+			{
+				return ex.Message;
+			}
+		}
+	}
+
+#endif
+
 	private void Reset()
 	{
 		SetDevDescription("I display text. E.g. {0} % \t {0} | {1} | {2} \t {1} credits \t {1:n} \t {#,##0}.");
@@ -30,6 +58,12 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
 	protected override void Awake()
 	{
 		base.Awake();
+
+		//validate
+		Debug.Assert(readoutUIElement != null, $"{nameof(readoutUIElement)} is not set.", this);
+		Debug.Assert(targetData != null, $"{nameof(targetData)} is not set.", this);
+
+		//init
 		SetTargetData(targetData); //cache min/max strings
 	}
 
