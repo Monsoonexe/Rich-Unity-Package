@@ -33,19 +33,36 @@ public static class LinkedList_Extensions
         return found;
     }
 
+    public static bool TryFindAndRemoveNode<T>(
+        this LinkedList<T> linkedList,
+        Predicate<T> query, out LinkedListNode<T> foundNode)
+    {
+        foundNode = null; //return values
+        LinkedListNode<T> currentNode = linkedList.First;
+
+        while (currentNode != null)
+        {
+            if (query(currentNode.Value))
+            {
+                foundNode = currentNode;
+                linkedList.Remove(foundNode);
+                break;
+            }
+            currentNode = currentNode.Next; //go to next element
+        } 
+
+        return foundNode != null;
+    }
+
     public static bool TryFindAndRemove<T>(
         this LinkedList<T> linkedList,
         Predicate<T> query, out T foundItem)
     {
         foundItem = default;
         bool found = false; // return value
-
-        if (linkedList.Count <= 0)
-            return false; //early exit
-
         LinkedListNode<T> currentNode = linkedList.First;
 
-        do
+        while (currentNode != null)
         {
             if (query(currentNode.Value))
             {
@@ -54,7 +71,8 @@ public static class LinkedList_Extensions
                 linkedList.Remove(currentNode);
                 break;
             }
-        } while (currentNode.Next != null);
+            currentNode = currentNode.Next; //go to next element
+        } 
 
         return found;
     }
