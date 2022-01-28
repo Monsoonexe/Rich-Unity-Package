@@ -299,7 +299,8 @@ public class AVLTree<T> where T : IComparable
         }
     }
 
-    private AVLNode<T> FindNode(in T target) => FindNode(target, root);
+    private AVLNode<T> FindNode(in T target)
+        => FindNode(target, root);
 
     /// <summary>
     /// Recursive binary search.
