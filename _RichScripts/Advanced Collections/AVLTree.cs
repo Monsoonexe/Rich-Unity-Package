@@ -25,9 +25,9 @@ public class AVLTree<T> where T : IComparable
 
         public TNode data;
 
-        public AVLNode<TNode> left;
+        public AVLNode<TNode> left = null;
 
-        public AVLNode<TNode> right;
+        public AVLNode<TNode> right = null;
 
         #endregion
 
@@ -54,7 +54,7 @@ public class AVLTree<T> where T : IComparable
 
     #region Properties
 
-    private AVLNode<T> root;
+    private AVLNode<T> root = null;
 
     private static readonly ClassPool<AVLNode<T>> nodePool
         = new ClassPool<AVLNode<T>>(
