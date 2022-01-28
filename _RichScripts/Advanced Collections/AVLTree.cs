@@ -19,6 +19,12 @@ using RichPackage;
 /// No duplicates allowed!</remarks>
 public class AVLTree<T> where T : IComparable
 {
+    /// <summary>
+    /// Target {compare} Item.If value >= 1, then testItem is greater than other. <br/>
+    /// If value == 0, then testItem is equal to other. <br/>
+    /// If value <= -1, then testItem is less than other. <br/>
+    /// </summary>
+    //public delegate int Comparer(T testItem);
     class AVLNode<TNode> where TNode : IComparable
     {
         #region Properties
@@ -38,18 +44,13 @@ public class AVLTree<T> where T : IComparable
             this.data = data;
         }
 
-        #endregion
-
-        /// <summary>
-        /// Resets node to default state.
-        /// </summary>
-        /// <param name="node"></param>
         public static void ResetNode(AVLNode<T> node)
-        {
+		{
             node.left = null;
             node.right = null;
-            node.data = default; //release memory, if applicable
-        }
+		}
+
+        #endregion
     }
 
     #region Properties
@@ -57,12 +58,15 @@ public class AVLTree<T> where T : IComparable
     private AVLNode<T> root = null;
 
     private static readonly ClassPool<AVLNode<T>> nodePool
-        = new ClassPool<AVLNode<T>>(
-            maxCount: -1, 
-            preInit: 32, 
-            factoryMethod: () => new AVLNode<T>(default),
-            enpoolMethod: AVLNode<T>.ResetNode
-            );
+        = new ClassPool<AVLNode<T>>
+        (
+            maxCount: -1, //no limit to nodes
+            preInit: 32, //prebuild a pool
+            factoryMethod: () => new AVLNode<T>(default), //default constructor
+            enpoolMethod: AVLNode<T>.ResetNode //de-init nodes
+        );
+
+    //private Class
 
     /// <summary>
     /// Count of items in tree.
@@ -77,8 +81,7 @@ public class AVLTree<T> where T : IComparable
     /// <summary>
     /// Quick calculation of the height. Upper bound: Height <= 1.441 * Log2(Count)
     /// </summary>
-    public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, 
-        MidpointRounding.AwayFromZero));
+    public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, MidpointRounding.AwayFromZero));
 
     #endregion
 
@@ -130,12 +133,15 @@ public class AVLTree<T> where T : IComparable
         => TryAddIfNew(ref root, data);
 
     /// <summary>
-    /// Check if the given key is equal to any item inside this tree.
+    /// 
     /// </summary>
     /// <param name="key"></param>
-    /// <returns>True if this tree contains at least one node with the given key.</returns>
     public bool Contains(in T key)
-        => FindNode(key, root) != null;
+    {
+        var foundNode = FindNode(key, root);
+        return foundNode != null
+            && foundNode.data.CompareTo(key) == 0;
+    }
 
     /// <summary>
     /// Remove node with target data.
@@ -147,6 +153,13 @@ public class AVLTree<T> where T : IComparable
         Remove(ref root, target);
     }
 
+    public void RemoveAll()
+    {
+        while (root != null)
+            Remove(ref root, root.data);
+        Count = 0;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -155,84 +168,95 @@ public class AVLTree<T> where T : IComparable
     /// <returns></returns>
     private void Remove(ref AVLNode<T> current, in T target)
     {
-        int compareResult = 0;
         if (current == null)
         {
             ++Count;//undo wrong assumption (janky, but cheap).
             return; //not found
         }
         else
-        {   //left subtree
-            if ((compareResult = target.CompareTo(current.data)) < 0) //get and stash compare result for next else if
-            {
+        {
+            int compareResult = target.CompareTo(current.data);
+
+            //left subtree
+            if (compareResult < 0) //get and stash compare result for next else if
                 Remove(ref current.left, target);
-                if (BalanceFactor(current) == -2)//here
-                {
-                    if (BalanceFactor(current.right) <= 0)
-                        current = RotateRR(current);
-                    else
-                        current = RotateRL(current);
-                }
-            }
             //right subtree
             else if (compareResult > 0)
-            {
                 Remove(ref current.right, target);
-                if (BalanceFactor(current) == 2)
-                {
-                    if (BalanceFactor(current.left) >= 0)
-                        current = RotateLL(current);
-                    else
-                        current = RotateLR(current);
-                }
-            }
             else  //target is found!
-            {   //adjust tree
-                if (current.right != null)
+            {   // delete this node and replace with a child?
+                //case 1: one or no children
+                if (current.left == null
+                || current.right == null)
                 {
-                    //delete its inorder successor
-                    AVLNode<T> parent = current.right;
-                    AVLNode<T> removeNode = current;
-                    while (parent.left != null)
-                    {
-                        removeNode = parent;
-                        parent = parent.left;
-                    }
-                    current.data = parent.data; //data is effectively removed, but not node.
+                    AVLNode<T> temp = current; //del current
+                    if (current.left != null)
+                        current = current.left; //replace with left
+                    else if (current.right != null)
+                        current = current.right; //replace with right
+                    else //has no children
+                        current = null; //del self
 
-                    if (removeNode == current)
-                    {
-                        var deadNode = removeNode.right;
-                        removeNode.right = deadNode.right; //release
-                        nodePool.Enpool(deadNode);
-                    }
-                    else
-                    {
-                        var deadNode = removeNode.left;
-                        removeNode.left = deadNode.left; //release
-                        nodePool.Enpool(deadNode);
-                    }
-
-                    //rebalancing
-                    //Remove(ref current.right, current.data);
-                    if (BalanceFactor(current) == 2)
-                    {
-                        if (BalanceFactor(current.left) >= 0)
-                            current = RotateLL(current);
-                        else
-                            current = RotateLR(current);
-                    }
+                    nodePool.Enpool(temp); //free node
                 }
-                else //if current.right == null
+                else //2 children
                 {
-                    var deadNode = current;
-                    current = current.left;
-                    nodePool.Enpool(deadNode);
+                    //find the inorder successor
+                    //(the smallest item in the right subtree)
+                    AVLNode<T> successor = current.right;
+                    while (successor.left != null)
+                        successor = successor.left;
 
-                    return;
+                    //copy the inorder successor's data to the current node
+                    current.data = successor.data;
+
+                    //delete the inorder successor
+                    Remove(ref current.right, successor.data);
                 }
+
+                //had no children
+                if (current == null)
+                    return; //deleted self
+
+                BalanceTree(ref current);
             }
         }
+    }
+
+    public T GetMaxValue()
+    {
+        if (root == null) //throw new EmptyTreeException();
+            return default;
+
+        var maxNode = root;
+        GetMaxValueNode(ref maxNode);
+        return maxNode.data;
+    }
+
+    private void GetMaxValueNode(ref AVLNode<T> current)
+    {
+        if (current.right == null)
+            return;
+        else
+            GetMaxValueNode(ref current.right);
+    }
+
+    public T GetMinValue()
+    {
+        if (root == null) //throw new EmptyTreeException();
+            return default;
+
+        var minNode = root;//ref a local variable to not change root
+        GetMinValueNode(ref minNode);
+        return minNode.data;
+    }
+
+    private void GetMinValueNode(ref AVLNode<T> current)
+    {
+        if (current.left == null)
+            return; //current is lowest
+        else
+            GetMinValueNode(ref current.left);
     }
 
     /// <summary>
