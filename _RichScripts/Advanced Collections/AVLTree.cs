@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using RichPackage;
+using RichPackage.Pooling;
 
 /*  TODO - pool Nodes in stack to reduce garbage / fragmentation
  *  FixMe - TryFindRemove() costs 2 traversals, one for find, one to delete
@@ -44,12 +44,6 @@ public class AVLTree<T> where T : IComparable
             this.data = data;
         }
 
-        public static void ResetNode(AVLNode<T> node)
-		{
-            node.left = null;
-            node.right = null;
-		}
-
         #endregion
     }
 
@@ -57,13 +51,13 @@ public class AVLTree<T> where T : IComparable
 
     private AVLNode<T> root = null;
 
-    private static readonly ClassPool<AVLNode<T>> nodePool
-        = new ClassPool<AVLNode<T>>
+    private static readonly ObjectPool<AVLNode<T>> nodePool
+        = new ObjectPool<AVLNode<T>>
         (
             maxCount: -1, //no limit to nodes
             preInit: 32, //prebuild a pool
             factoryMethod: () => new AVLNode<T>(default), //default constructor
-            enpoolMethod: AVLNode<T>.ResetNode //de-init nodes
+            enpoolMethod: (n) => n.left = n.right = null// AVLNode<T>.ResetNode //de-init nodes
         );
 
     //private Class
