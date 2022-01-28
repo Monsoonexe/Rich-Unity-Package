@@ -33,7 +33,7 @@ public class AVLTree<T> where T : IComparable
 
         #region Constructors
 
-        public AVLNode(in TNode data)
+        public AVLNode(TNode data)
         {
             this.data = data;
         }
