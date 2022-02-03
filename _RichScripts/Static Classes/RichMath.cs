@@ -46,6 +46,12 @@ public static class RichMath
         => value > max ? max 
             : value < min ? min 
             : value;
+            
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint Clamp(uint value, uint min, uint max)
+        => value > max ? max 
+            : value < min ? min 
+            : value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Clamp(float value, float min, float max)
