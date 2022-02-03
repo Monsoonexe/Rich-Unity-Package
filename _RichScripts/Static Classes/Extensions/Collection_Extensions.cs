@@ -378,10 +378,20 @@ public static class Collection_Extensions
     }
     #region Summation
 
+    public static int Sum(this IList<byte> col)
+    {
+        int sum = 0;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
     public static int Sum(this IList<int> col)
     {
-        var sum = 0;
-        for (var i = col.Count - 1; i >= 0; --i)
+        int sum = 0;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -389,23 +399,26 @@ public static class Collection_Extensions
     public static uint Sum(this IList<uint> col)
     {
         uint sum = 0;
-        for (var i = col.Count; i >= 0; --i)
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
 
     public static float Sum(this IList<float> col)
     {
-        var sum = 0.0f;
-        for (var i = col.Count; i >= 0; --i)
+        float sum = 0.0f;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
 
     public static double Sum(this IList<double> col)
     {
-        var sum = 0.0d;
-        for (var i = col.Count - 1; i >= 0; --i)
+        double sum = 0.0d;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
