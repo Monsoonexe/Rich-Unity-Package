@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 
-namespace RichPackage
+namespace RichPackage.Pooling
 {
 	/// <summary>
 	/// Generic pool for anything.
 	/// </summary>
 	/// <seealso cref="ArrayPool{T}"/>
-	public class ClassPool<T>
+	public class ObjectPool<T>
 	{
 		/// <summary>
 		/// Shared class if you don't want to instantiate your own.
 		/// </summary>
-		public static readonly ClassPool<T> Shared = new ClassPool<T>();
+		public static readonly ObjectPool<T> Shared = new ObjectPool<T>();
 
 		private readonly Stack<T> pool;
 
@@ -43,7 +43,7 @@ namespace RichPackage
 		/// </summary>
 		public int MaxCount { get; set; } = -1;
 
-		public ClassPool(int maxCount = -1)
+		public ObjectPool(int maxCount = -1)
 		{
 			MaxCount = maxCount;
 			int amount = MaxCount >= 0 ? MaxCount : 16;
@@ -57,7 +57,7 @@ namespace RichPackage
 		/// added to the pool, they will be dropped rather than enpooled.<br/>
 		/// MaxCount less than 1 implies there is no internal limit to the size of the pool.</param>
 		/// <param name="preInit">Number of items to create up front.</param>
-		public ClassPool(int maxCount, int preInit)
+		public ObjectPool(int maxCount, int preInit)
 			: this(maxCount)
 		{
 			//prebake
@@ -65,7 +65,7 @@ namespace RichPackage
 				pool.Push(FactoryMethod());
 		}
 
-		public ClassPool(int maxCount, int preInit,
+		public ObjectPool(int maxCount, int preInit,
 			Func<T> factoryMethod, Action<T> enpoolMethod = null,
 			Action<T> depoolMethod = null)
 			: this(maxCount)
