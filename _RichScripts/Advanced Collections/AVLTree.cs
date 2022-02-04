@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using RichPackage.Pooling;
 
-/*  TODO - pool Nodes in stack to reduce garbage / fragmentation
+/*  TODO - allow for applying custom comparison function rather than relying on CompareTo.
+ *  this would allow for things like arrays to be pooled natively without a wrapper class.
  *  FixMe - TryFindRemove() costs 2 traversals, one for find, one to delete
  *  fixme - AddIfNew() costs 2 traversals
  */
@@ -264,6 +265,7 @@ public class AVLTree<T> where T : IComparable
     public bool TryGetRemove(Predicate<T> predicate,
         out T value)
     {
+        //TODO - test which half of the tree the target would be in and do pre order or post order search.
         var found = TryInOrderSearch(//arbitrarily use this method
         predicate, out value);
         if (found)
@@ -499,9 +501,7 @@ public class AVLTree<T> where T : IComparable
     public void PreOrderProcessTree(Action<T> process)
     {
         if (root == null)
-        {
             return;
-        }
 
         PreOrderProcessTree(root, process);
     }
