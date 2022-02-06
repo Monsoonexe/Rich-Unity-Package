@@ -2,6 +2,8 @@
 
 namespace ScriptableObjectArchitecture
 {
+    /// <seealso cref="BoolGameEventListener"/>
+    /// <seealso cref="BoolVariable"/>
     [System.Serializable]
     [CreateAssetMenu(
         fileName = "BoolGameEvent.asset",
