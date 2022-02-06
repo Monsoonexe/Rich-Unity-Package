@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
+    /// <seealso cref="BoolGameEventListener"/>
+    /// <seealso cref="BoolGameEvent"/>
     [CreateAssetMenu(
         fileName = "BoolVariable.asset",
         menuName = SOArchitecture_Utility.VARIABLE_SUBMENU + "bool",
