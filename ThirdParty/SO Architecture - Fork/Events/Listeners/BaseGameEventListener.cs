@@ -33,7 +33,7 @@ where TResponse : UnityEvent<TType>
 
             AddStackTrace(value);
         }
-        private void RaiseResponse(TType value)
+        protected virtual void RaiseResponse(TType value)
         {
             _response.Invoke(value);
         }
@@ -50,9 +50,7 @@ where TResponse : UnityEvent<TType>
         private void Register()
         {
             if (_previouslyRegisteredEvent != null)
-            {
                 _previouslyRegisteredEvent.RemoveListener(this);
-            }
 
             _event.AddListener(this);
             _previouslyRegisteredEvent = _event;
