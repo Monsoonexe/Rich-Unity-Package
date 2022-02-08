@@ -31,13 +31,13 @@ public class RichUIElement : RichMonoBehaviour
     /// <summary>
     /// Show if hidden, hide if shown.
     /// </summary>
-    [Button]
+    [Button, HorizontalGroup("A")]
     public virtual void ToggleVisuals() => ToggleVisuals(!gameObject.activeSelf);
 
-    [Button]
+    [Button, HorizontalGroup("A")]
     public void Show() => ToggleVisuals(true);
 
-    [Button]
+    [Button, HorizontalGroup("A")]
     public void Hide() => ToggleVisuals(false);
     
     /// <summary>
