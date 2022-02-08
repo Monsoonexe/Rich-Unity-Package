@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+//using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Controls a meter fill amount between min and max
@@ -33,6 +34,7 @@ public class UIMeterInt : VariableUIElement<IntVariable>
     /// <summary>
     /// Refresh UI element with current data values.
     /// </summary>
+    [Button]
     public override void UpdateUI()
     {
         var min = targetData.MinClampValue; //cache
