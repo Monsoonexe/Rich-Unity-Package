@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using RichPackage.UI;
+using Signals;
 
 namespace RichPackage
 {
@@ -100,6 +101,9 @@ namespace RichPackage
 
             //wait for the darkness to envelope you
             yield return transitionWait;
+
+            //last call before a scene is destroyed.
+            GlobalSignals.Get<ScenePreUnload>().Dispatch();
 
             //perform scene load
             SceneManager.sceneLoaded += OnLevelLoaded; //subscribe to event

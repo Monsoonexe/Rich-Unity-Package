@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Signals;
+using ScriptableObjectArchitecture;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// I control the application-level behaviour.
@@ -23,6 +25,9 @@ public class RichAppController : RichMonoBehaviour
     public static float Time { get; private set; }
     
     public static float FixedDeltaTime { get; private set; }
+
+    [SerializeField, Required]
+    private GameEvent gameIsQuittingEvent;
 
     private void Reset()
     {
@@ -52,6 +57,7 @@ public class RichAppController : RichMonoBehaviour
     public void QuitGame()
     {
         GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
+        gameIsQuittingEvent.Raise();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
@@ -74,7 +80,6 @@ public class RichAppController : RichMonoBehaviour
     private void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
         => GlobalSignals.Get<SceneLoadedSignal>().Dispatch();
 
-
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().buildIndex);
@@ -94,3 +99,10 @@ public class GameIsQuittingSignal : ASignal { }
 /// Dispatched by SceneManager.sceneLoaded when such.
 /// </summary>
 public class SceneLoadedSignal : ASignal { }
+
+/// <summary>
+/// The scene is about to be unloaded. Last call before your possible demise! <br/>
+/// NOTE: If multiple scenes exist, it may not be 'your' scene that is being unloaded.
+/// See also: <seealso cref="SceneManager.sceneUnloaded"/>
+/// </summary>
+public class ScenePreUnload : ASignal { }
