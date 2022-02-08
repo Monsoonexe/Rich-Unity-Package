@@ -42,6 +42,8 @@ public static class ConstStrings
     public static readonly string SPACE_SLASH_SPACE = " / ";
     public static readonly string SPACE = " ";
 
+    public const string EMPTY = "";
+
     //const chars
     public const char COLON = ':';
     public const char DOLLAR_SIGN = '$';
