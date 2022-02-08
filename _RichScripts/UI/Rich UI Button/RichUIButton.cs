@@ -124,6 +124,12 @@ public class RichUIButton : RichUIElement
     protected virtual void OnDisable()
         => myButton.onClick.RemoveListener(OnButtonClick);
 
+    public void AddListener(Action action) => myButton.onClick.AddListener(action.Invoke);
+
+    public void RemoveListener(Action action) => myButton.onClick.RemoveListener(action.Invoke);
+
+    public void RemoveAllListeners() => myButton.onClick.RemoveAllListeners();
+
     /// <summary>
     /// Function called by Button.
     /// </summary>
@@ -137,19 +143,52 @@ public class RichUIButton : RichUIElement
     {
         myImage.enabled = active;
         myText.enabled = active;
+        myButton.enabled = active;
     }
 
-    /// <summary>
-    /// Basic way to set configure look of button. For more flexibility,
-    /// use Configure(RichUIButtonPayload to add more data).
-    /// </summary>
-    /// <param name="image"></param>
-    /// <param name="label"></param>
-    public virtual void SetContent(Sprite image, string label)
-    {
-        myImage.sprite = image;
-        myText.text = label;
+    public void Show(string text)
+	{
+        Text = text;
+        Show();
     }
+
+    public void Show(string text, Sprite sprite)
+    {
+        Text = text;
+        Sprite = sprite;
+        Show();
+    }
+
+    public void Show(Action onPress)
+	{
+        RemoveAllListeners();
+        AddListener(onPress.Invoke);
+        Show();
+	}
+
+    public void Show(Action onPress, Sprite sprite)
+    {
+        Sprite = sprite;
+        Show(onPress);
+    }
+
+    public void Show(Action onPress, string text)
+	{
+        Text = text;
+        Show(onPress);
+	}
+
+    public void Show(Action onPress, string text, Sprite sprite)
+	{
+        Sprite = sprite;
+        Show(onPress, text);
+	}
+
+    public void Show(Sprite sprite)
+	{
+        Sprite = sprite;
+        Show();
+	}
 }
 
 /// <summary>
@@ -181,12 +220,17 @@ public abstract class RichUIButton<TPayload> : RichUIButton
         SetDevDescription("Automatically handles subscribing " +
             "and responding to a button." +
             "\r\nAnnounces its payload when pressed.");
+
+        //assume this hierarchy when initializing, but not always.
+        myButton = GetComponent<Button>();
+        myImage = GetComponent<Image>();
+        myText = GetComponentInChildren<TextMeshProUGUI>();
     }
 
-    public virtual void SetContent(TPayload newPayloadData, Sprite image, string label)
+    public virtual void Show(TPayload newPayloadData, string label, Sprite image)
     {
-        SetContent(image, label);//forward
         PayloadData = newPayloadData;
+        Show(label, image);//forward
     }
 
 	protected override void OnButtonClick()
