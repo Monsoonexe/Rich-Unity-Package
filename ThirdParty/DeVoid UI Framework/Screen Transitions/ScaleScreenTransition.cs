@@ -22,6 +22,7 @@ public class ScaleScreenTransition : ATransitionComponent
 
     public override void Animate(Transform target, Action callWhenFinished)
     {
+        IsAnimating = true;
         rTransform = target as RectTransform;
         callback = callWhenFinished;
         canvasGroup = null; // reset in case not fading
@@ -59,12 +60,14 @@ public class ScaleScreenTransition : ATransitionComponent
         scaleSequence.Play();
     }
 
-    private void Cleanup() {
-        callback();
-        callback = null;
+    private void Cleanup() 
+    {
+        IsAnimating = false;
         rTransform.localScale = Vector3.one;
         if(canvasGroup)
             canvasGroup.alpha = 1f;
+        callback();
+        callback = null;
     }
 
     public override void Stop()

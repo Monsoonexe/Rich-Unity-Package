@@ -33,6 +33,7 @@ public class SlideScreenTransition : ATransitionComponent
 
     public override void Animate(Transform target, Action callWhenFinished = null)
     {
+        IsAnimating = true;
         rTransform = target as RectTransform;
         callback = callWhenFinished;
 
@@ -59,8 +60,9 @@ public class SlideScreenTransition : ATransitionComponent
         rTransform.DOKill();
 
         CanvasGroup canvasGroup = null;
-        if (doFade) {
-            canvasGroup = rTransform.GetComponent<CanvasGroup>()
+        if (doFade) 
+        {
+            canvasGroup = rTransform.GetComponent<CanvasGroup>() //TODO - null coalescing could be a lie!
                 ?? rTransform.gameObject.AddComponent<CanvasGroup>();
             
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
@@ -71,13 +73,14 @@ public class SlideScreenTransition : ATransitionComponent
             .OnComplete(
                 () => 
                 {
-                    callback?.Invoke();
-                    callback = null;
+                    IsAnimating = false;
 
                     rTransform.anchoredPosition = origAnchoredPos;
                     if (canvasGroup != null) {
                         canvasGroup.alpha = 1f;
                     }
+                    callback?.Invoke();
+                    callback = null;
                 })
             .SetUpdate(true);
     }
