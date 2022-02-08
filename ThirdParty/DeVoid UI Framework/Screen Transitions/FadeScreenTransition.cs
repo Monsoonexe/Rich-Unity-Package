@@ -17,7 +17,7 @@ public class FadeScreenTransition : ATransitionComponent, IAnimate
     [Required]
     public CanvasGroup canvasGroup;
 
-    public bool IsAnimating { get => animationTween != null; }
+    public new bool IsAnimating { get => animationTween != null; }
 
     //runtime data
     private Tweener animationTween;
