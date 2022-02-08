@@ -15,6 +15,8 @@ public abstract class ATransitionComponent : RichMonoBehaviour
     protected float duration = 0.5f;
 
     public float Duration { get => duration; }
+
+    public bool IsAnimating { get; protected set; }
     
     protected virtual void Reset()
     {
