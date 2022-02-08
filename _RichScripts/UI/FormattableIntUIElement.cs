@@ -27,7 +27,7 @@ public class FormattableIntUIElement : RichUIElement<IntVariable>
 	/// Shows example output in Inspector.
 	/// </summary>
 	[ReadOnly, ShowInInspector, PropertyTooltip("Shows example output.")]
-	private string OutputString
+	private string OutputString_Editor
 	{
 		get
 		{
