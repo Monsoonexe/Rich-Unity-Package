@@ -1,4 +1,6 @@
-﻿using RichPackage.Pooling;
+﻿using System;
+using System.Collections.Generic;
+using RichPackage.Pooling;
 
 /*  TODO - allow for applying custom comparison function rather than relying on CompareTo.
  *  this would allow for things like arrays to be pooled natively without a wrapper class.
