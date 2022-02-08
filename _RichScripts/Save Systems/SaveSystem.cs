@@ -43,7 +43,8 @@ namespace RichPackage.SaveSystem
 		}
 
 		[SerializeField]
-		private List<SaveGameSlot> gameSaveFiles;
+		private List<SaveGameSlot> gameSaveFiles = new List<SaveGameSlot>
+				{ new SaveGameSlot(DEFAULT_SAVE_FILE_NAME) };
 
 		[Title("Settings")]
 		public bool deleteOnPlay = false;
@@ -51,6 +52,11 @@ namespace RichPackage.SaveSystem
 
 		[SerializeField]
 		private int saveGameSlotIndex = 0;
+
+		[SerializeField]
+		private int maxSaveFiles = 3;
+
+		public int MaxSaveFiles { get => maxSaveFiles; }
 
 		/// <summary>
 		/// True if there exists some amount of SaveData which can be loaded.
@@ -77,7 +83,7 @@ namespace RichPackage.SaveSystem
 			SetDevDescription("I facilitate saving and manage save files.");
 
 			//first slot is free
-			gameSaveFiles = new List<SaveGameSlot>
+			gameSaveFiles = gameSaveFiles ?? new List<SaveGameSlot>
 				{ new SaveGameSlot(DEFAULT_SAVE_FILE_NAME) };
 		}
 
@@ -129,6 +135,7 @@ namespace RichPackage.SaveSystem
 
 		public void DeleteSave(int slot)
 		{
+			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
 			saveGameSlotIndex = slot;
 			DeleteSave();
 		}
@@ -142,9 +149,10 @@ namespace RichPackage.SaveSystem
 			Debug.Log("Deleted save file.");
 		}
 
-		//[Button, DisableInEditorMode]
+		[Button, DisableInEditorMode]
 		public void Save(int slot)
 		{
+			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
 			saveGameSlotIndex = slot;
 			Save();
 		}
@@ -154,9 +162,6 @@ namespace RichPackage.SaveSystem
 		{
 			if (SaveFile == null)
 				LoadSaveFile(SaveFileName);
-
-			//delete all keys
-			SaveFile.Clear();
 
 			//flag to indicate there is indeed some save data
 			SaveFile.Save(HAS_SAVE_DATA_KEY, true);
@@ -168,9 +173,10 @@ namespace RichPackage.SaveSystem
 			Debug.Log("Saved");
 		}
 
-		//[Button, DisableInEditorMode]
+		[Button, DisableInEditorMode]
 		public void Load(int slot)
 		{
+			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
 			saveGameSlotIndex = slot;
 			Load();
 		}
@@ -188,6 +194,23 @@ namespace RichPackage.SaveSystem
 
 			//load player inventory
 			Debug.Log("Loaded");
+		}
+
+		/// <summary>
+		/// Checks to see if there is any save data in the active file.
+		/// </summary>
+		/// <returns>True if the save file has any data in it, and false if it's unused.</returns>
+		public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+
+		/// <summary>
+		/// Checks to see if there is any save data in the file at the given slot.
+		/// </summary>
+		/// <returns>True if the save file has any data in it, and false if it's unused.</returns>
+		public bool FileHasSaveData(int slot)
+		{
+			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
+			saveGameSlotIndex = slot;
+			return SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
 		}
 		
 		#region Console Commands
