@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using RichPackage.Pooling;
-
-/*  TODO - allow for applying custom comparison function rather than relying on CompareTo.
- *  this would allow for things like arrays to be pooled natively without a wrapper class.
- *  FixMe - TryFindRemove() costs 2 traversals, one for find, one to delete
- *  fixme - AddIfNew() costs 2 traversals
- */
+﻿using RichPackage.Pooling;
 
 namespace RichPackage.Collections
 {
@@ -21,7 +13,7 @@ namespace RichPackage.Collections
     /// <summary>
     /// Self-balancing AVL tree. Search is Log2(n). Pools nodes.
     /// </summary>
-    /// <typeparam name="T">Class or Struct that impements the <see name="IComparable"/see> interface.</typeparam>
+    /// <typeparam name="T">Class or Struct that impements the <see name="IComparable"></see> interface.</typeparam>
     /// <remarks>Don't modify the IComparable pivot value while
     /// the item is in a tree. Will break BST aspect.</remarks>
     public class AVLTree<T> where T : IComparable
@@ -190,6 +182,11 @@ namespace RichPackage.Collections
         /// </summary>
         public bool Contains(in T key) => FindNode(key) != null;
 
+        /// <summary>
+        /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
+        /// </summary>
+        public bool Contains(Comparer<T> comparer) => FindNode(comparer) != null;
+
         #region Removal
 
         /// <summary>
@@ -229,7 +226,7 @@ namespace RichPackage.Collections
         /// Empties the tree.
         /// </summary>
         public void RemoveAll()
-        {   //TODO remove without rotating.
+        {
             PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); //clears nodes
             root = null;
             Count = 0;
@@ -386,19 +383,25 @@ namespace RichPackage.Collections
         #region Searching
 
         /// <summary>
-        /// Search against key query using binary search.
+        /// Search against key query using binary search using the default comparer: <see name="IComparable.CompareTo({T})"></see>.
         /// </summary>
         /// <param name="key">Dummy value used as comparison.</param>
         /// <param name="foundItem">Holds item that matched querry.</param>
         /// <returns>True if item was found and returned.</returns>
-        public bool TryFind(in T key, out T foundItem)
-        {
-            foundItem = default;
-            var foundNode = FindNode(key);
-            var searchSuccessful = foundNode != null;
-            if (searchSuccessful)
-                foundItem = foundNode.data;
+        public bool TryFind(T key, out T foundItem)
+            => TryFind((other) => key.CompareTo(other), out foundItem);
 
+        /// <summary>
+        /// Search against key query using binary search.
+        /// </summary>
+        /// <param name="comparer">Comparison method.</param>
+        /// <param name="foundItem">Holds item that matched querry.</param>
+        /// <returns>True if item was found and returned.</returns>
+        public bool TryFind(Comparer<T> comparer, out T foundItem)
+        {
+            var foundNode = FindNode(comparer);
+            var searchSuccessful = foundNode != null;
+            foundItem = searchSuccessful ? foundNode.data : default;//return value
             return searchSuccessful;
         }
         
