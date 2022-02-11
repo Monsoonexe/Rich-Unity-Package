@@ -592,24 +592,6 @@ namespace RichPackage.Collections
 
         private static AVLNode<T> RotateRight(AVLNode<T> parent)
         {
-            var pivot = parent.left;
-            parent.left = pivot.right;
-            pivot.right = parent;
-
-            return pivot;
-        }
-
-        private static AVLNode<T> RotateLeft(AVLNode<T> parent)
-        {
-            var pivot = parent.right;
-            parent.right = pivot.left;
-            pivot.left = parent;
-
-            return pivot;
-        }
-
-        private static AVLNode<T> RotateRR(AVLNode<T> parent)
-        {
             var pivot = parent.right;
             parent.right = pivot.left;
             pivot.left = parent;
