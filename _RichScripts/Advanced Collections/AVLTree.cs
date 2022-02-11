@@ -1,5 +1,7 @@
 ﻿using RichPackage.Pooling;
 
+//TODO - cache heights on Node instead of recalculating them constantly.
+
 namespace RichPackage.Collections
 {
     /// <summary>
