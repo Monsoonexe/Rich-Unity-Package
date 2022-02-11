@@ -216,22 +216,17 @@ namespace RichPackage.Collections
             }
         }
 
+        #region Min/Max Value
+
         public T GetMaxValue()
         {
             if (root == null) //throw new EmptyTreeException();
                 return default;
 
             var maxNode = root;
-            GetMaxValueNode(ref maxNode);
+            while(maxNode.right != null)
+                maxNode = maxNode.right;
             return maxNode.data;
-        }
-
-        private void GetMaxValueNode(ref AVLNode<T> current)
-        {
-            if (current.right == null)
-                return;
-            else
-                GetMaxValueNode(ref current.right);
         }
 
         public T GetMinValue()
@@ -239,18 +234,13 @@ namespace RichPackage.Collections
             if (root == null) //throw new EmptyTreeException();
                 return default;
 
-            var minNode = root;//ref a local variable to not change root
-            GetMinValueNode(ref minNode);
+            var minNode = root;
+            while(minNode.left != null)
+                minNode = minNode.left;
             return minNode.data;
         }
 
-        private void GetMinValueNode(ref AVLNode<T> current)
-        {
-            if (current.left == null)
-                return; //current is lowest
-            else
-                GetMinValueNode(ref current.left);
-        }
+        #endregion
 
         /// <summary>
         /// Returns the item that matches given predicate,
