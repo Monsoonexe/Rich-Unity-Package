@@ -10,6 +10,8 @@ using RichPackage.Pooling;
 
 namespace RichPackage.Collections
 {
+    public delegate int Comparer<in T> (T other);
+
     /// <summary>
     /// Self-balancing AVL tree. Search is Log2(n). Pools nodes.
     /// </summary>
@@ -111,6 +113,9 @@ namespace RichPackage.Collections
         }
 
         #endregion
+        
+
+        #region Insert
 
         /// <summary>
         /// Insert an item into the data set. O(Log2(n))
@@ -123,6 +128,27 @@ namespace RichPackage.Collections
             RecursiveInsert(ref root, newNode);
         }
 
+        private void RecursiveInsert(
+            ref AVLNode<T> current, AVLNode<T> newNode)
+        {
+            int compareResult = 0;
+            if (current == null)
+            {
+                ++Count;
+                current = newNode;
+            }
+            else if ((compareResult = newNode.data.CompareTo(current.data)) <= 0)//stash result and check if less than 0
+            {
+                RecursiveInsert(ref current.left, newNode);
+                BalanceTree(ref current);
+            }
+            else
+            {
+                RecursiveInsert(ref current.right, newNode);
+                BalanceTree(ref current);
+            }
+        }
+
         /// <summary>
         /// Insert an item into the data set. O(Log2(n))
         /// </summary>
@@ -131,14 +157,39 @@ namespace RichPackage.Collections
         public bool TryAddIfNew(in T data)
             => TryAddIfNew(ref root, data);
 
+        private bool TryAddIfNew(ref AVLNode<T> currentNode, in T data)
+        {
+            if (currentNode == null)
+            {
+                var newNode = nodePool.Depool();
+                newNode.data = data;
+                RecursiveInsert(ref currentNode, newNode);
+                return true;
+            }
+            else
+            {
+                int compareResult = data.CompareTo(currentNode.data);
+                if (compareResult < 0)
+                    return TryAddIfNew(ref currentNode.left, data);
+                else if (compareResult > 0)
+                    return TryAddIfNew(ref currentNode.right, data);
+                else
+                    return false;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
         public bool Contains(in T key) => FindNode(key) != null;
 
+        #region Removal
 
         /// <summary>
         /// Remove node where the data is equal to the key using the IComparable interface. O(Log2(n))
+        /// </summary>
         public void Remove(in T target)
         {
             --Count;//assume it was found, and backtrack if not
@@ -146,13 +197,53 @@ namespace RichPackage.Collections
         }
 
         /// <summary>
+        /// Remove node where the data is equal to the key using the IComparable interface. O(Log2(n))
+        /// </summary>
+        ///<returns>True if the node was found and removed, otherwise false.</returns>
+        public bool TryRemove(in T target)
+        {
+            int preCount = Count;
+            Remove(target);
+            return Count < preCount;
+        }
+
+        /// <summary>
         /// Empties the tree.
         /// </summary>
         public void RemoveAll()
-        {
+        {   //TODO remove without rotating.
             while (root != null)
                 Remove(ref root, root.data);
             Count = 0;
+        }
+
+        /// <summary>
+        /// Returns the item that matches given predicate,
+        /// or 'default'. If {Type} is a class, 'value' can be a
+        /// partially-complete record.
+        /// </summary>
+        /// <param name="predicate">Condition.</param>
+        /// <param name="value">Condition.</param>
+        /// <returns>True if item was found and removed.</returns>
+        public bool TryGetRemove(Predicate<T> predicate,
+            out T value)
+        {   //arbitrarily use this method
+            var found = TryInOrderSearch(predicate, out value);
+            if (found)
+                Remove(value);//requires another shorter search to remove and balance
+            return found;
+        }
+
+        /// <summary>
+        /// Returns the first value that matches given predicate or default if not found.
+        /// <see cref="TryGetRemove(Predicate{T}, out T)"/> to determine if the value was found.
+        /// </summary>
+        /// <returns>The value that was found or 'default'.</returns>
+        public T GetRemove(Predicate<T> predicate)
+        {   //arbitrarily use this method
+            if (TryInOrderSearch(predicate, out T value))
+                Remove(value);//requires another shorter search
+            return value; //throw not found exception
         }
 
         private void Remove(ref AVLNode<T> current, in T target)
@@ -212,6 +303,8 @@ namespace RichPackage.Collections
             }
         }
 
+        #endregion
+
         #region Min/Max Value
 
         public T GetMaxValue()
@@ -238,26 +331,7 @@ namespace RichPackage.Collections
 
         #endregion
 
-        /// <summary>
-        /// Returns the item that matches given predicate,
-        /// or 'default'. If {Type} is a class, 'value' can be a
-        /// partially-complete record.
-        /// </summary>
-        /// <param name="predicate">Condition.</param>
-        /// <param name="value">Condition.</param>
-        /// <returns>True if item was found and removed.</returns>
-        public bool TryGetRemove(Predicate<T> predicate,
-            out T value)
-        {
-            var found = TryInOrderSearch(//arbitrarily use this method
-            predicate, out value);
-            if (found)
-            {
-                --Count; // assume it was found, and backtrack if not
-                Remove(ref root, value);//requires another shorter search
-            }
-            return found;
-        }
+        #region Searching
 
         /// <summary>
         /// Search against key query using binary search.
@@ -265,80 +339,65 @@ namespace RichPackage.Collections
         /// <param name="key">Dummy value used as comparison.</param>
         /// <param name="foundItem">Holds item that matched querry.</param>
         /// <returns>True if item was found and returned.</returns>
-        public bool TryFind(in T key, out T foundItem)
+        public bool TryFind(T key, out T foundItem)
         {
             foundItem = default;
-            var foundNode = FindNode(key, root);
+            var foundNode = FindNode(key);
             var searchSuccessful = foundNode != null;
             if (searchSuccessful)
                 foundItem = foundNode.data;
 
             return searchSuccessful;
         }
+        
+        private AVLNode<T> FindNode(T target)
+            => FindNode((other) => target.CompareTo(other), root); //default comparer
 
-        private bool TryAddIfNew(ref AVLNode<T> currentNode, in T data)
-        {
-            if (currentNode == null)
-            {
-                var newNode = nodePool.Depool();
-                newNode.data = data;
-                RecursiveInsert(ref currentNode, newNode);
-                return true;
-            }
-            else
-            {
-                int compareResult = data.CompareTo(currentNode.data);
-                if (compareResult < 0)
-                    return TryAddIfNew(ref currentNode.left, data);
-                else if (compareResult > 0)
-                    return TryAddIfNew(ref currentNode.right, data);
-                else
-                    return false;
-            }
-        }
-
-        private AVLNode<T> FindNode(in T target)
-            => FindNode(target, root);
+        private AVLNode<T> FindNode(Comparer<T> comparer)
+            => FindNode(comparer, root); //explicit comparer
 
         /// <summary>
         /// Recursive binary search.
         /// </summary>
         /// <param name="target">Partially-filled record.</param>
         /// <returns>Null if not found.</returns>
-        private static AVLNode<T> FindNode(in T target,
+        private static AVLNode<T> FindNode(Comparer<T> comparer,
             AVLNode<T> current)
         {
             if (current == null) return null;
 
-            var compareResult = target.CompareTo(current.data);
+            var compareResult = comparer(current.data);
             if (compareResult > 0)
-                return FindNode(target, current.right);
+                return FindNode(comparer, current.right);
             else if (compareResult < 0)
-                return FindNode(target, current.left);
+                return FindNode(comparer, current.left);
             else
                 return current; // found!
         }
 
-        private void RecursiveInsert(
-            ref AVLNode<T> current, AVLNode<T> newNode)
+        /// <summary>
+        /// Processes the first node that compares equal. Do NOT modify the comparison values of <see name="CompareTo()"/>, or you could bork the tree.
+        /// </summary>
+        public void ProcessItem(Comparer<T> searcher, Action<T> processor)
         {
-            int compareResult = 0;
-            if (current == null)
-            {
-                ++Count;
-                current = newNode;
-            }
-            else if ((compareResult = newNode.data.CompareTo(current.data)) <= 0)//stash result and check if less than 0
-            {
-                RecursiveInsert(ref current.left, newNode);
-                BalanceTree(ref current);
-            }
-            else
-            {
-                RecursiveInsert(ref current.right, newNode);
-                BalanceTree(ref current);
-            }
+            AVLNode<T> foundNode = FindNode(searcher, root);
+            if (foundNode != null)
+                processor(foundNode.data);
         }
+
+        /// <summary>
+        /// Processes the first node that compares equal. Do NOT modify the comparison values of <see name="CompareTo()"/>, or you could bork the tree.
+        /// </summary>
+        public bool TryProcessItem(Comparer<T> searcher, Action<T> processor)
+        {
+            AVLNode<T> foundNode = FindNode(searcher, root);
+            bool found = foundNode != null; //return value
+            if(found)
+                processor(foundNode.data);
+            return found;
+        }
+
+        #endregion
 
         #region In-Order Processing
 
@@ -548,25 +607,20 @@ namespace RichPackage.Collections
             return balanceFactor;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="current"></param>
-        /// <returns></returns>
         private static void BalanceTree(ref AVLNode<T> current)
         {
             int balanceFactor = BalanceFactor(current);
 
             if (balanceFactor > 1)
                 if (BalanceFactor(current.left) > 0)
-                    current = RotateLL(current);
+                    current = RotateLeft(current);
                 else
-                    current = RotateLR(current);
+                    current = RotateRL(current);
             else if (balanceFactor < -1)
                 if (BalanceFactor(current.right) > 0)
-                    current = RotateRL(current);
+                    current = RotateLR(current);
                 else
-                    current = RotateRR(current);
+                    current = RotateRight(current);
         }
 
         #endregion
@@ -581,7 +635,7 @@ namespace RichPackage.Collections
             return pivot;
         }
 
-        private static AVLNode<T> RotateLL(AVLNode<T> parent)
+        private static AVLNode<T> RotateLeft(AVLNode<T> parent)
         {
             var pivot = parent.left;
             parent.left = pivot.right;
@@ -589,18 +643,18 @@ namespace RichPackage.Collections
             return pivot;
         }
 
-        private static AVLNode<T> RotateLR(AVLNode<T> parent)
-        {
-            var pivot = parent.left;
-            parent.left = RotateRR(pivot);
-            return RotateLL(parent);
-        }
-
         private static AVLNode<T> RotateRL(AVLNode<T> parent)
         {
+            var pivot = parent.left;
+            parent.left = RotateRight(pivot);
+            return RotateLeft(parent);
+        }
+
+        private static AVLNode<T> RotateLR(AVLNode<T> parent)
+        {
             var pivot = parent.right;
-            parent.right = RotateLL(pivot);
-            return RotateRR(parent);
+            parent.right = RotateLeft(pivot);
+            return RotateRight(parent);
         }
 
         #endregion
