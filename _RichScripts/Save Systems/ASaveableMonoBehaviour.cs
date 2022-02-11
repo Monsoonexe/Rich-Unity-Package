@@ -70,7 +70,12 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		/// <param name="saveFile"></param>
 		public abstract void SaveState(ES3File saveFile);
-			//=> saveFile.Save(saveID, mySaveData); //recommended code
+		/*  //recommended code
+		{
+		    if(isDirty)
+			saveFile.Save(saveID, mySaveData);
+		}
+		*/
 
 		/// <summary>
 		/// Must be overriden with proper derived type of <cref="SaveData"/>
