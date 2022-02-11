@@ -72,6 +72,16 @@ namespace RichPackage.Collections
         /// </summary>
         public int HeightEstimate => (int)(Math.Round(Math.Log(2, Count) * 1.441f, MidpointRounding.AwayFromZero));
 
+        /// <summary>
+        /// Get maximum value in tree. O(height). It is your responsibility to not call this on an empty tree.
+        /// </summary>
+        public T MaxValue => GetMaxValue();
+
+        /// <summary>
+        /// Get minimum value in tree. O(height). It is your responsibility to not call this on an empty tree.
+        /// </summary>
+        public T MinValue => GetMinValue();
+
         #endregion
 
         #region Constructors
