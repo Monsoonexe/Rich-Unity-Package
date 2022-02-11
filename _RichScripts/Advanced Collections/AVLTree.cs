@@ -350,10 +350,7 @@ namespace RichPackage.Collections
         /// LPR
         /// </summary>
         public void InOrderProcessTree(Action<T> process)
-        {
-            if (root == null) return;
-            InOrderProcessTree(root, process);
-        }
+            => InOrderProcessTree(root, process);
 
         /// <summary>
         /// LPR
@@ -416,12 +413,7 @@ namespace RichPackage.Collections
         /// LRP
         /// </summary>
         public void PostOrderProcessTree(Action<T> process)
-        {
-            if (root == null)
-                return;
-
-            PostOrderProcessTree(root, process);
-        }
+            => PostOrderProcessTree(root, process);
 
         private static void PostOrderProcessTree(
             AVLNode<T> current, Action<T> process)
@@ -479,12 +471,7 @@ namespace RichPackage.Collections
         /// PLR
         /// </summary>
         public void PreOrderProcessTree(Action<T> process)
-        {
-            if (root == null)
-                return;
-
-            PreOrderProcessTree(root, process);
-        }
+            => PreOrderProcessTree(root, process);
 
         /// <summary>
         /// PLR
