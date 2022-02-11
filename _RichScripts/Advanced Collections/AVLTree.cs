@@ -134,12 +134,8 @@ namespace RichPackage.Collections
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
-        public bool Contains(in T key)
-        {
-            var foundNode = FindNode(key, root);
-            return foundNode != null
-                && foundNode.data.CompareTo(key) == 0;
-        }
+        public bool Contains(in T key) => FindNode(key) != null;
+
 
         /// <summary>
         /// Remove node where the data is equal to the key using the IComparable interface. O(Log2(n))
