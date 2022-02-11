@@ -10,6 +10,12 @@ using RichPackage.Pooling;
 
 namespace RichPackage.Collections
 {
+    /// <summary>
+    /// e.g. this.CompareTo(other); Other is the RHS value of the comparison. 
+    /// Useful for searching without having to create a dummy key value.
+    /// </summary>
+    /// <param name="other">The RHS value of the comparison.</param>
+    /// <returns>-1 if this is less than other, 0 if this is equal to other, and 1 if this is greater than other</returns>
     public delegate int Comparer<in T> (T other);
 
     /// <summary>
@@ -114,7 +120,6 @@ namespace RichPackage.Collections
 
         #endregion
         
-
         #region Insert
 
         /// <summary>
@@ -196,6 +201,12 @@ namespace RichPackage.Collections
             Remove(ref root, target);
         }
 
+        public void Remove(Comparer<T> comparer)
+        {
+            --Count;//assume it was found, and backtrack if not
+            Remove(ref root, comparer);
+        }
+
         /// <summary>
         /// Remove node where the data is equal to the key using the IComparable interface. O(Log2(n))
         /// </summary>
@@ -204,6 +215,13 @@ namespace RichPackage.Collections
         {
             int preCount = Count;
             Remove(target);
+            return Count < preCount;
+        }
+
+        public bool TryRemove(Comparer<T> comparer)
+        {
+            int preCount = Count;
+            Remove(comparer);
             return Count < preCount;
         }
 
@@ -234,19 +252,53 @@ namespace RichPackage.Collections
             return found;
         }
 
+        public bool TryGetRemove(Comparer<T> comparer, out T value)
+        {   //TODO - do in one walk instead of 2
+            var node = FindNode(comparer); //find target node
+            bool found = node != null;
+
+            if (found)
+            {
+                value = node.data; //return value
+                Remove(node.data); //find using default comparer
+            }
+            else
+            {
+                value = default;
+            }
+            return found;
+        }
+
         /// <summary>
-        /// Returns the first value that matches given predicate or default if not found.
+        /// Returns the first value that matches given predicate.
         /// <see cref="TryGetRemove(Predicate{T}, out T)"/> to determine if the value was found.
         /// </summary>
         /// <returns>The value that was found or 'default'.</returns>
+        /// <exception>KeyNotFoundException></exception>
         public T GetRemove(Predicate<T> predicate)
-        {   //arbitrarily use this method
-            if (TryInOrderSearch(predicate, out T value))
-                Remove(value);//requires another shorter search
-            return value; //throw not found exception
+        {
+            if (TryGetRemove(predicate, out T value))
+                return value; //throw not found exception
+            throw new KeyNotFoundException();
         }
 
-        private void Remove(ref AVLNode<T> current, in T target)
+        /// <summary>
+        /// Returns the first value that matches given predicate.
+        /// <see cref="TryGetRemove(Comparer{T}, out T)"/> to determine if the value was found.
+        /// </summary>
+        /// <returns>The value that was found or 'default'.</returns>
+        /// <exception>KeyNotFoundException></exception>
+        public T GetRemove(Comparer<T> comparer)
+        {
+            if (TryGetRemove(comparer, out T value))
+                return value;
+            throw new KeyNotFoundException();
+        }
+
+        private void Remove(ref AVLNode<T> current, T target)
+            => Remove(ref current, (other) => target.CompareTo(other));
+
+        private void Remove(ref AVLNode<T> current, Comparer<T> comparer)
         {
             if (current == null)
             {
@@ -255,14 +307,14 @@ namespace RichPackage.Collections
             }
             else
             {
-                int compareResult = target.CompareTo(current.data);
+                int compareResult = comparer(current.data);
 
                 //left subtree
                 if (compareResult < 0) //get and stash compare result for next else if
-                    Remove(ref current.left, target);
+                    Remove(ref current.left, comparer);
                 //right subtree
                 else if (compareResult > 0)
-                    Remove(ref current.right, target);
+                    Remove(ref current.right, comparer);
                 else  //target is found!
                 {   // delete this node and replace with a child?
                     //case 1: one or no children
@@ -291,7 +343,7 @@ namespace RichPackage.Collections
                         current.data = successor.data;
 
                         //delete the inorder successor
-                        Remove(ref current.right, successor.data);
+                        Remove(ref current.right, (other) => successor.data.CompareTo(other)); //find node to replace using internal comparison method.
                     }
 
                     //had no children
