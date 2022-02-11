@@ -230,8 +230,8 @@ namespace RichPackage.Collections
         /// </summary>
         public void RemoveAll()
         {   //TODO remove without rotating.
-            while (root != null)
-                Remove(ref root, root.data);
+            PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); //clears nodes
+            root = null;
             Count = 0;
         }
 
@@ -391,7 +391,7 @@ namespace RichPackage.Collections
         /// <param name="key">Dummy value used as comparison.</param>
         /// <param name="foundItem">Holds item that matched querry.</param>
         /// <returns>True if item was found and returned.</returns>
-        public bool TryFind(T key, out T foundItem)
+        public bool TryFind(in T key, out T foundItem)
         {
             foundItem = default;
             var foundNode = FindNode(key);
@@ -521,6 +521,20 @@ namespace RichPackage.Collections
         /// </summary>
         public void PostOrderProcessTree(Action<T> process)
             => PostOrderProcessTree(root, process);
+            
+        /// <summary>
+        /// LRP. For internal use only.
+        /// </summary>
+        private static void PostOrderProcessNodes(
+            AVLNode<T> current, Action<AVLNode<T>> process)
+        {
+            if (current != null)
+            {
+                PostOrderProcessNodes(current.left, process);
+                PostOrderProcessNodes(current.right, process);
+                process(current);
+            }
+        }
 
         private static void PostOrderProcessTree(
             AVLNode<T> current, Action<T> process)
