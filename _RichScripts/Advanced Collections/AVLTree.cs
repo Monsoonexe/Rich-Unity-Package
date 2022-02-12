@@ -30,6 +30,8 @@ namespace RichPackage.Collections
         {
             #region Properties
 
+            public int height;
+
             public TNode data;
 
             public AVLNode<TNode> left = null;
@@ -41,12 +43,14 @@ namespace RichPackage.Collections
             public AVLNode(TNode data)
             {
                 this.data = data;
+                Reset();
             }
 
             public void Reset()
             {
                 left = null;
                 right = null;
+                height = 0;
             }
         }
 
@@ -62,8 +66,6 @@ namespace RichPackage.Collections
         );
 
         private AVLNode<T> root = null;
-
-        //private Class
 
         /// <summary>
         /// Count of items in tree.
@@ -138,13 +140,12 @@ namespace RichPackage.Collections
         private void RecursiveInsert(
             ref AVLNode<T> current, AVLNode<T> newNode)
         {
-            int compareResult = 0;
             if (current == null)
             {
                 ++Count;
                 current = newNode;
             }
-            else if ((compareResult = newNode.data.CompareTo(current.data)) <= 0)//stash result and check if less than 0
+            else if (newNode.data.CompareTo(current.data) <= 0) //left-bias for identical keys
             {
                 RecursiveInsert(ref current.left, newNode);
                 BalanceTree(ref current);
@@ -161,6 +162,7 @@ namespace RichPackage.Collections
         /// </summary>
         /// <param name="data">Data to add.</param>
         /// <returns>True if data does not already exist and was just added.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryAddIfNew(in T data)
             => TryAddIfNew(ref root, data);
 
@@ -400,6 +402,7 @@ namespace RichPackage.Collections
         /// <param name="key">Dummy value used as comparison.</param>
         /// <param name="foundItem">Holds item that matched querry.</param>
         /// <returns>True if item was found and returned.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryFind(T key, out T foundItem)
             => TryFind((other) => key.CompareTo(other), out foundItem);
 
@@ -417,9 +420,15 @@ namespace RichPackage.Collections
             return searchSuccessful;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private AVLNode<T> FindNode(T target)
             => FindNode((other) => target.CompareTo(other), root); //default comparer
 
+        /// <summary>
+        /// Search against key query using binary search.
+        /// </summary>
+        /// <param name="comparer">Comparison method. Will select Node whose comparison == 0.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private AVLNode<T> FindNode(Comparer<T> comparer)
             => FindNode(comparer, root); //explicit comparer
 
@@ -427,6 +436,7 @@ namespace RichPackage.Collections
         /// Recursive binary search.
         /// </summary>
         /// <param name="target">Partially-filled record.</param>
+        /// <param name="comparer">Comparison method. Will select Node whose comparison == 0.</param>
         /// <returns>Null if not found.</returns>
         private static AVLNode<T> FindNode(Comparer<T> comparer,
             AVLNode<T> current)
@@ -471,6 +481,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// LPR
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void InOrderProcessTree(Action<T> process)
             => InOrderProcessTree(root, process);
 
@@ -493,6 +504,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Returns first item where predicate returns true.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryInOrderSearch(
             Predicate<T> predicate, out T value)
         {
@@ -534,6 +546,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// LRP
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PostOrderProcessTree(Action<T> process)
             => PostOrderProcessTree(root, process);
             
@@ -565,6 +578,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Returns first item where predicate returns true.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPostOrderSearch(
             Predicate<T> predicate, out T value)
         {
@@ -606,6 +620,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// PLR
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PreOrderProcessTree(Action<T> process)
             => PreOrderProcessTree(root, process);
 
@@ -626,6 +641,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Returns first item where predicate returns true.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPreOrderSearch(
             Predicate<T> predicate, out T value)
         {
@@ -664,29 +680,22 @@ namespace RichPackage.Collections
 
         #region Utility
 
-        private static int GetHeight(AVLNode<T> current)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int GetHeight(AVLNode<T> current) 
+            => current == null ? 0 : current.height;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void RecalculateHeight(AVLNode<T> current)
         {
-            int height = 0; //return value
-
-            if (current != null)
-            {
-                int l = GetHeight(current.left);
-                int r = GetHeight(current.right);
-                int m = l.CompareTo(r) > 0 ? l : r;//max
-                height = m + 1;
-            }
-
-            return height;
+            int leftHeight = GetHeight(current.left);
+            int rightHeight = GetHeight(current.right);
+            current.height = ((leftHeight > rightHeight) ? 
+                leftHeight : rightHeight) + 1; //+1 for self
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int BalanceFactor(AVLNode<T> current)
-        {
-            int l = GetHeight(current.left);
-            int r = GetHeight(current.right);
-            int balanceFactor = l - r;
-
-            return balanceFactor;
-        }
+            => GetHeight(current.left) - GetHeight(current.right);
 
         private static void BalanceTree(ref AVLNode<T> current)
         {
@@ -714,22 +723,39 @@ namespace RichPackage.Collections
 
         #region Rotations
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateRight(AVLNode<T> parent)
         {
             var pivot = parent.right;
+
+            //rotate
             parent.right = pivot.left;
             pivot.left = parent;
+            
+            //update heights
+            RecalculateHeight(parent);
+            RecalculateHeight(pivot);
+            
             return pivot;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateLeft(AVLNode<T> parent)
         {
             var pivot = parent.left;
+
+            //rotate
             parent.left = pivot.right;
             pivot.right = parent;
+            
+            //update heights
+            RecalculateHeight(parent);
+            RecalculateHeight(pivot);
+
             return pivot;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateRL(AVLNode<T> parent)
         {
             var pivot = parent.left;
@@ -737,6 +763,7 @@ namespace RichPackage.Collections
             return RotateLeft(parent);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateLR(AVLNode<T> parent)
         {
             var pivot = parent.right;
