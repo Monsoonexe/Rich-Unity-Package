@@ -276,6 +276,16 @@ namespace RichPackage.Collections
 
         /// <summary>
         /// Returns the first value that matches given predicate.
+        /// <see cref="TryGetRemove(Comparer{T}, out T)"/> to determine if the value was found.
+        /// </summary>
+        /// <returns>The value that was found or 'default'.</returns>
+        /// <exception>KeyNotFoundException></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T GetRemove(T key)
+            => GetRemove((other) => key.CompareTo(other));
+
+        /// <summary>
+        /// Returns the first value that matches given predicate.
         /// <see cref="TryGetRemove(Predicate{T}, out T)"/> to determine if the value was found.
         /// </summary>
         /// <returns>The value that was found or 'default'.</returns>
