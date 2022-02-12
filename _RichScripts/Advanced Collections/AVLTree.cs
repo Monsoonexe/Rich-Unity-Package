@@ -1,6 +1,7 @@
-﻿using RichPackage.Pooling;
-
-//TODO - cache heights on Node instead of recalculating them constantly.
+﻿using System;
+using System.Collections.Generic;
+using RichPackage.Pooling;
+using System.Runtime.CompilerServices;
 
 namespace RichPackage.Collections
 {
