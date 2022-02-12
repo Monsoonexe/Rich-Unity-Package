@@ -50,9 +50,6 @@ namespace RichPackage.Pooling
 			pool = new Stack<T>(amount);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="maxCount">Max count of items this pool will hold. If more than MaxCount items are
 		/// added to the pool, they will be dropped rather than enpooled.<br/>
 		/// MaxCount less than 1 implies there is no internal limit to the size of the pool.</param>
@@ -109,5 +106,7 @@ namespace RichPackage.Pooling
 				OnEnpoolMethod?.Invoke(item);
 			}
 		}
+
+		public void TrimExcess() => pool.TrimExcess();
 	}
 }
