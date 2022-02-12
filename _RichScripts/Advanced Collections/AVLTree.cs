@@ -146,15 +146,11 @@ namespace RichPackage.Collections
                 current = newNode;
             }
             else if (newNode.data.CompareTo(current.data) <= 0) //left-bias for identical keys
-            {
                 RecursiveInsert(ref current.left, newNode);
-                BalanceTree(ref current);
-            }
             else
-            {
                 RecursiveInsert(ref current.right, newNode);
-                BalanceTree(ref current);
-            }
+            RecalculateHeight(current);
+            BalanceTree(ref current);
         }
 
         /// <summary>
