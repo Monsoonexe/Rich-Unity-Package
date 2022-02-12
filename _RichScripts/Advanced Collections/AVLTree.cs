@@ -704,6 +704,12 @@ namespace RichPackage.Collections
                     current = RotateRight(current);
         }
 
+        /// <summary>
+        /// Trim excess nodes from the node pool. 
+        /// Useful if you know no more nodes will be added.
+        /// </summary>
+        public void TrimExcessFromNodePool() => nodePool.TrimExcess();
+
         #endregion
 
         #region Rotations
