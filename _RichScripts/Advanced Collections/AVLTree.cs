@@ -98,25 +98,12 @@ namespace RichPackage.Collections
             Count = 0;
         }
 
-        public AVLTree(in IList<T> source)
-        {
-            var count = source.Count;
-            for (var i = 0; i < count; ++i)
-                Add(source[i]);
-        }
-
         public AVLTree(in IEnumerable<T> source)
         {
             foreach (var item in source)
                 Add(item);
         }
-
-        public AVLTree(in ICollection<T> source)
-        {
-            foreach (var item in source)
-                Add(item);
-        }
-
+        
         #endregion
         
         #region Insert
