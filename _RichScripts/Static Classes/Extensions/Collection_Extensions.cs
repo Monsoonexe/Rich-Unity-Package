@@ -234,6 +234,9 @@ public static class Collection_Extensions
     public static T GetRemoveLast<T>(this List<T> list)
         => list.GetRemoveAt(list.LastIndex());
 
+    public static void RemoveLast<T>(this List<T> list)
+        => list.RemoveAt(list.Count - 1);
+
     /// <summary>
     /// Removes and returns a random element of list. [0, Count)
     /// </summary>
