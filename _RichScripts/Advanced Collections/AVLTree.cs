@@ -13,11 +13,6 @@ namespace RichPackage.Collections
     /// <returns>-1 if this is less than other, 0 if this is equal to other, and 1 if this is greater than other</returns>
     public delegate int Comparer<in T> (T other);
 
-    public class EmptyTreeException : Exception 
-    {
-        public EmptyTreeException() : base("Tree is empty.") { }
-    }
-
     /// <summary>
     /// Self-balancing AVL tree. Search is Log2(n). Pools nodes.
     /// </summary>
@@ -85,13 +80,13 @@ namespace RichPackage.Collections
         /// <summary>
         /// Get maximum value in tree. O(1) because height is cached.
         /// </summary>
-        /// <exception cref="EmptyTreeException"> if tree is empty.</exception>
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T MaxValue => GetMaxValue();
 
         /// <summary>
         /// Get minimum value in tree. O(1) because height is cached.
         /// </summary>
-        /// <exception cref="EmptyTreeException"> if tree is empty.</exception>
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T MinValue => GetMinValue();
 
         #endregion
@@ -374,11 +369,11 @@ namespace RichPackage.Collections
 
         #region Min/Max Value
 
-        /// <exception cref="EmptyTreeException"> if tree is empty.</exception>
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T GetMaxValue()
         {
             if (root == null)
-                throw new EmptyTreeException();
+                throw new InvalidOperationException("Can't get max value from empty tree.");
 
             var maxNode = root;
             while(maxNode.right != null)
@@ -386,11 +381,11 @@ namespace RichPackage.Collections
             return maxNode.data;
         }
 
-        /// <exception cref="EmptyTreeException"> if tree is empty.</exception>
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T GetMinValue()
         {
             if (root == null)
-                throw new EmptyTreeException();
+                throw new InvalidOperationException("Can't get min value from empty tree.");
 
             var minNode = root;
             while(minNode.left != null)
