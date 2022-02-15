@@ -32,12 +32,16 @@ namespace RichPackage.Collections
         
         #endregion
 
-        public void Push(T item)
-        {
-            elements.Add(item);
-            HeapifyUp(elements.Count - 1);
-        }
+        /// <summary>
+        /// Look at the next item in the heap (without actually removing it).
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Peek() => (elements.Count > 0) ? elements[FRONT] 
+            : throw new InvalidOperationException("No elements in heap.");
 
+        /// <summary>
+        /// Get the next item from the heap.
+        /// </summary>
         public T Pop()
         {
             if (elements.Count == 0)
@@ -51,9 +55,14 @@ namespace RichPackage.Collections
             return item;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Peek() => (elements.Count > 0) ? elements[FRONT] 
-            : throw new InvalidOperationException("No elements in heap.");
+        /// <summary>
+        /// Add an item to the heap.
+        /// </summary>
+        public void Push(in T item)
+        {
+            elements.Add(item);
+            HeapifyUp(elements.Count - 1);
+        }
 
         #region Modify
             
