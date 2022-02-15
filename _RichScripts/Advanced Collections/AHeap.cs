@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 //TODO - implement ICollection or IEnumerable or something
-//TODO - implement Increment/Decrement item.
 
 namespace RichPackage.Collections
 {
@@ -44,10 +43,10 @@ namespace RichPackage.Collections
             if (elements.Count == 0)
                 throw new InvalidOperationException("No elements in heap.");
             
-            int lastIndex = elements.Count - 1; //cache for re-use
+            int BACK = elements.Count - 1; //cache for re-use
             T item = elements[FRONT];
-            elements[FRONT] = elements[lastIndex];
-            elements.RemoveAt(lastIndex);
+            elements[FRONT] = elements[BACK];
+            elements.RemoveAt(BACK);
             HeapifyDown(FRONT);
             return item;
         }
