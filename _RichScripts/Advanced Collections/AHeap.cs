@@ -3,13 +3,13 @@ https://www.geeksforgeeks.org/min-heap-in-java/
 https://en.wikipedia.org/wiki/Binary_heap
 */
 
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 //TODO - implement ICollection or IEnumerable or something
+//TODO - implement Increment/Decrement item.
 
 namespace RichPackage.Collections
 {
@@ -17,7 +17,7 @@ namespace RichPackage.Collections
     {
         protected const int FRONT = 0;
 
-        protected readonly List< T> elements = new List<T>(32); 
+        protected readonly List<T> elements = new List<T>(32); 
 
         #region Constructors
 
@@ -42,7 +42,7 @@ namespace RichPackage.Collections
         public T Pop()
         {
             if (elements.Count == 0)
-                throw new InvalidOperationException("No elementa in heap.");
+                throw new InvalidOperationException("No elements in heap.");
             
             T item = elements[0];
             elements[0] = elements[elements.Count - 1];
@@ -54,6 +54,100 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Peek() => (elements.Count > 0) ? elements[FRONT] 
             : throw new InvalidOperationException("No elements in heap.");
+
+        #region Modify
+            
+        /// <summary>
+        /// Modify the first item that returns true from <paramref name="query"/> and
+        /// process it with <paramref name="procedure"/>. <br/>
+        /// Prefer <see cref="ModifyItem(Predicate{T}, Action{T})"/> if {T} is an object.
+        /// </summary> <br/>
+        public void ModifyItem(Predicate<T> query, ActionRef<T> procedure)
+        {
+            int count = elements.Count;
+            for(int i = 0; i < count; ++i)
+            {
+                T element = elements[i];
+                if(query(element))
+                {
+                    procedure(ref element);
+                    elements[i] = element; //reassign (for value types)
+                    HeapifyUp(i);
+                    HeapifyDown(i);
+                    break;
+                }
+            }
+        }
+            
+        /// <summary>
+        /// Modify the first item that returns true from <paramref name="query"/> and
+        /// process it with <paramref name="procedure"/>. <br/>
+        /// Throws a <see cref="NotSupportedException"/> if {T} is a value type.
+        /// Prefer <see cref="ModifyItems(Predicate{T}, ActionRef{T})"/> if {T} is a value type.
+        /// </summary> <br/>
+        /// <exceptions><see cref="NotSupportedException"/></exceptions>
+        public void ModifyItem(Predicate<T> query, Action<T> procedure)
+        {
+            if(typeof(T) != typeof(object))
+                throw new NotSupportedException("This method does not work on value types as it won't modify the underlying value in the backing array.");
+
+            int count = elements.Count;
+            for(int i = 0; i < count; ++i)
+            {
+                T element = elements[i];
+                if(query(element))
+                {
+                    procedure(element);
+                    HeapifyUp(i);
+                    HeapifyDown(i);
+                    break;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Modify all items that returns true from <paramref name="query"/> and
+        /// process it with <paramref name="procedure"/>. <br/>
+        /// Prefer <see cref="ModifyItems(Predicate{T}, Action{T})"/> if {T} is an object.
+        /// </summary>
+        public void ModifyItems(Predicate<T> query, ActionRef<T> procedure)
+        {
+            int count = elements.Count;
+            for(int i = 0; i < count; ++i)
+            {
+                T element = elements[i];
+                if(query(element))
+                {
+                    procedure(ref element);
+                    elements[i] = element; //reassign (for value types)
+                }
+            }
+            Heapify();
+        }
+
+        /// <summary>
+        /// Modify all items that returns true from <paramref name="query"/> and
+        /// process it with <paramref name="procedure"/>. <br/>
+        /// Throws a <see cref="NotSupportedException"/> if {T} is a value type.
+        /// Prefer <see cref="ModifyItems(Predicate{T}, ActionRef{T})"/> if {T} is a value type.
+        /// </summary>
+        /// <exceptions><see cref="NotSupportedException"/></exceptions>
+        public void ModifyItems(Predicate<T> query, Action<T> procedure)
+        {
+            if(typeof(T) != typeof(object))
+                throw new NotSupportedException("This method does not work on value types as it won't modify the underlying value in the backing array.");
+
+            int count = elements.Count;
+            for(int i = 0; i < count; ++i)
+            {
+                T element = elements[i];
+                if(query(element))
+                    procedure(element);
+            }
+            Heapify();
+        }
+
+        #endregion
 
         #region Heapify
 
@@ -72,8 +166,6 @@ namespace RichPackage.Collections
                 HeapifyDown(i);
         }
 
-        #endregion
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static int GetParentIndex(int index)
             => (index - 1) / 2;
@@ -86,6 +178,8 @@ namespace RichPackage.Collections
         protected static int GetRightIndex(int index)
             => 2 * index + 2;
 
+        #endregion
+
         #region Collection interface
 
         public int Size => elements.Count;
@@ -96,9 +190,30 @@ namespace RichPackage.Collections
             Heapify();
         }
 
+        /// <summary>
+        /// Calls <paramref name="action"/> on each element in backing array. <br/>
+        /// Follow this call with <see cref="Heapify"/> if the backing array is modified.
+        /// Prefer <see cref="ForEach(ActionRef{T})"/> if {T} is a value type and the values are modified.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ForEach(Action<T> action)
             => elements.ForEach(action);
+
+        /// <summary>
+        /// Calls <paramref name="action"/> on each element in backing array. <br/>
+        /// Follow this call with <see cref="Heapify"/> if the backing array is modified.
+        /// Prefer <see cref="ForEach(Action{T})"/> if {T} is a reference type.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        public void ForEach(ActionRef<T> action)
+        {
+            for(int i = 0; i < Size; ++i)
+            {
+                T element = elements[i];
+                action(ref element);
+                elements[i] = element;
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void TrimExcess() => elements.TrimExcess();
