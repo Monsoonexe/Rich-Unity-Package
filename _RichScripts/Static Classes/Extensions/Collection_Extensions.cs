@@ -89,10 +89,40 @@ public static class Collection_Extensions
     public static bool Contains<T>(this T[] array, T elem)
     {
         var length = array.Length;
-        for (var i = 0; i < length; ++i) //TODO what if this is an array of ints? ints can't be null. wtf?
-            if (array[i] != null && array[i].Equals(elem))
+        for (var i = 0; i < length; ++i)
+            if (elem.Equals(array[i]))
                 return true;
         return false;
+    }
+
+    public static bool Contains<T>(this IList<T> list, Predicate<T> query)
+    {
+        bool contains = false; //return value
+        int count = list.Count;
+        for(int i = 0; i < count; ++i)
+        {
+            if (query(list[i]))
+            {
+                contains = true;
+                break;
+            }
+        }
+        return contains;
+    }
+
+    public static bool TrueForAll<T>(this IList<T> list, Predicate<T> query)
+    {
+        bool contains = true; //return value
+        int count = list.Count;
+        for (int i = 0; i < count; ++i)
+        {
+            if (!query(list[i]))
+            {
+                contains = false;
+                break;
+            }
+        }
+        return contains;
     }
     
     /// <summary>
