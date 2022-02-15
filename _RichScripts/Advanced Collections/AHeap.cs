@@ -44,9 +44,10 @@ namespace RichPackage.Collections
             if (elements.Count == 0)
                 throw new InvalidOperationException("No elements in heap.");
             
-            T item = elements[0];
-            elements[0] = elements[elements.Count - 1];
-            elements.RemoveAt(elements.Count - 1);
+            int lastIndex = elements.Count - 1; //cache for re-use
+            T item = elements[FRONT];
+            elements[FRONT] = elements[lastIndex];
+            elements.RemoveAt(lastIndex);
             HeapifyDown(FRONT);
             return item;
         }
