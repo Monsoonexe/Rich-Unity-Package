@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using DG.Tweening;
 using RichPackage;
@@ -21,6 +22,7 @@ public static class Utility
     /// 0-based index, similar to how 2-d, Row-Major arrays work.
     /// </summary>
     /// <example>RowColumnToIndex(1, 2, 3) = 5 </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int RowColumnToIndex(int row, int column, int columnCount)
         => row * columnCount + column;
 
@@ -30,6 +32,7 @@ public static class Utility
     /// Has an n probability of returning 'true'.
     /// </summary>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Chance(float n) => Random.Range(0f, 1f) <= n;
     
 	/// <param name="dice">[0, inf)</param>
@@ -48,6 +51,7 @@ public static class Utility
         return result;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int RollDie(int sides) => Random.Range(1, sides + 1);
 
     #endregion
@@ -162,8 +166,7 @@ public static class Utility
     /// <summary>
     /// Simply loops a given number of times
     /// </summary>
-    /// <param name="cycles"></param>
-    /// <param name="action"></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Repeat(Action action, int cycles)
     {
         for (int i = 0; i < cycles; ++i)
@@ -183,6 +186,7 @@ public static class Utility
         return watch.ElapsedMilliseconds;
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Swap<T>(ref T a, ref T b)
     {
         T temp = a;

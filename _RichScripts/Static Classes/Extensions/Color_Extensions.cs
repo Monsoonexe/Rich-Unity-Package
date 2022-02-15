@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 public static class Color_Extensions
 {
@@ -22,21 +23,27 @@ public static class Color_Extensions
             a.HasValue ? a.Value : c.a
         );
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color WithR(this Color c, float r)
         => new Color(r, c.g, c.b, c.a);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color WithG(this Color c, float g)
         => new Color(c.r, g, c.b, c.a);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color WithB(this Color c, float b)
         => new Color(c.r, c.g, b, c.a);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Color WithA(this Color c, float a)
         => new Color(c.r, c.g, c.b, a);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void MakeOpaque(ref this Color c)
         => c.a = 1;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void MakeTransparent(ref this Color c)
         => c.a = 0;
 

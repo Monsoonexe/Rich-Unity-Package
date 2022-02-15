@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// 
@@ -11,6 +12,7 @@ public static class GameObject_Extensions
     /// Shortcut for a.enabled = true;
     /// </summary>
     /// <param name="a"></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetActiveTrue(this GameObject a)
         => a.SetActive(true);
 
@@ -18,6 +20,7 @@ public static class GameObject_Extensions
     /// Shortcut for a.enabled = false;
     /// </summary>
     /// <param name="a"></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetActiveFalse(this GameObject a)
         => a.SetActive(false);
 
@@ -25,6 +28,7 @@ public static class GameObject_Extensions
     /// Shortcut for a.enabled = false;
     /// </summary>
     /// <param name="a"></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetActiveToggle(this GameObject a)
         => a.SetActive(!a.activeSelf);
 
@@ -32,6 +36,7 @@ public static class GameObject_Extensions
     /// Shortcut for Destroy(gameObject);
     /// </summary>
     /// <param name="a"></param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Destroy(this GameObject a)
         => Destroy(a);
 
