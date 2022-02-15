@@ -27,14 +27,15 @@ namespace RichPackage.Collections
 
         protected override void HeapifyDown(int index)
         {
+            int size = elements.Count;
             int smallest = index;
             int left = GetLeftIndex(index);
             int right = GetRightIndex(index);
 
-            if (left < Size && elements[left].CompareTo(elements[index]) < 0)
+            if (left < size && elements[left].CompareTo(elements[index]) < 0)
                 smallest = left;
 
-            if (right < Size && elements[right].CompareTo(elements[smallest]) < 0)
+            if (right < size && elements[right].CompareTo(elements[smallest]) < 0)
                 smallest = right;
 
             if (smallest != index)
