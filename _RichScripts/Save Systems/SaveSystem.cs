@@ -50,10 +50,10 @@ namespace RichPackage.SaveSystem
 		public bool deleteOnPlay = false;
 		public bool loadOnStart = false;
 
-		[SerializeField]
+		[SerializeField, Min(0)]
 		private int saveGameSlotIndex = 0;
 
-		[SerializeField]
+		[SerializeField, Min(0)]
 		private int maxSaveFiles = 3;
 
 		public int MaxSaveFiles { get => maxSaveFiles; }
@@ -210,7 +210,7 @@ namespace RichPackage.SaveSystem
 		{
 			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
 			saveGameSlotIndex = slot;
-			return SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+			return SaveFile != null && SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
 		}
 		
 		#region Console Commands
@@ -267,6 +267,21 @@ namespace RichPackage.SaveSystem
 				Instance.DeleteSave(slot);
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
+		}
+
+		[ConsoleCommand("openSaveFile"), Button, DisableInEditorMode]
+		public static void OpenSaveFileInVSCode()
+		{
+			string arg = $"\"code '\"{Instance.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
+			var options = new System.Diagnostics.ProcessStartInfo()
+			{
+				FileName = "powershell",
+				Arguments = arg,
+				UseShellExecute = false,
+			};
+			var process = System.Diagnostics.Process.Start(options);
+			process.EnableRaisingEvents = true;
+			process.Exited += (obj, ctx) => ((System.Diagnostics.Process)obj).Dispose();
 		}
 
 		#endregion
