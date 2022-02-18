@@ -13,19 +13,25 @@ namespace RichPackage.Editor
 		[MenuItem(TerminalMenu + "/Powershell %`")] //%` means you can press ctrl+` to call this function
 		public static void OpenPowershell()
 		{
-			Process.Start("powershell");
+			var process = Process.Start("powershell");
+			process.EnableRaisingEvents = true;
+			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
 		}
 
 		[MenuItem(TerminalMenu + "/Command Prompt")]
 		public static void OpenCommandPrompt()
 		{
-			Process.Start("cmd");
+			var process = Process.Start("cmd");
+			process.EnableRaisingEvents = true;
+			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
 		}
 
 		[MenuItem(TerminalMenu + "/Bash")]
 		public static void OpenBash()
 		{
-			Process.Start(@"D:\3rdPartyUtility\Git\git-bash.exe");//, "--cd-to-home");
+			var process = Process.Start(@"D:\3rdPartyUtility\Git\git-bash.exe");//, "--cd-to-home");
+			process.EnableRaisingEvents = true;
+			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
 		}
 	}
 }
