@@ -369,6 +369,14 @@ namespace RichPackage.Collections
         }
 
         /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
+        public T PopMax()
+        {
+            T value = GetMaxValue();
+            Remove(value);
+            return value;
+        }
+
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T GetMinValue()
         {
             if (root == null)
@@ -378,6 +386,14 @@ namespace RichPackage.Collections
             while(minNode.left != null)
                 minNode = minNode.left;
             return minNode.data;
+        }
+
+        /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
+        public T PopMin()
+        {
+            T value = GetMinValue();
+            Remove(value);
+            return value;
         }
 
         #endregion
