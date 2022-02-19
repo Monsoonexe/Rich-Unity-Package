@@ -53,7 +53,7 @@ namespace RichPackage.SaveSystem
 		private void LoadDatum(ES3File saveFile,
 			BaseVariable variable)
 		{
-			var saveKey = variable.name;
+			string saveKey = variable.name;
 			if (variable is IntVariable intVar)
 			{
 				intVar.Value = saveFile.Load<int>(
@@ -85,7 +85,7 @@ namespace RichPackage.SaveSystem
 		private void SaveDatum(ES3File saveFile,
 			BaseVariable variable)
 		{
-			var saveKey = variable.name;
+			string saveKey = variable.name;
 			if (variable is IntVariable intVar)
 			{
 				saveFile.Save<int>(saveKey, intVar.Value);
