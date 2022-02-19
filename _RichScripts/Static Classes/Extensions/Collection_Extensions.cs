@@ -455,6 +455,52 @@ public static class Collection_Extensions
             sum += col[i];
         return sum;
     }
+    
+    public static byte SumBy<T>(this IList<T> list, Func<T, byte> adder)
+    {
+        byte sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
+    public static int SumBy<T>(this IList<T> list, Func<T, int> adder)
+	{
+        int sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
+    public static long SumBy<T>(this IList<T> list, Func<T, long> adder)
+    {
+        long sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
+    public static float SumBy<T>(this IList<T> list, Func<T, float> adder)
+    {
+        float sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
+    public static double SumBy<T>(this IList<T> list, Func<T, double> adder)
+    {
+        double sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
 
     #endregion
 
