@@ -65,11 +65,23 @@ public static class Collection_Extensions
         if(found) dic.Remove(key);
         return found;
     }
-
+    
     #region Average
+
+    public static int Average(this IList<byte> col)
+        => col.Sum() / col.Count;
 
     public static int Average(this IList<int> col)
         => col.Sum() / col.Count;
+
+    public static uint Average(this IList<uint> col)
+        => col.Sum() / (uint)col.Count;
+
+    public static long Average(this IList<long> col)
+        => col.Sum() / col.Count;
+
+    public static ulong Average(this IList<ulong> col)
+        => col.Sum() / (ulong)col.Count;
 
     public static float Average(this IList<float> col)
         => col.Sum() / col.Count;
@@ -409,6 +421,7 @@ public static class Collection_Extensions
             action(item);
         }
     }
+
     #region Summation
 
     public static int Sum(this IList<byte> col)
@@ -429,9 +442,27 @@ public static class Collection_Extensions
         return sum;
     }
 
+    public static long Sum(this IList<long> col)
+    {
+        long sum = 0;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
     public static uint Sum(this IList<uint> col)
     {
         uint sum = 0;
+        int count = col.Count;
+        for (int i = count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+
+    public static ulong Sum(this IList<ulong> col)
+    {
+        ulong sum = 0;
         int count = col.Count;
         for (int i = count - 1; i >= 0; --i)
             sum += col[i];
@@ -455,10 +486,10 @@ public static class Collection_Extensions
             sum += col[i];
         return sum;
     }
-    
-    public static byte SumBy<T>(this IList<T> list, Func<T, byte> adder)
+
+    public static int SumBy<T>(this IList<T> list, Func<T, byte> adder)
     {
-        byte sum = 0;
+        int sum = 0;
         int count = list.Count; //cache for re-use
         for (int i = 0; i < count; ++i)
             sum += adder(list[i]);
@@ -483,6 +514,15 @@ public static class Collection_Extensions
         return sum;
     }
 
+    public static ulong SumBy<T>(this IList<T> list, Func<T, ulong> adder)
+    {
+        ulong sum = 0;
+        int count = list.Count; //cache for re-use
+        for (int i = 0; i < count; ++i)
+            sum += adder(list[i]);
+        return sum;
+    }
+
     public static float SumBy<T>(this IList<T> list, Func<T, float> adder)
     {
         float sum = 0;
@@ -500,7 +540,6 @@ public static class Collection_Extensions
             sum += adder(list[i]);
         return sum;
     }
-
 
     #endregion
 
