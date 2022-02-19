@@ -212,7 +212,26 @@ namespace RichPackage.SaveSystem
 			saveGameSlotIndex = slot;
 			return SaveFile != null && SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
 		}
-		
+
+		#region ISaveable Consumers
+
+		/// <summary>
+		/// Save <paramref name="item"/> to the currently active <see cref="SaveFile"/>.
+		/// </summary>
+		public void SaveMe(ISaveable item) => item.SaveState(SaveFile);
+
+		/// <summary>
+		/// Load <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
+		/// </summary>
+		public void LoadMe(ISaveable item) => item.LoadState(SaveFile);
+
+		/// <summary>
+		/// Delete <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
+		/// </summary>
+		public void DeleteMe(ISaveable item) => item.LoadState(SaveFile);
+
+		#endregion
+
 		#region Console Commands
 
 		[ConsoleCommand("save")]
