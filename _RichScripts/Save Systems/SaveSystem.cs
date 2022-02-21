@@ -4,6 +4,12 @@ using Signals;
 using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
 using UnityConsole;
+using RichPackage.Debugging;
+
+/*
+ * Cache Save/Load signals to reduce dictionary lookups
+ * Support saving to different save slots (Bethesda style)
+ */ 
 
 namespace RichPackage.SaveSystem
 { 
@@ -13,7 +19,7 @@ namespace RichPackage.SaveSystem
 	public class SaveSystem : RichMonoBehaviour
 	{
 		#region Constants
-		private static readonly string HAS_SAVE_DATA_KEY = "HasSave";
+		private static readonly string HAS_SAVE_DATA_KEY = "HasData";
 		private static readonly string DEFAULT_SAVE_FILE_NAME = "Save.es3";
 		#endregion	
 
@@ -21,30 +27,9 @@ namespace RichPackage.SaveSystem
 		private static SaveSystem instance;
 		public static SaveSystem Instance { get => instance; }
 
-		[System.Serializable]
-		private class SaveGameSlot
-		{
-			public string fileName;
-			public ES3File file;
-
-			#region Constructors
-			public SaveGameSlot(string fileName)
-			{
-				this.fileName = fileName;
-				file = null;
-			}
-
-			public SaveGameSlot(string fileName, ES3File file)
-			{
-				this.fileName = fileName;
-				this.file = file;
-			}
-			#endregion
-		}
-
 		[SerializeField]
-		private List<SaveGameSlot> gameSaveFiles = new List<SaveGameSlot>
-				{ new SaveGameSlot(DEFAULT_SAVE_FILE_NAME) };
+		private List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>
+				{ new ES3SerializableSettings(DEFAULT_SAVE_FILE_NAME) };
 
 		[Title("Settings")]
 		public bool deleteOnPlay = false;
@@ -59,6 +44,11 @@ namespace RichPackage.SaveSystem
 		public int MaxSaveFiles { get => maxSaveFiles; }
 
 		/// <summary>
+		/// Save file which is currently loaded. If it's null, it needs to be loaded from disk.
+		/// </summary>
+		private ES3File currentSaveFile;
+
+		/// <summary>
 		/// True if there exists some amount of SaveData which can be loaded.
 		/// </summary>
 		public static bool HasSaveData
@@ -69,22 +59,32 @@ namespace RichPackage.SaveSystem
 
 		private string SaveFileName
 		{
-			get => gameSaveFiles[saveGameSlotIndex].fileName;
+			get => null;// gameSaveFiles[saveGameSlotIndex].fileName;
 		}
 
+		/// <summary>
+		/// Gets the current save file that is loaded.
+		/// </summary>
 		private ES3File SaveFile
 		{
-			get => gameSaveFiles[saveGameSlotIndex].file;
-			set => gameSaveFiles[saveGameSlotIndex].file = value;
+			get
+			{
+				//work
+				if (currentSaveFile == null)
+					LoadFile(saveGameSlotIndex);
+				return currentSaveFile;
+			}
 		}
+
+		#region Unity Messages
 
 		private void Reset()
 		{
 			SetDevDescription("I facilitate saving and manage save files.");
 
 			//first slot is free
-			gameSaveFiles = gameSaveFiles ?? new List<SaveGameSlot>
-				{ new SaveGameSlot(DEFAULT_SAVE_FILE_NAME) };
+			gameSaveFiles = gameSaveFiles ?? new List<ES3SerializableSettings>
+				{ new ES3SerializableSettings(DEFAULT_SAVE_FILE_NAME) };
 		}
 
 		protected override void Awake()
@@ -124,76 +124,65 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
 		}
 
-		/// <summary>
-		/// Change source save file.
-		/// </summary>
-		/// <param name="fileName"></param>
-		private void LoadSaveFile(string fileName)
+		#endregion
+
+		private void LoadFile(int slot)
 		{
-			SaveFile = new ES3File(fileName);
+			//validate
+			gameSaveFiles.AssertValidIndex(slot);
+
+			//work
+			if (currentSaveFile == null)
+				currentSaveFile = new ES3File(gameSaveFiles[slot]);
 		}
 
+		/// <summary>
+		/// Triggered by dispatching <see cref="SaveGame"/>.
+		/// </summary>
+		[Button, DisableInEditorMode]
+		public void Save()
+		{
+			SaveFile.Save(HAS_SAVE_DATA_KEY, value: true);//flag to indicate there is indeed some save data
+			GlobalSignals.Get<SaveStateToFile>().Dispatch(SaveFile);//broadcast save command
+			SaveFile.Sync();//save from RAM to Disk
+			RichDebug.EditorLog($"Saved file: {SaveFile.settings.path}.");
+		}
+
+		[Button, HorizontalGroup("Delete")]
+		public void DeleteSave() => DeleteSave(saveGameSlotIndex);
+
+		[Button, HorizontalGroup("Delete")]
 		public void DeleteSave(int slot)
 		{
-			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
-			saveGameSlotIndex = slot;
-			DeleteSave();
+			//validate
+			gameSaveFiles.AssertValidIndex(slot);
+
+			//work
+			ES3File saveFile = new ES3File(gameSaveFiles[slot]); //load into memory
+			saveFile.Clear();
+			saveFile.Sync(); //needed?
+
+			Debug.Log($"Deletedfile: {saveFile.settings.path}.");
 		}
 
-		[Button]
-		public void DeleteSave()
-		{
-			if (SaveFile == null)
-				LoadSaveFile(SaveFileName);
-			SaveFile.Clear();
-			Debug.Log("Deleted save file.");
-		}
-
-		[Button, DisableInEditorMode]
-		public void Save(int slot)
-		{
-			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
-			saveGameSlotIndex = slot;
-			Save();
-		}
-
-		[Button, DisableInEditorMode]
-		private void Save()
-		{
-			if (SaveFile == null)
-				LoadSaveFile(SaveFileName);
-
-			//flag to indicate there is indeed some save data
-			SaveFile.Save(HAS_SAVE_DATA_KEY, true);
-
-			//broadcast save command
-			GlobalSignals.Get<SaveStateToFile>().Dispatch(SaveFile);
-
-			SaveFile.Sync();//synchronize file (like stamping)
-			Debug.Log("Saved");
-		}
-
-		[Button, DisableInEditorMode]
-		public void Load(int slot)
-		{
-			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
-			saveGameSlotIndex = slot;
-			Load();
-		}
-
-		[Button, DisableInEditorMode]
+		[Button, DisableInEditorMode, HorizontalGroup("Load")]
 		public void Load()
 		{
-			if (SaveFile == null)
-				LoadSaveFile(SaveFileName);
-
-			SaveFile.Sync();//make sure up to date
+			currentSaveFile?.Sync(); //flush cache to disk before switching save files.
+			LoadFile(saveGameSlotIndex);
 
 			//broadcast load command
 			GlobalSignals.Get<LoadStateFromFile>().Dispatch(SaveFile);
 
 			//load player inventory
-			Debug.Log("Loaded");
+			RichDebug.EditorLog($"Loaded file: {SaveFile.settings.path}.");
+		}
+
+		[Button, DisableInEditorMode, HorizontalGroup("Load")]
+		public void Load(int slot)
+		{
+			saveGameSlotIndex = slot;
+			Load();
 		}
 
 		/// <summary>
@@ -239,15 +228,6 @@ namespace RichPackage.SaveSystem
 		{
 			if (Instance)
 				Instance.Save();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		[ConsoleCommand("saveSlot")]
-		public static void Save_(int slot)
-		{
-			if (Instance)
-				Instance.Save(slot);
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
