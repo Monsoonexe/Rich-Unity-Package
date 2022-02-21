@@ -53,8 +53,7 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		public static bool HasSaveData
 		{
-			get => instance.SaveFile.KeyExists(HAS_SAVE_DATA_KEY) 
-				&& instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY);
+			get => instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY, false);
 		}
 
 		private string SaveFileName
