@@ -91,7 +91,10 @@ namespace RichPackage.SaveSystem
 		/// Loads <see cref="AState"/> state from saveFile.
 		/// </summary>
 		public override void LoadState(ES3File saveFile)
-			=> saveData = saveFile.Load(key: SaveID, defaultValue: saveData); //recommended code
+		{    //recommended code
+			saveData = saveFile.Load(SaveID, defaultValue: saveData);
+			saveData.IsDirty = false;
+		}
 
 		#endregion
 	}
