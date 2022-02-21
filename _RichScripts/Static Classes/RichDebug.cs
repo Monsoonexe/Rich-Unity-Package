@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace RichPackage.RichDebug
+namespace RichPackage.Debugging
 {
     using Debug = UnityEngine.Debug;//clarify which static class
 
@@ -11,22 +11,18 @@ namespace RichPackage.RichDebug
     public static class RichDebug
     {
         /// <summary>
-        /// Only Logs in Editor. Removed from Builds.
+        /// Only Logs in Editor. Call is removed from Builds.
         /// </summary>
         [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void EditorLog(string message)
-        {
-            Debug.Log(message);
-        }
+            => Debug.Log(message);
 
         /// <summary>
-        /// Only Logs in Editor. Removed from Builds.
+        /// Only Logs in Editor. Call is removed from Builds.
         /// </summary>
         [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void EditorLog(string message, UnityEngine.Object context)
-        {
-            Debug.Log(message, context);
-        }
+            => Debug.Log(message, context);
 
         /// <summary>
         /// This call gets stripped when built.
