@@ -56,11 +56,6 @@ namespace RichPackage.SaveSystem
 			get => instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY, false);
 		}
 
-		private string SaveFileName
-		{
-			get => null;// gameSaveFiles[saveGameSlotIndex].fileName;
-		}
-
 		/// <summary>
 		/// Gets the current save file that is loaded.
 		/// </summary>
@@ -113,6 +108,7 @@ namespace RichPackage.SaveSystem
 		{
 			//subscribe to events
 			GlobalSignals.Get<SaveGame>().AddListener(Save);
+			GlobalSignals.Get<ScenePreUnload>().AddListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
 		}
 
@@ -120,6 +116,7 @@ namespace RichPackage.SaveSystem
 		{
 			//unsubscribe from events
 			GlobalSignals.Get<SaveGame>().RemoveListener(Save);
+			GlobalSignals.Get<ScenePreUnload>().RemoveListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
 		}
 
