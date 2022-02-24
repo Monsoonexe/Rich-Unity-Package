@@ -366,6 +366,56 @@ namespace RichPackage.Collections
             }
         }
 
+        private void RemoveNode(ref AVLNode<T> current, AVLNode<T> targetNode)
+        {
+                int compareResult = dataComparer.Compare(targetNode.data, current.data);
+
+                //left subtree
+                if (compareResult < 0 || (compareResult == 0 && current != targetNode)) //get and stash compare result for next else if
+                    RemoveNode(ref current.left, targetNode);
+                //right subtree
+                else if (compareResult > 0)
+                    RemoveNode(ref current.right, targetNode);
+                else  //target is found!
+                {   
+                    // delete this node and replace with a child?
+                    //case 1: one or no children
+                    if (current.left == null
+                    || current.right == null)
+                    {
+                        AVLNode<T> temp = current; //del current
+                        if (current.left != null)
+                            current = current.left; //replace with left
+                        else if (current.right != null)
+                            current = current.right; //replace with right
+                        else //has no children
+                            current = null; //del self
+
+                        nodePool.Enpool(temp); //free node
+                    }
+                    else //2 children
+                    {
+                        //find the inorder successor
+                        //(the smallest item in the right subtree)
+                        AVLNode<T> successor = current.right;
+                        while (successor.left != null)
+                            successor = successor.left;
+
+                        //copy the inorder successor's data to the current node
+                        current.data = successor.data;
+
+                        //delete the inorder successor
+                        Remove(ref current.right, (other) => dataComparer.Compare(successor.data, other)); //find node to replace using internal comparison method.
+                    }
+
+                    //had no children
+                    if (current == null)
+                        return; //deleted self
+
+                    BalanceTree(ref current);
+                }
+        }
+
         #endregion
 
         #region Min/Max Value
