@@ -6,7 +6,8 @@ using System.Runtime.CompilerServices;
 namespace RichPackage.Collections
 {
     /// <summary>
-    /// e.g. this.CompareTo(other); Other is the RHS value of the comparison. 
+    /// e.g. this.CompareTo(other);
+    /// Other is the RHS of the comparison.
     /// Useful for searching without having to create a dummy key value.
     /// </summary>
     /// <param name="other">The RHS value of the comparison.</param>
