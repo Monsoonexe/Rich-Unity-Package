@@ -19,7 +19,7 @@ namespace RichPackage.Collections
     /// <typeparam name="T">Class or Struct that impements the <see name="IComparable"></see> interface.</typeparam>
     /// <remarks>Don't modify the IComparable pivot value while
     /// the item is in a tree. Will break BST aspect.</remarks>
-    public class AVLTree<T> where T : IComparable
+    public class AVLTree<T> where T : IComparable<T>
     {
         private class AVLNode<TNode> where TNode
         {
