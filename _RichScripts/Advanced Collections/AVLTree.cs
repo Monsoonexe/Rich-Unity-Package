@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using RichPackage.Pooling;
 using System.Runtime.CompilerServices;
 
+// TODO - make pooling nodes optional - per instance or not
+
 namespace RichPackage.Collections
 {
     /// <summary>
@@ -70,7 +72,20 @@ namespace RichPackage.Collections
         /// Determines how items in the tree are ordered. <br/>
         /// Default value is <see cref="Comparer{T}.Default"/>.
          /// </summary>
-        public IComparer<T> DataComparer { get => dataComparer; set => dataComparer = value;} //TODO - rebuild tree
+         /// <exception cref="ArgumentNullException">Thrown if <paramref name="comparer"/> is null.</exception>
+        public IComparer<T> DataComparer 
+        { 
+            get => dataComparer; 
+            set 
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+
+                dataComparer = value;
+                if (Count > 1)
+                    FixViolatedTreeProperty();
+            }
+        }
 
         /// <summary>
         /// Count of items in tree.
@@ -180,11 +195,13 @@ namespace RichPackage.Collections
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(in T key) => FindNode(key) != null;
 
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(CompareAgainst<T> comparer) => FindNode(comparer) != null;
 
         #region Removal
@@ -805,6 +822,23 @@ namespace RichPackage.Collections
                     current = RotateLR(current);
                 else
                     current = RotateRight(current);
+        }
+
+        /// <summary>
+        /// If the tree was violated and needs to be reset, like if 
+        /// a node's pivot property was modified while in the tree, this method
+        /// will fix the violated tree property (nodes stored in an order).
+        /// </summary>
+        public void FixViolatedTreeProperty()
+        {
+            int index = 0;
+            var items = new T[Count];
+
+            while (Count-- > 0)
+                items[index++] = GetRemove(root.data);
+
+            while (index > 0)
+                Add(items[--index]);
         }
 
         /// <summary>
