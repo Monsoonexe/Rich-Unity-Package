@@ -257,7 +257,7 @@ namespace RichPackage.Collections
             if (found)
             {
                 value = node.data; //return value
-                Remove(node.data); //find using default comparer
+                Remove(ref root, comparer); //find using default comparer
             }
             else
             {
