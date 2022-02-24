@@ -77,7 +77,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Quick calculation of the height. Upper bound: Height &lt;= 1.441 * Log2(Count)
         /// </summary>
-        public int HeightEstimate => (int)(Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.AwayFromZero));
+        public int HeightEstimate => (int)(Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.ToPositiveInfinity));
 
         /// <summary>
         /// Get maximum value in tree. O(1) because height is cached.
