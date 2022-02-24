@@ -21,7 +21,7 @@ namespace RichPackage.Collections
     /// the item is in a tree. Will break BST aspect.</remarks>
     public class AVLTree<T> where T : IComparable
     {
-        private class AVLNode<TNode> where TNode : IComparable
+        private class AVLNode<TNode> where TNode
         {
             #region Properties
 
