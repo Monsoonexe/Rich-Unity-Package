@@ -38,8 +38,8 @@ namespace RichPackage.Collections
 
             public AVLNode(TNode data)
             {
-                this.data = data;
                 Reset();
+                this.data = data;
             }
 
             public void Reset()
@@ -47,11 +47,12 @@ namespace RichPackage.Collections
                 left = null;
                 right = null;
                 height = 0;
+                data = default;
             }
         }
 
         #region Properties
-        
+
         private static readonly ObjectPool<AVLNode<T>> nodePool
             = new ObjectPool<AVLNode<T>>
         (
