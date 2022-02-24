@@ -8,13 +8,14 @@ using System.Runtime.CompilerServices;
 namespace RichPackage.Collections
 {
     /// <summary>
+    /// Function that searches a binary search tree in O(log n) time. <br/>
+    /// <paramref name="other"/> is the RHS of the comparison.
     /// e.g. this.CompareTo(other);
-    /// Other is the RHS of the comparison.
-    /// Useful for searching without having to create a dummy key value.
     /// </summary>
     /// <param name="other">The RHS value of the comparison.</param>
-    /// <returns>-1 if this precedes other, 0 if this is in the same position as other, and 1 if follows other.</returns>
-    public delegate int CompareAgainst<in T> (T other);
+    /// <returns>-1 if this precedes <paramref name="other"/>, 0 if this is in the same position as <paramref name="other"/>, 
+    /// and 1 if follows <paramref name="other"/>.</returns>
+    public delegate int Searcher<in T> (T other);
 
     /// <summary>
     /// Self-balancing AVL tree. Search is Log2(n). Pools nodes.
@@ -72,7 +73,7 @@ namespace RichPackage.Collections
         /// Determines how items in the tree are ordered. <br/>
         /// Default value is <see cref="Comparer{T}.Default"/>.
          /// </summary>
-         /// <exception cref="ArgumentNullException">Thrown if <paramref name="comparer"/> is null.</exception>
+         /// <exception cref="ArgumentNullException">Thrown if <paramref name="searcher"/> is null.</exception>
         public IComparer<T> DataComparer 
         { 
             get => dataComparer; 
@@ -202,7 +203,7 @@ namespace RichPackage.Collections
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(CompareAgainst<T> comparer) => FindNode(comparer) != null;
+        public bool Contains(Searcher<T> searcher) => FindNode(searcher) != null;
 
         #region Removal
 
@@ -219,10 +220,10 @@ namespace RichPackage.Collections
             Remove(ref root, target);
         }
 
-        public void Remove(CompareAgainst<T> comparer)
+        public void Remove(Searcher<T> searcher)
         {
             --Count;//assume it was found, and backtrack if not
-            Remove(ref root, comparer);
+            Remove(ref root, searcher);
         }
 
         /// <summary>
@@ -236,10 +237,10 @@ namespace RichPackage.Collections
             return Count < preCount;
         }
 
-        public bool TryRemove(CompareAgainst<T> comparer)
+        public bool TryRemove(Searcher<T> searcher)
         {
             int preCount = Count;
-            Remove(comparer);
+            Remove(searcher);
             return Count < preCount;
         }
 
@@ -270,15 +271,15 @@ namespace RichPackage.Collections
             return found;
         }
 
-        public bool TryGetRemove(CompareAgainst<T> comparer, out T value)
+        public bool TryGetRemove(Searcher<T> searcher, out T value)
         {   //TODO - do in one walk instead of 2
-            var node = FindNode(comparer); //find target node
+            var node = FindNode(searcher); //find target node
             bool found = node != null;
 
             if (found)
             {
                 value = node.data; //return value
-                Remove(ref root, comparer); //find using default comparer
+                Remove(ref root, searcher); //find using default searcher
             }
             else
             {
@@ -289,7 +290,7 @@ namespace RichPackage.Collections
 
         /// <summary>
         /// Returns the first value that matches given predicate.
-        /// <see cref="TryGetRemove(CompareAgainst{T}, out T)"/> to determine if the value was found.
+        /// <see cref="TryGetRemove(Searcher{T}, out T)"/> to determine if the value was found.
         /// </summary>
         /// <returns>The value that was found or 'default'.</returns>
         /// <exception>KeyNotFoundException></exception>
@@ -312,13 +313,13 @@ namespace RichPackage.Collections
 
         /// <summary>
         /// Returns the first value that matches given predicate.
-        /// <see cref="TryGetRemove(CompareAgainst{T}, out T)"/> to determine if the value was found.
+        /// <see cref="TryGetRemove(Searcher{T}, out T)"/> to determine if the value was found.
         /// </summary>
         /// <returns>The value that was found or 'default'.</returns>
         /// <exception>KeyNotFoundException></exception>
-        public T GetRemove(CompareAgainst<T> comparer)
+        public T GetRemove(Searcher<T> searcher)
         {
-            if (TryGetRemove(comparer, out T value))
+            if (TryGetRemove(searcher, out T value))
                 return value;
             throw new KeyNotFoundException();
         }
@@ -326,7 +327,7 @@ namespace RichPackage.Collections
         private void Remove(ref AVLNode<T> current, T key)
             => Remove(ref current, (other) => DataComparer.Compare(key, other));
 
-        private void Remove(ref AVLNode<T> current, CompareAgainst<T> comparer)
+        private void Remove(ref AVLNode<T> current, Searcher<T> searcher)
         {
             if (current == null)
             {
@@ -335,14 +336,14 @@ namespace RichPackage.Collections
             }
             else
             {
-                int compareResult = comparer(current.data);
+                int compareResult = searcher(current.data);
 
                 //left subtree
                 if (compareResult < 0) //get and stash compare result for next else if
-                    Remove(ref current.left, comparer);
+                    Remove(ref current.left, searcher);
                 //right subtree
                 else if (compareResult > 0)
-                    Remove(ref current.right, comparer);
+                    Remove(ref current.right, searcher);
                 else  //target is found!
                 {   // delete this node and replace with a child?
                     //case 1: one or no children
@@ -494,12 +495,12 @@ namespace RichPackage.Collections
         /// <summary>
         /// Search against key query using binary search.
         /// </summary>
-        /// <param name="comparer">Comparison method.</param>
+        /// <param name="searcher">Comparison method.</param>
         /// <param name="foundItem">Holds item that matched querry.</param>
         /// <returns>True if item was found and returned.</returns>
-        public bool TryFind(CompareAgainst<T> comparer, out T foundItem)
+        public bool TryFind(Searcher<T> searcher, out T foundItem)
         {
-            var foundNode = FindNode(comparer);
+            var foundNode = FindNode(searcher);
             var searchSuccessful = foundNode != null;
             foundItem = searchSuccessful ? foundNode.data : default;//return value
             return searchSuccessful;
@@ -512,27 +513,27 @@ namespace RichPackage.Collections
         /// <summary>
         /// Search against key query using binary search.
         /// </summary>
-        /// <param name="comparer">Comparison method. Will select Node whose comparison == 0.</param>
+        /// <param name="searcher">Comparison method. Will select Node whose comparison == 0.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AVLNode<T> FindNode(CompareAgainst<T> comparer)
-            => FindNode(comparer, root); //explicit comparer
+        private AVLNode<T> FindNode(Searcher<T> searcher)
+            => FindNode(searcher, root); //explicit searcher
 
         /// <summary>
         /// Recursive binary search.
         /// </summary>
         /// <param name="target">Partially-filled record.</param>
-        /// <param name="comparer">Comparison method. Will select Node whose comparison == 0.</param>
+        /// <param name="searcher">Comparison method. Will select Node whose comparison == 0.</param>
         /// <returns>Null if not found.</returns>
-        private static AVLNode<T> FindNode(CompareAgainst<T> comparer,
+        private static AVLNode<T> FindNode(Searcher<T> searcher,
             AVLNode<T> current)
         {
             if (current == null) return null;
 
-            int compareResult = comparer(current.data);
+            int compareResult = searcher(current.data);
             if (compareResult > 0)
-                return FindNode(comparer, current.right);
+                return FindNode(searcher, current.right);
             else if (compareResult < 0)
-                return FindNode(comparer, current.left);
+                return FindNode(searcher, current.left);
             else
                 return current; // found!
         }
@@ -540,7 +541,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Processes the first node that compares equal. Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree.
         /// </summary>
-        public void ProcessItem(CompareAgainst<T> searcher, Action<T> processor)
+        public void ProcessItem(Searcher<T> searcher, Action<T> processor)
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             if (foundNode != null)
@@ -550,7 +551,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Processes the first node that compares equal. Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree.
         /// </summary>
-        public bool TryProcessItem(CompareAgainst<T> searcher, Action<T> processor)
+        public bool TryProcessItem(Searcher<T> searcher, Action<T> processor)
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
@@ -565,7 +566,7 @@ namespace RichPackage.Collections
         /// Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree. <br/>
         /// If you do violate the tree property, you must call <see cref="FixViolatedTreeProperty"/> or else your searching behavior is undefined.
         /// </summary>
-        public void ProcessItemRef(CompareAgainst<T> searcher, ActionRef<T> processor)
+        public void ProcessItemRef(Searcher<T> searcher, ActionRef<T> processor)
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             if (foundNode != null)
@@ -575,7 +576,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Processes the first node that compares equal. Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree.
         /// </summary>
-        public bool TryProcessItemRef(CompareAgainst<T> searcher, ActionRef<T> processor)
+        public bool TryProcessItemRef(Searcher<T> searcher, ActionRef<T> processor)
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
