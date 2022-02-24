@@ -542,6 +542,32 @@ namespace RichPackage.Collections
             return found;
         }
 
+
+        /// <summary>
+        /// Processes the first node that compares equal. <br/>
+        /// Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree. <br/>
+        /// If you do violate the tree property, you must call <see cref="FixViolatedTreeProperty"/> or else your searching behavior is undefined.
+        /// </summary>
+        public void ProcessItemRef(CompareAgainst<T> searcher, ActionRef<T> processor)
+        {
+            AVLNode<T> foundNode = FindNode(searcher, root);
+            if (foundNode != null)
+                processor(ref foundNode.data);
+        }
+
+        /// <summary>
+        /// Processes the first node that compares equal. Do NOT modify the values compared with <see cref="DataComparer"/> or you could bork the tree.
+        /// </summary>
+        public bool TryProcessItemRef(CompareAgainst<T> searcher, ActionRef<T> processor)
+        {
+            AVLNode<T> foundNode = FindNode(searcher, root);
+            bool found = foundNode != null; //return value
+            if(found)
+                processor(ref foundNode.data);
+            return found;
+        }
+
+
         #endregion
 
         #region In-Order Processing
