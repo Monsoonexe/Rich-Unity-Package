@@ -189,6 +189,10 @@ namespace RichPackage.Collections
 
         #region Removal
 
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Clear() => RemoveAll(); //alias
+
         /// <summary>
         /// Remove node where the data is equal to the key using the IComparable interface. O(Log2(n))
         /// </summary>
