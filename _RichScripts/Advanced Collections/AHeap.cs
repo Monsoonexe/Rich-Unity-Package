@@ -18,6 +18,27 @@ namespace RichPackage.Collections
 
         protected readonly List<T> elements = new List<T>(32); 
 
+        protected IComparer<T> comparer = Comparer<T>.Default;
+
+        /// <summary>
+        /// Determines how items in the tree are ordered. <br/>
+        /// Default value is <see cref="Comparer{T}.Default"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        public IComparer<T> Comparer 
+        { 
+            get => comparer; 
+            set 
+            {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value));
+
+                comparer = value;
+                if (Size > 1)
+                    Heapify();
+            }
+        }
+
         #region Constructors
 
         public AHeap()

@@ -1,11 +1,9 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace RichPackage.Collections
 {
     public class MinHeap< T> : AHeap<T>
-        where T : IComparable<T>
     {
         #region Constructors
 
@@ -18,7 +16,7 @@ namespace RichPackage.Collections
         protected override void HeapifyUp(int index)
         {
             int parentIndex = GetParentIndex(index);
-            if (parentIndex >= 0 && elements[index].CompareTo(elements[parentIndex]) < 0)
+            if (parentIndex >= 0 && comparer.Compare(elements[index], elements[parentIndex]) < 0)
             {
                 Swap(index, parentIndex);
                 HeapifyUp(parentIndex);
@@ -32,10 +30,10 @@ namespace RichPackage.Collections
             int left = GetLeftIndex(index);
             int right = GetRightIndex(index);
 
-            if (left < size && elements[left].CompareTo(elements[index]) < 0)
+            if (left < size && comparer.Compare(elements[left], elements[index]) < 0)
                 smallest = left;
 
-            if (right < size && elements[right].CompareTo(elements[smallest]) < 0)
+            if (right < size && comparer.Compare(elements[right], elements[smallest]) < 0)
                 smallest = right;
 
             if (smallest != index)
