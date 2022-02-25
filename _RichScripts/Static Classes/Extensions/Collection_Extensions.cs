@@ -394,13 +394,16 @@ public static class Collection_Extensions
         }
         return true;
     }
+    
+    /// <summary>
+    /// Element at position Count - 1.
+    /// </summary>
+    public static T Last<T>(this IList<T> col) => col[col.Count - 1];
 
     /// <summary>
-    /// Element at Count - 1.
+    /// Element at position 0.
     /// </summary>
-    /// <param name="col"></param>
-    /// <returns></returns>
-    public static T Last<T>(this IList<T> col) => col[col.Count - 1];
+    public static T First<T>(this IList<T> col) => col[0];
 
     /// <summary>
     /// Count - 1
