@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using RichPackage.Pooling;
 using System.Runtime.CompilerServices;
 
-// TODO - make pooling nodes optional - per instance or not
-
 namespace RichPackage.Collections
 {
     /// <summary>
@@ -23,7 +21,7 @@ namespace RichPackage.Collections
     /// <typeparam name="T">Class or Struct that impements the <see name="IComparable"></see> interface.</typeparam>
     /// <remarks>Don't modify the IComparable pivot value while
     /// the item is in a tree. Will break BST aspect.</remarks>
-    public class AVLTree<T> where T : IComparable<T>
+    public class AVLTree<T>// where T : IComparable<T>
     {
         private class AVLNode<TNode>
         {
@@ -60,7 +58,7 @@ namespace RichPackage.Collections
             = new ObjectPool<AVLNode<T>>
         (
             maxCount: -1, //no limit to nodes
-            preInit: 32, //prebuild a pool
+            preInit: 0, //prebuild a pool
             factoryMethod: () => new AVLNode<T>(default), //default constructor
             enpoolMethod: (n) => n.Reset()// AVLNode<T>.ResetNode //de-init nodes
         );
@@ -72,8 +70,8 @@ namespace RichPackage.Collections
         /// <summary>
         /// Determines how items in the tree are ordered. <br/>
         /// Default value is <see cref="Comparer{T}.Default"/>.
-         /// </summary>
-         /// <exception cref="ArgumentNullException">Thrown if <paramref name="searcher"/> is null.</exception>
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="searcher"/> is null.</exception>
         public IComparer<T> DataComparer 
         { 
             get => dataComparer; 
@@ -89,6 +87,14 @@ namespace RichPackage.Collections
         }
 
         /// <summary>
+        /// If true, nodes are drawn from a pool instead of dynamically allocated, and allocated as needed.
+        /// If false, nodes are always dynamically allocated.
+        /// Consider setting this to true if you have lots of trees adding/removing frequently.
+        /// Pooling nodes is not thread-safe
+        /// </summary>
+        public bool PoolInternalNodes {get; set;} = true;
+
+        /// <summary>
         /// Count of items in tree.
         /// </summary>
         public int Count { get; private set; }
@@ -101,7 +107,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Quick calculation of the height. Upper bound: Height &lt;= 1.441 * Log2(Count)
         /// </summary>
-        public int HeightEstimate => (int)(Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.ToPositiveInfinity));
+        public int HeightEstimate => (int)(Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.AwayFromZero));
 
         /// <summary>
         /// Get maximum value in tree. O(1) because height is cached.
@@ -140,7 +146,7 @@ namespace RichPackage.Collections
         /// <param name="data">Data to add.</param>
         public void Add(in T data)
         {
-            var newNode = nodePool.Depool();
+            var newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
             newNode.data = data;
             RecursiveInsert(ref root, newNode);
         }
@@ -174,7 +180,7 @@ namespace RichPackage.Collections
         {
             if (currentNode == null)
             {
-                var newNode = nodePool.Depool();
+                var newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
                 newNode.data = data;
                 RecursiveInsert(ref currentNode, newNode);
                 return true;
@@ -249,7 +255,8 @@ namespace RichPackage.Collections
         /// </summary>
         public void RemoveAll()
         {
-            PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); //clears nodes
+            if (PoolInternalNodes)
+                PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); //clears nodes
             root = null;
             Count = 0;
         }
@@ -358,7 +365,11 @@ namespace RichPackage.Collections
                         else //has no children
                             current = null; //del self
 
-                        nodePool.Enpool(temp); //free node
+                        //free node
+                        if (PoolInternalNodes)
+                            nodePool.Enpool(temp);
+                        else
+                            temp = null;
                     }
                     else //2 children
                     {
@@ -409,7 +420,11 @@ namespace RichPackage.Collections
                         else //has no children
                             current = null; //del self
 
-                        nodePool.Enpool(temp); //free node
+                        //free node
+                        if (PoolInternalNodes)
+                            nodePool.Enpool(temp);
+                        else
+                            temp = null;
                     }
                     else //2 children
                     {
@@ -846,7 +861,7 @@ namespace RichPackage.Collections
         /// Trim excess nodes from the node pool. 
         /// Useful if you know no more nodes will be added.
         /// </summary>
-        public void TrimExcessFromNodePool() => nodePool.TrimExcess();
+        public static void TrimExcessFromNodePool() => nodePool.TrimExcess();
 
         #endregion
 
