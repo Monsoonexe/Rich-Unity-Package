@@ -63,7 +63,7 @@ public static class ConstStrings
     /// Cached string versions of commonly-used numbers. 
     /// Reduces garbage GENERATION and fragmentation.
     /// </summary>
-    public static readonly string[] NUMBER_STRINGS;
+    public static readonly string[] INTEGER_STRINGS;
 
     public static readonly Dictionary<int, string>
         cachedStringDictionary;
@@ -72,7 +72,7 @@ public static class ConstStrings
     ///  0 - 100 covers all times, dates, and percentages and only costs
     ///  about 204 bytes (I think)
     /// </summary>
-    public const int NUMBER_STRINGS_LIMIT = 100;//salt to needs of project.
+    public const int INTEGER_STRINGS_LIMIT = 100;//salt to needs of project.
 
     /// <summary>
     /// Always returns a string, either a cached one if it's range or a 
@@ -84,18 +84,18 @@ public static class ConstStrings
     public static string GetCachedString(int num)
     {
         //#if UNITY_EDITOR
-        //        if(num > NUMBER_STRINGS_LIMIT)
+        //        if(num > INTEGER_STRINGS_LIMIT)
         //        {
         //            Debug.Log("[ConstStrings] "+ num.ToString() + 
         //                " not in constant string array, so a new string was " +
         //                "generated. If this happens quite often, consider increasing " +
-        //                "NUMBER_STRINGS_LIMIT: (" + NUMBER_STRINGS_LIMIT.ToString() + 
+        //                "INTEGER_STRINGS_LIMIT: (" + INTEGER_STRINGS_LIMIT.ToString() + 
         //                ") or making a dictionary to track new entries.");
         //        }
         //#endif
         string str = null;
-        if (num <= NUMBER_STRINGS_LIMIT && num >= 0) //O(1)
-            str = NUMBER_STRINGS[num];
+        if (num <= INTEGER_STRINGS_LIMIT && num >= 0) //O(1)
+            str = INTEGER_STRINGS[num];
         else if(cachedStringDictionary.TryGetValue(num, out str)) //O(1)
         {
             //if it worked, str contains the requested string.
@@ -105,18 +105,54 @@ public static class ConstStrings
 
         return str;
     }
+    
+    #region Extensions
 
     public static string ToStringCached(this int num) => GetCachedString(num);
+
+    public static string ToStringCached(this byte num)
+    {
+        int intNum = num; //upcast
+        return intNum.ToStringCached();
+    }
+
+    public static string ToStringCached(this short num)
+    {
+        int intNum = num; //upcast
+        return intNum.ToStringCached();
+    }
+
+    public static string ToStringCached(this ushort num)
+    {
+        int intNum = num; //upcast
+        return intNum.ToStringCached();
+    }
+
+    public static string ToStringCached(this uint num)
+    {
+        if (num >= 0 && num <= INTEGER_STRINGS_LIMIT)
+            return ToStringCached((int)num);
+        return num.ToString();
+    }
+
+    public static string ToStringCached(this long num)
+    {
+        if (num >= int.MinValue && num <= INTEGER_STRINGS_LIMIT)
+            return ToStringCached((int)num);
+        return num.ToString();
+    }
+
+    #endregion
 
     #region Constructor
 
     static ConstStrings()
     {
         //preload first few ints as strings
-        NUMBER_STRINGS = new string[NUMBER_STRINGS_LIMIT + 1];//for 0
-        for(var i = 0; i <= NUMBER_STRINGS_LIMIT; ++i)
+        INTEGER_STRINGS = new string[INTEGER_STRINGS_LIMIT + 1];//for 0
+        for(var i = 0; i <= INTEGER_STRINGS_LIMIT; ++i)
         {
-            NUMBER_STRINGS[i] = i.ToString();//cache string versions of common numbers
+            INTEGER_STRINGS[i] = i.ToString();//cache string versions of common numbers
         }
 
         //thousands and other int-keyed strings.
