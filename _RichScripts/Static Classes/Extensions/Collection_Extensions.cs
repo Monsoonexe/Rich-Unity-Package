@@ -67,8 +67,29 @@ public static class Collection_Extensions
     }
     
     #region Average
+    
+    public static int Average<T>(this IList<T> col, Func<T, int> summer)
+        => col.Sum(summer) / col.Count;
+
+    public static uint Average<T>(this IList<T> col, Func<T, uint> summer)
+        => col.Sum(summer) / (uint) col.Count;
+
+    public static long Average<T>(this IList<T> col, Func<T, long> summer)
+        => col.Sum(summer) / col.Count;
+
+    public static ulong Average<T>(this IList<T> col, Func<T, ulong> summer)
+        => col.Sum(summer) / (ulong) col.Count;
+
+    public static float Average<T>(this IList<T> col, Func<T, float> summer)
+        => col.Sum(summer) / col.Count;
+
+    public static double Average<T>(this IList<T> col, Func<T, double> summer)
+        => col.Sum(summer) / col.Count;
 
     public static int Average(this IList<byte> col)
+        => col.Sum() / col.Count;
+        
+    public static int Average(this IList<short> col)
         => col.Sum() / col.Count;
 
     public static int Average(this IList<int> col)
@@ -231,14 +252,10 @@ public static class Collection_Extensions
         //build a pool of indices that have not been used.  
         var possibleIndices = CommunalLists.Get<int>();
 
-        var totalCount = totalCollection.Count;
-        for (var i = 0; i < totalCount; ++i)
-        {
+        int totalCount = totalCollection.Count;
+        for (int i = 0; i < totalCount; ++i)
             if (!usedCollection.Contains(totalCollection[i]))
-            {
                 possibleIndices.Add(i);//this index is safe to choose from
-            }
-        }
 
         if (possibleIndices.Count == 0)
         {
@@ -362,11 +379,11 @@ public static class Collection_Extensions
         => index >= 0 && index < col.Count;
 
     /// <summary>
-    /// A & B are the same size and every element in A is in B (order agnostic).
+    /// A and B are the same size and every element in A is in B (order agnostic).
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
-    /// <returns>True if A & B are the same size and every element in A is in B</returns>
+    /// <returns>True if A and B are the same size and every element in A is in B</returns>
     public static bool IsEquivalentTo<T>(this IList<T> a, IList<T> b)
     {
         if (a.Count != b.Count) return false;
@@ -426,12 +443,73 @@ public static class Collection_Extensions
     }
 
     #region Summation
+    
+    public static int Sum<T>(this IList<T> col, Func<T, int> summer)
+    {
+        int sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
+
+    public static uint Sum<T>(this IList<T> col, Func<T, uint> summer)
+    {
+        uint sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
+
+    public static float Sum<T>(this IList<T> col, Func<T, float> summer)
+    {
+        float sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
+
+    public static double Sum<T>(this IList<T> col, Func<T, double> summer)
+    {
+        double sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
+
+    public static long Sum<T>(this IList<T> col, Func<T, long> summer)
+    {
+        long sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
+
+    public static ulong Sum<T>(this IList<T> col, Func<T, ulong> summer)
+    {
+        ulong sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += summer(col[i]);
+
+        return sum;
+    }
 
     public static int Sum(this IList<byte> col)
     {
         int sum = 0;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
+    
+    public static int Sum(this IList<short> col)
+    {
+        int sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -439,8 +517,7 @@ public static class Collection_Extensions
     public static int Sum(this IList<int> col)
     {
         int sum = 0;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -448,8 +525,7 @@ public static class Collection_Extensions
     public static long Sum(this IList<long> col)
     {
         long sum = 0;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -457,8 +533,7 @@ public static class Collection_Extensions
     public static uint Sum(this IList<uint> col)
     {
         uint sum = 0;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -466,8 +541,7 @@ public static class Collection_Extensions
     public static ulong Sum(this IList<ulong> col)
     {
         ulong sum = 0;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -475,8 +549,7 @@ public static class Collection_Extensions
     public static float Sum(this IList<float> col)
     {
         float sum = 0.0f;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
         return sum;
     }
@@ -484,63 +557,8 @@ public static class Collection_Extensions
     public static double Sum(this IList<double> col)
     {
         double sum = 0.0d;
-        int count = col.Count;
-        for (int i = count - 1; i >= 0; --i)
+        for (int i = col.Count - 1; i >= 0; --i)
             sum += col[i];
-        return sum;
-    }
-
-    public static int SumBy<T>(this IList<T> list, Func<T, byte> adder)
-    {
-        int sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
-        return sum;
-    }
-
-    public static int SumBy<T>(this IList<T> list, Func<T, int> adder)
-	{
-        int sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
-        return sum;
-    }
-
-    public static long SumBy<T>(this IList<T> list, Func<T, long> adder)
-    {
-        long sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
-        return sum;
-    }
-
-    public static ulong SumBy<T>(this IList<T> list, Func<T, ulong> adder)
-    {
-        ulong sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
-        return sum;
-    }
-
-    public static float SumBy<T>(this IList<T> list, Func<T, float> adder)
-    {
-        float sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
-        return sum;
-    }
-
-    public static double SumBy<T>(this IList<T> list, Func<T, double> adder)
-    {
-        double sum = 0;
-        int count = list.Count; //cache for re-use
-        for (int i = 0; i < count; ++i)
-            sum += adder(list[i]);
         return sum;
     }
 
