@@ -23,6 +23,8 @@ namespace RichPackage
         /// </summary>
         public int MaxBucketCapacity { get; private set; }
 
+        public int MaxArraySize = 4096;
+
         public ArrayPool(int maxBucketCapacity = -1)
         {
             if (maxBucketCapacity == 0)
@@ -41,16 +43,22 @@ namespace RichPackage
         /// <returns>A buffer of at least 'minSize' from the pool.</returns>
         public T[] Rent(int minSize, bool clear = false)
         {
-            //iterate backwards to reduce left-shifts of elements after removal.
-            for (int i = _pool.Count - 1; i >= 0; --i)
+            int i = _pool.Count - 1;
+
+            //if there is an item that will fit
+            if (!(i > 1 && minSize > _pool[0].Length)) //largest size is at 0
             {
-                if (_pool[i].Length >= minSize)
+                //iterate backwards to reduce left-shifts of elements after removal.
+                for (; i >= 0; --i)
                 {
-                    T[] item = _pool[i];
-                    _pool.RemoveAt(i);
-                    if (clear)
-                        Array.Clear(item, 0, item.Length);
-                    return item;
+                    if (_pool[i].Length >= minSize)
+                    {
+                        T[] item = _pool[i];
+                        _pool.RemoveAt(i);
+                        if (clear)
+                            Array.Clear(item, 0, item.Length);
+                        return item;
+                    }
                 }
             }
 
@@ -64,7 +72,11 @@ namespace RichPackage
         /// <param name="clear">If true, the buffer will be cleared before being added. This is good practice for reference types.</param>
         public void Return(T[] array, bool clear = false)
         {
-            if (MaxBucketCapacity < 0 || _pool.Count < MaxBucketCapacity)
+            if (MaxArraySize > 0 && array.Length > MaxArraySize)
+			{
+                //drop arrays that are too large for pool
+			}
+            else if(MaxBucketCapacity < 0 || _pool.Count < MaxBucketCapacity)
             {
                 _pool.Add(array);
                 if(clear)
@@ -77,6 +89,7 @@ namespace RichPackage
                 {
                     _pool.Remove(shortestItem);
                     _pool.Add(array);
+                    _pool.Sort(ArrayLengthReverseComparer<T>.Default); //sort descending
                     if(clear)
                         Array.Clear(array, 0, array.Length);
                 }
