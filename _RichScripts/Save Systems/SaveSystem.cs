@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Signals;
 using RichPackage.SaveSystem.Signals;
@@ -16,20 +17,51 @@ namespace RichPackage.SaveSystem
 	/// <summary>
 	/// I facilitate saving and manage save files.
 	/// </summary>
-	public class SaveSystem : RichMonoBehaviour
+	public class SaveSystem : ASaveableMonoBehaviour<SaveSystem.SaveSystemData>
 	{
 		#region Constants
+
 		private static readonly string HAS_SAVE_DATA_KEY = "HasData";
 		private static readonly string DEFAULT_SAVE_FILE_NAME = "Save.es3";
+
 		#endregion	
 
 		//singleton
 		private static SaveSystem instance;
 		public static SaveSystem Instance { get => instance; }
 
+		[Serializable]
+		public class SaveSystemData : AState
+		{
+			[SerializeField]
+			private string[] saveFiles;
+
+			public string[] SaveFiles 
+			{ 
+				get => saveFiles; 
+				set
+				{
+					saveFiles = value;
+					IsDirty = true;
+				}
+			}
+
+			public SaveSystemData() : this(new string[0]) { }
+
+			public SaveSystemData(string[] saveFiles) : base()
+			{
+				this.saveFiles = saveFiles;
+				IsDirty = true;
+			}
+		}
+
 		[SerializeField]
 		private List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>
 				{ new ES3SerializableSettings(DEFAULT_SAVE_FILE_NAME) };
+
+		[Title("System Save Data")]
+		[SerializeField, Tooltip("File that stores meta information about the actual save files themselves.")]
+		private ES3SerializableSettings saveDataMetaInformation;
 
 		[Title("Settings")]
 		public bool deleteOnPlay = false;
@@ -72,8 +104,9 @@ namespace RichPackage.SaveSystem
 
 		#region Unity Messages
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("I facilitate saving and manage save files.");
 
 			//first slot is free
@@ -96,6 +129,13 @@ namespace RichPackage.SaveSystem
 
 			if (deleteOnPlay)
 				DeleteSave();
+
+			LoadMetaInformation();
+		}
+
+		private void OnDestroy()
+		{
+			SaveMetaInformation(); //just to be safe
 		}
 
 		private void Start()
@@ -104,7 +144,7 @@ namespace RichPackage.SaveSystem
 				Load();
 		}
 
-		private void OnEnable()
+		protected override void OnEnable()
 		{
 			//subscribe to events
 			GlobalSignals.Get<SaveGame>().AddListener(Save);
@@ -112,7 +152,7 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
 		}
 
-		private void OnDisable()
+		protected override void OnDisable()
 		{
 			//unsubscribe from events
 			GlobalSignals.Get<SaveGame>().RemoveListener(Save);
@@ -128,8 +168,7 @@ namespace RichPackage.SaveSystem
 			gameSaveFiles.AssertValidIndex(slot);
 
 			//work
-			if (currentSaveFile == null)
-				currentSaveFile = new ES3File(gameSaveFiles[slot]);
+			currentSaveFile = new ES3File(gameSaveFiles[slot]);
 		}
 
 		/// <summary>
@@ -147,7 +186,7 @@ namespace RichPackage.SaveSystem
 		[Button, HorizontalGroup("Delete")]
 		public void DeleteSave() => DeleteSave(saveGameSlotIndex);
 
-		[Button, HorizontalGroup("Delete")]
+		[Button, HorizontalGroup("Delete", 0.5f)]
 		public void DeleteSave(int slot)
 		{
 			//validate
@@ -174,12 +213,52 @@ namespace RichPackage.SaveSystem
 			RichDebug.EditorLog($"Loaded file: {SaveFile.settings.path}.");
 		}
 
-		[Button, DisableInEditorMode, HorizontalGroup("Load")]
+		[Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
 		public void Load(int slot)
 		{
 			saveGameSlotIndex = slot;
 			Load();
 		}
+
+		#region Meta Save Data
+
+		[Button, HorizontalGroup("META")]
+		public void SaveMetaInformation() => SaveState(new ES3File(saveDataMetaInformation));
+
+		[Button, HorizontalGroup("META")]
+		public void LoadMetaInformation() => LoadState(new ES3File(saveDataMetaInformation));
+
+		[Button, HorizontalGroup("META")]
+		public void DeleteMetaInformation() => (new ES3File(saveDataMetaInformation)).Clear();
+
+		public override void SaveState(ES3File saveFile)
+		{
+			//always update state
+			SaveData.SaveFiles = gameSaveFiles.ToSubArray((file) => file.FullPath);
+
+			//save to raw default file
+			if (SaveData.IsDirty)
+				saveFile.Save(SaveID, SaveData);
+			SaveData.IsDirty = false;
+			saveFile.Sync();
+		}
+
+		public override void LoadState(ES3File saveFile)
+		{
+			currentSaveFile?.Sync();
+			if (saveFile.KeyExists(SaveID))
+			{
+				saveFile.LoadInto(SaveID, SaveData);
+				gameSaveFiles.Clear();
+				//load existing files
+				foreach (var f in SaveData.SaveFiles)
+					gameSaveFiles.Add(new ES3SerializableSettings(f));
+				currentSaveFile = null;
+			}
+			//initialize
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Checks to see if there is any save data in the active file.
@@ -264,10 +343,12 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("openSaveFile"), Button, DisableInEditorMode]
+		[ConsoleCommand("openSaveFile"), Button]
 		public static void OpenSaveFileInVSCode()
 		{
-			string arg = $"\"code '\"{Instance.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
+			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
+			ins.LoadFile(ins.saveGameSlotIndex);
+			string arg = $"\"code '\"{ins.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
 			var options = new System.Diagnostics.ProcessStartInfo()
 			{
 				FileName = "powershell",
