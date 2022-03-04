@@ -46,6 +46,11 @@ namespace RichPackage.Collections
             //nada
         }
 
+        public AHeap(int capacity)
+        {   
+            elements = new List<T>(capacity);
+        }
+
         public AHeap(IEnumerable<T> source)
         {
             PushRange(source);

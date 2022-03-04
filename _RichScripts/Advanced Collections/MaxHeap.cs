@@ -1,13 +1,19 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace RichPackage.Collections
 {
-    public class MaxHeap< T> : AHeap<T>
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="MinHeap{T}"/>
+    public class MaxHeap<T> : AHeap<T>
     {
         #region Constructors
 
-        public MaxHeap() : base() {}
+        public MaxHeap() : base() { }
+
+        public MaxHeap(int capacity) : base(capacity) { }
 
         public MaxHeap(IEnumerable<T> collection) : base(collection) {}
 
