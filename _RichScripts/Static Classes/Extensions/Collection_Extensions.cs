@@ -441,6 +441,31 @@ public static class Collection_Extensions
             action(item);
         }
     }
+    
+    public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
+        Func<TArray, TReturn> expression)
+        => ToSubArray(array, expression, 0, array.Count);
+
+    public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
+        Func<TArray, TReturn> expression, int offset, int count)
+    {
+        if (array == null)
+            throw new ArgumentNullException(nameof(array));
+
+        if (expression == null)
+            throw new ArgumentNullException(nameof(expression));
+
+        if (count < 0 || count > array.Count)
+            throw new ArgumentOutOfRangeException($"{nameof(count)} is out of bounds: {count} : {array.Count}.");
+
+        if (offset + count > array.Count || offset < 0)
+            throw new ArgumentOutOfRangeException($"{nameof(offset)} is out of bounds: {offset} : {array.Count}.");
+
+        TReturn[] result = new TReturn[count];
+        for (int i = 0; i < count; ++i)
+            result[i] = expression(array[i + offset]);
+        return result;
+    }
 
     #region Summation
     
