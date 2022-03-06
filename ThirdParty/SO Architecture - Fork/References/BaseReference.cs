@@ -71,7 +71,17 @@ namespace ScriptableObjectArchitecture
             if (!(_variable == null || _useConstant))
                 _variable.AddListener(action);
         }
+        public void AddListener(System.Action<TBase> action)
+        {
+            if (!(_variable == null || _useConstant))
+                _variable.AddListener(action);
+        }
         public void RemoveListener(System.Action action)
+        {
+            if (!(_variable == null || _useConstant))
+                _variable.RemoveListener(action);
+        }
+        public void RemoveListener(System.Action<TBase> action)
         {
             if (!(_variable == null || _useConstant))
                 _variable.RemoveListener(action);
