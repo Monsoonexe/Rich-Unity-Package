@@ -4,95 +4,113 @@ using UnityEngine;
 using NaughtyAttributes;
 using ScriptableObjectArchitecture;
 
-/// <summary>
-/// Play an audio clip using only a string reference to its tag.
-/// </summary>
-/// <seealso cref="GlobalAudioHub"/>
-public class AudioHub : RichMonoBehaviour
+namespace RichPackage.Audio
 {
-    #region Data Structures
 
-    [Serializable]
-    protected struct TableEntry
+    /// <summary>
+    /// Play an audio clip using only a string reference to its tag.
+    /// </summary>
+    /// <seealso cref="GlobalAudioHub"/>
+    public class AudioHub : RichMonoBehaviour
     {
-        public string tag;
-        public AudioClipReference audioClipRef;
-    }
+        #region Data Structures
 
-    #endregion
+        [Serializable]
+        protected struct TableEntry
+        {
+            public string tag;
+            public AudioClipReference audioClipRef;
+        }
 
-    [Header("---Settings---")]
-    [Tooltip("Prefer true unless you really want this " +
-        "kind of responsibility on yourself.")]
-    [SerializeField] protected bool initOnAwake = true;
-    [SerializeField] protected bool isPersistentThroughScenes = true;
+        #endregion
 
-    [Header("---Audio---")]
-    [SerializeField]
-    protected TableEntry[] clipEntries;
+        [Header("---Settings---")]
+        [Tooltip("Prefer true unless you really want this " +
+            "kind of responsibility on yourself.")]
+        [SerializeField] protected bool initOnAwake = true;
+        [SerializeField] protected bool isPersistentThroughScenes = true;
 
-    //runtime data
-    protected Dictionary<string, TableEntry> audioClipTable;
-    public bool IsInitialized { get; private set; }
+        [Header("---Audio---")]
+        [SerializeField]
+        protected TableEntry[] clipEntries;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        IsInitialized = false;
+        //runtime data
+        protected Dictionary<string, TableEntry> audioClipTable;
+        public bool IsInitialized { get; private set; }
 
-        if (initOnAwake)
-            Inititialize();
-    }
+        protected override void Awake()
+        {
+            base.Awake();
+            IsInitialized = false;
 
-    [Button(null, EButtonEnableMode.Playmode)]
-    public void Inititialize()
-    {
-        var entries = clipEntries.Length;
-        audioClipTable = new Dictionary<string, TableEntry>(entries);
-        for (var i = 0; i < entries; ++i)
-            audioClipTable.Add(clipEntries[i].tag, clipEntries[i]);
-        IsInitialized = true;
-    }
+            if (initOnAwake)
+                Inititialize();
+        }
 
-    public void PlayAudioClipSFX(string clipTag)
-    {
-        //validation
-        Debug.Assert(AudioManager.IsInitialized,
-            "[AudioHub] AudioManager not initialized. Not in scene?");
-        Debug.Assert(IsInitialized,
-            "[AudioHub] Being used without being Init'd: " + this.name, this);
+        private void OnEnable()
+        {
+            if (IsInitialized)
+                clipEntries.ForEach((entry) => entry.audioClipRef.AddListener(PlaySFX));
+        }
 
-        if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
-            entry.audioClipRef.PlaySFX();//actually do the thing
-        else
-            Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
-                clipTag, name);
-    }
+        private void OnDisable()
+        {
+            if (IsInitialized)
+                clipEntries.ForEach((entry) => entry.audioClipRef.RemoveListener(PlaySFX));
+        }
 
-    public void PlayAudioClipSFX(string clipTag, in AudioOptions options)
-    {
-        //validation
-        Debug.Assert(AudioManager.IsInitialized,
-            "[AudioHub] AudioManager not initialized. Not in scene?");
-        Debug.Assert(IsInitialized,
-            "[AudioHub] Being used without being Init'd: " + this.name, this);
+        private void PlaySFX(AudioClip clip)
+            => AudioManager.PlaySFX(clip);
 
-        if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
-            entry.audioClipRef.PlaySFX(options);//actually do the thing
-        else
-            Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
-                clipTag, name);
-    }
+        [Button(null, EButtonEnableMode.Playmode)]
+        public void Inititialize()
+        {
+            var entries = clipEntries.Length;
+            audioClipTable = new Dictionary<string, TableEntry>(entries);
+            for (var i = 0; i < entries; ++i)
+                audioClipTable.Add(clipEntries[i].tag, clipEntries[i]);
+            IsInitialized = true;
+        }
 
-    public static AudioHub Construct()
-    {
-        //set name
-        string newName = null;
+        public void PlayAudioClipSFX(string clipTag)
+        {
+            //validation
+            Debug.Assert(AudioManager.IsInitialized,
+                "[AudioHub] AudioManager not initialized. Not in scene?");
+            Debug.Assert(IsInitialized,
+                "[AudioHub] Being used without being Init'd: " + this.name, this);
+
+            if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
+                entry.audioClipRef.PlaySFX();//actually do the thing
+            else
+                Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
+                    clipTag, name);
+        }
+
+        public void PlayAudioClipSFX(string clipTag, in AudioOptions options)
+        {
+            //validation
+            Debug.Assert(AudioManager.IsInitialized,
+                "[AudioHub] AudioManager not initialized. Not in scene?");
+            Debug.Assert(IsInitialized,
+                "[AudioHub] Being used without being Init'd: " + this.name, this);
+
+            if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
+                entry.audioClipRef.PlaySFX(options);//actually do the thing
+            else
+                Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
+                    clipTag, name);
+        }
+
+        public static AudioHub Construct()
+        {
+            //set name
+            string newName = null;
 
 #if UNITY_EDITOR
-        newName = "AudioHub";
+            newName = "AudioHub";
 #endif
-        return new GameObject(newName).AddComponent<AudioHub>();
+            return new GameObject(newName).AddComponent<AudioHub>();
+        }
     }
 }
-

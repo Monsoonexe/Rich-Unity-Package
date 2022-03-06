@@ -1,43 +1,46 @@
 using UnityEngine;
 
-public class GlobalAudioHub : AudioHub
+namespace RichPackage.Audio
 {
-    private static GlobalAudioHub instance;
-
-    protected override void Awake()
+    public class GlobalAudioHub : AudioHub
     {
-        base.Awake();
-        if (!InitSingleton(this, ref instance, dontDestroyOnLoad: isPersistentThroughScenes))
+        private static GlobalAudioHub instance;
+
+        protected override void Awake()
         {
-            Destroy(this);
-            return;
+            base.Awake();
+            if (!InitSingleton(this, ref instance, dontDestroyOnLoad: isPersistentThroughScenes))
+            {
+                Destroy(this);
+                return;
+            }
         }
-    }
 
-    public static void PlayGlobalSFX(string clipTag)
-    {
-        Debug.Assert(instance != null,
-            "[GlobalAudioHub] No instance in Scene.");
-        instance.PlayAudioClipSFX(clipTag);
-    }
+        public static void PlayGlobalSFX(string clipTag)
+        {
+            Debug.Assert(instance != null,
+                "[GlobalAudioHub] No instance in Scene.");
+            instance.PlayAudioClipSFX(clipTag);
+        }
 
 #if UNITY_EDITOR
-    [UnityEditor.MenuItem("Tools/Audio Manager/GlobalAudioHub")]
+        [UnityEditor.MenuItem("Tools/Audio Manager/GlobalAudioHub")]
 #endif
-    public static void ConstructGlobal()
-    {
-        if(instance != null)
+        public static void ConstructGlobal()
         {
-            Debug.Log("[GlobalAudioHub] GlobalAudioHub already Scene.", instance);
-            return;
-        }
-        //set name
-        string newName = null;
+            if (instance != null)
+            {
+                Debug.Log("[GlobalAudioHub] GlobalAudioHub already Scene.", instance);
+                return;
+            }
+            //set name
+            string newName = null;
 
 #if UNITY_EDITOR
-        newName = "Global AudioHub";
+            newName = "Global AudioHub";
 #endif
-        instance = Construct<GlobalAudioHub>(newName);
-    }
+            instance = Construct<GlobalAudioHub>(newName);
+        }
 
+    }
 }
