@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ApexCommon
+namespace RichPackage
 {
     public static class ObjectExtensions
     {
