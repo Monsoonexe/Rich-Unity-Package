@@ -9,7 +9,7 @@ namespace RichPackage
         /// Equivalent to `(T)obj`.
         /// </summary>
         /// <returns>The object cast to the given type.</returns>
-        /// <exception cref="System.InvalidCastException"
+        /// <exception cref="System.InvalidCastException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T CastTo<T>(this object obj) => (T)obj;
 
