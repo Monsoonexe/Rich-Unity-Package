@@ -36,10 +36,12 @@ public static class Collection_Extensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void AddIfNew<T>(this List<T> list, T item)
+    public static bool AddIfNew<T>(this List<T> list, T item)
     {
-        if (!list.Contains(item))
+        bool isNew;
+        if (isNew = !list.Contains(item))
             list.Add(item);
+        return isNew;
     }
 
     [Conditional("UNITY_EDITOR")]//editor only
@@ -129,6 +131,8 @@ public static class Collection_Extensions
 
     #endregion 
 
+    #region Contains
+
     /// <summary>
     /// Returns 'true' if at least 1 item in array `Equals()` given item.
     /// </summary>
@@ -186,6 +190,8 @@ public static class Collection_Extensions
         }
         return contains;
     }
+
+    #endregion
 
     public static bool TrueForAll<T>(this IList<T> list, Predicate<T> query)
     {
@@ -317,39 +323,6 @@ public static class Collection_Extensions
 	}
 
     /// <summary>
-    /// Returns a random element from array, or default if collection is empty.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T GetRandomElement<T>(this IList<T> collection)
-        => collection[Random.Range(0, collection.Count)];
-
-    /// <summary>
-    /// Get a random element from Collection that is not in usedCollection. 
-    /// Up to caller to store this value in usedCollection
-    /// </summary>
-    public static T GetRandomUnused<T>(this IList<T> totalCollection, 
-        IList<T> usedCollection)
-    {
-        //build a pool of indices that have not been used.  
-        var possibleIndices = CommunalLists.Get<int>();
-
-        int totalCount = totalCollection.Count;
-        for (int i = 0; i < totalCount; ++i)
-            if (!usedCollection.Contains(totalCollection[i]))
-                possibleIndices.Add(i);//this index is safe to choose from
-
-        if (possibleIndices.Count == 0)
-        {
-            Debug.Log("Every index has been used in collection of count: "
-                + totalCollection.Count);
-            return default;
-        }
-
-        return totalCollection[possibleIndices[
-            Random.Range(0, possibleIndices.Count)]];
-    }
-
-    /// <summary>
     /// Remove and return the element at the given index.
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -383,34 +356,18 @@ public static class Collection_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void RemoveLast<T>(this List<T> list)
         => list.RemoveAt(list.Count - 1);
-
+    
     /// <summary>
-    /// Removes and returns a random element of list. [0, Count)
+    /// Remove each item and perform an action on it. O(n) time.
     /// </summary>
-    public static T GetRemoveRandomElement<T>(this List<T> list)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RemoveWhile<T>(this List<T> col, Action<T> action)
     {
-        var randomIndex = Random.Range(0, list.Count);
-        T randomElement = list[randomIndex];
-        list.RemoveAt(randomIndex);
-        return randomElement;
-    }
-
-    /// <summary>
-    /// Remove a random element in [start, end).
-    /// </summary>
-    public static T GetRemoveRandomElement<T>(this List<T> list, 
-        int start, int end)
-    {
-        var count = list.Count;
-        //validate
-        start = (start < 0 || start >= count) ? 0 : start; //start [0, count - 1]
-        end = (end < 1 || end > count) ? count : end;//end [1, count]
-
-        //compute
-        var randomIndex = Random.Range(start, end);
-        T randomElement = list[randomIndex];
-        list.RemoveAt(randomIndex);
-        return randomElement;
+        while(col.Count > 0)
+        {   //iterate backwards to avoid shifting each element as you remove.
+            var item = col.GetRemoveLast();
+            action(item);
+        }
     }
 
     /// <summary>
@@ -455,8 +412,8 @@ public static class Collection_Extensions
     /// <summary>
     /// Returns List with lowest <see cref="IList.Count"/> from List of Lists and its index.
     /// </summary>
-    public static T GetShortestList<T>(this IList<T> lists, out int shortestIndex)
-        where T : IList
+    public static T GetShortestList<T>(this IList<T> lists, 
+        out int shortestIndex) where T : IList
     {
         //first shortest path
         shortestIndex = 0;
@@ -567,19 +524,6 @@ public static class Collection_Extensions
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LastIndex(this IList col) => col.Count - 1;
-    
-    /// <summary>
-    /// Remove each item and perform an action on it. O(n) time.
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void RemoveWhile<T>(this List<T> col, Action<T> action)
-    {
-        while(col.Count > 0)
-        {   //iterate backwards to avoid shifting each element as you remove.
-            var item = col.GetRemoveLast();
-            action(item);
-        }
-    }
     
     public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
         Func<TArray, TReturn> expression)
@@ -759,6 +703,68 @@ public static class Collection_Extensions
     #endregion
 
     #region Random and Collections
+    
+    /// <summary>
+    /// Returns a random element from array, or default if collection is empty.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T GetRandomElement<T>(this IList<T> collection)
+        => collection[Random.Range(0, collection.Count)];
+
+    /// <summary>
+    /// Get a random element from Collection that is not in usedCollection. 
+    /// Up to caller to store this value in usedCollection
+    /// </summary>
+    public static T GetRandomUnused<T>(this IList<T> totalCollection, 
+        IList<T> usedCollection)
+    {
+        //build a pool of indices that have not been used.  
+        var possibleIndices = CommunalLists.Get<int>();
+
+        int totalCount = totalCollection.Count;
+        for (int i = 0; i < totalCount; ++i)
+            if (!usedCollection.Contains(totalCollection[i]))
+                possibleIndices.Add(i);//this index is safe to choose from
+
+        if (possibleIndices.Count == 0)
+        {
+            Debug.Log("Every index has been used in collection of count: "
+                + totalCollection.Count);
+            return default;
+        }
+
+        return totalCollection[possibleIndices[
+            Random.Range(0, possibleIndices.Count)]];
+    }
+    
+    /// <summary>
+    /// Removes and returns a random element of list. [0, Count)
+    /// </summary>
+    public static T GetRemoveRandomElement<T>(this List<T> list)
+    {
+        var randomIndex = Random.Range(0, list.Count);
+        T randomElement = list[randomIndex];
+        list.RemoveAt(randomIndex);
+        return randomElement;
+    }
+
+    /// <summary>
+    /// Remove a random element in [start, end).
+    /// </summary>
+    public static T GetRemoveRandomElement<T>(this List<T> list, 
+        int start, int end)
+    {
+        var count = list.Count;
+        //validate
+        start = (start < 0 || start >= count) ? 0 : start; //start [0, count - 1]
+        end = (end < 1 || end > count) ? count : end;//end [1, count]
+
+        //compute
+        var randomIndex = Random.Range(start, end);
+        T randomElement = list[randomIndex];
+        list.RemoveAt(randomIndex);
+        return randomElement;
+    }
 
     /// <summary>
     /// Shuffle elements in the collection.
