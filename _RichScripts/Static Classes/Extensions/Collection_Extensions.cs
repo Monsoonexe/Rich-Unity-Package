@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using RichPackage.Collections;
 using UnityEngine;
 
 //clarifications
@@ -33,6 +35,7 @@ public static class Collection_Extensions
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddIfNew<T>(this List<T> list, T item)
     {
         if (!list.Contains(item))
@@ -68,52 +71,66 @@ public static class Collection_Extensions
     
     #region Average
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Average<T>(this IList<T> col, Func<T, int> summer)
         => col.Sum(summer) / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static uint Average<T>(this IList<T> col, Func<T, uint> summer)
         => col.Sum(summer) / (uint) col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Average<T>(this IList<T> col, Func<T, long> summer)
         => col.Sum(summer) / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ulong Average<T>(this IList<T> col, Func<T, ulong> summer)
         => col.Sum(summer) / (ulong) col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Average<T>(this IList<T> col, Func<T, float> summer)
         => col.Sum(summer) / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Average<T>(this IList<T> col, Func<T, double> summer)
         => col.Sum(summer) / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Average(this IList<byte> col)
         => col.Sum() / col.Count;
         
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Average(this IList<short> col)
         => col.Sum() / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Average(this IList<int> col)
         => col.Sum() / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static uint Average(this IList<uint> col)
         => col.Sum() / (uint)col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Average(this IList<long> col)
         => col.Sum() / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ulong Average(this IList<ulong> col)
         => col.Sum() / (ulong)col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Average(this IList<float> col)
         => col.Sum() / col.Count;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double Average(this IList<double> col)
         => col.Sum() / col.Count;
 
     #endregion 
 
     /// <summary>
-    /// Returns 'true' if at least 1 item in array Equals() given item.
+    /// Returns 'true' if at least 1 item in array `Equals()` given item.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="array"></param>
@@ -127,7 +144,34 @@ public static class Collection_Extensions
                 return true;
         return false;
     }
+    
+    /// <summary>
+    /// Returns 'true' if at least 1 item in array `elem.CompareTo(other) == 0`.
+    /// </summary>
+    public static bool Contains<T>(this IList<T> array, IComparable<T> elem)
+    {
+        var length = array.Count;
+        for (var i = 0; i < length; ++i)
+            if (elem.CompareTo(array[i]) == 0)
+                return true;
+        return false;
+    }
+    
+    /// <summary>
+    /// Returns 'true' if at least 1 item in array `elem.CompareTo(other) == 0`.
+    /// </summary>
+    public static bool Contains<T>(this IList<T> array, Searcher<T> searcher)
+    {
+        var length = array.Count;
+        for (var i = 0; i < length; ++i)
+            if (searcher(array[i]) == 0)
+                return true;
+        return false;
+    }
 
+    /// <summary>
+    /// Returns 'true' if at least 1 item in array `query(list) == true`.
+    /// </summary>
     public static bool Contains<T>(this IList<T> list, Predicate<T> query)
     {
         bool contains = false; //return value
@@ -158,8 +202,12 @@ public static class Collection_Extensions
         return contains;
     }
     
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TrueForNone<T>(this IList<T> list, Predicate<T> query)
+        => !TrueForAll(list, query);
+    
     /// <summary>
-    /// Returns 'true' if all elements of each IList are equivalent, otherwise returns 'false'.
+    /// Returns 'true' if all elements of each <see cref="IList{T}"/> are equivalent, otherwise returns 'false'.
     /// </summary>
     public static bool SequenceEqual<T>(this IList<T> a, IList<T> b)
     {
@@ -180,7 +228,7 @@ public static class Collection_Extensions
     }
     
     /// <summary>
-    /// Returns the first item that the query returns true.
+    /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
     /// </summary>
     public static T Find<T>(this IList<T> list, Predicate<T> query)
     {
@@ -190,9 +238,44 @@ public static class Collection_Extensions
                 return list[i];
         return default;
     }
+    
+    /// <summary>
+    /// Fills a new <see cref="List{T}"/> with the results of <paramref name="query"/>.
+    /// </summary>
+    public static List<T> FindAll<T>(this IList<T> list, Predicate<T> query)
+    {
+        var count = list.Count;
+        List<T> listToFill = new List<T>(count);
+        for (var i = 0; i < count; ++i)
+            if (query(list[i]))
+                listToFill.Add(list[i]);
+        return listToFill;
+    }
+    
+    /// <summary>
+    /// Fills <paramref name="list"/> with the results of <paramref name="query"/>.
+    /// </summary>
+    public static void FindAll<T>(this IList<T> list, Predicate<T> query, List<T> listToFill)
+    {
+        var count = list.Count;
+        for (var i = 0; i < count; ++i)
+            if (query(list[i]))
+                listToFill.Add(list[i]);
+    }
+    
+    /// <summary>
+    /// Returns the last item in <paramref name="list"/> that <paramref name="query"/> returns true.
+    /// </summary>
+    public static T FindLast<T>(this IList<T> list, Predicate<T> query)
+    {
+        for (var i = list.Count - 1; i >=0; --i)
+            if (query(list[i]))
+                return list[i];
+        return default;
+    }
 
     /// <summary>
-    /// Returns the first item that the query returns true.
+    /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
     /// </summary>
     public static bool TryFind<T>(this IList<T> list, Predicate<T> query,
         out T foundItem)
@@ -215,16 +298,17 @@ public static class Collection_Extensions
     public static bool TryFindAndRemove<T>(this List<T> list, 
         Predicate<T> query, out T foundItem)
 	{
-        bool found = false;
         foundItem = default;
+        bool found = false;
 
         //iterate backwards to reduce left-shifts of elements after removal.
         for(int i = list.Count - 1; i >= 0; --i)
 		{
             if(query(list[i]))
 			{
-                foundItem = list[i];
                 found = true;
+                foundItem = list[i];
+                list.RemoveAt(i);
                 break;
 			}
 		}
@@ -235,12 +319,9 @@ public static class Collection_Extensions
     /// <summary>
     /// Returns a random element from array, or default if collection is empty.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetRandomElement<T>(this IList<T> collection)
-    {
-        var length = collection.Count;
-        if (length == 0) return default; // no elements!
-        return collection[Random.Range(0, length)];
-    }
+        => collection[Random.Range(0, collection.Count)];
 
     /// <summary>
     /// Get a random element from Collection that is not in usedCollection. 
@@ -275,6 +356,7 @@ public static class Collection_Extensions
     /// <param name="list"></param>
     /// <param name="i"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetRemoveAt<T>(this List<T> list, int i)
     {
         list.AssertValidIndex(i);
@@ -290,9 +372,15 @@ public static class Collection_Extensions
     /// <typeparam name="T"></typeparam>
     /// <param name="list"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T GetRemoveLast<T>(this List<T> list)
         => list.GetRemoveAt(list.LastIndex());
+        
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RemoveFirst<T>(this List<T> list)
+        => list.RemoveAt(0);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void RemoveLast<T>(this List<T> list)
         => list.RemoveAt(list.Count - 1);
 
@@ -344,7 +432,6 @@ public static class Collection_Extensions
     /// <summary>
     /// Returns List with lowest Count from List of Lists.
     /// </summary>
-    /// <remarks></remarks>
     public static T GetShortestList<T>(this IList<T> lists)
         where T : IList
     {
@@ -366,15 +453,37 @@ public static class Collection_Extensions
     }
 
     /// <summary>
+    /// Returns List with lowest <see cref="IList.Count"/> from List of Lists and its index.
+    /// </summary>
+    public static T GetShortestList<T>(this IList<T> lists, out int shortestIndex)
+        where T : IList
+    {
+        //first shortest path
+        shortestIndex = 0;
+        int shortestLength = int.MaxValue;
+
+        int count = lists.Count;
+        for (int i = 0; i < count; ++i)
+        {
+            int workingCount = lists[i].Count;
+            if (workingCount < shortestLength)
+            {
+                shortestIndex = i;
+                shortestLength = workingCount;
+            }
+        }
+        return lists[shortestIndex]; // assume the first is shortest
+    }
+
+
+    /// <summary>
     /// Returns the first index matching the given element, or -1 if not found.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="element"></param>
-    /// <param name="array"></param>
-    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int IndexOf<T>(this T[] array, T element)
         => Array.IndexOf(array, element);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IndexIsInRange(this IList col, int index)
         => index >= 0 && index < col.Count;
 
@@ -412,28 +521,58 @@ public static class Collection_Extensions
         return true;
     }
     
-    /// <summary>
-    /// Element at position Count - 1.
-    /// </summary>
-    public static T Last<T>(this IList<T> col) => col[col.Count - 1];
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T ElementAtWrapped<T>(this IList<T> list, int index)
+    {
+        int count = list.Count;
+        int indexWrapped = (int)(index - count * Math.Floor((float)index / count));
+        return list.ElementAt(indexWrapped);
+    }
 
     /// <summary>
     /// Element at position 0.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T First<T>(this IList<T> col) => col[0];
+    
+    /// <summary>
+    /// Element at position Count - 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T Last<T>(this IList<T> col) => col[col.Count - 1];
 
     /// <summary>
-    /// Count - 1
+    /// A 'foreach' with a 'for' backbone
     /// </summary>
-    /// <param name="col"></param>
-    /// <returns></returns>
-    public static int LastIndex(this IList col) => col.Count - 1;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ForEach<T>(this IList<T> list, Action<T> action)
+    {
+        int count = list.Count; //cache for less function overhead on every iteration
+        for (int i = 0; i < count; ++i)
+            action(list[i]);
+    }
 
+    /// <summary>
+    /// A 'foreach' with a 'for' backbone
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ForEachBackwards<T>(this IList<T> list, Action<T> action)
+    {
+        for (int i = list.Count - 1; i >= 0; --i)
+            action(list[i]);
+    }
+
+    /// <summary>
+    /// Count - 1.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int LastIndex(this IList col) => col.Count - 1;
+    
     /// <summary>
     /// Remove each item and perform an action on it. O(n) time.
     /// </summary>
-    public static void RemoveWhile<T>(this List<T> col, 
-        Action<T> action)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RemoveWhile<T>(this List<T> col, Action<T> action)
     {
         while(col.Count > 0)
         {   //iterate backwards to avoid shifting each element as you remove.
@@ -445,6 +584,10 @@ public static class Collection_Extensions
     public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
         Func<TArray, TReturn> expression)
         => ToSubArray(array, expression, 0, array.Count);
+        
+    public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
+        Func<TArray, TReturn> expression, int offset)
+        => ToSubArray(array, expression, offset, array.Count - offset);
 
     public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
         Func<TArray, TReturn> expression, int offset, int count)
@@ -456,10 +599,12 @@ public static class Collection_Extensions
             throw new ArgumentNullException(nameof(expression));
 
         if (count < 0 || count > array.Count)
-            throw new ArgumentOutOfRangeException($"{nameof(count)} is out of bounds: {count} : {array.Count}.");
+            throw new ArgumentOutOfRangeException($"{nameof(count)} " + 
+                $"is out of bounds: {count} : {array.Count}.");
 
         if (offset + count > array.Count || offset < 0)
-            throw new ArgumentOutOfRangeException($"{nameof(offset)} is out of bounds: {offset} : {array.Count}.");
+            throw new ArgumentOutOfRangeException($"{nameof(offset)} " + 
+                $"is out of bounds: {offset} : {array.Count}.");
 
         TReturn[] result = new TReturn[count];
         for (int i = 0; i < count; ++i)
@@ -586,6 +731,14 @@ public static class Collection_Extensions
             sum += col[i];
         return sum;
     }
+    
+    public static long SumLong(this IList<int> col)
+    {
+        long sum = 0;
+        for (int i = col.Count - 1; i >= 0; --i)
+            sum += col[i];
+        return sum;
+    }
 
     #endregion
 
@@ -628,29 +781,6 @@ public static class Collection_Extensions
     {
         for (var i = 0; i < repeat; ++i)
             list.Shuffle();
-    }
-
-    #endregion
-
-    #region Functional 
-
-    /// <summary>
-    /// A 'foreach' with a 'for' backbone
-    /// </summary>
-    public static void ForEach<T>(this IList<T> list, Action<T> action)
-    {
-        int count = list.Count; //cache for less function overhead on every iteration
-        for (int i = 0; i < count; ++i)
-            action(list[i]);
-    }
-
-    /// <summary>
-    /// A 'foreach' with a 'for' backbone
-    /// </summary>
-    public static void ForEachBackwards<T>(this IList<T> list, Action<T> action)
-    {
-        for (int i = list.Count - 1; i >= 0; --i)
-            action(list[i]);
     }
 
     #endregion
