@@ -373,17 +373,14 @@ public static class Collection_Extensions
     /// <summary>
     /// Returns a new array of given size with as many elements (or fewer) copied over.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="arr"></param>
-    /// <param name="newSize"></param>
-    public static T[] GetResized<T>(this T[] arr, int newSize)
+    public static void Resize<T>(this ref T[] arr, int newSize)
     {
         var newArr = new T[newSize];
         var len = arr.Length;
         var smallerSize = newSize < len ? newSize : len;
         for (var i = 0; i < smallerSize; ++i)
             newArr[i] = arr[i];
-        return newArr;
+        arr = newArr;
     }
 
     /// <summary>
