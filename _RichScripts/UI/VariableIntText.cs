@@ -24,6 +24,5 @@ public class VariableIntText : VariableUIElement<IntVariable>
 
     [Button]
     public override void UpdateUI()
-        => textElement.text = ConstStrings.GetCachedString(targetData);
-
+        => textElement.text = targetData.Value.ToStringCached();
 }
