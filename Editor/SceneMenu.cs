@@ -35,8 +35,8 @@ namespace RichPackage.Editor
             if(scriptFile == null)
             {
                 //complain
-                Debug.Log("SceneMenu.cs not found! Check path at "
-                + scriptFilePath);
+                Debug.Log($"SceneMenu.cs not found! Check path at {scriptFilePath}." +
+					$"You can also double-click this log message to open the file.");
             }
             else
             {
