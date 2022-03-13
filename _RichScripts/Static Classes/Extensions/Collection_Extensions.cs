@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 using Debug = UnityEngine.Debug;
 
 /// <summary>
-/// 
+/// My Collection Extension collection.
 /// </summary>
 public static class Collection_Extensions
 {
@@ -477,14 +477,31 @@ public static class Collection_Extensions
         }
         return true;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ElementAtWrapped<T>(this IList<T> list, int index)
-    {
+        => list[GetWrappedIndex(list, index)];
+
+    /// <summary>
+    /// Always produces a valid index if <paramref name="list"/>'s size > 0. <br/>
+    /// Supports negative indexing. e.g. list[-1] gives list index.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetWrappedIndex<T>(this IList<T> list, int index)
+	{
         int count = list.Count;
-        int indexWrapped = (int)(index - count * Math.Floor((float)index / count));
-        return list.ElementAt(indexWrapped);
+        int indexWrapped = (int)(index - count * System.Math.Floor(
+            (double)index / count));
+        return indexWrapped;
     }
+
+    public static void InsertWrapped<T>(this List<T> list,
+        int index, T item)
+        => list.Insert(list.GetWrappedIndex(index), item);
 
     /// <summary>
     /// Element at position 0.
