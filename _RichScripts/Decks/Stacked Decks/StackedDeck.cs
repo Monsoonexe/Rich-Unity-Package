@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
 
 /// <summary>
 /// Not every card has the same probability of being drawn.
@@ -9,7 +8,6 @@ public class StackedDeck<TContainer, TValue> : ADeck<TValue>
     where TContainer : AWeightedProbability<TValue>
 {
     [SerializeField]
-    [ReorderableList]
     protected List<TContainer> weightedManifest = new List<TContainer>();
 
     /// <summary>
@@ -22,7 +20,6 @@ public class StackedDeck<TContainer, TValue> : ADeck<TValue>
     /// </summary>
     public readonly List<TContainer> usedCards = new List<TContainer>();
 
-    [ShowNativeProperty]
     public override int CardsRemaining { get => unusedCards.Count; }
 
     private void OnValidate()

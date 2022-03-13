@@ -13,6 +13,6 @@ public class ScriptableSequentialDeck : SequentialDeck<ScriptableObject>
 {
     private void Reset()
 	{
-		SetDevDescription("Draws a card in a pre-determined sequence.");
+		SetDevDescription("Draws the next card in a pre-determined sequence.");
 	}
 }

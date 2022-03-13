@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 /// <summary>
 /// A deck of something (cards).
@@ -13,7 +12,6 @@ public class Deck<T> : ADeck<T>
     public readonly List<T> unusedCards = new List<T>(); //face-down deck
     public readonly List<T> usedCards = new List<T>(); //discard pile
 
-    [ShowInInspector]
     public override int CardsRemaining { get => unusedCards.Count; }
 
     /// <summary>
@@ -97,7 +95,6 @@ public class Deck<T> : ADeck<T>
     /// <summary>
     /// Recombines un/used cards and shuffles entire deck.
     /// </summary>
-    [Button] 
     public override void Shuffle()
     {
         usedCards.Clear();

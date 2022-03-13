@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
+
+//TODO - Peeking feature. Look at the next card to be drawn but don't actually draw it.
 
 /// <summary>
 /// Base class for decks to help with serialization.
@@ -19,7 +21,6 @@ public abstract class ADeck : RichScriptableObject
 public abstract class ADeck<T> : ADeck
 {
     [SerializeField]
-    [ReorderableList]
     [Tooltip("A list of the cards that belong to this deck.")]
     protected List<T> manifest = new List<T>();
 
@@ -33,7 +34,13 @@ public abstract class ADeck<T> : ADeck
     /// <summary>
     /// Draw()s remaining until Deck needs to Reload().
     /// </summary>
+    [ShowInInspector]
     public abstract int CardsRemaining { get; }
+
+    protected virtual void OnEnable()
+	{
+        Reload();
+	}
 
     /// <summary>
     /// Get a card out of the deck.
@@ -51,8 +58,11 @@ public abstract class ADeck<T> : ADeck
     /// <summary>
     /// Recombine un/used cards.
     /// </summary>
+    [Button]
     public abstract void Reload();
+    [Button]
     public abstract void Shuffle();
+    [Button]
     public abstract void ShuffleRemaining();
 
     [Button]

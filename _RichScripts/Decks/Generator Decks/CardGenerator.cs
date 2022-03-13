@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Generators never expend cards -- probability of outcome never changes.
@@ -11,10 +11,9 @@ public class CardGenerator<TContainer, TValue> : ADeck<TValue>
     where TContainer : AWeightedProbability<TValue>
 {
     [SerializeField]
-    [ReorderableList]
     protected List<TContainer> weightedManifest = new List<TContainer>();
 
-    [ShowNativeProperty]
+    [ShowInInspector, ReadOnly]
     public override int CardsRemaining { get => weightedManifest.Count; }
 
     private void OnValidate()
@@ -41,8 +40,8 @@ public class CardGenerator<TContainer, TValue> : ADeck<TValue>
     public override void Shuffle() { }//nada
     public override void ShuffleRemaining() { }//nada
 
-    //in-line since generics don't play well together
-    protected static int GetTotalWeight(IList<TContainer>
+	//in-line since generics don't play well together
+	protected static int GetTotalWeight(IList<TContainer>
         probabilityTemplates)
     {
         var totalWeight = 0;
