@@ -857,12 +857,6 @@ namespace RichPackage.Collections
                 Add(items[--index]);
         }
 
-        /// <summary>
-        /// Trim excess nodes from the node pool. 
-        /// Useful if you know no more nodes will be added.
-        /// </summary>
-        public static void TrimExcessFromNodePool() => nodePool.TrimExcess();
-
         #endregion
 
         #region Rotations
