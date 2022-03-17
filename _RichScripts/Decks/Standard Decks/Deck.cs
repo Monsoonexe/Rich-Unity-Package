@@ -43,23 +43,16 @@ public class Deck<T> : ADeck<T>
     /// </summary>
     /// <param name="position">How many cards deep should it go. '0' is the top (next) card. 
     ///  Negative indicates spaces from the bottom (last).</param>
-    public void AddToDeck(T newItem, int position)
+    public void AddToDeck(T newItem, int index)
     {
-        manifest.Add(newItem);
-
-        //negative means "from the end".
-        if(position < 0)
-            position = unusedCards.LastIndex() + position;
-
-        unusedCards.Insert(position, newItem);
+        unusedCards.InsertWrapped(index, newItem);
     }
 
     /// <summary>
-    /// Adds an item into the deck and places it in the discard pile.
+    /// Adds an item into the discard pile.
     /// </summary>
     public void AddToDiscardPile(T newItem)
     {
-        manifest.Add(newItem);
         usedCards.Add(newItem);
     }
 
