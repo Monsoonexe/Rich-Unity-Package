@@ -16,7 +16,7 @@ namespace RichPackage.Collections
     {
         protected const int FRONT = 0;
 
-        protected readonly List<T> elements = new List<T>(32); 
+        protected readonly List<T> elements; 
 
         protected IComparer<T> comparer = Comparer<T>.Default;
 
@@ -41,17 +41,14 @@ namespace RichPackage.Collections
 
         #region Constructors
 
-        public AHeap()
-        {
-            //nada
-        }
+        public AHeap() : this(32){}
 
         public AHeap(int capacity)
-        {   
+        {
             elements = new List<T>(capacity);
         }
 
-        public AHeap(IEnumerable<T> source)
+        public AHeap(IEnumerable<T> source) : this()
         {
             PushRange(source);
         }
