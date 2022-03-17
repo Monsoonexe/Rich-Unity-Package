@@ -84,7 +84,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Add an item to the heap.
         /// </summary>
-        public void Push(in T item)
+        public void Push(T item)
         {
             elements.Add(item);
             HeapifyUp(elements.Count - 1);
@@ -244,6 +244,7 @@ namespace RichPackage.Collections
         {
             for(int i = 0; i < Size; ++i)
             {
+                //support structs
                 T element = elements[i];
                 action(ref element);
                 elements[i] = element;
