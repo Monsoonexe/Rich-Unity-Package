@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using RichPackage.Pooling;
 using System.Runtime.CompilerServices;
 
+//TODO - remove object pooling. AVL trees are most advantageous with few add/remove operations, in which case object pooling doesn't provide any benefit anyways.
+
 namespace RichPackage.Collections
 {
     /// <summary>
@@ -53,15 +55,13 @@ namespace RichPackage.Collections
         }
 
         #region Properties
-
+        
         private static readonly ObjectPool<AVLNode<T>> nodePool
-            = new ObjectPool<AVLNode<T>>
-        (
-            maxCount: -1, //no limit to nodes
-            preInit: 0, //prebuild a pool
-            factoryMethod: () => new AVLNode<T>(default), //default constructor
-            enpoolMethod: (n) => n.Reset()// AVLNode<T>.ResetNode //de-init nodes
-        );
+            = new ObjectPool<AVLNode<T>>()
+            {
+                FactoryMethod = () => new AVLNode<T>(default), //default constructor
+                OnEnpoolMethod = (n) => n.Reset(),// AVLNode<T>.ResetNode //de-init nodes
+            };
 
         private AVLNode<T> root = null;
 
@@ -130,7 +130,7 @@ namespace RichPackage.Collections
             Count = 0;
         }
 
-        public AVLTree(in IEnumerable<T> source)
+        public AVLTree(in IEnumerable<T> source) : this()
         {
             foreach (var item in source)
                 Add(item);
