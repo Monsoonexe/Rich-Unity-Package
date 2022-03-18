@@ -215,6 +215,12 @@ namespace RichPackage.Pooling
 			}
 		}
 
+		public void Clear()
+		{
+			while (Count > 0)
+				Depool();
+		}
+
 		#endregion
 
 		#region Utility
