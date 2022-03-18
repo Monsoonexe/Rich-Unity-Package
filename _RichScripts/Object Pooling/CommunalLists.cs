@@ -61,7 +61,7 @@ namespace RichPackage
         /// or if you pass it around as a parameter.
         /// </summary>
         /// <returns>Ready-to-use <see cref="List{T}"/>.</returns>
-        public List<T> GetList<T>()
+        public List<T> Get<T>()
         {
             IList<T> list;
 
@@ -79,5 +79,12 @@ namespace RichPackage
 
             return list;
         }
+
+        /// <summary>
+        /// Removes the give <see cref="List{T}"/> from the collection.
+        /// It can be <see cref="Get{T}"/>ed again.
+        /// </summary>
+        public void Return<T>()
+            => listTable.Remove(typeof(T));
     }
 }
