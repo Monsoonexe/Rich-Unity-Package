@@ -6,11 +6,18 @@ namespace RichPackage.Pooling
 {
 	/// <summary>
 	/// Generic pool for anything.
+	///	This is the preferred <see cref="ObjectPool{T}"/> if you 
+	/// don't want to worry about the internal workings of the pool.
 	/// </summary>
+	/// <seealso cref="StackPool{T}"/>
+	/// <seealso cref="QueuePool{T}"/>
+	/// <seealso cref="MinHeapPool{T}"/>
+	/// <seealso cref="MaxHeapPool{T}"/>
 	/// <seealso cref="ArrayPool{T}"/>
 	public class ObjectPool<T>
 	{
-		protected const int Default_Capacity = 16;
+		protected const int Default_Initial_Capacity = 16;
+		protected const int Infinite_Pool_Size = -1;
 
 		/// <summary>
 		/// Count of items inside the pool.
@@ -51,11 +58,21 @@ namespace RichPackage.Pooling
 		public Func<T> FactoryMethod = () => default;
 
 		/// <summary>
+		///	Use <see cref="MaxCount"/> property instead of directly accessing this backer.
+		/// </summary>
+		private int _maxCount; //
+
+		/// <summary>
 		/// The maximum number of items this pool will hold. If more than MaxCount items are
 		/// added to the pool, they will be dropped rather than enpooled. <br/>
-		/// MaxCount less than 0 implies there is no internal limit to the size of the pool.
+		/// MaxCount &lt; 0 implies there is virtually no internal limit to the size of the pool (<see cref="MaxCount"/> == <see cref="int.MaxValue"/>).
 		/// </summary>
-		public int MaxCount { get; set; }
+		/// <remarks>Won't trim pool if <see cref="Count"/> &gt; <see cref="MaxCount"/>. See <see cref="TrimPool"/>.</remarks>
+		public int MaxCount 
+		{ 
+			get => _maxCount;
+		 	set => _maxCount = value < 0 ? int.MaxValue : value; // if value is less than 0, set to max value
+		}
 
 		/// <summary>
 		/// If not null, this function will be called when an Item is removed <br/>
@@ -72,32 +89,61 @@ namespace RichPackage.Pooling
 		#region Constructors
 		
 		/// <summary>
-		/// By default implements a <see cref="Stack{T}"/>.
+		/// By default implements a <see cref="Stack{T}"/>. 
 		/// </summary>
 		/// <seealso cref="StackPool{T}"/>
-		public ObjectPool() : this(-1) {}
+		public ObjectPool() : this(Infinite_Pool_Size, Default_Initial_Capacity) {}
 
 		/// <summary>
 		/// By default implements a <see cref="Stack{T}"/>.
 		/// </summary>
 		/// <seealso cref="StackPool{T}"/>
-		public ObjectPool(int maxCount)
+		public ObjectPool(int maxCount) : this(maxCount, Default_Initial_Capacity) {}
+
+		/// <summary>
+		/// By default implements a <see cref="Stack{T}"/>.
+		/// </summary>
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <seealso cref="StackPool{T}"/>
+		public ObjectPool(int maxCount, int initialCapacity)
 		{
 			MaxCount = maxCount;
-			int capacity = MaxCount >= 0 ? MaxCount : Default_Capacity;
-			
-			var stack = new Stack<T>(capacity);
-			EnpoolerMethod = stack.Push;
-			DepoolerMethod = stack.Pop;
-			PoolObject = stack;
+
+			int initialAmount = CalculateInitialCapacity(initialCapacity);
+			var pool = new Stack<T>(initialAmount);
+			EnpoolerMethod = pool.Push;
+			DepoolerMethod = pool.Pop;
+			PoolObject = pool;
 		}
 
 		/// <summary>
 		/// By default implements a <see cref="Stack{T}"/>.
 		/// </summary>
 		/// <seealso cref="StackPool{T}"/>
-		public ObjectPool(int maxCount, int preInit) : this(maxCount)
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		public ObjectPool(int maxCount, int initialCapacity, int preInit) : this(maxCount, initialCapacity) 
 		{
+			for (int i = 0; i < preInit; i++)
+				Enpool(FactoryMethod());
+		}
+		
+		/// <summary>
+		/// By default implements a <see cref="Stack{T}"/>.
+		/// </summary>
+		/// <seealso cref="StackPool{T}"/>
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <paramref name="factoryMethod"/>.</param>
+		/// <param name="factoryMethod">A number of elements to add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="factoryMethod"/> is null.</exception>
+		public ObjectPool(int maxCount, int initialCapacity, int preInit, Func<T> factoryMethod) : this(maxCount, initialCapacity) 
+		{
+			//validate
+			if (factoryMethod == null)
+				throw new ArgumentNullException(nameof(factoryMethod));
+
+			//work
+			FactoryMethod = factoryMethod;
 			for (int i = 0; i < preInit; i++)
 				Enpool(FactoryMethod());
 		}
@@ -118,13 +164,14 @@ namespace RichPackage.Pooling
 
 			//work
 			MaxCount = maxCount;
-			int capacity = MaxCount >= 0 ? MaxCount : Default_Capacity;
 
 			this.DepoolerMethod = DepoolerMethod;
 			this.EnpoolerMethod = EnpoolerMethod;
 		}
 
 		#endregion
+
+		#region API
 
 		/// <summary>
 		/// Will always return an intance of T.
@@ -168,6 +215,12 @@ namespace RichPackage.Pooling
 				++Count; //track
 			}
 		}
+
+		#endregion
+
+		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+		protected static int CalculateInitialCapacity(int initialAmount)
+			=> initialAmount >= 0 ? initialAmount : Default_Initial_Capacity;
 	}
 
 	#region Special Pools
@@ -175,28 +228,57 @@ namespace RichPackage.Pooling
 	/// <summary>
 	/// A pool that is backed by a <see cref="MaxHeap{T}"/>.
 	/// </summary>
+	/// <seealso cref="MaxHeap{T}"/>
 	public class MaxHeapPool<T> : ObjectPool<T>
 	{
+		/// <summary>
+		/// Internal backing object. It is safe to manipulate this object directly.
+		/// </summary>
 		public MaxHeap<T> MaxHeap { get => (MaxHeap<T>)PoolObject; }
 
-		public MaxHeapPool() : this(-1) { }
+		#region Constructors
 
-		public MaxHeapPool(int maxCount)
+		public MaxHeapPool() : this(Infinite_Pool_Size, Default_Initial_Capacity) {}
+
+		public MaxHeapPool(int maxCount) : this(maxCount, Default_Initial_Capacity) {}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		public MaxHeapPool(int maxCount, int initialCapacity)
 		{
 			MaxCount = maxCount;
-			int capacity = MaxCount >= 0 ? MaxCount : Default_Capacity;
-			
-			var heap = new MaxHeap<T>(capacity);
-			EnpoolerMethod = heap.Push;
-			DepoolerMethod = heap.Pop;
-			PoolObject = heap;
+
+			int initialAmount = CalculateInitialCapacity(initialCapacity);
+			var pool = new MaxHeap<T>(initialAmount);
+			EnpoolerMethod = pool.Push;
+			DepoolerMethod = pool.Pop;
+			PoolObject = pool;
 		}
 		
-		public MaxHeapPool(int maxCount, int preInit) : this(maxCount)
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		public MaxHeapPool(int maxCount, int initialCapacity, int preInit) : this(maxCount, initialCapacity)
 		{
 			for (int i = 0; i < preInit; i++)
 				Enpool(FactoryMethod());
 		}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <paramref name="factoryMethod"/>.</param>
+		/// <param name="factoryMethod">A number of elements to add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="factoryMethod"/> is null.</exception>
+		public MaxHeapPool(int maxCount, int initialCapacity, int preInit, Func<T> factoryMethod) : this(maxCount, initialCapacity) 
+		{
+			//validate
+			if (factoryMethod == null)
+				throw new ArgumentNullException(nameof(factoryMethod));
+
+			//work
+			FactoryMethod = factoryMethod;
+			for (int i = 0; i < preInit; i++)
+				Enpool(FactoryMethod());
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -204,26 +286,54 @@ namespace RichPackage.Pooling
 	/// </summary>
 	public class MinHeapPool<T> : ObjectPool<T>
 	{
+		/// <summary>
+		/// Internal backing object. It is safe to manipulate this object directly.
+		/// </summary>
 		public MinHeap<T> MinHeap { get => (MinHeap<T>)PoolObject; }
 
-		public MinHeapPool() : this(-1) { }
+		#region Constructors
 
-		public MinHeapPool(int maxCount)
+		public MinHeapPool() : this(Infinite_Pool_Size, Default_Initial_Capacity) {}
+
+		public MinHeapPool(int maxCount) : this(maxCount, Default_Initial_Capacity) {}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		public MinHeapPool(int maxCount, int initialCapacity)
 		{
 			MaxCount = maxCount;
-			int capacity = MaxCount >= 0 ? MaxCount : Default_Capacity;
-			
-			var heap = new MinHeap<T>(capacity);
-			EnpoolerMethod = heap.Push;
-			DepoolerMethod = heap.Pop;
-			PoolObject = heap;
+
+			int initialAmount = CalculateInitialCapacity(initialCapacity);
+			var pool = new MinHeap<T>(initialAmount);
+			EnpoolerMethod = pool.Push;
+			DepoolerMethod = pool.Pop;
+			PoolObject = pool;
 		}
 		
-		public MinHeapPool(int maxCount, int preInit) : this(maxCount)
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		public MinHeapPool(int maxCount, int initialCapacity, int preInit) : this(maxCount, initialCapacity)
 		{
 			for (int i = 0; i < preInit; i++)
 				Enpool(FactoryMethod());
 		}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <paramref name="factoryMethod"/>.</param>
+		/// <param name="factoryMethod">A number of elements to add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="factoryMethod"/> is null.</exception>
+		public MinHeapPool(int maxCount, int initialCapacity, int preInit, Func<T> factoryMethod) : this(maxCount, initialCapacity) 
+		{
+			//validate
+			if (factoryMethod == null)
+				throw new ArgumentNullException(nameof(factoryMethod));
+
+			//work
+			FactoryMethod = factoryMethod;
+			for (int i = 0; i < preInit; i++)
+				Enpool(FactoryMethod());
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -231,26 +341,54 @@ namespace RichPackage.Pooling
 	/// </summary>
 	public class QueuePool<T> : ObjectPool<T>
 	{
+		/// <summary>
+		/// Internal backing object. It is safe to manipulate this object directly.
+		/// </summary>
 		public Queue<T> Queue { get => (Queue<T>)PoolObject; }
 
-		public QueuePool() : this(-1) { }
+		#region Constructors
 
-		public QueuePool(int maxCount)
+		public QueuePool() : this(Infinite_Pool_Size, Default_Initial_Capacity) {}
+
+		public QueuePool(int maxCount) : this(maxCount, Default_Initial_Capacity) {}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		public QueuePool(int maxCount, int initialCapacity)
 		{
 			MaxCount = maxCount;
-			int capacity = MaxCount >= 0 ? MaxCount : Default_Capacity;
-			
-			var queue = new Queue<T>(capacity);
-			EnpoolerMethod = queue.Enqueue;
-			DepoolerMethod = queue.Dequeue;
-			PoolObject = queue;
+
+			int initialAmount = CalculateInitialCapacity(initialCapacity);
+			var pool = new Queue<T>(initialAmount);
+			EnpoolerMethod = pool.Enqueue;
+			DepoolerMethod = pool.Dequeue;
+			PoolObject = pool;
 		}
 		
-		public QueuePool(int maxCount, int preInit) : this(maxCount)
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		public QueuePool(int maxCount, int initialCapacity, int preInit) : this(maxCount, initialCapacity)
 		{
 			for (int i = 0; i < preInit; i++)
 				Enpool(FactoryMethod());
 		}
+
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <paramref name="factoryMethod"/>.</param>
+		/// <param name="factoryMethod">A number of elements to add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="factoryMethod"/> is null.</exception>
+		public QueuePool(int maxCount, int initialCapacity, int preInit, Func<T> factoryMethod) : this(maxCount, initialCapacity) 
+		{
+			//validate
+			if (factoryMethod == null)
+				throw new ArgumentNullException(nameof(factoryMethod));
+
+			//work
+			FactoryMethod = factoryMethod;
+			for (int i = 0; i < preInit; i++)
+				Enpool(FactoryMethod());
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -260,13 +398,31 @@ namespace RichPackage.Pooling
 	///	so this class just strongly types that behaviour.</remarks>
 	public class StackPool<T> : ObjectPool<T>
 	{
+		/// <summary>
+		/// Internal backing object. It is safe to manipulate this object directly.
+		/// </summary>
 		public Stack<T> Stack { get => (Stack<T>)PoolObject; }
 
-		public StackPool() : base() { }
+		#region Constructors
 
-		public StackPool(int maxCount) : base(maxCount) { }
+		public StackPool() : base() {}
+
+		public StackPool(int maxCount) : base(maxCount) {}
 		
-		public StackPool(int maxCount, int preInit) : base(maxCount, preInit) { }
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		public StackPool(int maxCount, int initialCapacity) : base(maxCount, initialCapacity) {}
+		
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		public StackPool(int maxCount, int initialCapacity, int preInit) : base(maxCount, initialCapacity, preInit) {}
+		
+		/// <param name="initialCapacity">The initial capacity of the pool.</param>
+		/// <param name="preInit">A number of elements to create and add to the pool right now using <paramref name="factoryMethod"/>.</param>
+		/// <param name="factoryMethod">A number of elements to add to the pool right now using <see cref="FactoryMethod"/>.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="factoryMethod"/> is null.</exception>
+		public StackPool(int maxCount, int initialCapacity, int preInit, Func<T> factoryMethod) : base(maxCount, initialCapacity, preInit, factoryMethod) {}
+
+		#endregion
 	}
 
 	#endregion
