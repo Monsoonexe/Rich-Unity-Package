@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using RichPackage.Pooling;
 using System.Runtime.CompilerServices;
 
-//TODO - remove object pooling. AVL trees are most advantageous with few add/remove operations, in which case object pooling doesn't provide any benefit anyways.
-
 namespace RichPackage.Collections
 {
     /// <summary>
@@ -56,12 +54,7 @@ namespace RichPackage.Collections
 
         #region Properties
         
-        private static readonly ObjectPool<AVLNode<T>> nodePool
-            = new ObjectPool<AVLNode<T>>()
-            {
-                FactoryMethod = () => new AVLNode<T>(default), //default constructor
-                OnEnpoolMethod = (n) => n.Reset(),// AVLNode<T>.ResetNode //de-init nodes
-            };
+        private StackPool<AVLNode<T>> nodePool;
 
         private AVLNode<T> root = null;
 
@@ -87,12 +80,54 @@ namespace RichPackage.Collections
         }
 
         /// <summary>
-        /// If true, nodes are drawn from a pool instead of dynamically allocated, and allocated as needed.
-        /// If false, nodes are always dynamically allocated.
-        /// Consider setting this to true if you have lots of trees adding/removing frequently.
-        /// Pooling nodes is not thread-safe
+        /// If true, nodes are drawn from a pool instead of dynamically allocated, and only allocated as needed.
+        /// If false, nodes are always dynamically allocated. <br/>
+        /// Default value is false.
+        /// Consider setting this to true if you have lots of trees adding/removing frequently. <br/>
+        /// If you are using a pool, you can also set the <see cref="NodePoolSize"/> property.
         /// </summary>
-        public bool PoolInternalNodes {get; set;} = true;
+        public bool PoolInternalNodes 
+        {
+            get => nodePool != null; 
+            set
+            {
+                if (value)
+                {
+                    if (nodePool == null)
+                    {
+                        nodePool = new StackPool<AVLNode<T>>()
+                        {
+                            FactoryMethod = () => new AVLNode<T>(default), //default constructor
+                            OnEnpoolMethod = (n) => n.Reset(),// AVLNode<T>.ResetNode //de-init nodes
+                        };
+                    }
+                }
+                else
+                {
+                    nodePool = null;
+                }
+            }
+        }
+
+        public int NodePoolSize 
+        {
+            get
+            {
+                int size = 0;
+
+                if (PoolInternalNodes)
+                {
+                    size = nodePool.Count;
+                }
+
+                return size;
+            }
+            set
+            {
+                PoolInternalNodes = true;
+                nodePool.MaxCount = value;
+            }
+        }
 
         /// <summary>
         /// Count of items in tree.
@@ -855,6 +890,12 @@ namespace RichPackage.Collections
 
             while (index > 0)
                 Add(items[--index]);
+        }
+
+        public void TrimExcessPool()
+        {
+            if (PoolInternalNodes)
+                nodePool.Stack.TrimExcess();
         }
 
         #endregion
