@@ -172,6 +172,15 @@ namespace RichPackage.Pooling
 
 		#region API
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void Add() => Add(1);
+
+		public void Add(int count)
+		{
+			for (int i = 0; i < count; i++)
+				Enpool(FactoryMethod());
+		}
+
 		/// <summary>
 		/// Will always return an intance of T.
 		/// Will call <see cref="OnDepoolMethod"/> if it is not null.
