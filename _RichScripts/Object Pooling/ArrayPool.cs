@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace RichPackage
 {
     /// <summary>
-    /// Using the ArrayPool<T> class to Rent() and Return() buffers <br/>
+    /// Using the <see cref="ArrayPool{T}"/> class to <see cref="Rent"/> and <see cref="Return"/> buffers <br/>
     /// can improve performance in situations where arrays are created and destroyed frequently, <br/>
     /// resulting in significant memory pressure on the garbage collector.
     /// </summary>
