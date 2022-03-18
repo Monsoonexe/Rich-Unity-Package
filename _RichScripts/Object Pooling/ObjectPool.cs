@@ -249,7 +249,7 @@ namespace RichPackage.Pooling
 	public class MaxHeapPool<T> : ObjectPool<T>
 	{
 		/// <summary>
-		/// Internal backing object. It is safe to manipulate this object directly.
+		/// Internal backing object. It is safe to manipulate this backing object, but do NOT change the Count.
 		/// </summary>
 		public MaxHeap<T> MaxHeap { get => (MaxHeap<T>)PoolObject; }
 
@@ -302,7 +302,7 @@ namespace RichPackage.Pooling
 	public class MinHeapPool<T> : ObjectPool<T>
 	{
 		/// <summary>
-		/// Internal backing object. It is safe to manipulate this object directly.
+		/// Internal backing object. It is safe to manipulate this backing object, but do NOT change the Count.
 		/// </summary>
 		public MinHeap<T> MinHeap { get => (MinHeap<T>)PoolObject; }
 
@@ -355,7 +355,7 @@ namespace RichPackage.Pooling
 	public class QueuePool<T> : ObjectPool<T>
 	{
 		/// <summary>
-		/// Internal backing object. It is safe to manipulate this object directly.
+		/// Internal backing object. It is safe to manipulate this backing object, but do NOT change the Count.
 		/// </summary>
 		public Queue<T> Queue { get => (Queue<T>)PoolObject; }
 
@@ -410,7 +410,7 @@ namespace RichPackage.Pooling
 	public class StackPool<T> : ObjectPool<T>
 	{
 		/// <summary>
-		/// Internal backing object. It is safe to manipulate this object directly.
+		/// Internal backing object. It is safe to manipulate this backing object, but do NOT change the Count.
 		/// </summary>
 		public Stack<T> Stack { get => (Stack<T>)PoolObject; }
 
