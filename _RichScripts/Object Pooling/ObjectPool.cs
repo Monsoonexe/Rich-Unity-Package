@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using RichPackage.Collections;
 
 namespace RichPackage.Pooling
@@ -111,9 +112,7 @@ namespace RichPackage.Pooling
 
 			int initialAmount = CalculateInitialCapacity(initialCapacity);
 			var pool = new Stack<T>(initialAmount);
-			EnpoolerMethod = pool.Push;
-			DepoolerMethod = pool.Pop;
-			PoolObject = pool;
+			ConfigurePool(pool.Push, pool.Pop, pool);
 		}
 
 		/// <summary>
@@ -218,9 +217,21 @@ namespace RichPackage.Pooling
 
 		#endregion
 
-		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+		#region Utility
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected static int CalculateInitialCapacity(int initialAmount)
 			=> initialAmount >= 0 ? initialAmount : Default_Initial_Capacity;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void ConfigurePool(Action<T> enpoolMethod, Func<T> depoolMethod, object pool)
+		{
+			EnpoolerMethod = enpoolMethod;
+			DepoolerMethod = depoolMethod;
+			PoolObject = pool;
+		}
+
+		#endregion
 	}
 
 	#region Special Pools
@@ -249,9 +260,7 @@ namespace RichPackage.Pooling
 
 			int initialAmount = CalculateInitialCapacity(initialCapacity);
 			var pool = new MaxHeap<T>(initialAmount);
-			EnpoolerMethod = pool.Push;
-			DepoolerMethod = pool.Pop;
-			PoolObject = pool;
+			ConfigurePool(pool.Push, pool.Pop, pool);
 		}
 		
 		/// <param name="initialCapacity">The initial capacity of the pool.</param>
@@ -304,9 +313,7 @@ namespace RichPackage.Pooling
 
 			int initialAmount = CalculateInitialCapacity(initialCapacity);
 			var pool = new MinHeap<T>(initialAmount);
-			EnpoolerMethod = pool.Push;
-			DepoolerMethod = pool.Pop;
-			PoolObject = pool;
+			ConfigurePool(pool.Push, pool.Pop, pool);
 		}
 		
 		/// <param name="initialCapacity">The initial capacity of the pool.</param>
@@ -359,9 +366,7 @@ namespace RichPackage.Pooling
 
 			int initialAmount = CalculateInitialCapacity(initialCapacity);
 			var pool = new Queue<T>(initialAmount);
-			EnpoolerMethod = pool.Enqueue;
-			DepoolerMethod = pool.Dequeue;
-			PoolObject = pool;
+			ConfigurePool(pool.Enqueue, pool.Dequeue, pool);
 		}
 		
 		/// <param name="initialCapacity">The initial capacity of the pool.</param>
