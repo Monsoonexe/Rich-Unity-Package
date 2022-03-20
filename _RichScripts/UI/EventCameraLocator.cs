@@ -28,6 +28,10 @@ public class EventCameraLocator : RichMonoBehaviour
 		if(worldEventCamera == null)
 			worldEventCamera = GameObject.FindGameObjectWithTag(
 				"MainCamera").GetComponent<Camera>();
+		
+		//assign if you can
+		if (canvas != null && canvas.worldCamera == null)
+			canvas.worldCamera = worldEventCamera;
 	}
 
 	protected void Start()
