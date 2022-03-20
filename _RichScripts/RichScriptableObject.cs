@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Common base class for scriptable objects.
@@ -8,6 +9,7 @@ public class RichScriptableObject : ScriptableObject
 {
 #if UNITY_EDITOR
     [SerializeField, TextArea]
+    [PropertyOrder(-5)]
     private string developerDescription = "Please enter a description or a note.";
 #endif
 
@@ -23,6 +25,14 @@ public class RichScriptableObject : ScriptableObject
 #endif
     }
 
+    [Conditional("UNITY_EDITOR")]
+    public void Editor_MarkDirty()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            UnityEditor.EditorUtility.SetDirty(this);
+#endif
+    }
 }
 
 public class RichScriptableObject <T> : RichScriptableObject
