@@ -57,7 +57,6 @@ namespace RichPackage.SaveSystem
 		where TState : ASaveableMonoBehaviour.AState, new()
 	{	
 		[SerializeField]
-		[Header("Data")]
 		private TState saveData = new TState();
 
 		public TState SaveData => saveData; //readonly property
@@ -68,7 +67,11 @@ namespace RichPackage.SaveSystem
 		/// A persistent, unique string identifier.
 		/// </summary>
 		[ShowInInspector]
+		[PropertyOrder(-1)]
+		[DelayedProperty]
+		[Title("Saving")]
 		[CustomContextMenu("Set to Name", "SetDefaultSaveID")]
+		[CustomContextMenu("Set to Scene-Name", "SetSaveIDToScene_Name")]
 		[CustomContextMenu("Set to GUID", "SetSaveIDToGUID")]
 		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
 		public override string SaveID 
@@ -118,7 +121,7 @@ namespace RichPackage.SaveSystem
 				IsDirty = false;
 			}
 
-			[SerializeField] //show in inspector
+			[HideInInspector]
 			[ES3NonSerializable] //don't save it to file
 			[Tooltip("Must be unique to all other saveables!")]
 			public string saveID = string.Empty;
@@ -217,10 +220,14 @@ namespace RichPackage.SaveSystem
 		{
 			if (!IsSaveIDUnique(this, out var other))
 			{
-				Debug.LogWarning($"Name collision! uniqueID <{SaveID}> " +
-					$"is already taken by \"{other.name}\".", other);
+				Debug.LogWarning($"{nameof(SaveID)} name collision! The uniqueID <{SaveID}> " +
+					$"is already taken by \"{other.name}\". " +
+					$"{Environment.NewLine} This means you might encounter " +
+					$"problems when attempting to save data with this key.", other);
 			}
 		}
+
+		#region Editor: Set Save ID Helper Functions
 
 		public virtual void SetDefaultSaveID()
 		{
@@ -233,5 +240,13 @@ namespace RichPackage.SaveSystem
 			SaveID = Guid.NewGuid().ToString();
 			Editor_PrintIDIsNotUnique();
 		}
+
+		public void SetSaveIDToScene_Name()
+		{
+			SaveID =  gameObject.GetNameWithScene();
+			Editor_PrintIDIsNotUnique();
+		}
+
+		#endregion
 	}
 }
