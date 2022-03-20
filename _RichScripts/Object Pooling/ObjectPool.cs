@@ -36,7 +36,7 @@ namespace RichPackage.Pooling
 		/// <summary>
 		/// A reference to the underlying pool.
 		/// </summary>
-		public object? PoolObject { get; protected set;}
+		public object PoolObject { get; protected set;}
 		
 		/// <summary>
 		/// Function used to remove items from the pool. <br/>
