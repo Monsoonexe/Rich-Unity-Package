@@ -1,11 +1,17 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
+/// <summary>
+/// Base class that includes helper methods for MonoBehaviour.
+/// </summary>
+/// <seealso cref="RichScriptableObject"/>
 [SelectionBase]
 public class RichMonoBehaviour : MonoBehaviour
 {
 #if UNITY_EDITOR
     [SerializeField, TextArea]
+    [PropertyOrder(-5)]
     private string developerDescription = "Please enter a description or a note.";
 #endif
 
@@ -62,7 +68,7 @@ public class RichMonoBehaviour : MonoBehaviour
     }
 
     [Conditional("UNITY_EDITOR")]
-    public void MarkDirtySafely()
+    public void Editor_MarkDirty()
     {
 #if UNITY_EDITOR
         if (!Application.isPlaying)
