@@ -1,20 +1,23 @@
-﻿/// <summary>
-/// Used by a pool. Should be a MonoBehaviour.
-/// </summary>
-public interface IPoolable
-{
-    PoolablePool PoolOwner { get; set; }
-    bool InUse { get; } // has been Depooled and is doing its thing.
-    void OnCreate(); //when created
-    void OnEnpool(); //into pool
-    void OnDepool(); //out of pool
-}
-
-public static class IPoolable_Extensions
+﻿
+namespace RichPackage.Pooling
 {
     /// <summary>
-    /// Return to the Pool from which you came.
+    /// Used by a pool. Should be a MonoBehaviour.
     /// </summary>
-    /// <param name="p"></param>
-    public static void ReturnToPool(this IPoolable p) => p.PoolOwner.Enpool(p);
+    public interface IPoolable
+    {
+        PoolablePool PoolOwner { get; set; }
+        bool InUse { get; } // has been Depooled and is doing its thing.
+        void OnCreate(); //when created
+        void OnEnpool(); //into pool
+        void OnDepool(); //out of pool
+    }
+
+    public static class IPoolable_Extensions
+    {
+        /// <summary>
+        /// Return to the Pool from which you came.
+        /// </summary>
+        public static void ReturnToPool(this IPoolable p) => p.PoolOwner.Enpool(p);
+    }
 }
