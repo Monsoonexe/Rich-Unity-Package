@@ -39,6 +39,14 @@ public static class GameObject_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Destroy(this GameObject a)
         => Destroy(a);
+        
+    /// <summary>
+    /// Get name of the <see cref="GameObject"/> prefixed 
+    /// with the current <see cref="UnityEngine.SceneManagement.Scene"/> name. <br/>
+    /// e.g. "MainMenuScene/MainMenu".
+    /// </summary>
+    public static string GetNameWithScene(this GameObject a)
+        => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name + "/" + a.name;
 
     /// <summary>
     /// Perform an action on every Transform on each of its children, etc, recursively.
