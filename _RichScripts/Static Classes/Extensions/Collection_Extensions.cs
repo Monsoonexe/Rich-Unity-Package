@@ -508,6 +508,31 @@ public static class Collection_Extensions
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T First<T>(this IList<T> col) => col[0];
+
+    /// <summary>
+    /// First element in a sequence or a default value if it is empty.
+    /// </summary>
+    public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
+    {
+        if (source == null)
+            throw System.ArgumentNullException(nameof(source));
+
+        if (source is IList<TSource> list)
+        {
+            if (list.Count > 0)
+                return list[0];
+        }
+        else
+        {
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                    return enumerator.Current;
+            }
+        }
+
+        return default(TSource);
+    }
     
     /// <summary>
     /// Element at position Count - 1.
