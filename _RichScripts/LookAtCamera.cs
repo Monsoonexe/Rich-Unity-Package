@@ -12,7 +12,7 @@ public class LookAtCamera : RichMonoBehaviour
         if (!mainCamTransform)
             mainCamTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
     }
-    private void Update()
+    private void LateUpdate()
     {
         transform.LookAt(mainCamTransform);
     }
