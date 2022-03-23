@@ -73,6 +73,7 @@ namespace RichPackage.SaveSystem
 		[CustomContextMenu("Set to Name", "SetDefaultSaveID")]
 		[CustomContextMenu("Set to Scene-Name", "SetSaveIDToScene_Name")]
 		[CustomContextMenu("Set to GUID", "SetSaveIDToGUID")]
+		[CustomContextMenu("Complain if not unique", "Editor_PrintIDIsNotUnique")]
 		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
 		public override string SaveID 
 		{ 
@@ -191,13 +192,12 @@ namespace RichPackage.SaveSystem
 		#endregion
 
 		public static bool IsSaveIDUnique(ASaveableMonoBehaviour query)
-		{
-			return IsSaveIDUnique(query, out _);
-		}
+			=> IsSaveIDUnique(query, out _);
 
 		public static bool IsSaveIDUnique(ASaveableMonoBehaviour query, 
 			out ASaveableMonoBehaviour other)
 		{
+			//TODO - cache this cuz it's terribly slow
 			var allSaveables = FindObjectsOfType<ASaveableMonoBehaviour>();
 			bool isUnique = true; //return value
 			other = default;
@@ -214,7 +214,7 @@ namespace RichPackage.SaveSystem
 			return isUnique;
 		}
 
-		[HorizontalGroup("SetGUID"), Button("Is ID Unique?")]
+		[HorizontalGroup("SetGUID"), Button("Complain if ID taken")]
 		[Conditional(ConstStrings.UNITY_EDITOR)]
 		public void Editor_PrintIDIsNotUnique()
 		{
