@@ -36,10 +36,10 @@ namespace RichPackage.Audio
         }
 
         public AudioID PlayBackgroundTrack()
-            => audioID = AudioManager.PlayBackgroundTrack(clip, default);
+            => audioID = AudioManager.PlayBackgroundTrack(clip);
 
         public AudioID PlayBackgroundTrack(AudioClip clip)
-            => audioID = AudioManager.PlayBackgroundTrack(clip, default);
+            => audioID = AudioManager.PlayBackgroundTrack(clip);
 
         public AudioID PlayBackgroundTrack(AudioClip clip,
             AudioOptions options)
