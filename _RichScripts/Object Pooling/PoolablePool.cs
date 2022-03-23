@@ -107,7 +107,7 @@ namespace RichPackage.Pooling
         /// <summary>
         /// Create entire pool
         /// </summary>
-        public virtual async void InitPool()
+        public virtual void InitPool()
         {
             Pool = new StackPool<IPoolable>(maxAmount, startingAmount)
             {
