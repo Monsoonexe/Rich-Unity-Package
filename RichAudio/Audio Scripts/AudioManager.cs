@@ -315,6 +315,7 @@ namespace RichPackage.Audio
         /// </summary>
         public static void RestartSFX(AudioID key)
         {
+            //TODO - take into account Coroutine
             //check key is valid and source is active
             if (key != AudioID.Invalid 
                 && sourceDictionary.TryGetValue(key.ID, 
@@ -351,19 +352,17 @@ namespace RichPackage.Audio
                 .SetEase(FadeEase);
         }
 
+        public static AudioID PlayBackgroundTrack(AudioClip clip)
+            => PlayBackgroundTrack(clip, AudioOptions.DefaultBGM);
+
         public static AudioID PlayBackgroundTrack(AudioClip clip,
-            AudioOptions options = default)
+            AudioOptions options)
         {
             if (!clip) return AudioID.Invalid;//for safety
 
             Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
                 "Please call AudioManager.Init() or instantiate prefab at root.");
 
-            //default values for options, iff none included.
-            if (options.priority <= 0) //clear sign this wasn't init'd
-                options = AudioOptions.DefaultBGM;
-
-            //
             ActiveMusicTrack.DOFade(0, options.crossfade)
                 .SetEase(FadeEase); // fade out current track
             ActiveMusicTrack = ActiveMusicTrack == BackgroundMusicTrackA ? // switch active track
