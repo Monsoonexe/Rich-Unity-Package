@@ -1,4 +1,5 @@
 using UnityEngine;
+using RichPackage.Audio;
 
 /// <summary>
 /// Handy class to do fancy things like myClip.PlayBackgroundTrack();
