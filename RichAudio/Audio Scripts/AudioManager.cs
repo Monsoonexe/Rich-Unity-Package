@@ -356,7 +356,7 @@ namespace RichPackage.Audio
             => PlayBackgroundTrack(clip, AudioOptions.DefaultBGM);
 
         public static AudioID PlayBackgroundTrack(AudioClip clip,
-            AudioOptions options)
+            in AudioOptions options)
         {
             if (!clip) return AudioID.Invalid;//for safety
 
