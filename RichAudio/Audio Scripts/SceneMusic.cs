@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Audio
 {
@@ -11,7 +11,6 @@ namespace RichPackage.Audio
     {
         [Header("---Resources---")]
         [Required]
-        [Expandable]
         public AudioClipVariable music;
 
         public AudioClip Clip
