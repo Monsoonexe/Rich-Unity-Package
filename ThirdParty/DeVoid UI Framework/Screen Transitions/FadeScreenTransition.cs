@@ -2,7 +2,7 @@
 using UnityEngine;
 using DG.Tweening;
 using NaughtyAttributes;
-using RichPackage.Debugging;
+using RichPackage.Assertions;
 
 /// <summary>
 /// Fades a CanvasGroup in/out.
@@ -28,7 +28,7 @@ public class FadeScreenTransition : ATransitionComponent, IAnimate
         base.Awake();
 
         //validate refs
-        RichDebug.AssertMyRefNotNull(this, canvasGroup);
+        canvasGroup.ShouldNotBeNull();
     }
 
     protected override void Reset()
