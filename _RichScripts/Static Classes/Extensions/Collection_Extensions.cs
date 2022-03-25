@@ -447,6 +447,10 @@ public static class Collection_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this IList list)
         => list.Count == 0;
+        
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNotEmpty(this IList list)
+        => list.Count != 0;
 
     /// <summary>
     /// A and B are the same size and every element in A is in B (order agnostic).
