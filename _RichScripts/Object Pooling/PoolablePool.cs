@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RichPackage.Pooling
@@ -6,9 +7,13 @@ namespace RichPackage.Pooling
     /// <summary>
     /// A Pool for GameObject prefabs that implement the IPoolable Interface.
     /// </summary>
+    /// <seealso cref="GameObjectPool"/>
+    /// <seealso cref="IPoolable"/>
+    /// <see cref="ObjectPool{T}"/>
     public class PoolablePool : RichMonoBehaviour
     {
-        [Header("---Prefab Pool Resources---")]
+        [Title("Resources")]
+        [PreviewField, Required]
         public GameObject objectPrefab;
 
         [Header("---Pool Base Settings---")]
@@ -16,10 +21,10 @@ namespace RichPackage.Pooling
 
         public bool createWhenEmpty = true;
 
-        [SerializeField, MinValue(0)]
+        [SerializeField, Min(0)]
         private int startingAmount = 6;
 
-        [SerializeField, MinValue(0)]
+        [SerializeField, Min(0)]
         [Tooltip("less than 0 means 'no limit'.")]
         private int maxAmount = 10;
         
@@ -128,7 +133,7 @@ namespace RichPackage.Pooling
             //if (!resizeable) return;
             //Debug.Assert(resizeable, "[PoolablePool] Attempting to resize a marked non-resizable pool.");
 
-            maxAmount = Mathf.Min(newCapacity, ReadyCount);
+            maxAmount = RichMath.Min(newCapacity, ReadyCount);
             while (Pool.Count > maxAmount) //shrink
             {
                 var poolable = Pool.Depool();//trim excess
