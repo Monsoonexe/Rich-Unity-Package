@@ -18,7 +18,7 @@ namespace RichPackage.Pooling
 	public class ObjectPool<T>
 	{
 		protected const int Default_Initial_Capacity = 16;
-		protected const int Infinite_Pool_Size = -1;
+		public const int Infinite_Pool_Size = -1;
 
 		/// <summary>
 		/// Count of items inside the pool.
