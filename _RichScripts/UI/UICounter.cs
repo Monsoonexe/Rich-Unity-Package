@@ -2,6 +2,7 @@
 using TMPro;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using RichPackage.Pooling;
 
 /// <summary>
 /// Shows up to MAX icons. If VALUE > MAX, show a single icon

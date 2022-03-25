@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using RichPackage.Pooling;
 
 /// <summary>
 /// Always keeps given number of items spawned. Pairs well with LayoutGroups.

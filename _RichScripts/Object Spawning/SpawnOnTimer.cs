@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RichPackage.Tweening;
+using RichPackage.Pooling;
 
 /// <summary>
 /// Every x seconds, spawn a new hazard.

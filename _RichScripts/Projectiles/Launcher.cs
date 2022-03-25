@@ -1,4 +1,5 @@
 using UnityEngine;
+using RichPackage.Pooling;
 
 [RequireComponent(typeof(GameObjectPool))]
 public class Launcher : RichMonoBehaviour, ILaunchable
