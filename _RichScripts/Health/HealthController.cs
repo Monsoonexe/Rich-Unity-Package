@@ -121,6 +121,19 @@ public class HealthController : RichMonoBehaviour,
             deadEvent.Invoke();
         }
     }
+    
+    /// <summary>
+    /// Will <see cref="TakeDamage"/> if <paramref name="amount"/> is below 0. 
+    /// Will <see cref="RecoverHealth"/> if <paramref name="amount"/>  is above 0.
+    /// Has no effect if <paramref name="amount"/> is 0.
+    /// </summary>
+    public void ChangeHealth(int amount)
+    {
+        if (amount > 0)
+            RecoverHealth(amount);
+        else if (amount < 0)
+            TakeDamage(-amount);
+    }
 
 #if UNITY_EDITOR
 
