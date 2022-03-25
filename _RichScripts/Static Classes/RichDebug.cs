@@ -33,20 +33,5 @@ namespace RichPackage.Debugging
         [Conditional(ConstStrings.UNITY_EDITOR)]
         public static void OnlyDoInEditor(Action editorAction)
             => editorAction();
-
-        [Conditional(ConstStrings.UNITY_EDITOR)]
-        public static void AssertNotNull<T>(T someRef)
-            where T : class
-            => Debug.AssertFormat(someRef != null,
-                "Reference not set for: {0} ",
-                typeof(T).Name);
-
-        [Conditional(ConstStrings.UNITY_EDITOR)]
-        public static void AssertMyRefNotNull<T, U>(T caller, U someRef)
-            where T : class
-            => Debug.AssertFormat(someRef != null,
-                "[{0}] Reference not set for: {1} ",
-                caller.GetType().Name, //caller's name
-                typeof(T).Name); //ref's name
     }
 }
