@@ -443,6 +443,10 @@ public static class Collection_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IndexIsInRange(this IList col, int index)
         => index >= 0 && index < col.Count;
+        
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEmpty(this IList list)
+        => list.Count == 0;
 
     /// <summary>
     /// A and B are the same size and every element in A is in B (order agnostic).
