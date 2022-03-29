@@ -7,6 +7,7 @@ using ScriptableObjectArchitecture;
 
 /* TODO - cache fade tweens for less overhead
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
+ * TODO - remove 'static' from source dictionary and make less functions static, if needed.
  */ 
 
 namespace RichPackage.Audio
@@ -19,6 +20,14 @@ namespace RichPackage.Audio
     {
         //singleton
         private static AudioManager Instance;
+
+        private bool instanceIsInitialized = false;
+
+        /// <summary>
+        /// True if there is an active, initialized AudioManager in the Scene.
+        /// If this is false and you aren't okay with that, call AudioManager.Init().
+        /// </summary>
+        public static bool IsInitialized { get => Instance != null && Instance.instanceIsInitialized; }
 
         /// <summary>
         /// True if there is an active, initialized AudioManager in the Scene.
@@ -62,33 +71,29 @@ namespace RichPackage.Audio
         protected override void Awake()
         {
             base.Awake();
-            InitSingleton(this);
-            CreateAudioSources();
-            ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
+            if (InitSingleton(this, ref Instance, dontDestroyOnLoad: true))
+            {
+                CreateAudioSources();
+                ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
+                instanceIsInitialized = true;
+            }
+            else
+            {
+                Debug.LogWarning($"[{name}] Singleton: " +
+                    $"Too many AudioManagers in the Scene! Destroying: {name}.", this);
+                Destroy(gameObject); // there can only be one!
+            }
         }
 
         private void OnDestroy()
         {
-            if (Instance == this)
-                IsInitialized = false;//no more active audio manager in scene.
-            StopAllCoroutines();
-            sourceDictionary.Clear();
-        }
-
-        private static void InitSingleton(AudioManager current)
-        {
-            if (!Instance)
+            if (instanceIsInitialized)
             {
-                Instance = current;
-                current.transform.SetParent(null);//DontDestroyOnLoad only works when transform is at root of Scene
-                DontDestroyOnLoad(Instance.gameObject); // immortality!
-                IsInitialized = true;
-            }
-            else
-            {
-                Debug.LogWarning("[AudioManager] Singleton: Too many AudioManagers in the Scene! Destroying: " +
-                    current.name, current);
-                Destroy(current.gameObject); // there can only be one!
+                StopAllCoroutines();
+                foreach (var source in SFXAudioSources)
+                    DOTween.Kill(source);
+                sourceDictionary.Clear();
+                instanceIsInitialized = false;
             }
         }
 
