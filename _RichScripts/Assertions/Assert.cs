@@ -570,17 +570,7 @@ namespace RichPackage.Assertions
 		}
 
 		public static void DoesNotThrowException<TException>(Action action)
-		{
-			try
-			{
-				action();
-			}
-			catch(Exception ex)
-			{
-				Fail($"{action.Method.Name} threw {ex.GetType().Name} but was " +
-				$"expected to not throw any exception. {ex.Message}.", null);
-			}
-		}
+			=> DoesNotThrowException<TException>(action, string.Empty);
 
 		public static void DoesNotThrowException<TException>(Action action,
 			string because)
