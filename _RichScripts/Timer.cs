@@ -21,7 +21,7 @@ namespace RichPackage
 			get => paused;
 			set
 			{
-				if (value == true)
+				if (value)
 					Stop();
 				else
 					StartTimer();
@@ -48,7 +48,7 @@ namespace RichPackage
 		/// Not guaranteed to be equal to TimerDuration at end of timer due to deltaTime.
 		/// </summary>
 		[ShowNativeProperty]
-		public float TimeEllapsed { get; private set; }
+		public float TimeElapsed { get; private set; }
 
 		/// <summary>
 		/// 0 will effectively pause effect but won't pause coroutine.
@@ -75,14 +75,19 @@ namespace RichPackage
 			SetDevDescription("Counts down and raises an event when timer hits 0. Can loop.");
 		}
 
+		private void Start()
+		{
+			//validate dependencies exist
+			if (RichAppController.Instance == null)
+				throw new MissingReferenceException($"{nameof(Timer)} relies on there being a " +
+					$"{nameof(RichAppController)} in the scene, but there is none. Please add one.");
+		}
+
 		private void OnDisable()
 		{
 			Stop();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="duration">Length of timer.</param>
 		/// <param name="callback">Override current callback with this one.</param>
 		/// <param name="loop">Auto-repeat at end?</param>
@@ -97,6 +102,9 @@ namespace RichPackage
 			Initialize(duration, loop, startNow);//forward call
 		}
 
+		/// <param name="duration">Length of timer.</param>
+		/// <param name="loop">Auto-repeat at end?</param>
+		/// <param name="startNow">Should the <see cref="Timer"/> begin right away.</param>
 		public void Initialize(float duration, 
 			bool loop = false, bool startNow = true)
 		{
@@ -144,14 +152,14 @@ namespace RichPackage
 			do // loop timer
 			{
 				TimeRemaining.Value = TimerDuration;//reset timer
-				TimeEllapsed = 0;
+				TimeElapsed = 0;
 
 				//countdown loop
 				while (TimeRemaining > 0)
 				{
 					yield return null;//wait for next frame
 					var scaledDeltaTime = RichAppController.DeltaTime * timeScale;
-					TimeEllapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
+					TimeElapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
 					TimeRemaining.Value -= scaledDeltaTime;//tick... tick... tick...
 				}
 				TimeRemaining.Value = 0;//set to prevent overshoot
@@ -166,7 +174,7 @@ namespace RichPackage
 		/// </summary>
 		/// <returns></returns>
 		public static Timer Construct()
-			=> new GameObject(typeof(Timer).Name).AddComponent<Timer>();
+			=> new GameObject(nameof(Timer)).AddComponent<Timer>();
 
 		/// <summary>
 		/// Creates a new inactive Timer.
