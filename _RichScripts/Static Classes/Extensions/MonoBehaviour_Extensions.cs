@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
+using RichPackage;
 
 /// <summary>
 /// Extension methods for monobehaviours.
@@ -9,18 +9,24 @@ using UnityEngine;
 /// <seealso cref="Behaviour_Extensions"/>
 public static class MonoBehaviour_Extensions
 {
+	#region Extensions
+
+	public static void InvokeAtEndOfFrame(this MonoBehaviour mono,
+        Action action)
+        => mono.StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
+
+    public static void InvokeNextFrame(this MonoBehaviour mono,
+        Action action)
+        => mono.StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
+
     public static void InvokeAfterDelay(this MonoBehaviour mono,
         Action action, float delay)
-        => mono.StartCoroutine(InvokeAfterDelay(action, delay));
+        => mono.StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay));
 
-    private static IEnumerator InvokeAfterDelay(
-        Action action, float delay)
-    {
-        //TODO - used unmarshalled Time.
-        var endTime = Time.time + delay;
+    public static void InvokeAfterDelay(this MonoBehaviour mono,
+        Action action, YieldInstruction delay)
+        => mono.StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay));
 
-        do yield return null;
-        while (Time.time < endTime);
-        action();
-    }
+    #endregion
+
 }
