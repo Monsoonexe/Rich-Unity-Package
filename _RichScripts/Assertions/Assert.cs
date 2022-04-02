@@ -1,40 +1,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using RichPackage.Comparers;
 
+using Object = UnityEngine.Object;
+
 namespace RichPackage.Assertions
 {
-	public class AssertionException : Exception
-	{
-		private string m_UserMessage;
-
-		public override string Message
-		{
-			get
-			{
-				string text = base.Message;
-				if (m_UserMessage != null)
-				{
-					text = text + "\n" + m_UserMessage;
-				}
-
-				return text;
-			}
-		}
-
-		public AssertionException(string message) : base(message) { }
-
-		public AssertionException(string message, string userMessage)
-			: base(message)
-		{
-			m_UserMessage = userMessage;
-		}
-	}
-
 	//
 	// Summary:
 	//     The Assert class contains assertion methods for setting invariants in the code.
@@ -48,6 +22,12 @@ namespace RichPackage.Assertions
         /// By default it is set to <see cref="UnityEngine.Debug.LogAssertion"/>.
         /// </summary>
         public static Action<string> Logger = (str) => UnityEngine.Debug.LogAssertion(str); //lamba because LogAssertion is [Conditional]
+
+		/// <summary>
+		/// Method that should be used for logging to a console. <br/>
+		/// By default it is set to <see cref="UnityEngine.Debug.LogAssertion"/>.
+		/// </summary>
+		public static Action<string, Object> LoggerWithContext = (str, context) => UnityEngine.Debug.LogAssertion(str, context);
 
 		//
 		// Summary:
@@ -66,10 +46,29 @@ namespace RichPackage.Assertions
 					message = userMessage + "\n" + message;
 
 				Logger(message);
-				return;
 			}
+			else
+			{
+				throw new AssertionException(message, userMessage);
+			}
+		}
 
-			throw new AssertionException(message, userMessage);
+		private static void Fail(string message, string userMessage, Object context)
+		{
+			if (!raiseExceptions)
+			{
+				if (message == null)
+					message = "Assertion has failed\n";
+
+				if (userMessage != null)
+					message = userMessage + "\n" + message;
+
+				LoggerWithContext(message, context);
+			}
+			else
+			{
+				throw new AssertionException(message, userMessage);
+			}
 		}
 
 		//
