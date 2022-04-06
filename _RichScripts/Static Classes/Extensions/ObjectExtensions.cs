@@ -21,5 +21,17 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T CastAs<T>(this object obj)
             where T : class  => obj as T;
+           
+        /// <summary>
+        /// Throws an <see cref="ArgumentNullException"/> if <paramref name="obj"/> is null.
+        /// </summary>
+        /// <param name="paramName">The name of the parameter being checked.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ThrowIfNull(this object obj, string paramName)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(paramName);
+        }
     }
 }
