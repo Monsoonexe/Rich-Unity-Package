@@ -9,6 +9,11 @@ using ScriptableObjectArchitecture;
 public abstract class VariableUIElement<T> : RichUIElement<T>
     where T : BaseVariable
 {
+    protected virtual void Reset()
+    {
+        SetDevDescription($"Displays a {typeof(T)} and updates when its events are called.");
+    }
+
     protected override void SubscribeToEvents()
         => targetData.AddListener(UpdateUI);
 
