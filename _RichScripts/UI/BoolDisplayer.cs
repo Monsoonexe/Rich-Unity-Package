@@ -1,36 +1,23 @@
 ﻿using UnityEngine;
 using TMPro;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 [SelectionBase]
-public class BoolDisplayer : RichUIElement<BoolVariable>
+public class BoolDisplayer : VariableUIElement<BoolVariable>
 {
-    [Header("---Settings---")]
+    [Title("Settings")]
     public string trueMessage = "On";
     public string falseMessage = "Off";
 
-    [Header("---Prefab Refs---")]
-    [SerializeField]
-    [Required]
+    [Title("Prefab Refs")]
+    [SerializeField, Required]
     private TextMeshProUGUI textGUI;
 
-    private void Reset()
-    {
-        SetDevDescription("I show a string based on a boolean value.");
-    }
-    protected override void SubscribeToEvents()
-    {
-        targetData.AddListener(UpdateUI);
-    }
-    protected override void UnsubscribeFromEvents()
-    {
-        targetData.RemoveListener(UpdateUI);
-    }
     public override void UpdateUI()
     {
-		//determine which message to print.
-		string outString = null;
+	//determine which message to print.
+        string outString;
         if (targetData.Value == true)
             outString = trueMessage;
         else
