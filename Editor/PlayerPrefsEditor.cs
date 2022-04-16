@@ -1,92 +1,115 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using UnityConsole;
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor;
 
-public static class PlayerPrefsEditor
+//https://docs.unity3d.com/ScriptReference/PlayerPrefs.html
+
+namespace RichPackage.Editor
 {
-	[ConsoleCommand]
-	public static void SetInt(string key, int value)
+	/// <summary>
+	/// Utility for CRUD operations on PlayerPrefs.
+	/// </summary>
+	public class PlayerPrefsEditor : OdinEditorWindow
 	{
-		PlayerPrefs.SetInt(key, value);
-		Debug.Log($"Saved {key}: {value}.");
-	}
+		private const string MenuPath = "RichUtilities/PlayerPrefs/";
 
-	[ConsoleCommand]
-	public static void SetString(string key, string value)
-	{
-		PlayerPrefs.SetString(key, value);
-		Debug.Log($"Saved {key}: {value}.");
-	}
+		public static PlayerPrefsEditor Instance { get; private set; }
 
-	[ConsoleCommand]
-	public static void SetFloat(string key, float value)
-	{
-		PlayerPrefs.SetFloat(key, value);
-		Debug.Log($"Saved {key}: {value}.");
-	}
-
-	[ConsoleCommand]
-	public static void GetInt(string key)
-	{
-		if (PlayerPrefs.HasKey(key))
+		[MenuItem(MenuPath + "PlayerPrefsEditor")]
+		private static void Init()
 		{
-			int value = PlayerPrefs.GetInt(key);
-			Debug.Log($"Key <{key}>: <{value}>.");
+			Instance = (PlayerPrefsEditor)EditorWindow.GetWindow(typeof(PlayerPrefsEditor));
+			Instance.Show();
 		}
-		else
-		{
-			Debug.Log($"Key <{key}> does not exist.");
-		}	
-	}
 
-	[ConsoleCommand]
-	public static void GetFloat(string key)
-	{
-		if (PlayerPrefs.HasKey(key))
+		[ConsoleCommand, Button]
+		public static void SetInt(string key, int value)
 		{
-			float value = PlayerPrefs.GetFloat(key);
-			Debug.Log($"Key <{key}>: <{value}>.");
+			PlayerPrefs.SetInt(key, value);
+			Debug.Log($"Saved {key}: {value}.");
 		}
-		else
-		{
-			Debug.Log($"Key <{key}> does not exist.");
-		}
-	}
 
-	[ConsoleCommand]
-	public static void GetString(string key)
-	{
-		if (PlayerPrefs.HasKey(key))
+		[ConsoleCommand, Button]
+		public static void SetString(string key, string value)
 		{
-			string value = PlayerPrefs.GetString(key);
-			Debug.Log($"Key <{key}>: <{value}>.");
+			PlayerPrefs.SetString(key, value);
+			Debug.Log($"Saved {key}: {value}.");
 		}
-		else
+
+		[ConsoleCommand, Button]
+		public static void SetFloat(string key, float value)
 		{
-			Debug.Log($"Key <{key}> does not exist.");
+			PlayerPrefs.SetFloat(key, value);
+			Debug.Log($"Saved {key}: {value}.");
 		}
-	}
 
-	[ConsoleCommand]
-	public static void HasKey(string key)
-	{
-		bool has = PlayerPrefs.HasKey(key);
-		Debug.Log($"Key <{key}> exists: {has}.");
-	}
-
-	[ConsoleCommand]
-	public static void DeleteKey(string key)
-	{
-		bool contains = PlayerPrefs.HasKey(key);
-		if (contains)
+		[ConsoleCommand, Button]
+		public static void GetInt(string key)
 		{
-			PlayerPrefs.DeleteKey(key);
+			if (PlayerPrefs.HasKey(key))
+			{
+				int value = PlayerPrefs.GetInt(key);
+				Debug.Log($"Key <{key}>: <{value}>.");
+			}
+			else
+			{
+				Debug.Log($"Key <{key}> does not exist.");
+			}
 		}
-		Debug.Log(contains ? $"Key <{key}> was deleted." : $"Key <{key}> not found.");
-	}
 
-	public static void DeleteAllKeys()
-	{
-		PlayerPrefs.DeleteAll();
-		Debug.Log("Deleted all keys in PlayerPrefs");
+		[ConsoleCommand, Button]
+		public static void GetFloat(string key)
+		{
+			if (PlayerPrefs.HasKey(key))
+			{
+				float value = PlayerPrefs.GetFloat(key);
+				Debug.Log($"Key <{key}>: <{value}>.");
+			}
+			else
+			{
+				Debug.Log($"Key <{key}> does not exist.");
+			}
+		}
+
+		[ConsoleCommand, Button]
+		public static void GetString(string key)
+		{
+			if (PlayerPrefs.HasKey(key))
+			{
+				string value = PlayerPrefs.GetString(key);
+				Debug.Log($"Key <{key}>: <{value}>.");
+			}
+			else
+			{
+				Debug.Log($"Key <{key}> does not exist.");
+			}
+		}
+
+		[ConsoleCommand, Button]
+		public static void HasKey(string key)
+		{
+			bool has = PlayerPrefs.HasKey(key);
+			Debug.Log($"Key <{key}> exists: {has}.");
+		}
+
+		[ConsoleCommand, Button]
+		public static void DeleteKey(string key)
+		{
+			bool contains = PlayerPrefs.HasKey(key);
+			if (contains)
+			{
+				PlayerPrefs.DeleteKey(key);
+			}
+			Debug.Log(contains ? $"Key <{key}> was deleted." : $"Key <{key}> not found.");
+		}
+
+		[ConsoleCommand, Button, MenuItem(MenuPath + nameof(DeleteAllKeys))]
+		public static void DeleteAllKeys()
+		{
+			PlayerPrefs.DeleteAll();
+			Debug.Log("Deleted all keys in PlayerPrefs");
+		}
 	}
 }
