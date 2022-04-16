@@ -10,10 +10,11 @@ using Sirenix.OdinInspector;
 public class CardGenerator<TContainer, TValue> : ADeck<TValue>
     where TContainer : AWeightedProbability<TValue>
 {
+    [Tooltip("Modify THIS manifest and the above manifest will be automatically updated.")]
     [SerializeField]
     protected List<TContainer> weightedManifest = new List<TContainer>();
 
-    [ShowInInspector, ReadOnly]
+    [ShowInInspector, ReadOnly, PropertyTooltip("Does not decrease with use.")]
     public override int CardsRemaining { get => weightedManifest.Count; }
 
     private void OnValidate()
@@ -27,7 +28,8 @@ public class CardGenerator<TContainer, TValue> : ADeck<TValue>
     public override TValue Draw()
     {
         var deck = weightedManifest;
-        if (deck.Count == 0) return default;
+        if (deck.Count == 0) 
+            return default;
 
         var iCard = GetWeightedIndex(deck);
         return deck[iCard].Value;         
@@ -37,7 +39,15 @@ public class CardGenerator<TContainer, TValue> : ADeck<TValue>
     /// Has no effect but is not an error.
     /// </summary>
     public override void Reload() { } //nada
+
+    /// <summary>
+    /// Has no effect but is not an error.
+    /// </summary>
     public override void Shuffle() { }//nada
+
+    /// <summary>
+    /// Has no effect but is not an error.
+    /// </summary>
     public override void ShuffleRemaining() { }//nada
 
 	//in-line since generics don't play well together
@@ -59,11 +69,10 @@ public class CardGenerator<TContainer, TValue> : ADeck<TValue>
         var totalWeight = GetTotalWeight(items);
         var randomValue = Random.Range(0, totalWeight) + 1;
         var index = 0;
-        TContainer result = null;
 
         while (randomValue > 0)
         {
-            result = items[index++];
+            TContainer result = items[index++];
             randomValue -= result.Weight;
         }
 
