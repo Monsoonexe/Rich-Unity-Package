@@ -40,6 +40,8 @@ namespace ScriptableObjectArchitecture
                 _invertedActions[i](invertedValue);
         }
 
+        public void SetTrue() => Value = true;
+        public void SetFalse() => Value = false;
         public void InvertValue() => Value = !Value;
     } 
 }
