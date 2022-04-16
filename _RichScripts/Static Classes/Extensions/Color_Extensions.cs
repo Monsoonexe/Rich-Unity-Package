@@ -17,10 +17,10 @@ public static class Color_Extensions
         float? a = null)
         => new Color
         (
-            r.HasValue ? r.Value : c.r,
-            g.HasValue ? g.Value : c.g,
-            b.HasValue ? b.Value : c.b,
-            a.HasValue ? a.Value : c.a
+            r ?? c.r,
+            g ?? c.g,
+            b ?? c.b,
+            a ?? c.a
         );
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
