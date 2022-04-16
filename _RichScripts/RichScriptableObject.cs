@@ -13,6 +13,19 @@ public class RichScriptableObject : ScriptableObject
     private string developerDescription = "Please enter a description or a note.";
 #endif
 
+    private string _name;
+
+    /// <summary>
+    /// Caches the 'name' property on use. Prefer this because
+    /// 'name' allocates on every call and is slower due to marshalling.
+    /// </summary>
+    /// <remarks>'name' allocates on every call.</remarks>
+    public string Name 
+    {
+        get => string.IsNullOrEmpty(_name) ? (_name = name) : _name;
+        set => _name = value;
+    }
+
     /// <summary>
     /// This call will be stripped out of Builds. Use anywhere.
     /// </summary>
