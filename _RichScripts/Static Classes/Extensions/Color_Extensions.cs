@@ -24,19 +24,19 @@ public static class Color_Extensions
         );
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color WithR(this Color c, float r)
+    public static Color WithR(this in Color c, float r)
         => new Color(r, c.g, c.b, c.a);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color WithG(this Color c, float g)
+    public static Color WithG(this in Color c, float g)
         => new Color(c.r, g, c.b, c.a);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color WithB(this Color c, float b)
+    public static Color WithB(this in Color c, float b)
         => new Color(c.r, c.g, b, c.a);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color WithA(this Color c, float a)
+    public static Color WithA(this in Color c, float a)
         => new Color(c.r, c.g, c.b, a);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
