@@ -1,11 +1,14 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using RichPackage.UI;
 using Signals;
+
+//TODO - handle additive scenes.
 
 namespace RichPackage
 {
@@ -31,6 +34,10 @@ namespace RichPackage
         private AudioClipReference transitionINClip
             = new AudioClipReference();
 
+        //public static event Action<SceneVariable> OnSceneLoaded;
+
+        public static SceneVariable CurrentScene { get; private set; }
+
         //runtime data
         [ShowInInspector, ReadOnly]
         public static bool IsTransitioning { get; private set; } = false;
@@ -47,6 +54,8 @@ namespace RichPackage
         /// </summary>
         private WaitUntil waitUntilFinishedLoading;
 
+        private Stack<SceneVariable> levelHistory;
+
         private void Reset()
         {
             SetDevDescription("I help control the flow of changing between Levels.");
@@ -54,15 +63,46 @@ namespace RichPackage
 
         private void Start()
         {
+            levelHistory = new Stack<SceneVariable>();
             waitUntilFinishedLoading = new WaitUntil(LevelHasFinishedLoading);
         }
 
+        /// <summary>
+        /// The best way to load a level, as it can be tracked.
+        /// </summary>
+        /// <param name="sceneVariable"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         [Button, DisableInEditorMode]
-        public void LoadLevel(SceneVariable sceneVariable)
-            => LoadLevel(sceneVariable.Value.SceneIndex);
+		public void LoadLevel(SceneVariable sceneVariable)
+		{
+            //validate
+            if (sceneVariable == null)
+                throw new ArgumentNullException(nameof(sceneVariable));
+
+            //work
+            levelHistory.Push(CurrentScene);
+            CurrentScene = sceneVariable; //track
+            LoadLevel(CurrentScene.Value.SceneIndex); //load
+        }
+
+        /// <summary>
+        /// Load the level that brought us to this one.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        [Button, DisableInEditorMode]
+        public void LoadPreviousLevel()
+		{
+            //validate
+            if (levelHistory.Count == 0)
+                throw new InvalidOperationException("There is no previous level to load.");
+
+            //work
+            CurrentScene = levelHistory.Pop(); //track
+            LoadLevel(CurrentScene.Value.SceneIndex); //load
+        }
 
         [Button, DisableInEditorMode]
-        public void LoadLevel(string name)
+        private void LoadLevel(string name)
         {
             if (!IsTransitioning)//prevent spamming
             {
@@ -72,7 +112,7 @@ namespace RichPackage
         }
 
         [Button, DisableInEditorMode]
-        public void LoadLevel(int index)
+        private void LoadLevel(int index)
         {
             if (!IsTransitioning)//prevent spamming
             {
@@ -99,7 +139,7 @@ namespace RichPackage
                 .TriggerTransition(outTransitionMessage);//hide scene
             transitionOUTClip.PlaySFX();
 
-            //wait for the darkness to envelope you
+            //wait for the darkness to envelope you, and then a bit longer
             yield return transitionWait;
 
             //last call before a scene is destroyed.
@@ -128,7 +168,7 @@ namespace RichPackage
 
             transitionINClip.PlaySFX();
 
-            //wait
+            //wait for scene to fully open, and just a bit longer
             yield return transitionWait;
 
             //finalize
@@ -154,19 +194,19 @@ namespace RichPackage
             SceneManager.LoadScene(levelIndex);
 		}
 
-        [Button, DisableInEditorMode]
-        public static void LoadNextLevel()
-        {
-            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(currentSceneIndex + 1);
-        }
+        //[Button, DisableInEditorMode]
+        //public static void LoadNextLevel()
+        //{
+        //    var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        //    SceneManager.LoadScene(currentSceneIndex + 1);
+        //}
 
-        [Button, DisableInEditorMode]
-        public static void LoadPreviousLevel()
-        {
-            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(currentSceneIndex - 1);
-        }
+        //[Button, DisableInEditorMode]
+        //public static void LoadPreviousLevel()
+        //{
+        //    var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        //    SceneManager.LoadScene(currentSceneIndex - 1);
+        //}
 
         [Button, DisableInEditorMode]
         public static void ReloadCurrentLevel()
