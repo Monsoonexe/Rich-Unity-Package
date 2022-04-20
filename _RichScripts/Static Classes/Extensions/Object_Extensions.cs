@@ -34,5 +34,12 @@ namespace RichPackage
             if (obj == null)
                 throw new ArgumentNullException(paramName);
         }
+        
+        /// <summary>
+        /// Create a single-element array containing only the given item.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T[] ToSingleElementArray<T>(this T obj)
+            => new T[] { obj };
     }
 }
