@@ -1,8 +1,11 @@
-﻿using System;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
+using RichPackage.Assertions;
 
 /*
  * On a message box that has an OK button, OK is returned if:
@@ -104,22 +107,29 @@ namespace RichPackage.UI
 		[SerializeField, ShowIf("@animate == true")]
 		ATransitionComponent transitionOUTAnimator;
 
-		//events
-		//public event Action OnCancel;
-		//public event Action OnNo;
-		//public event Action OnNone;
-		//public event Action OnOkay;
-		//public event Action OnYes;
 		public event MessageBoxResultCallback OnResult;
 
 		public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
 
 		public EMessageBoxResult LastResult { get; private set; } = EMessageBoxResult.None;
 
+		private bool asyncResultPending = false;
+		private CancellationTokenSource cancellationTokenSource;
+
 		private void Start()
 		{
 			if (hideOnStart)
 				Hide();			
+		}
+
+		private void OnDestroy()
+		{
+			//clean up resources and prevent Tasks leaking into the Editor.
+			if (cancellationTokenSource != null)
+			{
+				cancellationTokenSource.Cancel();
+				cancellationTokenSource.Dispose();
+			}
 		}
 
 		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
@@ -242,6 +252,76 @@ namespace RichPackage.UI
 			}
 		}
 
+		#region Async
+
+		/// <summary>
+		/// Call like EMessageBoxResult result = await ShowAsync(...);
+		/// EXPIREMENTAL AND MAY NOT WORK OR BREAK SOMETHING.
+		/// </summary>
+		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
+		/// <param name="messageBoxTitle">Title of the window.</param>
+		/// <param name="style">Sets how many buttons and their default values.</param>
+		/// <param name="button1Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
+		/// <param name="button2Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
+		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
+		/// <param name="animate">Should the window animate opened and closed?</param>
+		/// <exception cref="NotImplementedException"></exception>
+		public async Task<EMessageBoxResult> ShowAsync(string messageBoxText,
+			string messageBoxTitle = ConstStrings.EMPTY,
+			EMessageBoxButton style = EMessageBoxButton.OK,
+			bool animate = false,
+			string button1Text = null,
+			string button2Text = null,
+			string button3Text = null)
+		{
+			this.animate = animate;
+			this.Style = style;
+			promptText.text = messageBoxText;
+			titleText.text = messageBoxTitle;
+			asyncResultPending = true;
+			cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
+			var cancelToken = cancellationTokenSource.Token;
+
+			OnResult = (_) => asyncResultPending = false;
+
+			switch (style)
+			{
+				case EMessageBoxButton.OK:
+					Debug.Assert(string.IsNullOrEmpty(button2Text), "Too many button texts supplied.");
+					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
+					SetupSingleButton(button1Text);
+					break;
+				case EMessageBoxButton.OKCancel:
+					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
+					SetupDoubleButton(button1Text, button2Text);
+					break;
+				case EMessageBoxButton.YesNo:
+					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
+					SetupDoubleButton(button1Text, button2Text);
+					break;
+				case EMessageBoxButton.YesNoCancel:
+					SetupTripleButton(button1Text, button2Text, button3Text);
+					break;
+				default:
+					throw new NotImplementedException($"{style} not implemented.");
+			}
+
+			Show();//show visuals
+			if (animate && transitionINAnimator != null)
+			{
+				ToggleButtonInteractivity(false); //disallow interaction until open.
+				transitionINAnimator.Animate(windowTransform,
+					onCompleteCallback: () => ToggleButtonInteractivity(true));
+			}
+
+			while (asyncResultPending && !cancelToken.IsCancellationRequested)
+				await Task.Yield(); //basically yield return null;
+
+			return LastResult;
+		}
+
+		#endregion
+
 		/// <param name="buttonText">Will be "OK" if null.</param>
 		private void SetupSingleButton(string buttonText = OKAY)
 		{
@@ -302,25 +382,19 @@ namespace RichPackage.UI
 
 		#region Responses
 
-		private void Okay()
-			=> Close(EMessageBoxResult.Okay);
+		private void Okay() => Close(EMessageBoxResult.Okay);
 
-		private void Yes()
-			=> Close(EMessageBoxResult.Yes);
+		private void Yes() => Close(EMessageBoxResult.Yes);
 
-		private void No()
-			=> Close(EMessageBoxResult.No);
+		private void No() => Close(EMessageBoxResult.No);
 
-		private void Cancel()
-			=> Close(EMessageBoxResult.Cancel);
+		private void Cancel() => Close(EMessageBoxResult.Cancel);
 
 		#endregion
 	}
 
 	public enum EMessageBoxResult
 	{
-		//...
-
 		/// <summary>
 		/// Pending or cleared.
 		/// </summary>
@@ -337,14 +411,29 @@ namespace RichPackage.UI
 		Yes = 1,
 
 		/// <summary>
+		/// Identical to <see cref="Yes"/>.
+		/// </summary>
+		Left = 1,
+
+		/// <summary>
 		/// Reject.
 		/// </summary>
 		No = 2,
 
 		/// <summary>
+		/// Identical to <see cref="No"/>.
+		/// </summary>
+		Middle = 2,
+
+		/// <summary>
 		/// Cancel
 		/// </summary>
 		Cancel = 3,
+
+		/// <summary>
+		/// Identical to <see cref="Cancel"/>.
+		/// </summary>
+		Right = 3,
 	}
 
 	public enum EMessageBoxButton
@@ -369,5 +458,4 @@ namespace RichPackage.UI
 		/// </summary>
 		YesNoCancel = 3,
 	}
-
 }
