@@ -58,6 +58,9 @@ namespace RichPackage.Editor
 		/// </summary>
 		public static void LoadScene(string scenePath)
 		{
+            if (!System.IO.Path.HasExtension(scenePath))
+                scenePath += ".unity";
+                
 			//prompt to save
 			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
 			{
