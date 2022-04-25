@@ -547,6 +547,21 @@ public static class Collection_Extensions
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T Last<T>(this IList<T> col) => col[col.Count - 1];
+    
+    /// <summary>
+    /// Returns a 'new' list if <paramref name="list"/> is null or calls
+    /// <see cref="List{T}.Clear"/> before returning it.
+    /// </summary>
+    /// <returns>A list where <see cref="List{T}.Count"/> is 0.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static List<T> NewOrClear<T>(this List<T> list)
+    {
+        if (list == null)
+            list = new List<T>();
+        else
+            list.Clear();
+        return list;
+    }
 
     /// <summary>
     /// A 'foreach' with a 'for' backbone
