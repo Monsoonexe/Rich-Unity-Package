@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -193,21 +193,26 @@ public static class Collection_Extensions
 
     #endregion
 
-    public static bool TrueForAll<T>(this IList<T> list, Predicate<T> query)
-    {
-        bool contains = true; //return value
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Any<T>(this IList<T> list, Predicate<T> query)
+	{
         int count = list.Count;
         for (int i = 0; i < count; ++i)
-        {
+            if (query(list[i]))
+                return true;
+        return false;
+	}
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TrueForAll<T>(this IList<T> list, Predicate<T> query)
+    {
+        int count = list.Count;
+        for (int i = 0; i < count; ++i)
             if (!query(list[i]))
-            {
-                contains = false;
-                break;
-            }
-        }
-        return contains;
+                return false;
+        return true;
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TrueForNone<T>(this IList<T> list, Predicate<T> query)
     {
