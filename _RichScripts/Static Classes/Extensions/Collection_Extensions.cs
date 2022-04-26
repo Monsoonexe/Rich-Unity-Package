@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -210,7 +210,13 @@ public static class Collection_Extensions
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TrueForNone<T>(this IList<T> list, Predicate<T> query)
-        => !TrueForAll(list, query);
+    {
+        int count = list.Count;
+        for (int i = 0; i < count; ++i)
+            if (query(list[i]))
+                return false;
+        return true;
+    }
     
     /// <summary>
     /// Returns 'true' if all elements of each <see cref="IList{T}"/> are equivalent, otherwise returns 'false'.
