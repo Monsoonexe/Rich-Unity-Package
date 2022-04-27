@@ -223,26 +223,82 @@ public static class Collection_Extensions
         return true;
     }
     
+    #region IsSequentiallyEqualTo
+
     /// <summary>
-    /// Returns 'true' if all elements of each <see cref="IList{T}"/> are equivalent, otherwise returns 'false'.
+    /// A and B are the same size and every element in A is equal to the same position in B.
     /// </summary>
-    public static bool SequenceEqual<T>(this IList<T> a, IList<T> b)
+    /// <returns>True if A and B are the same size and every element in A is in B</returns>
+    public static bool IsSequentiallyEqualTo<T>(this IList<T> a, IList<T> b)
+        where T : class
     {
-        int aCount = a.Count; //cache to reduce function overhead
-        int bCount = b.Count;
-        bool equivalent = true; //return value
-        if (aCount == bCount)
+        int count = a.Count;
+
+        if (count != b.Count)
             return false;
-        for (int i = 0; i < aCount; i++)
-        {
-            if (!a[i].Equals(b[i]))
-            {
-                equivalent = false;
-                break;
-            }
-        }
-        return equivalent;
+
+        for (int i = 0; i < count; ++i)
+            if (!a[i].Equals(b[i])) 
+                return false;
+
+        return true;
     }
+
+    /// <summary>
+    /// A and B are the same size and every element in A is equal to the same position in B.
+    /// </summary>
+    /// <returns>True if A and B are the same size and every element in A is in B</returns>
+    public static bool IsSequentiallyEqualTo(this IList<byte> a, IList<byte> b)
+    {
+        int count = a.Count;
+
+        if (count != b.Count)
+            return false;
+
+        for (int i = 0; i < count; ++i)
+            if (a[i] != b[i])
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// A and B are the same size and every element in A is equal to the same position in B.
+    /// </summary>
+    /// <returns>True if A and B are the same size and every element in A is in B</returns>
+    public static bool IsSequentiallyEqualTo(this IList<int> a, IList<int> b)
+    {
+        int count = a.Count;
+
+        if (count != b.Count)
+            return false;
+
+        for (int i = 0; i < count; ++i)
+            if (a[i] != b[i])
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// A and B are the same size and every element in A is equal to the same position in B.
+    /// </summary>
+    /// <returns>True if A and B are the same size and every element in A is in B</returns>
+    public static bool IsSequentiallyEqualTo(this IList<char> a, IList<char> b)
+    {
+        int count = a.Count;
+
+        if (count != b.Count)
+            return false;
+
+        for (int i = 0; i < count; ++i)
+            if (a[i] != b[i])
+                return false;
+
+        return true;
+    }
+
+    #endregion IsSequentiallyEqualTo
     
     /// <summary>
     /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
