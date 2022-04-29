@@ -657,6 +657,13 @@ public static class Collection_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int LastIndex(this IList col) => col.Count - 1;
     
+    /// <summary>
+    /// Compiler-driven cast to <see cref="IEnumerable{T}"/>.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<T> GetEnumerable<T>(this IList<T> array) => array;
+    
+    //TODO - make this mirror Select from LINQ
     public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
         Func<TArray, TReturn> expression)
         => ToSubArray(array, expression, 0, array.Count);
