@@ -1,5 +1,11 @@
-﻿using System;
+﻿/*
+TODO make a generic type: ItemStack<T>
+
+*/
+
+using System;
 using UnityEngine;
+using RichPackage;
 
 /// <summary>
 /// Serializeable Item Stack. Formerlly called "ItemAmount'. Contains runtime data.
