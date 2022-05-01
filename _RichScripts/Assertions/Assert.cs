@@ -480,7 +480,7 @@ namespace RichPackage.Assertions
 		//   message:
 		//     The string used to describe the Assert.
 		[Conditional(UNITY_ASSERTIONS)]
-		public static void IsNull(Object value, string message)
+		public static void IsNull(object value, string message)
 		{
 			if (value != null)
 			{
@@ -489,9 +489,16 @@ namespace RichPackage.Assertions
 		}
 
 		[Conditional(UNITY_ASSERTIONS)]
+		public static void IsNotNull<T>(T value, Object unityContext) where T : class
+		{
+			if (value == null)
+				LoggerWithContext("Value was null and should not have been.", unityContext);
+		}
+
+		[Conditional(UNITY_ASSERTIONS)]
 		public static void IsNotNull<T>(T value) where T : class
 		{
-			IsNotNull(value, null);
+			IsNotNull(value, string.Empty);
 		}
 
 		[Conditional(UNITY_ASSERTIONS)]

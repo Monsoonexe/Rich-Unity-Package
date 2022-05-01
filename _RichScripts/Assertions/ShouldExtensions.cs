@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 
+using Object = UnityEngine.Object;
+
 namespace RichPackage.Assertions
 {
     public static class ShouldExtensions
@@ -23,6 +25,10 @@ namespace RichPackage.Assertions
         [Conditional(Assert.UNITY_ASSERTIONS)]
         public static void ShouldNotBeNull(this object obj)
             => Assert.IsNotNull(obj);
+
+        [Conditional(Assert.UNITY_ASSERTIONS)]
+        public static void ShouldNotBeNull(this object obj, Object unityContext)
+            => Assert.IsNotNull(obj, unityContext);
 
         [Conditional(Assert.UNITY_ASSERTIONS)]
         public static void ShouldNotBeNull(this object obj, string because)
