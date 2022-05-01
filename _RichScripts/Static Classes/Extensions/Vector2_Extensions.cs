@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Runtime.CompilerServices;
+using RichPackage;
 
 /// <summary>
 /// Custom helper mehtods for Vector2s.

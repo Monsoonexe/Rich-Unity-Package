@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using NaughtyAttributes;
+using RichPackage;
 
 /// <summary>
 /// No Neutonian Physics.

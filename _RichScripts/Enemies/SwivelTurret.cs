@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using NaughtyAttributes;
+using RichPackage;
 
 [SelectionBase]
 [RequireComponent(typeof(SphereCollider))]
