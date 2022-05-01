@@ -1,7 +1,16 @@
-﻿using UnityEngine;
+﻿/*
+TODO - replace this with a Stats system
+health and mana are virtually identical, but the base class shouldn't be "health"
+
+also, attributes like Strength traditionally work the same way
+
+*/
+
+using UnityEngine;
 using UnityEngine.Events;
 using ScriptableObjectArchitecture;
 using NaughtyAttributes;
+using RichPackage;
 
 /// <summary>
 /// 
