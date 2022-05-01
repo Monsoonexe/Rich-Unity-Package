@@ -9,7 +9,7 @@ public class CardSO : RichScriptableObject
     /// Rank Numeric value (1-13) 1:A, 11: J, 12: Q, 13: K.
     /// </summary>
 	[FormerlySerializedAs("value")]
-    [SerializeField] private int rank;
+    [SerializeField] private CardRank rank;
 	public int Rank => rank; //serialized readonly property pattern
 
     /// <summary>
@@ -30,14 +30,7 @@ public class CardSO : RichScriptableObject
 	}
 
     public override string ToString()
-    {
-		var outputString = CommunityStringBuilder.Instance;
-        outputString.Append(ConvertRankToString(rank));
-        outputString.Append(" of ");
-        outputString.Append(suit.ToString());
-
-        return outputString.ToString();
-    }
+        => $"{Rank} of {Suit}.";
 
     /// <summary>
     /// Returns the card that has a larger value (1 - 13; A - K)
@@ -91,37 +84,6 @@ public class CardSO : RichScriptableObject
     /// <returns>True if both value and suit match.</returns>
     public static bool Equals(CardSO cardA, CardSO cardB)
 		=> (cardA.suit == cardB.suit) && (cardA.rank == cardB.rank);
-
-    public static string ConvertRankToString(int rank)
-    {
-        string rankAsString;
-
-        //convert face card values
-        switch (rank)
-        {
-            case 1:
-                rankAsString = "Ace";
-                break;
-
-            case 11:
-                rankAsString = "Jack";
-                break;
-
-            case 12:
-                rankAsString = "Queen";
-                break;
-
-            case 13:
-                rankAsString = "King";
-                break;
-
-            default:
-                rankAsString = rank.ToString();
-                break;
-        }
-
-        return rankAsString;
-    }
 
 	//auto conversions for simplicity
 	public static implicit operator int (CardSO a) => a.Rank;
