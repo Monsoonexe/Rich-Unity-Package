@@ -1,45 +1,76 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
+using RichPackage.GuardClauses;
 
-public class DelayEvent : RichMonoBehaviour
+namespace RichPackage.Events
 {
-    public enum MessageTrigger
+    public sealed class DelayEvent : RichMonoBehaviour
     {
-        None = 0,
-        Awake,
-        Start
-    }
+        private enum MessageTrigger
+        {
+            None = 0,
+            Awake = 1,
+            Start = 2,
+        }
 
-    public MessageTrigger messageTrigger = MessageTrigger.None;
-    [SerializeField] private float delaySeconds = 1f;
-    [SerializeField] private UnityEvent uEvent = new UnityEvent();
+        [Title("Options"), SerializeField, EnumToggleButtons]
+        private MessageTrigger messageTrigger = MessageTrigger.None;
 
-    protected override void Awake()
-    {
-        if(messageTrigger == MessageTrigger.Awake)
-            CallEvent();
-    }
+        [SerializeField, Min(float.Epsilon)]
+        private float delaySeconds = 1f;
 
-    private void Start()
-    {
-        if(messageTrigger == MessageTrigger.Start)
-            CallEvent();        
-    }
+        [SerializeField, Title("Unity Events"),
+            FoldoutGroup("Event")]
+        private UnityEvent uEvent = new UnityEvent();
 
-    public void CallEvent()
-    {
-        StartCoroutine(Delay());
-    }
+        //runtime data
+        [ShowInInspector, ReadOnly, HideInEditorMode, PropertyTooltip("Is the event pending.")]
+        public bool IsPending => delayRoutine != null;
 
-    public void CancelEvent()
-    {
-        StopAllCoroutines();
-    }
+        private Coroutine delayRoutine;
 
-    private IEnumerator Delay()
-    {
-        yield return new WaitForSeconds(delaySeconds);
-        uEvent.Invoke();
+        #region Unity Messages
+
+        private void Reset()
+        {
+            SetDevDescription("I invoke a UnityEvent after a delay.");
+        }
+
+        protected override void Awake()
+        {
+            if (messageTrigger == MessageTrigger.Awake)
+                CallEvent();
+        }
+
+        private void Start()
+        {
+            if (messageTrigger == MessageTrigger.Start)
+                CallEvent();
+        }
+
+        #endregion Unity Messages
+
+        [Button, DisableInEditorMode]
+        public void CallEvent() => StartCoroutine(Delay());
+
+        [Button, DisableInEditorMode]
+        public void CancelEvent() => StopAllCoroutines();
+
+        private IEnumerator Delay()
+        {
+            //validate
+            GuardAgainst.IsZeroOrNegative(delaySeconds);
+
+            //prevent duplicates
+            if (delayRoutine != null)
+                StopCoroutine(delayRoutine);
+
+            //do work
+            yield return new WaitForSeconds(delaySeconds);
+            uEvent.Invoke();
+            delayRoutine = null;
+        }
     }
 }
