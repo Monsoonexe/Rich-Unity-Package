@@ -52,4 +52,43 @@ public static class String_Extensions
 
         return output;
     }
+    
+    public static string RemoveTrailingWhitespace(this string str)
+    {
+        //validate
+        if (str.IsNullOrEmpty())
+            return str;
+
+        //work
+        int len = str.Length;
+        int endingIndex = len - 1;
+
+        while (str.IndexIsInRange(endingIndex)
+            && char.IsWhiteSpace(str[endingIndex]))
+            --endingIndex;
+
+        if (endingIndex == len - 1)
+            return str; //no trailing whitespace
+        else
+            return str.Substring(0, endingIndex + 1);
+    }
+
+    public static string RemoveLeadingWhitespace(this string str)
+    {
+        //validate
+        if (str.IsNullOrEmpty())
+            return str;
+
+        //work
+        int startingIndex = 0;
+
+        while (str.IndexIsInRange(startingIndex)
+            && char.IsWhiteSpace(str[startingIndex]))
+            ++startingIndex;
+
+        if (startingIndex == 0)
+            return str;
+        else
+            return str.Substring(startingIndex);
+    }
 }
