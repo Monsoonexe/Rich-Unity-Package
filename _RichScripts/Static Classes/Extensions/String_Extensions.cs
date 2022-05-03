@@ -36,6 +36,10 @@ public static class String_Extensions
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IndexIsInRange(this string str, int index)
+        => index >= 0 && index < str.Length;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string RemoveWhitespace(this string str)
     {
         string output;
