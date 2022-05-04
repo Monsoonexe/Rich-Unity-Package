@@ -22,7 +22,7 @@ namespace RichPackage.ObjectPooling
         private bool isDisposed;
         private T[] buffer;
 
-        public readonly int Count;
+        public int Length => buffer.Length;
 
         #region Constructors
 
@@ -33,7 +33,6 @@ namespace RichPackage.ObjectPooling
 
             //init
             buffer = ArrayPool<T>.Shared.Rent(minimumLength);
-            Count = buffer.Length;
         }
 
         ~PooledBuffer()
