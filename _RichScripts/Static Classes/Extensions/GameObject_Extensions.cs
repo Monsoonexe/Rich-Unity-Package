@@ -38,7 +38,7 @@ public static class GameObject_Extensions
     /// <param name="a"></param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Destroy(this GameObject a)
-        => Destroy(a);
+        => UnityEngine.Object.Destroy(a);
         
     /// <summary>
     /// Get name of the <see cref="GameObject"/> prefixed 
