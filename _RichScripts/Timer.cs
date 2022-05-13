@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage
 {
@@ -15,7 +15,7 @@ namespace RichPackage
 	{
 		private bool paused = false;
 
-		[ShowNativeProperty]
+		[ShowInInspector, ReadOnly]
 		public bool Paused
 		{
 			get => paused;
@@ -47,22 +47,22 @@ namespace RichPackage
 		/// Accumulated time that has elapsed since last Restart() or Init().
 		/// Not guaranteed to be equal to TimerDuration at end of timer due to deltaTime.
 		/// </summary>
-		[ShowNativeProperty]
+		[ShowInInspector, ReadOnly]
 		public float TimeElapsed { get; private set; }
 
 		/// <summary>
 		/// 0 will effectively pause effect but won't pause coroutine.
 		/// </summary>
 		[Tooltip("0 will effectively pause effect but won't pause coroutine.")]
-		public float timeScale = 1.0f;
+		public FloatReference TimeScale = new FloatReference(1.0f);
 
-		[ShowNativeProperty]
+		[ShowInInspector, ReadOnly]
 		public float PercentComplete
 		{
 			get => (TimerDuration - TimeRemaining) / TimerDuration;
 		}
 
-		[Foldout("---Events---")]
+		[FoldoutGroup("---Events---")]
 		[SerializeField]
 		private UnityEvent onTimerExpire = new UnityEvent();
 		public UnityEvent OnTimerExpire { get => onTimerExpire; }
@@ -114,6 +114,8 @@ namespace RichPackage
 				StartTimer();
 		}
 
+		[HorizontalGroup("butt")]
+		[Button, DisableInEditorMode]
 		public void Stop()
 		{
 			paused = true;
@@ -121,10 +123,13 @@ namespace RichPackage
 				StopCoroutine(timerRoutine);
 		}
 
+		[HorizontalGroup("butt")]
+		[Button, DisableInEditorMode]
 		public void Restart()
 			=> Initialize(TimerDuration, loop, startNow: true);
 
-		[Button("Start", EButtonEnableMode.Playmode)]
+		[HorizontalGroup("butt")]
+		[Button("Start"), DisableInEditorMode]
 		public void StartTimer()
 		{
 			paused = false;
@@ -158,7 +163,7 @@ namespace RichPackage
 				while (TimeRemaining > 0)
 				{
 					yield return null;//wait for next frame
-					var scaledDeltaTime = RichAppController.DeltaTime * timeScale;
+					var scaledDeltaTime = RichAppController.DeltaTime * TimeScale;
 					TimeElapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
 					TimeRemaining.Value -= scaledDeltaTime;//tick... tick... tick...
 				}
