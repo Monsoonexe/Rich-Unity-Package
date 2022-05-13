@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 using ScriptableObjectArchitecture;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Exposes AudioMixer properties to FloatVariables.
@@ -17,43 +17,40 @@ public class AudioMixerHelper : RichMonoBehaviour
 
     [Header("---Settings---")]
     [Tooltip("Init Variables with values in Mixer.")]
+    [EnumToggleButtons]
     public InitSettings initSettings = InitSettings.LoadMixerIntoVariables;
 
     [Header("---Volume Resources---")]
-    [SerializeField]
-    [Required]
+    [SerializeField, Required]
     private FloatVariable masterVolume = null;
 
-    [Required]
-    [SerializeField]
+    [Required, SerializeField]
     private FloatVariable musicVolume = null;
 
-    [SerializeField]
-    [Required]
+    [SerializeField, Required]
     private FloatVariable sfxVolume = null;
 
-    [SerializeField]
-    [Required]
+    [SerializeField, Required]
     private FloatVariable voiceVolume = null;
 
     #region Property Names
 
-    [Foldout("---Property Names---")]
+    [FoldoutGroup("---Property Names---")]
     [Tooltip("Must match property name on AudioMixer exactly.")]
     [SerializeField]
     private string masterVolumeProperty = "MasterVolume";
 
-    [Foldout("---Property Names---")]
+    [FoldoutGroup("---Property Names---")]
     [Tooltip("Must match property name on AudioMixer exactly.")]
     [SerializeField]
     private string musicVolumeProperty = "MusicVolume";
 
-    [Foldout("---Property Names---")]
+    [FoldoutGroup("---Property Names---")]
     [Tooltip("Must match property name on AudioMixer exactly.")]
     [SerializeField]
     private string sfxVolumeProperty = "SFXVolume";
 
-    [Foldout("---Property Names---")]
+    [FoldoutGroup("---Property Names---")]
     [Tooltip("Must match property name on AudioMixer exactly.")]
     [SerializeField]
     private string voiceVolumeProperty = "VoiceVolume";
@@ -61,8 +58,7 @@ public class AudioMixerHelper : RichMonoBehaviour
     #endregion
 
     [Header("---Resources---")]
-    [SerializeField]
-    [Required]
+    [SerializeField, Required]
     private AudioMixer mainMixer = null;
 
     protected override void Awake()
