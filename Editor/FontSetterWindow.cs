@@ -1,56 +1,37 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 using TMPro;
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor;
+using RichPackage.GuardClauses;
 
 /// <summary>
 /// I help assign a Font Asset to all TextMeshPro objects in a Scene.
 /// </summary>
-public class FontSetterWindow : EditorWindow
+public class FontSetterWindow : OdinEditorWindow
 {
 	public static FontSetterWindow Instance { get; private set; }
 
+    [SerializeField, Required]
     private TMP_FontAsset workingFont;
 
-    private TextMeshProUGUI[] sceneTexts;
-    
-    //main
-    private void OnGUI()
+    [SerializeField, ListDrawerSettings(Expanded = true, ShowItemCount = true, ShowPaging = true)]
+    private List<TextMeshProUGUI> sceneTexts;
+
+    [MenuItem("RichUtilities/Font Setter Window")]
+    private static void Init()
     {
-        //draw field for working font
-        workingFont = EditorGUILayout.ObjectField(//draw an object field
-            "New Font: ", //label
-            workingFont, //give it this item to start with
-            typeof(TMP_FontAsset), //restrict to type
-            allowSceneObjects: false)
-            as TMP_FontAsset; // cast
-
-        if(workingFont && GUILayout.Button("Change Fonts on all TMP Texts"))
-        {
-            //gather all elements
-            if (sceneTexts == null || sceneTexts.Length == 0)
-                sceneTexts = FindObjectsOfType<TextMeshProUGUI>();
-
-            var textsCount = sceneTexts.Length;
-
-            for(var i = 0; i < textsCount; ++i)
-            {
-                var text = sceneTexts[i];
-                text.font = workingFont;
-            }
-
-            SceneView.RepaintAll(); // refresh visuals with new fonts
-            Debug.LogFormat("Changed Font on {0} TMPText elements to {1}",
-                textsCount, workingFont.name);
-        }
-        EditorGUILayout.LabelField("If you don't see a change after a moment,");
-        EditorGUILayout.LabelField("resize a window and the UI will be repainted.");
+        Instance = EditorWindow.GetWindow<FontSetterWindow>(false, "FontSetterWindow", true);
+        Instance.Show();
     }
-    
-    private void OnEnable()
+
+    protected override void OnEnable()
     {
+        base.OnEnable();
         //gather all elements
         if (sceneTexts == null)
-            sceneTexts = FindObjectsOfType<TextMeshProUGUI>();
+            sceneTexts = new List<TextMeshProUGUI>();
     }
 
     private void OnDisable()
@@ -59,10 +40,42 @@ public class FontSetterWindow : EditorWindow
         sceneTexts = null;
     }
 
-    [MenuItem("RichUtilities/Font Setter Window")]
-	private static void Init()
+    [PropertySpace(22)]
+    [Button(ButtonSizes.Large)]
+    public void GatherRefs()
 	{
-		Instance = EditorWindow.GetWindow<FontSetterWindow>(true, "FontSetterWindow", true);
-		Instance.Show();
-	}
+        //gather all elements
+        if (sceneTexts == null || sceneTexts.Count == 0)
+            sceneTexts.AddRange(FindObjectsOfType<TextMeshProUGUI>());
+    }
+
+
+    [Button(ButtonSizes.Large, Style = ButtonStyle.Box)]
+    public void GatherFromChildren(Transform parent)
+	{
+        sceneTexts.Clear();
+
+        sceneTexts.AddRange(parent.GetComponentsInChildren<TextMeshProUGUI>());
+    }
+
+    [Button(ButtonSizes.Large), GUIColor(0, 1, 0.2f)]
+    public void Modify()
+    {
+        //validate
+        GuardAgainst.ArgumentIsNull(workingFont);
+
+        //log
+        Debug.Log($"Setting font {workingFont.name}.", workingFont);
+
+        //work
+        var textsCount = sceneTexts.Count;
+
+        for (var i = 0; i < textsCount; ++i)
+        {
+            var text = sceneTexts[i];
+            text.font = workingFont;
+            EditorUtility.SetDirty(text);
+            Debug.Log($"-Modified font on {text.name}.", text);
+        }
+    }
 }
