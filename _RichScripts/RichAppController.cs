@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Signals;
-using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 
 /// <summary>
@@ -25,9 +24,6 @@ public class RichAppController : RichMonoBehaviour
     public static float Time { get; private set; }
     
     public static float FixedDeltaTime { get; private set; }
-
-    [SerializeField, Required]
-    private GameEvent gameIsQuittingEvent;
 
     private void Reset()
     {
@@ -53,7 +49,6 @@ public class RichAppController : RichMonoBehaviour
     public void QuitGame()
     {
         GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
-        gameIsQuittingEvent.Raise();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
@@ -79,6 +74,9 @@ public class RichAppController : RichMonoBehaviour
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().buildIndex);
+
+    public static RichAppController Construct()
+        => new GameObject(nameof(RichAppController)).AddComponent<RichAppController>();
 }
 
 /// <summary>
