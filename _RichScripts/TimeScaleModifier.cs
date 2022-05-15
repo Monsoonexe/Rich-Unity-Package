@@ -2,44 +2,47 @@
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 
-/// <summary>
-/// Sets the timeScale.
-/// </summary>
-public class TimeScaleModifier : RichMonoBehaviour
+namespace RichPackage
 {
-    [SerializeField]
-    private FloatReference timeScale = new FloatReference(1);
-
     /// <summary>
-    /// Setting this value updates Time.timeScale immediately.
+    /// Sets the timeScale.
     /// </summary>
-    public float TimeScale
+    public class TimeScaleModifier : RichMonoBehaviour
     {
-        get => timeScale;
-        set => timeScale.Value = value;
-    }
+        [SerializeField]
+        private FloatReference timeScale = new FloatReference(1);
 
-    public void SetTimeScale(FloatVariable newValue)
-    {
-        TimeScale = newValue;
-    }
+        /// <summary>
+        /// Setting this value updates Time.timeScale immediately.
+        /// </summary>
+        public float TimeScale
+        {
+            get => timeScale;
+            set => timeScale.Value = value;
+        }
 
-    private void OnEnable()
-    {
-        UpdateTimeScale();
-        //only works if using a FloatVariable, not Reference
-        timeScale.AddListener(UpdateTimeScale);
-    }
+        public void SetTimeScale(FloatVariable newValue)
+        {
+            TimeScale = newValue;
+        }
 
-    private void OnDisable()
-    {
-        //only works if using a FloatVariable, not Reference
-        timeScale.RemoveListener(UpdateTimeScale);
-    }
+        private void OnEnable()
+        {
+            UpdateTimeScale();
+            //only works if using a FloatVariable, not Reference
+            timeScale.AddListener(UpdateTimeScale);
+        }
 
-    [Button, DisableInEditorMode]
-    public void UpdateTimeScale()
-    {
-        Time.timeScale = timeScale;
+        private void OnDisable()
+        {
+            //only works if using a FloatVariable, not Reference
+            timeScale.RemoveListener(UpdateTimeScale);
+        }
+
+        [Button, DisableInEditorMode]
+        public void UpdateTimeScale()
+        {
+            Time.timeScale = timeScale;
+        }
     }
 }
