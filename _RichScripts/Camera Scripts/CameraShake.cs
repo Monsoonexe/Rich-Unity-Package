@@ -6,127 +6,130 @@ using UnityEngine;
 using NaughtyAttributes;
 using Signals;
 
-/// <summary>
-/// Can shake the camera. 
-/// </summary>
-/// <see cref="ShakeSignal"/>
-public class CameraShake : RichMonoBehaviour
+namespace RichPackage.Cameras
 {
     /// <summary>
-    /// Instructs any camera shakers to do so.
-    /// (float Duration, float amount);
+    /// Can shake the camera. 
     /// </summary>
-    public class ShakeSignal : ASignal<float, float> { }
-
-    /// <summary>
-    /// How many seconds the object should shake for.
-    /// </summary>
-    [Header("---Settings---")]
-    [Min(0)]
-	public float shakeDuration = 0.7f;
-
-    /// <summary>
-    /// Amplitude of the shake. A larger value shakes the camera harder.
-    /// </summary>
-    [Min(0)]
-    public float shakeAmount = 15.0f;
-
-    [Tooltip("If false, leave where left off. " +
-        "if true, put back where you found it.")]
-    public bool resetToOriginOnEnd = true;
-
-    public bool smooth = true;
-
-    [ShowIf("smooth")]
-    [Min(0)]
-    [Tooltip("Lower is more smooth, higher is choppier.")]
-    public float smoothAmount = 5f;
-
-    /// <summary>
-    /// Transform of the camera to shake. Grabs the gameObject's transform
-    /// if null.
-    /// </summary>
-    [Header("---Scene References---")]
-    [Tooltip("[default = this] Thing to get shooken.")]
-    public Transform shakeHandle;
-
-    //runtime values
-    private float startAmount;//The initial shake amount (to determine percentage), set when ShakeCamera is called.
-    private float startDuration;//The initial shake duration, set when ShakeCamera is called.
-
-    private Quaternion originalPos;
-    private Coroutine shakeRoutine;
-
-	protected override void Awake()
-	{
-        base.Awake();
-		if (shakeHandle == null)
-            shakeHandle = myTransform;
-    }
-
-    private void OnEnable()
+    /// <see cref="ShakeSignal"/>
+    public class CameraShake : RichMonoBehaviour
     {
-        GlobalSignals.Get<ShakeSignal>().AddListener(Shake);
-    }
+        /// <summary>
+        /// Instructs any camera shakers to do so.
+        /// (float Duration, float amount);
+        /// </summary>
+        public class ShakeSignal : ASignal<float, float> { }
 
-    private void OnDisable()
-    {
-        GlobalSignals.Get<ShakeSignal>().RemoveListener(Shake);
-        if (shakeRoutine != null)
-            StopCoroutine(shakeRoutine);
-    }
+        /// <summary>
+        /// How many seconds the object should shake for.
+        /// </summary>
+        [Header("---Settings---")]
+        [Min(0)]
+        public float shakeDuration = 0.7f;
 
-    [Button(null, EButtonEnableMode.Playmode)]
-    public void Shake()
-    {
-        if (shakeRoutine != null)//prevent duplicates
-            StopCoroutine(shakeRoutine);
-        shakeRoutine = StartCoroutine(DoShake());
-    }
+        /// <summary>
+        /// Amplitude of the shake. A larger value shakes the camera harder.
+        /// </summary>
+        [Min(0)]
+        public float shakeAmount = 15.0f;
 
-    public void Shake(float shakeDuration,
-        float shakeAmount)
-    {
-        this.shakeDuration = shakeDuration;
-        this.shakeAmount = shakeAmount;
-        Shake();
-    }
+        [Tooltip("If false, leave where left off. " +
+            "if true, put back where you found it.")]
+        public bool resetToOriginOnEnd = true;
 
-    public void Shake(Transform handle)
-    {
-        shakeHandle = handle;
-        Shake();
-    }
+        public bool smooth = true;
 
-    private IEnumerator DoShake()
-    {
-        startAmount = shakeAmount;//Set default (start) values
-        startDuration = shakeDuration;//Set default (start) values
+        [ShowIf("smooth")]
+        [Min(0)]
+        [Tooltip("Lower is more smooth, higher is choppier.")]
+        public float smoothAmount = 5f;
 
-        var endShakeTime = Time.time + shakeDuration;
-        originalPos = shakeHandle.localRotation; //cache
+        /// <summary>
+        /// Transform of the camera to shake. Grabs the gameObject's transform
+        /// if null.
+        /// </summary>
+        [Header("---Scene References---")]
+        [Tooltip("[default = this] Thing to get shooken.")]
+        public Transform shakeHandle;
 
-        while (Time.time < endShakeTime)
-		{
-			var newPos = (Random.insideUnitSphere * shakeAmount)
-                .WithZ(0); //don't shake z
+        //runtime values
+        private float startAmount;//The initial shake amount (to determine percentage), set when ShakeCamera is called.
+        private float startDuration;//The initial shake duration, set when ShakeCamera is called.
 
-            var shakePercentage = shakeDuration / startDuration;//Used to set the amount of shake (% * startAmount).
+        private Quaternion originalPos;
+        private Coroutine shakeRoutine;
 
-            shakeAmount = startAmount * shakePercentage;//Set the amount of shake (% * startAmount).
+        protected override void Awake()
+        {
+            base.Awake();
+            if (shakeHandle == null)
+                shakeHandle = myTransform;
+        }
 
-            if (smooth)
-                transform.localRotation = Quaternion.Lerp(
-                    transform.localRotation, 
-                    Quaternion.Euler(newPos), 
-                    Time.deltaTime * smoothAmount);
-            else
-                transform.localRotation = Quaternion.Euler(newPos);//Set the local rotation the be the rotation amount.
+        private void OnEnable()
+        {
+            GlobalSignals.Get<ShakeSignal>().AddListener(Shake);
+        }
 
-            yield return null;//next frame
-		}
+        private void OnDisable()
+        {
+            GlobalSignals.Get<ShakeSignal>().RemoveListener(Shake);
+            if (shakeRoutine != null)
+                StopCoroutine(shakeRoutine);
+        }
 
-        if(resetToOriginOnEnd)
-            shakeHandle.localRotation = originalPos;
+        [Button(null, EButtonEnableMode.Playmode)]
+        public void Shake()
+        {
+            if (shakeRoutine != null)//prevent duplicates
+                StopCoroutine(shakeRoutine);
+            shakeRoutine = StartCoroutine(DoShake());
+        }
+
+        public void Shake(float shakeDuration,
+            float shakeAmount)
+        {
+            this.shakeDuration = shakeDuration;
+            this.shakeAmount = shakeAmount;
+            Shake();
+        }
+
+        public void Shake(Transform handle)
+        {
+            shakeHandle = handle;
+            Shake();
+        }
+
+        private IEnumerator DoShake()
+        {
+            startAmount = shakeAmount;//Set default (start) values
+            startDuration = shakeDuration;//Set default (start) values
+
+            var endShakeTime = Time.time + shakeDuration;
+            originalPos = shakeHandle.localRotation; //cache
+
+            while (Time.time < endShakeTime)
+            {
+                var newPos = (Random.insideUnitSphere * shakeAmount)
+                    .WithZ(0); //don't shake z
+
+                var shakePercentage = shakeDuration / startDuration;//Used to set the amount of shake (% * startAmount).
+
+                shakeAmount = startAmount * shakePercentage;//Set the amount of shake (% * startAmount).
+
+                if (smooth)
+                    transform.localRotation = Quaternion.Lerp(
+                        transform.localRotation, 
+                        Quaternion.Euler(newPos), 
+                        Time.deltaTime * smoothAmount);
+                else
+                    transform.localRotation = Quaternion.Euler(newPos);//Set the local rotation the be the rotation amount.
+
+                yield return null;//next frame
+            }
+
+            if(resetToOriginOnEnd)
+                shakeHandle.localRotation = originalPos;
+        }
     }
 }
