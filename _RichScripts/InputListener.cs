@@ -1,69 +1,72 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using NaughtyAttributes;
+using Sirinex.OdinInspector;
 
-public class InputListener : RichMonoBehaviour
+namespace RichPackage
 {
-    public enum ButtonInteractType
+    public class InputListener : RichMonoBehaviour
     {
-        Down,
-        Up,
-        Hold
-    }
-
-    [Header("---Settings---")]
-    [SerializeField]
-    private bool useKeyCode = true;
-
-    [ShowIf("useKeyCode")]
-    [SerializeField]
-    private KeyCode keycode = KeyCode.Space;
-
-    [SerializeField]
-    private bool useButton = false;
-
-    [ShowIf("useButton")]
-    [InputAxis]
-    [SerializeField]
-    private string button = "Fire1";
-
-    [SerializeField]
-    private ButtonInteractType buttonType = ButtonInteractType.Down;
-
-    [SerializeField]
-    private UnityEvent action = new UnityEvent();
-
-    protected void Update()
-    {
-        ReactToButtonPress();
-    }
-
-    [Button("Force()", EButtonEnableMode.Playmode)]
-    public void PerformAction()
-    {
-        action.Invoke();
-    }
-
-    protected void ReactToButtonPress()
-    {
-        //listen for button
-        switch (buttonType)
+        public enum ButtonInteractType
         {
-            case ButtonInteractType.Down:
-                if (useKeyCode && Input.GetKeyDown(keycode)
-                    || useButton && Input.GetButtonDown(button))
-                    PerformAction();
-                break;
-            case ButtonInteractType.Up:
-                if (useKeyCode && Input.GetKeyUp(keycode)
-                    || useButton && Input.GetButtonUp(button))
-                    PerformAction();
-                break;
-            case ButtonInteractType.Hold:
-                if (useKeyCode && Input.GetKey(keycode)
-                    || useButton && Input.GetButton(button))
-                    PerformAction();
-                break;
+            Down,
+            Up,
+            Hold
+        }
+
+        [Title("Settings")]
+        [SerializeField]
+        public bool useKeyCode = true;
+
+        [ShowIf("useKeyCode")]
+        [SerializeField]
+        public KeyCode keycode = KeyCode.Space;
+
+        [SerializeField]
+        public bool useButton = false;
+
+        [ShowIf("useButton")]
+        [NaughtyAttributes.InputAxis]
+        [SerializeField]
+        public string button = "Fire1";
+
+        [SerializeField]
+        public ButtonInteractType buttonType = ButtonInteractType.Down;
+
+        [SerializeField, FoldoutGroup("Events")]
+        private UnityEvent action = new UnityEvent();
+
+        protected void Update()
+        {
+            ReactToButtonPress();
+        }
+
+        [Button("Force()", EButtonEnableMode.Playmode)]
+        public void PerformAction()
+        {
+            action.Invoke();
+        }
+
+        protected void ReactToButtonPress()
+        {
+            //listen for button
+            switch (buttonType)
+            {
+                case ButtonInteractType.Down:
+                    if (useKeyCode && Input.GetKeyDown(keycode)
+                        || useButton && Input.GetButtonDown(button))
+                        PerformAction();
+                    break;
+                case ButtonInteractType.Up:
+                    if (useKeyCode && Input.GetKeyUp(keycode)
+                        || useButton && Input.GetButtonUp(button))
+                        PerformAction();
+                    break;
+                case ButtonInteractType.Hold:
+                    if (useKeyCode && Input.GetKey(keycode)
+                        || useButton && Input.GetButton(button))
+                        PerformAction();
+                    break;
+            }
         }
     }
 }
