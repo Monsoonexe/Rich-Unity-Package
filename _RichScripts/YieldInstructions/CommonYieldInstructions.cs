@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-namespace RichPackage
+namespace RichPackage.YieldInstructions
 {
+	/// <summary>
+	/// Holds cached values for often-used yield instructions.
+	/// </summary>
 	public static class CommonYieldInstructions
 	{
 		public static readonly YieldInstruction WaitForEndOfFrame = new WaitForEndOfFrame();
