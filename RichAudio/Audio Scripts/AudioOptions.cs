@@ -1,4 +1,6 @@
-﻿using System;
+﻿//TODO - make a class, not struct
+
+using System;
 using UnityEngine;
 
 /// <summary>

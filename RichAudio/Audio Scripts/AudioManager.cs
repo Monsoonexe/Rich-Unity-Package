@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using DG.Tweening;
-using ScriptableObjectArchitecture;
 
 /* TODO - cache fade tweens for less overhead
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
@@ -217,13 +216,8 @@ namespace RichPackage.Audio
         public void PlaySFX(AudioClip clip)
             => AudioManager.PlaySFX(clip);
 
-        public void PlaySFX(AudioClipReference clipRef)
-            => AudioManager.PlaySFX(
-                clipRef.Value, clipRef.Options);
-
-        public void PlaySFX(AudioClipVariable clipVar)
-            => AudioManager.PlaySFX(
-                clipVar.Value, clipVar.Options);
+        public void PlaySFX(RichAudioClip clipVar)
+            => AudioManager.PlaySFX(clipVar.Value, clipVar.Options);
 
         /// <summary>
         /// Different way to play a SFX if you don't want to use AudioOptions.

@@ -9,9 +9,12 @@ namespace RichPackage.Audio
     /// </summary>
     public class SceneMusic : RichMonoBehaviour
     {
-        [Header("---Resources---")]
+        [Title("Options")]
+        public float crossfade = 1.0f;
+
+        [Title("Resources")]
         [Required]
-        public AudioClipVariable music;
+        public RichAudioClip music;
 
         public AudioClip Clip
         {
@@ -45,7 +48,7 @@ namespace RichPackage.Audio
 
         public void StopSound()
         {
-            AudioManager.StopSFX(audioID);
+            AudioManager.StopSFX(audioID, crossfade);
         }
     }
 }

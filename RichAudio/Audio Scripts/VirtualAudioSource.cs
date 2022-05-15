@@ -11,7 +11,7 @@ namespace RichPackage.Audio
     /// <seealso cref="AudioManager"/>
     public class VirtualAudioSource : RichMonoBehaviour
     {
-        public AudioClipReference clip;
+        public RichAudioClip clip;
         public bool playOnAwake = false;
         public bool stopOnDisable = false;
 
