@@ -1,74 +1,78 @@
 ﻿using UnityEngine;
-using NaughtyAttributes;
+using Sirinex.OdinInspector;
 
-/// <summary>
-/// 
-/// </summary>
-[RequireComponent(typeof(LineRenderer))]
-public class RaycastVisualizer : RichMonoBehaviour
+namespace RichPackage.Raycasting
 {
-    [Required]
-    public Transform origin;
-
-    [Required]
-    public Transform target;
-
-    [MinValue(0)]
-    public float rayInterval = 1.0f;
-
-    [MinValue(0)]
-    public float targetDistance = 50;
-
-    [ReadOnly]
-    [SerializeField]
-    private float actualDistance;
-
-    private LineRenderer myLineRenderer;
-    public LineRenderer LineRenderer
+    /// <summary>
+    /// 
+    /// </summary>
+    [RequireComponent(typeof(LineRenderer))]
+    public class RaycastVisualizer : RichMonoBehaviour
     {
-        get
+        [Required]
+        public Transform origin;
+
+        [Required]
+        public Transform target;
+
+        [Min(0)]
+        public float rayInterval = 1.0f;
+
+        [Min(0)]
+        public float targetDistance = 50;
+
+        [ReadOnly, SerializeField]
+        private float actualDistance;
+
+        private LineRenderer myLineRenderer;
+        public LineRenderer LineRenderer
         {
+            get
+            {
+                if (myLineRenderer == null)
+                    return myLineRenderer = GetComponent<LineRenderer>();
+                else
+                    return myLineRenderer;
+            }
+        }
+        private float nextRayTime;
+
+        private void Reset()
+        {
+            Awake();
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
             if (myLineRenderer == null)
-                return myLineRenderer = GetComponent<LineRenderer>();
-            else
-                return myLineRenderer;
+                myLineRenderer = GetComponent<LineRenderer>();
+            myLineRenderer.positionCount = 2;
         }
-    }
-    private float nextRayTime;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        myLineRenderer = GetComponent<LineRenderer>();
-        myLineRenderer.positionCount = 2;
-    }
-
-    private void Update()
-    {
-        var currentTime = Time.time;
-        if(nextRayTime < currentTime)
+        private void Update()
         {
-            nextRayTime = currentTime += rayInterval;
-            UpdateLineRenderer();
+            var currentTime = Time.time;
+            if(nextRayTime < currentTime)
+            {
+                nextRayTime = currentTime += rayInterval;
+                UpdateLineRenderer();
+            }
         }
-    }
 
-    [Button]
-    public void UpdateLineRenderer()
-    {
-        var originPosition = origin.position;
-        var targetPosition = target.position;
-        var directionVector = targetPosition - originPosition;
-        var ray = new Ray(originPosition, directionVector);
-        actualDistance = Vector3.Distance(originPosition, targetPosition);
+        [Button]
+        public void UpdateLineRenderer()
+        {
+            var originPosition = origin.position;
+            var targetPosition = target.position;
+            var directionVector = targetPosition - originPosition;
+            var ray = new Ray(originPosition, directionVector);
+            actualDistance = Vector3.Distance(originPosition, targetPosition);
 
-        LineRenderer.SetPosition(0, originPosition);
-        //LineRenderer.SetPosition(1, targetPosition);
-        LineRenderer.SetPosition(1, ray.GetPoint(targetDistance));
-    }
-
-    private void Reset()
-    {
-        Awake();
+            LineRenderer.SetPosition(0, originPosition);
+            //LineRenderer.SetPosition(1, targetPosition);
+            LineRenderer.SetPosition(1, ray.GetPoint(targetDistance));
+        }
     }
 }
