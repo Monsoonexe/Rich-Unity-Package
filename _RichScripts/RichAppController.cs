@@ -44,10 +44,6 @@ public class RichAppController : RichMonoBehaviour
 		DG.Tweening.DOTween.SetTweensCapacity(500, 20);
 	}
 
-	private void Start()
-	{
-	}
-
 	private void OnDestroy()
     {
         GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
