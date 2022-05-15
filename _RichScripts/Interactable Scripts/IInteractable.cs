@@ -1,15 +1,18 @@
 
-public interface IInteractable
+namespace RichPackage.Interaction
 {
-    void OnEnterHover(PlayerScript player);
+    public interface IInteractable
+    {
+        void OnEnterHover();
 
-    void OnExitHover(PlayerScript player);
+        void OnExitHover();
 
-    void OnEnterRange(PlayerScript player);
+        void OnEnterRange();
 
-    void OnExitRange(PlayerScript player);
+        void OnExitRange();
 
-    void Interact(PlayerScript player);
+        void Interact();
 
-    void EndInteraction();
+        void EndInteraction();
+    }
 }
