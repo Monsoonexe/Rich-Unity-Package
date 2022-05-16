@@ -543,6 +543,14 @@ public static class Collection_Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IndexIsInRange(this IList col, int index)
         => index >= 0 && index < col.Count;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullOrEmpty(this IList list)
+        => list == null || list.Count == 0;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullOrEmpty<T>(this IList<T> list)
+        => list == null || list.Count == 0;
         
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEmpty(this IList list)
