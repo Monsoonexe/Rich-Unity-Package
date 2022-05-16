@@ -1,4 +1,6 @@
-﻿using System;
+﻿//TODO - remove dependency on UnityEngine
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -58,6 +60,37 @@ public static class Collection_Extensions
             "Index out of bounds [{0} | {1}] " + //report index
             "on: {2}", //report name of problem mono
             index, collection.Count, name);
+
+    /// <summary>
+    /// Pop <paramref name="count"/> items off of <paramref name="src"/>
+    /// and add them to <paramref name="dest"/>.
+    /// </summary>
+    /// <param name="src">List to remove items from.</param>
+    /// <param name="dest">List to add items to.</param>
+    /// <param name="count">Number of items to drain. &lt;0 implies 'drain all'.</param>
+    /// <returns>Actual number of items added to <paramref name="dest"/>.</returns>
+    public static int DrainInto<T>(this List<T> src, List<T> dest, int count)
+    {
+        //validate
+        if (src == null)
+            throw new ArgumentNullException(nameof(src));
+        if (dest == null)
+            throw new ArgumentNullException(nameof(dest));
+
+        //flag to drain all
+        if (count < 0)
+            count = src.Count;
+
+        //ensure capacity
+        if (dest.Capacity < Math.Min(count, src.Count))
+            dest.Capacity = count;
+
+        //work
+        int i = 0;
+        for (; i < count && src.IsNotEmpty(); ++i)
+            dest.Add(src.GetRemoveLast());
+        return i;
+    }
 
     /// <summary>
     /// Returns 'true' if the dictionary contains the given key, which indicates the value was removed.
