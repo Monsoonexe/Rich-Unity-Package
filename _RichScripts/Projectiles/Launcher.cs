@@ -1,38 +1,41 @@
 using UnityEngine;
 using RichPackage.Pooling;
 
-[RequireComponent(typeof(GameObjectPool))]
-public class Launcher : RichMonoBehaviour, ILaunchable
+namespace RichPackage.ProjectileSystem
 {
-    /// <summary>
-    /// Pool of projectiles.
-    /// </summary>
-    protected GameObjectPool projectilePool;
-
-    protected override void Awake()
+    [RequireComponent(typeof(GameObjectPool))]
+    public class Launcher : RichMonoBehaviour, ILaunchable
     {
-        base.Awake();
-        projectilePool = GetComponent<GameObjectPool>();
-    }
+        /// <summary>
+        /// Pool of projectiles.
+        /// </summary>
+        protected GameObjectPool projectilePool;
 
-    protected virtual void Start()
-    {
-        projectilePool.InitPool();
-    }
-
-    public virtual void Launch(Transform spawnPoint)
-    {
-        //get obj from pool
-        var projectile = projectilePool.Depool<RichMonoBehaviour>();
-
-        if (!projectile)//pool empty
+        protected override void Awake()
         {
-            Debug.Log("Pool Empty");
-            return;
+            base.Awake();
+            projectilePool = GetComponent<GameObjectPool>();
         }
 
-        //orient towards target
-        projectile.transform.position = spawnPoint.position;
-        projectile.transform.rotation = spawnPoint.rotation;
+        protected virtual void Start()
+        {
+            projectilePool.InitPool();
+        }
+
+        public virtual void Launch(Transform spawnPoint)
+        {
+            //get obj from pool
+            var projectile = projectilePool.Depool<RichMonoBehaviour>();
+
+            if (!projectile)//pool empty
+            {
+                Debug.Log("Pool Empty");
+                return;
+            }
+
+            //orient towards target
+            projectile.transform.position = spawnPoint.position;
+            projectile.transform.rotation = spawnPoint.rotation;
+        }
     }
 }

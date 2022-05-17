@@ -1,96 +1,99 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Not every card has the same probability of being drawn.
-/// </summary>
-public class StackedDeck<TContainer, TValue> : ADeck<TValue>
-    where TContainer : AWeightedProbability<TValue>
+namespace RichPackage.Decks
 {
-    [SerializeField]
-    protected List<TContainer> weightedManifest = new List<TContainer>();
-
     /// <summary>
-    /// face-down deck
+    /// Not every card has the same probability of being drawn.
     /// </summary>
-    public readonly List<TContainer> unusedCards = new List<TContainer>();
-
-    /// <summary>
-    /// discard pile
-    /// </summary>
-    public readonly List<TContainer> usedCards = new List<TContainer>();
-
-    public override int CardsRemaining { get => unusedCards.Count; }
-
-    private void OnValidate()
+    public class StackedDeck<TContainer, TValue> : ADeck<TValue>
+        where TContainer : AWeightedProbability<TValue>
     {
-        manifest.Clear();// reload card values
-        var len = weightedManifest.Count;
-        for (var i = 0; i < len; ++i)
-            manifest.Add(weightedManifest[i].Value); //add card to manifest
-    }
+        [SerializeField]
+        protected List<TContainer> weightedManifest = new List<TContainer>(16);
 
-    public override TValue Draw()
-    {
-        var deck = unusedCards;
-        if (deck.Count == 0) return default;
+        /// <summary>
+        /// face-down deck
+        /// </summary>
+        public readonly List<TContainer> unusedCards = new List<TContainer>(16);
 
-        var iCard = GetWeightedIndex(deck);
-        var cardAt = deck[iCard];
-        MoveCardToDiscard(iCard);
-        return cardAt.Value;
-    }
+        /// <summary>
+        /// discard pile
+        /// </summary>
+        public readonly List<TContainer> usedCards = new List<TContainer>(16);
 
-    /// <summary>
-    /// Remove item from deck at given index and place it on top of discard pile.
-    /// </summary>
-    public void MoveCardToDiscard(int index)
-        => usedCards.Add(unusedCards.GetRemoveAt(index));
+        public override int CardsRemaining { get => unusedCards.Count; }
 
-    public override void Reload()
-    {
-        usedCards.Clear();
-        unusedCards.Clear();
-
-        //add all cards to unused pile
-        weightedManifest.ForEachBackwards(unusedCards.Add);
-    }
-
-    /// <summary>
-    /// Shuffling has no effect on a weighted random deck but is not an error to do so.
-    /// </summary>
-    public override void Shuffle() { } //nada
-
-    /// <summary>
-    /// Shuffling has no effect on a weighted random deck but is not an error to do so.
-    /// </summary>
-    public override void ShuffleRemaining() { } //nada
-
-    protected static int GetTotalWeight(IList<TContainer>
-        probabilityTemplates)
-    {
-        var totalWeight = 0;
-        var length = probabilityTemplates.Count;
-
-        for (var i = 0; i < length; ++i)
-            totalWeight += probabilityTemplates[i].Weight;
-
-        return totalWeight;
-    }
-
-    protected static int GetWeightedIndex(IList<TContainer> items)
-    {
-        var totalWeight = GetTotalWeight(items);
-        var randomValue = Random.Range(0, totalWeight) + 1;
-        var index = 0;
-        TContainer result = null;
-
-        while (randomValue > 0)
+        private void OnValidate()
         {
-            result = items[index++];
-            randomValue -= result.Weight;
+            manifest.Clear();// reload card values
+            var len = weightedManifest.Count;
+            for (var i = 0; i < len; ++i)
+                manifest.Add(weightedManifest[i].Value); //add card to manifest
         }
 
-        return index - 1;
+        public override TValue Draw()
+        {
+            var deck = unusedCards;
+            if (deck.Count == 0) return default;
+
+            var iCard = GetWeightedIndex(deck);
+            var cardAt = deck[iCard];
+            MoveCardToDiscard(iCard);
+            return cardAt.Value;
+        }
+
+        /// <summary>
+        /// Remove item from deck at given index and place it on top of discard pile.
+        /// </summary>
+        public void MoveCardToDiscard(int index)
+            => usedCards.Add(unusedCards.GetRemoveAt(index));
+
+        public override void Reload()
+        {
+            usedCards.Clear();
+            unusedCards.Clear();
+
+            //add all cards to unused pile
+            weightedManifest.ForEachBackwards(unusedCards.Add);
+        }
+
+        /// <summary>
+        /// Shuffling has no effect on a weighted random deck but is not an error to do so.
+        /// </summary>
+        public override void Shuffle() { } //nada
+
+        /// <summary>
+        /// Shuffling has no effect on a weighted random deck but is not an error to do so.
+        /// </summary>
+        public override void ShuffleRemaining() { } //nada
+
+        protected static int GetTotalWeight(IList<TContainer>
+            probabilityTemplates)
+        {
+            var totalWeight = 0;
+            var length = probabilityTemplates.Count;
+
+            for (var i = 0; i < length; ++i)
+                totalWeight += probabilityTemplates[i].Weight;
+
+            return totalWeight;
+        }
+
+        protected static int GetWeightedIndex(IList<TContainer> items)
+        {
+            var totalWeight = GetTotalWeight(items);
+            var randomValue = Random.Range(0, totalWeight) + 1;
+            var index = 0;
+            TContainer result = null;
+
+            while (randomValue > 0)
+            {
+                result = items[index++];
+                randomValue -= result.Weight;
+            }
+
+            return index - 1;
+        }
     }
 }

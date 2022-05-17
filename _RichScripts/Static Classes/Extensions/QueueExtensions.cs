@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
-namespace ApexCommon
+namespace RichPackage
 {
     /// <seealso cref="StackExtensions"/>
     internal static class QueueExtensions

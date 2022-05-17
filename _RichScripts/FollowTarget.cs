@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-
-namespace UnityStandardAssets.Utility
+namespace RichPackage
 {
     public class FollowTarget : RichMonoBehaviour
     {
@@ -11,7 +10,7 @@ namespace UnityStandardAssets.Utility
 
         private void LateUpdate()
         {
-            transform.position = target.position + offset;
+            myTransform.position = target.position + offset;
         }
     }
 }

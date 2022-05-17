@@ -4,47 +4,41 @@ using UnityEngine;
 /// <summary>
 /// A locator for objects that add themselves to hub.
 /// </summary>
-public class ComponentHub<T> : RichMonoBehaviour
-    where T : Component
+public abstract class ADictionaryComponent<T> : RichMonoBehaviour
 {
     private readonly Dictionary<string, T>
-        componentTable = new Dictionary<string, T>(); //lol. it's not what you think
+        table = new Dictionary<string, T>(4); //lol. it's not what you think
 
     public T Get(string key)
     {
-        T component = null;
-
-        if (!componentTable.TryGetValue(key, out component))
+        if (!table.TryGetValue(key, out T value))
         {
-            Debug.LogError("[ComponentHub] Component <" + key + "> not found." +
-                " Add this to the hub prior to access.");
+            Debug.LogError($"[{nameof(ADictionaryComponent)}] {key} not found.");
         }
 
-        return component;
+        return value;
     }
 
     public U Get<U>(string key) 
-        where U : Component
         => Get(key) as U;
 
-    /// <param name="newComponent"></param>
-    public void Add(string key, T newComponent)
-        => componentTable.Add(key, newComponent);
+    public void Add(string key, T value)
+        => table.Add(key, value);
 
     /// <summary>
     /// Keyed by name.
     /// </summary>
-    public void Add(T newComponent)
-        => componentTable.Add(newComponent.name, newComponent);
+    public void Add(string key, T value)
+        => table.Add(key, value);
 
     /// <summary>
     /// Keyed by name.
     /// </summary>
-    public void Remove(T newComponent)
-        => componentTable.Remove(newComponent.name);
+    public void Remove(string key)
+        => table.Remove(key);
 
     public void Remove(string key)
-        => componentTable.Remove(key);
+        => table.Remove(key);
 }
 
 /// <summary>
@@ -52,5 +46,9 @@ public class ComponentHub<T> : RichMonoBehaviour
 /// </summary>
 public class ComponentHub : ComponentHub<Component>
 {
+    public void Add(Component comp)
+        => Add(comp.name, comp);
 
+    public void Remove(Component comp)
+        => Remove(comp.name, comp);
 }

@@ -6,7 +6,6 @@ using ScriptableObjectArchitecture;
 
 namespace RichPackage.Audio
 {
-
     /// <summary>
     /// Play an audio clip using only a string reference to its tag.
     /// </summary>
@@ -19,7 +18,7 @@ namespace RichPackage.Audio
         protected struct TableEntry
         {
             public string tag;
-            public AudioClipReference audioClipRef;
+            public RichAudioClip audioClipRef;
         }
 
         #endregion
@@ -47,18 +46,6 @@ namespace RichPackage.Audio
                 Inititialize();
         }
 
-        private void OnEnable()
-        {
-            if (IsInitialized)
-                clipEntries.ForEach((entry) => entry.audioClipRef.AddListener(PlaySFX));
-        }
-
-        private void OnDisable()
-        {
-            if (IsInitialized)
-                clipEntries.ForEach((entry) => entry.audioClipRef.RemoveListener(PlaySFX));
-        }
-
         private void PlaySFX(AudioClip clip)
             => AudioManager.PlaySFX(clip);
 
@@ -83,8 +70,7 @@ namespace RichPackage.Audio
             if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
                 entry.audioClipRef.PlaySFX();//actually do the thing
             else
-                Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
-                    clipTag, name);
+                Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }
 
         public void PlayAudioClipSFX(string clipTag, in AudioOptions options)
@@ -98,19 +84,12 @@ namespace RichPackage.Audio
             if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
                 entry.audioClipRef.PlaySFX(options);//actually do the thing
             else
-                Debug.LogWarningFormat("[AudioHub] Requested clip '{0}' not found on {1}.",
-                    clipTag, name);
+                Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }
 
         public static AudioHub Construct()
         {
-            //set name
-            string newName = null;
-
-#if UNITY_EDITOR
-            newName = "AudioHub";
-#endif
-            return new GameObject(newName).AddComponent<AudioHub>();
+            return new GameObject(nameof(AudioHub)).AddComponent<AudioHub>();
         }
     }
 }

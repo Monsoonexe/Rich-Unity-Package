@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
+using RichPackage;
 
 namespace RichPackage.Interaction
 {
@@ -21,10 +22,6 @@ namespace RichPackage.Interaction
 	{
 		private static List<IInteractable> interactableList = new List<IInteractable>(12);
 
-		[Required]
-		[Tooltip("Can be set dynamically.")]
-		public PlayerScript playerCharacter;
-
 		[Header("---Settings---")]
 		public bool requireMatchingTag = true;
 
@@ -37,8 +34,7 @@ namespace RichPackage.Interaction
 		[ShowIf("allowProximityInteractions")]
 		[Tooltip("This component needs a Rigidbody on the same GameObject" +
 			"in order to detect proximity.")]
-		[Required]
-		[SerializeField]
+		[Required, SerializeField]
 		private Rigidbody myRigidbody;
 
 		[Header("---Input---")]
@@ -151,10 +147,10 @@ namespace RichPackage.Interaction
 
 		private void Start()
 		{
-			if (!playerCharacter)
-				LocatePlayer();
-			if (!raycastOrigin)
-				LocateMainCameraTransform();
+			// if (!playerCharacter)
+			// 	LocatePlayer();
+			// if (!raycastOrigin)
+			// 	LocateMainCameraTransform();
 		}
 
 		private void OnDestroy()
@@ -190,7 +186,7 @@ namespace RichPackage.Interaction
 				if (targetIInteractable != null)
 				{   //do interaction
 					interactEvent.Invoke();
-					targetIInteractable.Interact(playerCharacter);
+					targetIInteractable.Interact();
 				}
 				interactRequested = false; //clear flag
 			}
@@ -208,7 +204,7 @@ namespace RichPackage.Interaction
 				{
 					proximityIInteractable = newIInteractable;
 					enterRangeEvent.Invoke();
-					proximityIInteractable.OnEnterRange(playerCharacter);
+					proximityIInteractable.OnEnterRange();
 				}
 			}
 		}
@@ -224,7 +220,7 @@ namespace RichPackage.Interaction
 					&& newIInteractable == proximityIInteractable) // prevents repeats / stuttering
 				{
 					exitRangeEvent.Invoke();
-					proximityIInteractable.OnExitRange(playerCharacter);
+					proximityIInteractable.OnExitRange();
 					proximityIInteractable = null;
 				}
 			}
@@ -279,19 +275,19 @@ namespace RichPackage.Interaction
 
 							//begin hover
 							enterHoverEvent.Invoke();
-							raycastIInteractable.OnEnterHover(playerCharacter);
+							raycastIInteractable.OnEnterHover();
 						}
 						else if (raycastIInteractable != newIInteractable)//saw something different
 						{
 							//exit hover
 							exitHoverEvent.Invoke();
-							raycastIInteractable.OnExitHover(playerCharacter);
+							raycastIInteractable.OnExitHover();
 
 							raycastIInteractable = newIInteractable; //track
 
 							//enter hover
 							enterHoverEvent.Invoke();
-							raycastIInteractable.OnEnterHover(playerCharacter);
+							raycastIInteractable.OnEnterHover();
 						}//else saw the same interactable -- no reaction
 					}//else hit something, but it didn't have an IInteractable on it.
 				} //else hit something, but it didn't have an IInteractable on it.
@@ -301,22 +297,22 @@ namespace RichPackage.Interaction
 			if (!rayHitIInteractable && raycastIInteractable != null)
 			{   //release interactable
 				exitHoverEvent.Invoke();
-				raycastIInteractable.OnExitHover(playerCharacter);
+				raycastIInteractable.OnExitHover();
 				raycastIInteractable = null;
 			}
 		}
 
-		public void LocatePlayer()
-		{
-			playerCharacter = FindObjectOfType<PlayerScript>();
-		}
+		// public void LocatePlayer()
+		// {
+		// 	playerCharacter = FindObjectOfType<PlayerScript>();
+		// }
 
-		public void LocateMainCameraTransform()
-		{
-			raycastOrigin = GameObject.FindGameObjectWithTag(
-				ConstStrings.TAG_MAIN_CAMERA)
-				.GetComponent<Transform>();
-		}
+		// public void LocateMainCameraTransform()
+		// {
+		// 	raycastOrigin = GameObject.FindGameObjectWithTag(
+		// 		ConstStrings.TAG_MAIN_CAMERA)
+		// 		.GetComponent<Transform>();
+		// }
 
 		///<summary>
 		/// Can externally request interaction start.

@@ -1,4 +1,8 @@
-﻿public interface IDamageable
+﻿
+namespace RichPackage.HealthSystem
 {
-    void TakeDamage(int damageAmount);
+    public interface IDamageable
+    {
+        void TakeDamage(int damageAmount);
+    }
 }

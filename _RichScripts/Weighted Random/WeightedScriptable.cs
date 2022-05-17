@@ -1,17 +1,20 @@
 ﻿using System;
 using UnityEngine;
 
-/// <summary>
-/// Weight and ScriptableObject
-/// </summary>
-[Serializable]
-public class WeightedScriptable : AWeightedProbability<ScriptableObject>
+namespace RichPackage.WeightedProbabilities
 {
-    //exists
-
-    public WeightedScriptable(int weight, ScriptableObject value)
-        : base(weight, value)
+    /// <summary>
+    /// Weight and ScriptableObject
+    /// </summary>
+    [Serializable]
+    public class WeightedScriptable : AWeightedProbability<ScriptableObject>
     {
-        //constructs
+        //exists
+
+        public WeightedScriptable(int weight, ScriptableObject value)
+            : base(weight, value)
+        {
+            //constructs
+        }
     }
 }

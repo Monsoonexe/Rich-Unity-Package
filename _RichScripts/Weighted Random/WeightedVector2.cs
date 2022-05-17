@@ -1,23 +1,26 @@
 ﻿using System;
 using UnityEngine;
 
-/// <summary>
-/// 
-/// </summary>
-/// <seealso cref="WeightedInt"/>
-/// <seealso cref="RandomVector2Generator"/>
-[Serializable]
-public class WeightedVector2 : AWeightedProbability<Vector2>
+namespace RichPackage.WeightedProbabilities
 {
-    //exists
-
-    #region Constructors
-
-    public WeightedVector2(int weight, Vector2 value)
-        : base(weight, value)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="WeightedInt"/>
+    /// <seealso cref="RandomVector2Generator"/>
+    [Serializable]
+    public class WeightedVector2 : AWeightedProbability<Vector2>
     {
-        //constructs
-    }
+        //exists
 
-    #endregion
+        #region Constructors
+
+        public WeightedVector2(int weight, Vector2 value)
+            : base(weight, value)
+        {
+            //constructs
+        }
+
+        #endregion
+    }
 }

@@ -1,5 +1,8 @@
-﻿public interface IHealable
+﻿
+namespace RichPackage.HealthSystem
 {
-    void RecoverHealth(int recoverAmount);
+    public interface IHealable
+    {
+        void RecoverHealth(int recoverAmount);
+    }
 }
-    

@@ -5,27 +5,30 @@ using NaughtyAttributes;
 using HideIf = Sirenix.OdinInspector.HideIfAttribute;
 using ShowIf = Sirenix.OdinInspector.ShowIfAttribute;
 
-/// <seealso cref="LookAtCamera"/>
-public class LookAtTransform : RichMonoBehaviour
+namespace RichPackage
 {
-    [SerializeField]
-    private bool dynamicallyAssign = false;
-
-    [SerializeField, HideIf("@dynamicallyAssign")]
-    private Transform target;
-
-    [SerializeField, Tag, ShowIf("@dynamicallyAssign")]
-    private string findByTag = "Player";
-
-    private void LateUpdate()
+    /// <seealso cref="LookAtCamera"/>
+    public class LookAtTransform : RichMonoBehaviour
     {
-        if (dynamicallyAssign && target == null)
-		{
-            GameObject obj = GameObject.FindGameObjectWithTag(findByTag);
-            target = obj != null ? obj.GetComponent<Transform>() : null;
-        }
+        [SerializeField]
+        private bool dynamicallyAssign = false;
 
-        if (target != null)
-            myTransform.LookAt(target);
+        [HideIf("@dynamicallyAssign")]
+        public Transform target;
+
+        [Tag, ShowIf("@dynamicallyAssign")]
+        public string findByTag = ConstStrings.TAG_PLAYER;
+
+        private void LateUpdate()
+        {
+            if (dynamicallyAssign && target == null)
+            {
+                GameObject obj = GameObject.FindGameObjectWithTag(findByTag);
+                target = obj != null ? obj.GetComponent<Transform>() : null;
+            }
+
+            if (target != null)
+                myTransform.LookAt(target);
+        }
     }
 }

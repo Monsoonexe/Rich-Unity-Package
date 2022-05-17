@@ -48,19 +48,19 @@ namespace RichPackage.Interaction
 		protected virtual void OnDestroy()
 			=> UnregisterWithManager();
 
-		public virtual void OnEnterHover(PlayerScript player)
+		public virtual void OnEnterHover()
 			=> enterHoverEvent.Invoke();
 
-		public virtual void OnExitHover(PlayerScript player)
+		public virtual void OnExitHover()
 			=> exitHoverEvent.Invoke();
 
-		public virtual void OnEnterRange(PlayerScript player)
+		public virtual void OnEnterRange()
 			=> enterRangeEvent.Invoke();
 
-		public virtual void OnExitRange(PlayerScript player)
+		public virtual void OnExitRange()
 			=> exitRangeEvent.Invoke();
 
-		public virtual void Interact(PlayerScript player)
+		public virtual void Interact()
 			=> interactEvent.Invoke();
 
 		public virtual void EndInteraction()

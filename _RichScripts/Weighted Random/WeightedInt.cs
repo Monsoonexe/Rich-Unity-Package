@@ -1,17 +1,20 @@
 ﻿using System;
 
-/// <summary>
-/// Weight and int.
-/// </summary>
-/// <seealso cref="RandomIntGenerator"/>
-[Serializable]
-public class WeightedInt : AWeightedProbability<int>
+namespace RichPackage.WeightedProbabilities
 {
-    //exists
-
-    public WeightedInt(int weight, int value) 
-        : base(weight, value)
+    /// <summary>
+    /// Weight and int.
+    /// </summary>
+    /// <seealso cref="RandomIntGenerator"/>
+    [Serializable]
+    public class WeightedInt : AWeightedProbability<int>
     {
-        //constructs
+        //exists
+
+        public WeightedInt(int weight, int value) 
+            : base(weight, value)
+        {
+            //constructs
+        }
     }
 }

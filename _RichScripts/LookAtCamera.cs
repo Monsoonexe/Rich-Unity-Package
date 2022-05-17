@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Don't ask questions, just face the MainCamera while active.
-/// </summary>
-public class LookAtCamera : RichMonoBehaviour
+namespace RichPackage
 {
-    private static Transform mainCamTransform;
-
-    private void Start()
+    /// <summary>
+    /// Don't ask questions, just face the MainCamera while active.
+    /// </summary>
+    public class LookAtCamera : LookAtTransform
     {
-        if (!mainCamTransform)
-            mainCamTransform = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
-    }
-    private void LateUpdate()
-    {
-        transform.LookAt(mainCamTransform);
+        private void Reset()
+        {
+            SetDevDescription("Don't ask questions, just face the MainCamera while active.");
+            dynamicallyAssign = false;
+            findByTag = ConstStrings.TAG_MAIN_CAMERA;
+            target = GameObject.FindGameObjectWithTag(findByTag)
+                .GetComponent<Transform>();
+        }
     }
 }
