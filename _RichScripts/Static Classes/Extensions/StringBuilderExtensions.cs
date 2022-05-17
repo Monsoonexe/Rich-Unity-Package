@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Runtime.CompilerServices;
 
-namespace ApexCommon
+namespace RichPackage
 {
     internal static class StringBuilderExtensions
     {
