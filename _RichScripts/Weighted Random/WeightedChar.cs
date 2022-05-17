@@ -1,14 +1,17 @@
 ﻿
-/// <summary>
-/// Weight and char.
-/// </summary>
-[System.Serializable]
-public class WeightedChar : AWeightedProbability<char>
+namespace RichPackage.WeightedProbabilities
 {
-    //exists
-    public WeightedChar(int weight, char value) 
-        : base(weight, value)
+    /// <summary>
+    /// Weight and char.
+    /// </summary>
+    [System.Serializable]
+    public class WeightedChar : AWeightedProbability<char>
     {
-        //inherited Constructor
+        //exists
+        public WeightedChar(int weight, char value) 
+            : base(weight, value)
+        {
+            //inherited Constructor
+        }
     }
 }

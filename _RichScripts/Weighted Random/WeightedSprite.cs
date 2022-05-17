@@ -1,21 +1,24 @@
 ﻿using System;
 using UnityEngine;
 
-/// <summary>
-/// 
-/// </summary>
-[Serializable]
-public class WeightedSprite : AWeightedProbability<Sprite>
+namespace RichPackage.WeightedProbabilities
 {
-    //exists
-
-    #region Constructors
-
-    public WeightedSprite(int weight, Sprite value)
-        : base(weight, value)
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable]
+    public class WeightedSprite : AWeightedProbability<Sprite>
     {
+        //exists
 
+        #region Constructors
+
+        public WeightedSprite(int weight, Sprite value)
+            : base(weight, value)
+        {
+
+        }
+
+        #endregion
     }
-
-    #endregion
 }
