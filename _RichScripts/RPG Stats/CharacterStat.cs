@@ -128,22 +128,22 @@ public class CharacterStat
 		{
 			StatModifier mod = statModifiers[i];
 
-			if (mod.Type == StatModType.Flat)
+			if (mod.Type == EStatModType.Flat)
 			{
 				finalValue += mod.Value;
 			}
-			else if (mod.Type == StatModType.PercentAdd)
+			else if (mod.Type == EStatModType.PercentAdd)
 			{
 				sumPercentAdd += mod.Value;
 
 				if (i + 1 >= statModifiers.Count || 
-                    statModifiers[i + 1].Type != StatModType.PercentAdd)
+                    statModifiers[i + 1].Type != EStatModType.PercentAdd)
 				{
 					finalValue *= 1 + sumPercentAdd;
 					sumPercentAdd = 0;
 				}
 			}
-			else if (mod.Type == StatModType.PercentMult)
+			else if (mod.Type == EStatModType.PercentMult)
 			{
 				finalValue *= 1 + mod.Value;
 			}
