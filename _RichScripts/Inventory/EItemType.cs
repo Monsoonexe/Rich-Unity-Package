@@ -1,8 +1,11 @@
 ﻿
-public enum EItemType
+namespace RichPackage.InventorySystem
 {
-    Consumable,
-    KeyItem,
-    Usable,
-    Equipment
+    public enum EItemType
+    {
+        Consumable,
+        KeyItem,
+        Usable,
+        Equipment
+    }
 }
