@@ -2,9 +2,8 @@
 
 using UnityEngine;
 
-namespace RichPackage
+namespace RichPackage.TriggerVolumes
 {
-
     /// <summary>
     /// Trigger Collider that expands its radius when something is within promixity.
     /// Note: Must use a sphere collider.
