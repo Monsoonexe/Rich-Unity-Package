@@ -1,82 +1,85 @@
-﻿using UnityEngine;
+﻿//TODO - one for Floats, and another for Ints
+//TODO - Connect Max/MinClamp on SO to Slider.Min/Max
+//TODO - configure step based on Int/Float type.
+
+using UnityEngine;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using ScriptableObjectArchitecture;
 
-//TODO - one for Floats, and another for Ints
-//TODO - Connect Max/MinClamp on SO to Slider.Min/Max
-//TODO - configure step based on Int/Float type.
-
-/// <summary>
-/// Synchronizes a Slider with a FloatVariable.
-/// </summary>
-[SelectionBase]
-public class UISliderToFloatVariable : RichUIElement<FloatVariable>
+namespace RichPackage.UI
 {
-    [SerializeField, Required]
-    private Slider slider;
-
-	protected virtual void Reset()
+	/// <summary>
+	/// Synchronizes a Slider with a FloatVariable.
+	/// </summary>
+	[SelectionBase]
+	public class UISliderToFloatVariable : RichUIElement<FloatVariable>
 	{
-		SetDevDescription("Synchronizes a ScriptableObject with input from Slider.Value.");
-		slider = GetComponent<Slider>();
-	}
+		[SerializeField, Required]
+		private Slider slider;
 
-	private void OnValidate()
-	{
-		ConfigureSliderToMatchVariable();
-	}
-
-	protected override void Awake()
-	{
-		base.Awake();
-		if(slider == null)
+		protected virtual void Reset()
+		{
+			SetDevDescription("Synchronizes a ScriptableObject with input from Slider.Value.");
 			slider = GetComponent<Slider>();
+		}
 
-		ConfigureSliderToMatchVariable();
-		Debug.Assert(slider != null, "slider is not set.", this);
-	}
+		private void OnValidate()
+		{
+			ConfigureSliderToMatchVariable();
+		}
 
-	protected override void SubscribeToEvents()
-	{
-		slider.onValueChanged.AddListener(UpdateUI);
-	}
+		protected override void Awake()
+		{
+			base.Awake();
+			if(slider == null)
+				slider = GetComponent<Slider>();
 
-	protected override void UnsubscribeFromEvents()
-	{
-		slider.onValueChanged.RemoveListener(UpdateUI);
-	}
+			ConfigureSliderToMatchVariable();
+			Debug.Assert(slider != null, "slider is not set.", this);
+		}
 
-	[Button]
-	private void ConfigureSliderToMatchVariable()
-	{
-		if (slider == null || targetData == null) return;
+		protected override void SubscribeToEvents()
+		{
+			slider.onValueChanged.AddListener(UpdateUI);
+		}
 
-		slider.minValue = targetData.MinClampValue;
-		slider.maxValue = targetData.MaxClampValue;
-		slider.value = targetData.Value;
+		protected override void UnsubscribeFromEvents()
+		{
+			slider.onValueChanged.RemoveListener(UpdateUI);
+		}
 
-#if UNITY_EDITOR
-		if (!Application.isPlaying)
-			UnityEditor.EditorUtility.SetDirty(slider);
-#endif
-	}
+		[Button]
+		private void ConfigureSliderToMatchVariable()
+		{
+			if (slider == null || targetData == null) return;
 
-	/// <summary>
-	/// Update the slider value to source value.
-	/// </summary>
-	[Button]
-	public override void UpdateUI()
-	{
-		slider.value = targetData.Value;
-	}
+			slider.minValue = targetData.MinClampValue;
+			slider.maxValue = targetData.MaxClampValue;
+			slider.value = targetData.Value;
 
-	/// <summary>
-	/// Update source value with slider value.
-	/// </summary>
-	/// <param name="sliderValue"></param>
-	public void UpdateUI(float sliderValue)
-	{
-		targetData.Value = sliderValue;
+	#if UNITY_EDITOR
+			if (!Application.isPlaying)
+				UnityEditor.EditorUtility.SetDirty(slider);
+	#endif
+		}
+
+		/// <summary>
+		/// Update the slider value to source value.
+		/// </summary>
+		[Button]
+		public override void UpdateUI()
+		{
+			slider.value = targetData.Value;
+		}
+
+		/// <summary>
+		/// Update source value with slider value.
+		/// </summary>
+		/// <param name="sliderValue"></param>
+		public void UpdateUI(float sliderValue)
+		{
+			targetData.Value = sliderValue;
+		}
 	}
 }

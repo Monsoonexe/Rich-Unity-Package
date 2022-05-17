@@ -2,76 +2,79 @@
 using UnityEngine.UI;
 using ScriptableObjectArchitecture;
 
-/// <summary>
-/// Say something!
-/// </summary>
-[SelectionBase]
-public class ToggleBoxUI : VariableText
+namespace RichPackage.UI
 {
-    [Header("---Toggle State---")]
-    public bool ToggleValue;
-
-    [Header("---Toggle Vernacular---")]
-    public string onString = "On";
-    public string offString = "Off";
-
-    [Header("---Toggle Colors---")]
-    public Color onColor;
-    public Color offColor;
-
-    [Header("---Toggle Sprites---")]
-    public Sprite onSprite;
-    public Sprite offSprite;
-
-    [Header("---Prefab Refs---")]
-    [SerializeField]
-    private Image toggleImage;
-
-    [SerializeField]
-    private Button toggleButton;
-
-    [Header("---Game Events---")]
-    [SerializeField]
-    private BoolUnityEvent toggleEvent;
-    
-    protected override void Awake()
+    /// <summary>
+    /// Displays things that have to do with toggling and switches.
+    /// </summary>
+    [SelectionBase]
+    public class ToggleBoxUI : VariableText
     {
-        base.Awake();
-        //subscribe to events
-        toggleButton.onClick.AddListener(Toggle);
-    }
+        [Header("---Toggle State---")]
+        public bool ToggleValue;
 
-    private void OnDestroy()
-    {   //unsubscribe
-        toggleButton.onClick.RemoveListener(Toggle);
-    }
+        [Header("---Toggle Vernacular---")]
+        public string onString = "On";
+        public string offString = "Off";
 
-    public void Toggle()
-    {
-        SetState(!ToggleValue);
-    }
+        [Header("---Toggle Colors---")]
+        public Color onColor;
+        public Color offColor;
 
-    public override void UpdateUI()
-    {
-        SetState(ToggleValue); // init starting state
-    }
+        [Header("---Toggle Sprites---")]
+        public Sprite onSprite;
+        public Sprite offSprite;
 
-    public void SetState(bool togg)
-    {
-        ToggleValue = togg;
-        if(togg)
+        [Header("---Prefab Refs---")]
+        [SerializeField]
+        private Image toggleImage;
+
+        [SerializeField]
+        private Button toggleButton;
+
+        [Header("---Game Events---")]
+        [SerializeField]
+        private BoolUnityEvent toggleEvent;
+        
+        protected override void Awake()
         {
-            toggleImage.sprite = onSprite;
-            toggleImage.color = onColor;
-            tmp.text = onString;
+            base.Awake();
+            //subscribe to events
+            toggleButton.onClick.AddListener(Toggle);
         }
-        else
+
+        private void OnDestroy()
+        {   //unsubscribe
+            toggleButton.onClick.RemoveListener(Toggle);
+        }
+
+        public void Toggle()
         {
-            toggleImage.sprite = offSprite;
-            toggleImage.color = offColor;
-            tmp.text = offString;
+            SetState(!ToggleValue);
         }
-        toggleEvent.Invoke(togg);
+
+        public override void UpdateUI()
+        {
+            SetState(ToggleValue); // init starting state
+        }
+
+        public void SetState(bool togg)
+        {
+            ToggleValue = togg;
+            if(togg)
+            {
+                toggleImage.sprite = onSprite;
+                toggleImage.color = onColor;
+                tmp.text = onString;
+            }
+            else
+            {
+                toggleImage.sprite = offSprite;
+                toggleImage.color = offColor;
+                tmp.text = offString;
+            }
+            toggleEvent.Invoke(togg);
+        }
+        
     }
-    
 }

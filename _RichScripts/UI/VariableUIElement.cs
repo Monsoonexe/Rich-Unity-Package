@@ -1,22 +1,25 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
 
-/// <summary>
-/// Class that shows data based on a BaseVariable.
-/// </summary>
-/// <typeparam name="T"></typeparam>
-[SelectionBase]
-public abstract class VariableUIElement<T> : RichUIElement<T>
-    where T : BaseVariable
+namespace RichPackage.UI
 {
-    protected virtual void Reset()
+    /// <summary>
+    /// Class that shows data based on a BaseVariable.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    [SelectionBase]
+    public abstract class VariableUIElement<T> : RichUIElement<T>
+        where T : BaseVariable
     {
-        SetDevDescription($"Displays a {typeof(T)} and updates when its events are called.");
+        protected virtual void Reset()
+        {
+            SetDevDescription($"Displays a {typeof(T)} and updates when its events are called.");
+        }
+
+        protected override void SubscribeToEvents()
+            => targetData.AddListener(UpdateUI);
+
+        protected override void UnsubscribeFromEvents()
+            => targetData.RemoveListener(UpdateUI);
     }
-
-    protected override void SubscribeToEvents()
-        => targetData.AddListener(UpdateUI);
-
-    protected override void UnsubscribeFromEvents()
-        => targetData.RemoveListener(UpdateUI);
 }
