@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public interface ILaunchable
+namespace RichPackage.ProjectileSystem
 {
-    void Launch(Transform hardPoint);
+    public interface ILaunchable
+    {
+        void Launch(Transform hardPoint);
+    }
 }
