@@ -20,7 +20,9 @@ namespace ScriptableObjectArchitecture
         [SerializeField]
         protected TVariable _variable = default(TVariable);
 
-        public TBase Value
+        public override object BaseValue => Value;
+
+		public TBase Value
         {
             get
             {
@@ -66,7 +68,7 @@ namespace ScriptableObjectArchitecture
             if (!(_variable == null || _useConstant))
                 _variable.RemoveListener(listener);
         }
-        public void AddListener(System.Action action)
+        public override void AddListener(System.Action action)
         {
             if (!(_variable == null || _useConstant))
                 _variable.AddListener(action);
@@ -76,7 +78,7 @@ namespace ScriptableObjectArchitecture
             if (!(_variable == null || _useConstant))
                 _variable.AddListener(action);
         }
-        public void RemoveListener(System.Action action)
+        public override void RemoveListener(System.Action action)
         {
             if (!(_variable == null || _useConstant))
                 _variable.RemoveListener(action);
@@ -97,5 +99,10 @@ namespace ScriptableObjectArchitecture
     }
 
     //Can't get property drawer to work with generic arguments
-    public abstract class BaseReference { } 
+    public abstract class BaseReference 
+    {
+        public abstract void AddListener(System.Action action);
+        public abstract void RemoveListener(System.Action action);
+        public abstract object BaseValue { get; }
+    } 
 }
