@@ -523,19 +523,15 @@ namespace RichPackage
             => index >= 0 && index < col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNullOrEmpty(this IList list)
-            => list == null || list.Count == 0;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullOrEmpty<T>(this IList<T> list)
             => list == null || list.Count == 0;
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(this IList list)
+        public static bool IsEmpty<T>(this IList<T> list)
             => list.Count == 0;
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNotEmpty(this IList list)
+        public static bool IsNotEmpty<T>(this IList<T> list)
             => list.Count != 0;
 
         /// <summary>
@@ -544,18 +540,6 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int IndexOf<T>(this T[] array, T element)
             => Array.IndexOf(array, element);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IndexIsInRange(this IList col, int index)
-            => index >= 0 && index < col.Count;
-            
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(this IList list)
-            => list.Count == 0;
-            
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNotEmpty(this IList list)
-            => list.Count != 0;
 
         /// <summary>
         /// A and B are the same size and every element in A is in B (order agnostic).
