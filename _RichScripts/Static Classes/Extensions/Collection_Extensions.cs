@@ -574,6 +574,39 @@ namespace RichPackage
             }
             return true;
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static List<T> Sublist<T>(this IList<T> list, int startIndex)
+            => Sublist(list, startIndex, list.Count - startIndex);
+
+        public static List<T> Sublist<T>(this IList<T> list, int startIndex, int length)
+        {
+            //validate
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            if (startIndex > list.Count)
+                throw new ArgumentOutOfRangeException(nameof(startIndex));
+
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+            if (startIndex > list.Count - length)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+            //early exit
+            if (length == 0)
+                return new List<T>(0);
+
+            //sublist
+            var sublist = new List<T>(length); //return value
+            int endIndex = startIndex + length;
+
+            for (int i = startIndex; i < endIndex; ++i)
+                sublist.Add(list[i]);
+
+            return sublist;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ElementAtWrapped<T>(this IList<T> list, int index)
