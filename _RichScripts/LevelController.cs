@@ -1,7 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
-using UnityConsole;
 
 /// <summary>
 /// I control the events and behaviour of this specifc level.
@@ -29,27 +28,27 @@ public class LevelController : RichMonoBehaviour
 
     #region Static Interface
 
-    [Button("LoadLevelImmediately"), DisableInEditorMode, ConsoleCommand("loadLevel")]
+    [Button("LoadLevelImmediately"), DisableInEditorMode]//, ConsoleCommand("loadLevel")]
     public static void LoadLevel_(int levelIndex)
     {
         SceneManager.LoadScene(levelIndex);
     }
 
-    [Button, DisableInEditorMode, ConsoleCommand("loadNextLevel")]
+    [Button, DisableInEditorMode]//, ConsoleCommand("loadNextLevel")]
     public static void LoadNextLevel()
     {
         var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex + 1);
     }
 
-    [Button, DisableInEditorMode, ConsoleCommand("loadPreviousLevel")]
+    [Button, DisableInEditorMode]//, ConsoleCommand("loadPreviousLevel")]
     public static void LoadPreviousLevel()
     {
         var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex - 1);
     }
 
-    [Button, DisableInEditorMode, ConsoleCommand("reloadLevel")]
+    [Button, DisableInEditorMode]//, ConsoleCommand("reloadLevel")]
     public static void ReloadCurrentLevel()
         => SceneManager.LoadScene(
             SceneManager.GetActiveScene().buildIndex);
