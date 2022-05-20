@@ -1,15 +1,18 @@
 ﻿using UnityEngine.UI;
 using UnityEditor;
 
-/// <summary>
-/// 
-/// </summary>
-public static class Button_ContextMenu
+namespace RichPackage.Editor
 {
-	[MenuItem("CONTEXT/Button/Force Invoke")]
-	private static void ForceInvokeEvent(MenuCommand command)
+	/// <summary>
+	/// 
+	/// </summary>
+	public static class Button_ContextMenu
 	{
-		Button button = command.context as Button;
-		button.onClick.Invoke();
+		[MenuItem("CONTEXT/Button/Force Invoke")]
+		private static void ForceInvokeEvent(MenuCommand command)
+		{
+			Button button = command.context as Button;
+			button.onClick.Invoke();
+		}
 	}
 }
