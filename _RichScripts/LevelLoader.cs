@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using RichPackage.UI;
-using Signals;
+using RichPackage.Events.Signals;
 
 //TODO - handle additive scenes.
 
