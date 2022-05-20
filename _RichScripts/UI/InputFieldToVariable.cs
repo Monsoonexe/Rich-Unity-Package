@@ -85,7 +85,7 @@ namespace RichPackage.UI
 
                 default:
                     Debug.LogError($"[{nameof(InputFieldToVariable)}] Variable {targetData.Name} " +
-                        $"is not a supported type <{targetData.Type>}. " +
+                        $"is not a supported type <{targetData.Type}>script. " +
                         "Try bool, int, float, string, or implement it.", this);
                     break;
             }
