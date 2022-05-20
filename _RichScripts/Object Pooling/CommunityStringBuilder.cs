@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace RichPackage
+namespace RichPackage.ObjectPooling
 {
     /// <summary>
     /// A <see cref="StringBuilder"/> that is re-used 
