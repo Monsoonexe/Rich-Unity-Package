@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RichPackage.Events
+namespace RichPackage.Events.Signals
 {
     /// <summary>
     /// Base interface for Signals
