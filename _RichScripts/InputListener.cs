@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using Sirinex.OdinInspector;
+using Sirenix.OdinInspector;
 
 namespace RichPackage
 {
@@ -40,7 +40,7 @@ namespace RichPackage
             ReactToButtonPress();
         }
 
-        [Button("Force()", EButtonEnableMode.Playmode)]
+        [Button("Force()", DisableInEditorMode)]
         public void PerformAction()
         {
             action.Invoke();
