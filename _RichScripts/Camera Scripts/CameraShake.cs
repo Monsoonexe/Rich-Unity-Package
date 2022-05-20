@@ -4,7 +4,7 @@
 using System.Collections;
 using UnityEngine;
 using NaughtyAttributes;
-using Signals;
+using RichPackage.Events.Signals;
 
 namespace RichPackage.Cameras
 {

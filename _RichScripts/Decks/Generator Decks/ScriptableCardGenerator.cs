@@ -1,5 +1,5 @@
 using UnityEngine;
-using RichPackage.WeightedProbabilies;
+using RichPackage.WeightedProbabilities;
 
 namespace RichPackage.Decks
 {

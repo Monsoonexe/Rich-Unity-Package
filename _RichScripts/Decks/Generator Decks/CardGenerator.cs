@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using RichPackage.WeightedProbabilies;
+using RichPackage.WeightedProbabilities;
 
 namespace RichPackage.Decks
 {
