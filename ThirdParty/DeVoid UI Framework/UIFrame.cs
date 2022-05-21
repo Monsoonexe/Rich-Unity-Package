@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using RichPackage;
 
 /// <summary>
 /// All your calls should be directed at this. This is the central hub for all things UI.
