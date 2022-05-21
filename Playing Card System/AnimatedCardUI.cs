@@ -2,98 +2,101 @@
 using UnityEngine.Events;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using ScriptableObjectArchitecture;
+using RichPackage.Audio;
 
 /*TODO - Use composition to implement both sprite and ui versions
  * 
- */ 
+ */
 
-/// <summary>
-/// 
-/// </summary>
-/// <seealso cref="CardBehaviourWorld"/>
-[SelectionBase]
-public class AnimatedCardUI : CardBehaviourUI
+namespace RichPackage.PlayingCards
 {
-	[Title("Orientation Settings")]
-	public Vector3 faceUpRotation = new Vector3(0, 180, 0);
-	public Vector3 faceDownRotation = new Vector3(0, 0, 0);
-
-	[Title("Flip Animation Settings")]
-	public float flipDuration = 1.0f;
-	public Ease flipEase = Ease.OutQuart;
-
-	[Title("Punch Animation Settings")]
-	public bool punchOnFlip = true;
-	public Vector3 punchScale = new Vector3(0.25f, 0.25f, 0);
-	public int punchVibrato = 5;
-
-	[Title("Audio")]
-	[SerializeField, Required]
-	private AudioClipVariable flipSound;
-
-	[FoldoutGroup("Events")]
-	[SerializeField]
-	private UnityEvent onFlipFaceDownCompleteEvent;
-
-	[FoldoutGroup("Events")]
-	[SerializeField]
-	private UnityEvent onFlipFaceUpCompleteEvent;
-
 	/// <summary>
-	/// Action version.
+	/// 
 	/// </summary>
-	public void DoFlipFaceUp() => FlipFaceUp();
-
-	/// <summary>
-	/// Action version.
-	/// </summary>
-	public void DoFlipFaceDown() => FlipFaceDown();
-
-	public Tween FlipFaceUp()
+	/// <seealso cref="CardBehaviourWorld"/>
+	[SelectionBase]
+	public class AnimatedCardUI : CardBehaviourUI
 	{
-		Sequence flipSequence = DOTween.Sequence(); //depool
+		[Title("Orientation Settings")]
+		public Vector3 faceUpRotation = new Vector3(0, 180, 0);
+		public Vector3 faceDownRotation = new Vector3(0, 0, 0);
 
-		Tweener flipTween = transform.DOLocalRotate(
-			faceUpRotation, flipDuration)
-			.OnStart(flipSound.DoPlaySFX)
-			.SetEase(flipEase);
+		[Title("Flip Animation Settings")]
+		public float flipDuration = 1.0f;
+		public Ease flipEase = Ease.OutQuart;
 
-		flipSequence.Append(flipTween);
+		[Title("Punch Animation Settings")]
+		public bool punchOnFlip = true;
+		public Vector3 punchScale = new Vector3(0.25f, 0.25f, 0);
+		public int punchVibrato = 5;
 
-		if(punchOnFlip)
+		[Title("Audio")]
+		[SerializeField, Required]
+		private RichAudioClip flipSound;
+
+		[FoldoutGroup("Events")]
+		[SerializeField]
+		private UnityEvent onFlipFaceDownCompleteEvent;
+
+		[FoldoutGroup("Events")]
+		[SerializeField]
+		private UnityEvent onFlipFaceUpCompleteEvent;
+
+		/// <summary>
+		/// Action version.
+		/// </summary>
+		public void DoFlipFaceUp() => FlipFaceUp();
+
+		/// <summary>
+		/// Action version.
+		/// </summary>
+		public void DoFlipFaceDown() => FlipFaceDown();
+
+		public Tween FlipFaceUp()
 		{
-			//punch for added effect
-			flipSequence.Join(transform.DOPunchScale(
-				punchScale, flipDuration, punchVibrato)); //combine into single animation
+			Sequence flipSequence = DOTween.Sequence(); //depool
+
+			Tweener flipTween = transform.DOLocalRotate(
+				faceUpRotation, flipDuration)
+				.OnStart(flipSound.DoPlaySFX)
+				.SetEase(flipEase);
+
+			flipSequence.Append(flipTween);
+
+			if (punchOnFlip)
+			{
+				//punch for added effect
+				flipSequence.Join(transform.DOPunchScale(
+					punchScale, flipDuration, punchVibrato)); //combine into single animation
+			}
+			//flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
+			flipSequence.OnStart(onFlipFaceUpCompleteEvent.Invoke);
+
+			return flipSequence;
 		}
-		//flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
-		flipSequence.OnStart(onFlipFaceUpCompleteEvent.Invoke);
 
-		return flipSequence;
+		public Tween FlipFaceDown()
+		{
+
+			Tweener flipTween = transform.DOLocalRotate(
+				faceDownRotation, flipDuration)
+				.SetEase(flipEase)
+				.OnStart(flipSound.DoPlaySFX)
+				.OnComplete(onFlipFaceDownCompleteEvent.Invoke);
+
+			return flipTween;
+		}
+
+		/// <summary>
+		/// Immediately, with no animation, change orientation.
+		/// </summary>
+		public void FlipFaceDownSnap()
+			=> transform.localEulerAngles = faceDownRotation;
+
+		/// <summary>
+		/// Immediately, with no animation, change orientation.
+		/// </summary>
+		public void FlipFaceUpSnap()
+			=> transform.localEulerAngles = faceUpRotation;
 	}
-
-	public Tween FlipFaceDown()
-	{
-
-		Tweener flipTween = transform.DOLocalRotate(
-			faceDownRotation, flipDuration)
-			.SetEase(flipEase)
-			.OnStart(flipSound.DoPlaySFX)
-			.OnComplete(onFlipFaceDownCompleteEvent.Invoke);
-
-		return flipTween;
-	}
-
-	/// <summary>
-	/// Immediately, with no animation, change orientation.
-	/// </summary>
-	public void FlipFaceDownSnap()
-		=> transform.localEulerAngles = faceDownRotation;
-
-	/// <summary>
-	/// Immediately, with no animation, change orientation.
-	/// </summary>
-	public void FlipFaceUpSnap()
-		=> transform.localEulerAngles = faceUpRotation;
 }
