@@ -40,7 +40,7 @@ namespace RichPackage
             ReactToButtonPress();
         }
 
-        [Button("Force()", DisableInEditorMode)]
+        [Button("Force()"), DisableInEditorMode]
         public void PerformAction()
         {
             action.Invoke();
