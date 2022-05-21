@@ -8,7 +8,7 @@ namespace RichPackage
     /// Key-Value pair, like a Dictionary entry. 
     /// Value is mutable. If unmutable desired, use System.KeyValuePair instead
     /// </summary>
-    [System.Obsolete("Use System.Collections.Generic.KeyValuePair instead.")]
+    //[System.Obsolete("Use System.Collections.Generic.KeyValuePair instead.")]
     public abstract class AKeyValuePair<TKey, TValue>
     {
         [SerializeField]
