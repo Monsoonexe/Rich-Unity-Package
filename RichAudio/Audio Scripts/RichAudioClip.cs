@@ -13,20 +13,20 @@ namespace RichPackage.Audio
         /// </summary>
         [PropertyTooltip("Note, changes to Options does not Raise events.")]
         [field: SerializeField, LabelText(nameof(Options))]
-        [CustomContextMenuItem("SFX Options", "ConfigureOptionsForSFX")]
-        [CustomContextMenuItem("BGM Options", "ConfigureOptionsForBGM")]
+        [CustomContextMenu("SFX Options", "ConfigureOptionsForSFX")]
+        [CustomContextMenu("BGM Options", "ConfigureOptionsForBGM")]
         public AudioOptions Options { get; private set; } = AudioOptions.DefaultSFX;
 
-        protected override void Reset()
+        private void Reset()
 		{
             SetDevDescription("Audio with information on how to play it.");
 		}
 
         public void ConfigureOptionsForBGM()
-            => defaultOptions = AudioOptions.DefaultBGM;
+            => Options = AudioOptions.DefaultBGM;
 
         public void ConfigureOptionsForSFX()
-            => defaultOptions = AudioOptions.DefaultSFX;
+            => Options = AudioOptions.DefaultSFX;
 
         public AudioID DoPlayBGM()
         {
