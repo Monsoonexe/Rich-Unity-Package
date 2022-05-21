@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using RichPackage;
 
 /// <summary>
 /// Base class for UI Layers. Layers implement custom logic for Screens when opening, closing, etc.

@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
+using RichPackage;
 
 public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreenController
     where TProps : IScreenProperties

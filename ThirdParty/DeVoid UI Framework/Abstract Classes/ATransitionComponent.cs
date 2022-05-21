@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using RichPackage;
 
 /// <summary>
 /// Translates a target transform.
