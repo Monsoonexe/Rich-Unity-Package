@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
+using RichPackage.Pooling;
 
 namespace RichPackage.DiceSystem
 {
@@ -22,8 +23,7 @@ namespace RichPackage.DiceSystem
         public bool useSpawnPointDirection = false;
 
         [Header("---Prefab Refs---")]
-        [SerializeField]
-        [Required]
+        [SerializeField, Required]
         [Tooltip("Parent object of all dice elements (except this).")]
         private GameObject objectsHandle;
 
@@ -49,18 +49,23 @@ namespace RichPackage.DiceSystem
         protected override void Awake()
         {
             base.Awake();
-            workingDice = new List<DieBehaviour>(diePool.MaxAmount);
+            workingDice = new List<DieBehaviour>(diePool.maxAmount);
         }
 
         private void Start()
         {
             //subscribe to 'read result' event
-            diePool.ForEachItem(
+            diePool.OnDepoolMethod =
                 (die) => die.GetComponent<DieBehaviour>()
-                .OnResultReadyEvent += DieResultIsIn);
+                .OnResultReadyEvent += DieResultIsIn;
+
+            //unsubscribe from 'read result' event
+            diePool.OnEnpoolMethod =
+                (die) => die.GetComponent<DieBehaviour>()
+                .OnResultReadyEvent -= DieResultIsIn;
         }
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void TestDiceRoll() => RollDice(3);
 
         /// <summary>
@@ -180,7 +185,7 @@ namespace RichPackage.DiceSystem
         /// <summary>
         /// Clear dice elements.
         /// </summary>
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void ReclaimDice()
         {
             //remove all dice and Enpool them
@@ -204,7 +209,7 @@ namespace RichPackage.DiceSystem
         /// <summary>
         /// Prefer to subscribe to events.
         /// </summary>
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         private void ExamineRollResults()
         {
             var dieCount = workingDice.Count;
