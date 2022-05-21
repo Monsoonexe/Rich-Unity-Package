@@ -107,6 +107,7 @@ namespace ProjectEmpiresEdge.UI
 
                 button.OnButtonClicked -= OnNavigationButtonClicked;
                 Destroy(button.gameObject);
+                //TODO - pool
             }
 
             currentButtons.Clear();

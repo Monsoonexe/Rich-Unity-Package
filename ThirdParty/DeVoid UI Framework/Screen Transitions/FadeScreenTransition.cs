@@ -7,7 +7,7 @@ using RichPackage.Assertions;
 /// <summary>
 /// Fades a CanvasGroup in/out.
 /// </summary>
-public class FadeScreenTransition : ATransitionComponent, IAnimate
+public class FadeScreenTransition : ATransitionComponent
 {
     [Header("---Settings---")]
     public bool isOutAnimation;
