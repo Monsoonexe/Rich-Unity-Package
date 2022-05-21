@@ -9,7 +9,7 @@ namespace RichPackage.UI
     /// Updates a Text element based on value of a Variable.
     /// </summary>
     [SelectionBase]
-    public sealed class VariableText : VariableUIElement<BaseVariable>
+    public class VariableText : VariableUIElement<BaseVariable>
     {
         [Title("Scene Refs")]
         [SerializeField, Required]
