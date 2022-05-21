@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using RichPackage;
 using RichPackage.Decks;
 
 /// <summary>
