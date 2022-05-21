@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RichPackage.Pooling;
+using RichPackage.HealthSystem;
 
 namespace RichPackage.ProjectileSystem
 {
@@ -13,7 +14,7 @@ namespace RichPackage.ProjectileSystem
         public float speed = 5.0f;
         public int damage = 10;
 
-        [NaughtAttributes.Tag]
+        [NaughtyAttributes.Tag]
         public string boundsTag = string.Empty;
 
         /// <summary>
