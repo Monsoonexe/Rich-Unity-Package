@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 
-namespace RichPackage
+namespace RichPackage.Animation
 {
 	/// <summary>
 	/// 
