@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using RichPackage.Pooling;
+using RichPackage.HealthSystem;
 
 //TODO - decouple from Poolable
 //decouple from explosion prefab
@@ -49,7 +50,7 @@ namespace RichPackage.ProjectileSystem
 
         virtual protected void OnImpact()
         {
-            impactSound.PlaySFX();
+            impactSound.Value.PlaySFX();
             if (explosionEffect)
             {
                 var explosion = Instantiate(explosionEffect, 
