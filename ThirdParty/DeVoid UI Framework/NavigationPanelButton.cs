@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using RichPackage;
 
 namespace ProjectEmpiresEdge.UI
 {
@@ -27,10 +28,17 @@ namespace ProjectEmpiresEdge.UI
 
         private Button myButton; // button Component
 
+        public bool IsInteractable
+        {
+            get => myButton.interactable;
+            set => myButton.interactable = value;
+        }
+
         public string TargetScreen { get => navigationData.TargetScreen; }
 
         protected override void Awake()
         {
+            base.Awake();
             myButton = GetComponent<Button>();
         }
 
