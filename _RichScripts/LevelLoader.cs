@@ -137,7 +137,7 @@ namespace RichPackage
             //fade out
             ScreenTransitionController.Instance
                 .TriggerTransition(outTransitionMessage);//hide scene
-            transitionOUTClip.PlaySFX();
+            transitionOUTClip.Value.PlaySFX();
 
             //wait for the darkness to envelope you, and then a bit longer
             yield return transitionWait;
@@ -166,7 +166,7 @@ namespace RichPackage
             ScreenTransitionController.Instance.
                 TriggerTransition(inTransitionMessage);
 
-            transitionINClip.PlaySFX();
+            transitionINClip.Value.PlaySFX();
 
             //wait for scene to fully open, and just a bit longer
             yield return transitionWait;
