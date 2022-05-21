@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Sirinex.OdinInspector;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Raycasting
 {

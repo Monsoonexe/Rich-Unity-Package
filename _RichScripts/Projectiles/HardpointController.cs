@@ -60,7 +60,7 @@ namespace RichPackage.ProjectileSystem
             {
                 nextShootTime = Time.time + shotDelay;
                 launcher.Launch(GetNextSpawnPoint()); // do the thing
-                AudioManager.PlaySFX(bangSound, laserSoundOptions); // can include options
+                bangSound.PlaySFX(laserSoundOptions); // can include options
             }
         }
         
@@ -72,7 +72,7 @@ namespace RichPackage.ProjectileSystem
                 var nextSpawnPoint = GetNextSpawnPoint();
                 nextSpawnPoint.LookAt(target);//point at target to fine-tune aim.
                 launcher.Launch(nextSpawnPoint); // do the thing
-                AudioManager.PlaySFX(bangSound, laserSoundOptions); // can include options
+                bangSound.PlaySFX(laserSoundOptions); // can include options
             }
         }
 

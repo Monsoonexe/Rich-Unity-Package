@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using ScriptableObjectArchitecture;
-using Sirinex.OdinInspector;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Raycasting
 {

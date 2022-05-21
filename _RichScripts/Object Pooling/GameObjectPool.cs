@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using UnityEngine.Assertions;
 
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
 //TODO: ability to pre-spawn items in the Editor.
@@ -53,6 +52,7 @@ namespace RichPackage.Pooling
         //runtime data
         private Stack<GameObject> pool = new Stack<GameObject>(); //stack has better locality than queue
         private List<GameObject> manifest;
+
         /// <summary>
         /// Every GameObject Managed by this pool, non- and active alike.
         /// </summary>

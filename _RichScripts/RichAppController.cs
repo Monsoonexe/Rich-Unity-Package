@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Signals;
+using RichPackage.Events.Signals;
 using Sirenix.OdinInspector;
 
 namespace RichPackage
