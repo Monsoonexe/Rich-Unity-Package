@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using RichPackage.Events;
 
 namespace RichPackage.TriggerVolumes
 {

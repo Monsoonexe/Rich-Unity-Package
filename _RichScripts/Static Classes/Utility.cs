@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using DG.Tweening;
-using RichPackage;
+using RichPackage.YieldInstructions;
 
 //clarifications between UnityEngine and System classes
 using Debug = UnityEngine.Debug;

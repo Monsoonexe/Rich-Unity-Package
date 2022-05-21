@@ -63,7 +63,7 @@ namespace RichPackage.UI
             //effects to play while money is paying out
             void DoStartEffects()
             {
-                AudioManager.PlaySFX(pingPingPingAudio, //play sound on begin
+                pingPingPingAudio.Value.PlaySFX(
                     loop: true, pitchShift: false, duration: duration);
 
                 creditsTMP.color = creditPayoutTMPColor; // make color while paying out
