@@ -28,12 +28,6 @@ namespace RichPackage.Audio
         /// </summary>
         public static bool IsInitialized { get => Instance != null && Instance.instanceIsInitialized; }
 
-        /// <summary>
-        /// True if there is an active, initialized AudioManager in the Scene.
-        /// If this is false and you aren't okay with that, call AudioManager.Init().
-        /// </summary>
-        public static bool IsInitialized { get; private set; }
-
         [Header("---Settings---")]
         [SerializeField] private int sfxAudioSourceCount = 6;
 
@@ -217,7 +211,7 @@ namespace RichPackage.Audio
             => AudioManager.PlaySFX(clip);
 
         public void PlaySFX(RichAudioClip clipVar)
-            => AudioManager.PlaySFX(clipVar.Value, clipVar.Options);
+            => AudioManager.PlaySFX(clipVar.AudioClip, clipVar.Options);
 
         /// <summary>
         /// Different way to play a SFX if you don't want to use AudioOptions.
