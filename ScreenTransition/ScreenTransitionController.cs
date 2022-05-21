@@ -179,9 +179,15 @@ namespace RichPackage.UI
         public void HorizontalWipeIn()
             => myAnimator.SetTrigger(HORIZONTAL_WIPE_IN);
 
+        public void HorizontalWipeIn(float duration)
+            => TriggerTransition(HORIZONTAL_WIPE_IN, duration);
+
         [Button("HorWipeOut"), DisableInEditorMode, ButtonGroup("OUT")]
         public void HorizontalWipeOut()
             => myAnimator.SetTrigger(HORIZONTAL_WIPE_OUT);
+
+        public void HorizontalWipeOut(float duration)
+            => TriggerTransition(HORIZONTAL_WIPE_OUT, duration);
 
         [Button, DisableInEditorMode, ButtonGroup("OUT")]
         public void HideScene()
@@ -195,9 +201,15 @@ namespace RichPackage.UI
         public void SpinLockIn()
             => myAnimator.SetTrigger(SPIN_LOCK_IN);
 
+        public void SpinLockIn(float duration)
+            => TriggerTransition(SPIN_LOCK_IN, duration);
+
         [Button, DisableInEditorMode, ButtonGroup("OUT")]
         public void SpinLockOut()
             => myAnimator.SetTrigger(SPIN_LOCK_OUT);
+
+        public void SpinLockOut(float duration)
+            => TriggerTransition(SPIN_LOCK_OUT, duration);
 
         [Button("VertWipeIn"), DisableInEditorMode,
             ButtonGroup("IN")]
