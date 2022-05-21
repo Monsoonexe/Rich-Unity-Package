@@ -9,7 +9,8 @@ namespace RichPackage.Decks
     /// Generators never expend cards -- probability of outcome never changes.
     /// </summary>
     /// <typeparam name="TContainer">Weight and value.</typeparam>
-    /// <typeparam name="TValue">The thing you expect to get back.</typeparam>
+    /// <typeparam name="TValue">The underlying <see cref="System.Type"/>
+    /// of the thing you expect to get back.</typeparam>
     public class CardGenerator<TContainer, TValue> : ADeck<TValue>
         where TContainer : AWeightedProbability<TValue>
     {
@@ -28,6 +29,7 @@ namespace RichPackage.Decks
                 manifest.Add(weightedManifest[i].Value); //add card to manifest
         }
 
+        /// <seealso cref="WeightedProbabilityUtilities.GetWeightedRandomElement)"/>
         public override TValue Draw()
         {
             var deck = weightedManifest;
@@ -54,6 +56,7 @@ namespace RichPackage.Decks
         public override void ShuffleRemaining() { }//nada
 
         //in-line since generics don't play well together
+        /// <seealso cref="WeightedProbabilityUtilities.GetTotalWeight)"/>
         protected static int GetTotalWeight(IList<TContainer>
             probabilityTemplates)
         {
@@ -67,6 +70,7 @@ namespace RichPackage.Decks
         }
 
         //in-line since generics don't play well together
+        /// <seealso cref="WeightedProbabilityUtilities.GetWeightedIndex)"/>
         protected static int GetWeightedIndex(IList<TContainer> items)
         {
             var totalWeight = GetTotalWeight(items);
