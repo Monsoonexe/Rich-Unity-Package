@@ -1,14 +1,16 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace RichPackage.Animation
 {
     public class Rotator : RichMonoBehaviour, IAnimate<Transform>, IAnimate
     {
         public Vector3 rotateVector;
-        public Space relativeSpace = Space.World;
-        public TransformLine xform;
+        public Space space = Space.World;
+        public Transform xform;
 
-        public bool IsAnimating = enabled;
+        [ShowInInspector, ReadOnly]
+        public bool IsAnimating => enabled;
 
         protected override void Awake()
         {
@@ -19,12 +21,11 @@ namespace RichPackage.Animation
 
         private void Update()
         {
-            transform.Rotate(rotateVector * Time.deltaTime,
-                relativeSpace);
+            xform.Rotate(rotateVector * Time.deltaTime,
+                space);
         }
 
-        public void Play()
-            => enabled = true;
+        public void Play() => enabled = true;
 
         public void Play(Transform xform)
         {
@@ -32,8 +33,6 @@ namespace RichPackage.Animation
             enabled = true;
         }
 
-        public void Stop()
-            => enabled = false;
+        public void Stop() => enabled = false;
     }
-
 }
