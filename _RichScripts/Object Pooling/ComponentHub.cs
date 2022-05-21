@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace RichPackage.ObjectPooling
+namespace RichPackage.Pooling
 {
     /// <summary>
     /// A locator for objects that add themselves to hub.

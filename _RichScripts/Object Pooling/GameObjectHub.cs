@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace RichPackage.ObjectPooling
+namespace RichPackage.Pooling
 {
     public class GameObjectHub : RichMonoBehaviour
     {
