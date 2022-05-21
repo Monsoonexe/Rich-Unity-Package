@@ -1,10 +1,10 @@
-﻿using RichPackage.GuardClauses;
+﻿//using RichPackage.GuardClauses;
 using System;
-using System.Buffers;
+//using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace RichPackage.ObjectPooling
+namespace RichPackage.Pooling
 {
     /// <summary>
     /// A lightweight class that wraps calls to <see cref="ArrayPool{T}"/>
@@ -29,7 +29,7 @@ namespace RichPackage.ObjectPooling
         public PooledBuffer(int minimumLength)
         {
             //validate
-            GuardAgainst.IsZeroOrNegative(minimumLength, nameof(minimumLength));
+            //GuardAgainst.IsZeroOrNegative(minimumLength, nameof(minimumLength));
 
             //init
             buffer = ArrayPool<T>.Shared.Rent(minimumLength);
