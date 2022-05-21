@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using RichPackage.WeightedProbabilities;
+using RichPackage.Decks;
 
 namespace RichPackage.InventorySystem
 {
@@ -7,7 +9,7 @@ namespace RichPackage.InventorySystem
 	/// </summary>
 	[CreateAssetMenu(fileName = "RandomItemStackGen",
 		menuName = "ScriptableObjects/Random Generators/Item Stack")]
-	public class RandomItemStackGenerator : ARandomGeneratorBase
+	public class RandomItemStackGenerator : CardGenerator
 		<WeightedItemStack, ItemStack>
 	{
 		//exists
