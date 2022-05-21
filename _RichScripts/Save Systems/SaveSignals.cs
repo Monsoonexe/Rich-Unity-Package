@@ -1,4 +1,4 @@
-﻿using Signals;
+﻿using RichPackage.Events.Signals;
 
 namespace RichPackage.SaveSystem.Signals
 {

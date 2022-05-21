@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
+using RichPackage.RPGStats;
 
 /// <summary>
 /// S.P.E.C.I.A.L.

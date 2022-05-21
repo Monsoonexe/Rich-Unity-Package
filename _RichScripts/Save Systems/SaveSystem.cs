@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Signals;
+using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
-using UnityConsole;
 using RichPackage.Debugging;
+//using RichPackage.GuardClauses;
 
 /*
  * Cache Save/Load signals to reduce dictionary lookups
@@ -165,7 +165,7 @@ namespace RichPackage.SaveSystem
 		private void LoadFile(int slot)
 		{
 			//validate
-			gameSaveFiles.AssertValidIndex(slot);
+			//GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
 
 			//work
 			currentSaveFile = new ES3File(gameSaveFiles[slot]);
@@ -190,7 +190,7 @@ namespace RichPackage.SaveSystem
 		public void DeleteSave(int slot)
 		{
 			//validate
-			gameSaveFiles.AssertValidIndex(slot);
+			//gameSaveFiles.AssertValidIndex(slot);
 
 			//work
 			ES3File saveFile = new ES3File(gameSaveFiles[slot]); //load into memory
@@ -298,7 +298,7 @@ namespace RichPackage.SaveSystem
 
 		#region Console Commands
 
-		[ConsoleCommand("save")]
+		//[ConsoleCommand("save")]
 		public static void Save_()
 		{
 			if (Instance)
@@ -307,7 +307,7 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("load")]
+		//[ConsoleCommand("load")]
 		public static void Load_()
 		{
 			if(Instance)
@@ -316,7 +316,7 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("loadSlot")]
+		//[ConsoleCommand("loadSlot")]
 		public static void Load_(int slot)
 		{
 			if(Instance)
@@ -325,7 +325,7 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("deleteSave")]
+		//[ConsoleCommand("deleteSave")]
 		public static void DeleteSave_()
 		{
 			if (Instance)
@@ -334,7 +334,7 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("deleteSaveSlot")]
+		//[ConsoleCommand("deleteSaveSlot")]
 		public static void DeleteSave_(int slot)
 		{
 			if (Instance)
@@ -343,7 +343,7 @@ namespace RichPackage.SaveSystem
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		[ConsoleCommand("openSaveFile"), Button]
+		//[ConsoleCommand("openSaveFile"), Button]
 		public static void OpenSaveFileInVSCode()
 		{
 			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();

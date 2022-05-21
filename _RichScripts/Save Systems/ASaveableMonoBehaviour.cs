@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using Signals;
+using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
 using Debug = UnityEngine.Debug;
 
