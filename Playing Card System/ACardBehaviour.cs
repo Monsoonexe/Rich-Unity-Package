@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Base class for card scene behaviours.
-/// </summary>
-public abstract class ACardBehaviour : RichMonoBehaviour
+namespace RichPackage.PlayingCards
 {
-	public abstract Sprite FrontSprite { get; set; }
-	public abstract Sprite BackSprite { get; set; }
-
-	public virtual void UpdateVisuals(CardSO newCard)
-		=> FrontSprite = newCard.FaceImage;
-
-	private void Reset()
+	/// <summary>
+	/// Base class for card scene behaviours.
+	/// </summary>
+	public abstract class ACardBehaviour : RichMonoBehaviour
 	{
-		SetDevDescription("I'm the world-space representation of a card!");
+		public abstract Sprite FrontSprite { get; set; }
+		public abstract Sprite BackSprite { get; set; }
+
+		public virtual void UpdateVisuals(CardSO newCard)
+			=> FrontSprite = newCard.FaceImage;
+
+		private void Reset()
+		{
+			SetDevDescription("I'm the world-space representation of a card!");
+		}
 	}
 }
