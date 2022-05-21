@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using ScriptableObjectArchitecture;
 
 namespace RichPackage.Audio
 {
@@ -12,25 +11,19 @@ namespace RichPackage.Audio
     public class VirtualAudioSource : RichMonoBehaviour
     {
         public RichAudioClip clip;
-        public bool playOnAwake = false;
+        public bool playOnEnable = false;
         public bool stopOnDisable = false;
 
         private AudioID audioID;
 
-        private void Start()
-        {
-            if (playOnAwake)
-                PlaySFX(clip.Value, clip.Options);
-        }
-
         private void OnEnable()
         {
-            clip?.AddListener(PlaySFXInternal);
+            if (playOnEnable)
+                PlaySFX(clip.AudioClip, clip.Options);
         }
 
         private void OnDisable()
         {
-            clip?.RemoveListener(PlaySFXInternal);
             if (stopOnDisable)
                 StopSFX();
         }
@@ -45,19 +38,15 @@ namespace RichPackage.Audio
             AudioOptions options)
             => audioID = AudioManager.PlayBackgroundTrack(clip, options);
 
-        //used to prevent ambiguous reference to PlaySFX or PlaySFX(AudioClip) when un/subscribing evnets
-        private void PlaySFXInternal()
-            => audioID = AudioManager.PlaySFX(clip.Value, clip.Options);
-
         public void PlaySFX()
-            => audioID = AudioManager.PlaySFX(clip.Value, clip.Options);
+            => audioID = AudioManager.PlaySFX(clip.AudioClip, clip.Options);
 
         public void PlaySFX(AudioClip clip)
             => audioID = AudioManager.PlaySFX(clip);
 
-        public void PlaySFX(AudioClipVariable clipRef)
+        public void PlaySFX(RichAudioClip clipRef)
             => audioID = AudioManager.PlaySFX(
-                clipRef.Value, clipRef.Options);
+                clipRef.AudioClip, clipRef.Options);
 
         /// <summary>
         /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
