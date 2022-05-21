@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using ScriptableObjectArchitecture;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 
 namespace RichPackage.Audio
 {
@@ -15,12 +13,6 @@ namespace RichPackage.Audio
         [Title("Resources")]
         [Required]
         public RichAudioClip music;
-
-        public AudioClip Clip
-        {
-            get => music.Value;
-            set => music.Value = value;
-        }
 
         //runtime data
         private AudioID audioID;
