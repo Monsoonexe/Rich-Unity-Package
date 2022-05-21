@@ -11,7 +11,7 @@ namespace RichPackage
     public class LookAtTransform : RichMonoBehaviour
     {
         [SerializeField]
-        private bool dynamicallyAssign = false;
+        protected bool dynamicallyAssign = false;
 
         [HideIf("@dynamicallyAssign")]
         public Transform target;
