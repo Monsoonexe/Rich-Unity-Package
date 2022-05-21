@@ -1,4 +1,5 @@
-﻿
+﻿using RichPackage.InventorySystem;
+
 namespace RichPackage.WeightedProbabilities
 {
 	/// <summary>

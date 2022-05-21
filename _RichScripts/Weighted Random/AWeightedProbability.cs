@@ -1,7 +1,5 @@
-﻿using System;
+using System;
 using UnityEngine;
-using System.Collections.Generic;
-using Random = UnityEngine.Random;
 
 namespace RichPackage.WeightedProbabilities
 {
