@@ -154,6 +154,9 @@ namespace RichPackage.DiceSystem
         public void RollDie()
             => RollDie(defaultRollDirection, defaultTorqueDirection);
 
+        public void RollDie(Vector3 throwDirection)
+            => RollDie(throwDirection, defaultTorqueDirection);
+
         /// <summary>
         /// For a permament set, set rollDirection directly.
         /// </summary>
