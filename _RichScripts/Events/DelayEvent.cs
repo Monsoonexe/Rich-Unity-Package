@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
-using RichPackage.GuardClauses;
+//using RichPackage.GuardClauses;
 
 namespace RichPackage.Events
 {
@@ -61,7 +61,7 @@ namespace RichPackage.Events
         private IEnumerator Delay()
         {
             //validate
-            GuardAgainst.IsZeroOrNegative(delaySeconds);
+            //GuardAgainst.IsZeroOrNegative(delaySeconds);
 
             //prevent duplicates
             if (delayRoutine != null)
