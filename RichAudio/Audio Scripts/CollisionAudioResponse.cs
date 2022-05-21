@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using ScriptableObjectArchitecture;
 
 namespace RichPackage.Audio
 {
@@ -18,7 +17,7 @@ namespace RichPackage.Audio
 
         public void OnCollisionEnter(Collision collision)
         {
-            var options = (AudioOptions)collisionClip.Options.Clone(); //override option's volume
+            var options = collisionClip.Options; //override option's volume
             options.volume *= (collision.relativeVelocity.magnitude 
                 * maxForceFactor); //volume relative to impact force
             AudioManager.PlaySFX(collisionClip, options);
