@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using RichPackage;
 
 using Object = UnityEngine.Object;
 
@@ -39,7 +40,7 @@ namespace RichPackage.Assertions
             params string[] becauseArgs)
             => Assert.IsNotNull(obj, Assert.BecauseOf(because, becauseArgs));
 
-        #endregion
+        #endregion Null
 
         #region Boolean
 
@@ -120,7 +121,7 @@ namespace RichPackage.Assertions
         //TODO the above, but for floats
         //TODO the above, but for the less-common primitives (long, byte...)
 
-        #endregion
+        #endregion Comparisons
 
         #region Exceptions
 
@@ -173,6 +174,20 @@ namespace RichPackage.Assertions
             Action<object> action, string because)
             where TException : Exception
             => Assert.DoesNotThrowException<TException>(() => action(subject), because);
+
+        #endregion
+
+        #region Lists
+
+        [Conditional(Assert.UNITY_ASSERTIONS)]
+        public static void IndexShouldBeInRange(this System.Collections.IList list,
+            int index)
+            => Assert.IndexIsInRange(list, index);
+
+        [Conditional(Assert.UNITY_ASSERTIONS)]
+        public static void IndexShouldBeInRange(this System.Collections.IList list,
+            int index, string message)
+            => Assert.IndexIsInRange(list, index, message);
 
         #endregion
     }

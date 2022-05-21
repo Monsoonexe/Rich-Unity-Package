@@ -21,7 +21,7 @@ namespace RichPackage.Assertions
 
 		public static string GetEqualityMessage(object actual, object expected, bool expectEqual)
 		{
-			return GetMessage(string.Format("Values are {0}equal.", expectEqual ? "not " : ""), string.Format("{0} {2} {1}", actual, expected, expectEqual ? "==" : "!="));
+			return GetMessage(string.Format("Values are {0}equal.", expectEqual ? "not " : string.Empty), string.Format("{0} {2} {1}", actual, expected, expectEqual ? "==" : "!="));
 		}
 
 		//public static string GetExceptionMessage<TExpectedEx, TActualEx>(TActualEx actual) 
@@ -32,12 +32,17 @@ namespace RichPackage.Assertions
 
 		public static string NullFailureMessage(object value, bool expectNull)
 		{
-			return GetMessage(string.Format("Value was {0}Null", expectNull ? "not " : ""), string.Format("Value was {0}Null", expectNull ? "" : "not "));
+			return GetMessage(string.Format("Value was {0}Null", expectNull ? "not " : string.Empty), string.Format("Value was {0}Null", expectNull ? string.Empty : "not "));
 		}
 
 		public static string BooleanFailureMessage(bool expected)
 		{
 			return GetMessage("Value was " + !expected, expected.ToString());
+		}
+
+		public static string IndexOutOfRangeMessage(int index, int count)
+		{
+			return GetMessage($"{index} | {count}");
 		}
 	}
 }

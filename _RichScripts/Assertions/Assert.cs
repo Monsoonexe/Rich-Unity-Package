@@ -592,7 +592,29 @@ namespace RichPackage.Assertions
 			}
 		}
 
-		#endregion
+		#endregion Exceptions
+
+		#region Lists
+
+		[Conditional(UNITY_ASSERTIONS)]
+		public static void IndexIsInRange(System.Collections.IList list, int index)
+		{
+			if (!list.IndexIsInRange(index))
+			{
+				Fail(AssertionMessageUtil.IndexOutOfRangeMessage(index, list.Count), string.Empty);
+			}
+		}
+
+		[Conditional(UNITY_ASSERTIONS)]
+		public static void IndexIsInRange(System.Collections.IList list, int index, string message)
+		{
+			if (!list.IndexIsInRange(index))
+			{
+				Fail(AssertionMessageUtil.IndexOutOfRangeMessage(index, list.Count), message);
+			}
+		}
+
+		#endregion Lists
 
 		public static string BecauseOf(string because, params object[] becauseArgs)
         {
