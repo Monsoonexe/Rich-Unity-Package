@@ -1,4 +1,4 @@
-﻿//TODO - remove dependency on UnityEngine
+//TODO - remove dependency on UnityEngine
 
 using System;
 using System.Collections;
@@ -645,7 +645,7 @@ namespace RichPackage
         public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null)
-                throw System.ArgumentNullException(nameof(source));
+                throw new System.ArgumentNullException(nameof(source));
 
             if (source is IList<TSource> list)
             {
