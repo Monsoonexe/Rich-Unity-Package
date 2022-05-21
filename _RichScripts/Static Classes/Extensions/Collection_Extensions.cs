@@ -1,12 +1,11 @@
-//TODO - remove dependency on UnityEngine
+﻿//TODO - remove dependency on UnityEngine
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using RichPackage.Collections;
-using UnityEngine;
+using RichPackage.Assertions;
 
 //clarifications
 using Random = UnityEngine.Random;
@@ -419,7 +418,11 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetRemoveAt<T>(this List<T> list, int i)
         {
-            list.AssertValidIndex(i);
+            //validate
+            if (!list.IndexIsInRange(i))
+                throw new IndexOutOfRangeException($"{i} | {list.Count}");
+
+            //work
             T el = list[i];
             list.RemoveAt(i);
             return el;
@@ -517,6 +520,9 @@ namespace RichPackage
             }
             return lists[shortestIndex]; // assume the first is shortest
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IndexIsInRange<T>(this List<T> col, int index)
+            => index >= 0 && index < col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IndexIsInRange(this IList col, int index)
@@ -885,8 +891,8 @@ namespace RichPackage
         /// </summary>
         public static void Swap<T>(this IList<T> list, int a, int b)
         {   //validate
-            list.AssertValidIndex(a);
-            list.AssertValidIndex(b);
+            list.CastAs<IList>().IndexShouldBeInRange(a);
+            list.CastAs<IList>().IndexShouldBeInRange(b);
 
             //perform swap
             T tmp = list[a];
@@ -913,7 +919,7 @@ namespace RichPackage
             IList<T> usedCollection)
         {
             //build a pool of indices that have not been used.  
-            var possibleIndices = CommunalLists.Get<int>();
+            var possibleIndices = CommunalLists.Rent<int>();
 
             int totalCount = totalCollection.Count;
             for (int i = 0; i < totalCount; ++i)
