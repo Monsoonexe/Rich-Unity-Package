@@ -86,7 +86,7 @@ namespace RichPackage.Decks
             var totalWeight = GetTotalWeight(items);
             var randomValue = Random.Range(0, totalWeight) + 1;
             var index = 0;
-            TContainer result = null;
+            TContainer result;
 
             while (randomValue > 0)
             {

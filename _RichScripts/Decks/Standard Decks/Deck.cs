@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.Decks
@@ -131,7 +131,7 @@ namespace RichPackage.Decks
         /// <returns></returns>
         public T PeekAt(int i)
         {
-            unusedCards.AssertValidIndex(i);
+            unusedCards.IndexShouldBeInRange(i);
             return unusedCards[unusedCards.LastIndex() - i];
         } 
 
