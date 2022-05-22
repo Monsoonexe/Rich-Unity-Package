@@ -10,7 +10,7 @@ namespace RichPackage.Animation
     {
         [Title("Options")]
         public Vector3 rotateVector;
-        public Space space = Space.World;
+        public Space space = Space.Self;
 
         [Title("References")]
         public Transform xform;
