@@ -10,9 +10,9 @@ namespace RichPackage.Audio
         [Title("Options")]
         public float crossfade = 1.0f;
 
-        [Title("Resources")]
-        [Required]
-        public RichAudioClip music;
+        [Title(nameof(music))]
+        [InlineProperty, HideLabel]
+        public RichAudioClipReference music = new RichAudioClipReference(AudioOptions.DefaultBGM);
 
         //runtime data
         private AudioID audioID;
