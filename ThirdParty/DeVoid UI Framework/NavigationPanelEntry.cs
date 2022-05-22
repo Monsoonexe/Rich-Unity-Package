@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ProjectEmpiresEdge.UI { 
+namespace ProjectEmpiresEdge.UI
+{ 
     /// <summary>
     /// Holds icon, text, and target screen data.
     /// </summary>
