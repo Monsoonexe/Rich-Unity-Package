@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using RichPackage.Audio;
 
 namespace RichPackage.ProjectileSystem
 {
@@ -27,7 +28,7 @@ namespace RichPackage.ProjectileSystem
         public Transform[] SpawnPoints { get => projectileSpawnPoints; }
 
         [Header("---Audio---")]
-        [SerializeField] private AudioClip bangSound;
+        [SerializeField] private AudioClip bangSound; //TODO - RichAudioClipReference
 
         private int projectileSpawnIndex = 0;
 
