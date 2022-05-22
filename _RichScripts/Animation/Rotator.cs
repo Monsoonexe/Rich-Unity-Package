@@ -3,16 +3,28 @@ using UnityEngine;
 
 namespace RichPackage.Animation
 {
+    /// <summary>
+    /// Rotates the target transform.
+    /// </summary>
     public class Rotator : RichMonoBehaviour, IAnimate<Transform>, IAnimate
     {
+        [Title("Options")]
         public Vector3 rotateVector;
         public Space space = Space.World;
+
+        [Title("References")]
         public Transform xform;
 
         [ShowInInspector, ReadOnly]
         public bool IsAnimating => enabled;
 
-        protected override void Awake()
+		private void Reset()
+		{
+            SetDevDescription("Rotates the target transform.");
+            Awake();
+        }
+
+		protected override void Awake()
         {
             base.Awake();
             if (xform == null)
