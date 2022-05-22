@@ -13,11 +13,14 @@ namespace RichPackage.Audio
         /// <summary>
         /// AudioClip options that indicate how this clip should be played.
         /// </summary>
-        [PropertyTooltip("Note, changes to Options does not Raise events.")]
-        [field: SerializeField, LabelText(nameof(Options))]
-        [CustomContextMenu("SFX Options", "ConfigureOptionsForSFX")]
-        [CustomContextMenu("BGM Options", "ConfigureOptionsForBGM")]
-        public AudioOptions Options { get; private set; } = AudioOptions.DefaultSFX;
+        [Space(15)]
+        [BoxGroup(nameof(Options))]
+        [SerializeField, HideLabel, InlineProperty]
+        [CustomContextMenu("SFX Options", nameof(ConfigureOptionsForSFX))]
+        [CustomContextMenu("BGM Options", nameof(ConfigureOptionsForBGM))]
+        private AudioOptions options = AudioOptions.DefaultSFX;
+
+        public AudioOptions Options { get => options; private set => options = value; }
 
         private void Reset()
 		{
