@@ -36,7 +36,7 @@ namespace RichPackage.UI
 		[SerializeField, Required]
 		private GameObjectPool objectPool;
 
-		private void Reset()
+		protected override void Reset()
 		{
 			SetDevDescription("Shows up to MAX icons. If VALUE > MAX, show a single icon. " +
 				"and an additional UI element (e.g. X5 lives). " +

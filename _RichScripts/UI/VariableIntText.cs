@@ -18,7 +18,7 @@ namespace RichPackage.UI
         [Tooltip("Update this text element with target data.")]
         protected TextMeshProUGUI textElement;
         
-        private void Reset()
+        protected override void Reset()
         {
             SetDevDescription("Displays an IntVariable's value with a TMP.");
             textElement = GetComponent<TextMeshProUGUI>();

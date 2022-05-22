@@ -27,7 +27,7 @@ namespace RichPackage.UI
 
         #region Unity Messages
 
-        private void Reset()
+        protected override void Reset()
         {
             SetDevDescription("A meter in UI space that fills up based on a FloatVariable's value.");
         }
