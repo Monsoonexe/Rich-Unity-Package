@@ -3,6 +3,8 @@ using Sirenix.OdinInspector;
 
 namespace RichPackage.Audio
 {
+    [CreateAssetMenu(menuName = "ScriptableObjects/" + nameof(RichAudioClip),
+        fileName = "AC_")]
     public class RichAudioClip : RichScriptableObject
     {
         [field: SerializeField, Required(InfoMessageType.Warning), LabelText(nameof(AudioClip))]
