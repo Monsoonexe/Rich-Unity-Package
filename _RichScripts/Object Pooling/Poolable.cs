@@ -47,7 +47,7 @@ namespace RichPackage.Pooling
             gameObject.SetActive(false);
         }
 
-        [Button]
+        [Button, DisableInEditorMode]
         public void ReturnToPool() => PoolOwner.Enpool(this);
     }
 }
