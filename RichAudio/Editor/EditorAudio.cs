@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using ScriptableObjectArchitecture;
 using NaughtyAttributes;
+using RichPackage;
 
 #if UNITY_EDITOR
 using UnityEditor;
