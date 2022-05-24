@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2323655240641742516}
-  - component: {fileID: 9106752542391192208}
+  - component: {fileID: 2696778434379560505}
   - component: {fileID: 7346461347287298948}
   m_Layer: 0
   m_Name: Scene Music
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9106752542391192208
+--- !u!114 &2696778434379560505
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,22 +41,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 577555244053850121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b606c248a827654fa32c71f7f315180, type: 3}
+  m_Script: {fileID: 11500000, guid: 800866662cdb34c47b37e422d329ffd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  developerDescription: A throw-it-together class to get music playing.
-  crossfade: 1
-  music:
+  developerDescription: ' A Mono that will play audio from static AudioManager Helpful
+    for rigging events and prefabs to audio that aren''t yet aware of an AudioManager
+    in a scene..'
+  playOnEnable: 1
+  stopOnDisable: 0
+  clip:
     _constantClip: {fileID: 0}
     audioClipVariable: {fileID: 0}
     overrideOptions:
-      loop: 0
-      pitchShift: 1
+      loop: 1
+      pitchShift: 0
       duration: -1
-      crossfade: 0
+      crossfade: 2.5
       volume: 1
-      priority: 128
-    <UseConstant>k__BackingField: 0
+      priority: 127
+    <UseConstant>k__BackingField: 1
 --- !u!114 &7346461347287298948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,8 +84,8 @@ MonoBehaviour:
   _response:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 9106752542391192208}
-        m_MethodName: PlaySound
+      - m_Target: {fileID: 2696778434379560505}
+        m_MethodName: PlayBGM
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
