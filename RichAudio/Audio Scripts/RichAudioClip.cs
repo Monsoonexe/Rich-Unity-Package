@@ -13,7 +13,6 @@ namespace RichPackage.Audio
         /// <summary>
         /// AudioClip options that indicate how this clip should be played.
         /// </summary>
-        [Space(15)]
         [BoxGroup(nameof(Options))]
         [SerializeField, HideLabel, InlineProperty]
         [CustomContextMenu("SFX Options", nameof(ConfigureOptionsForSFX))]
