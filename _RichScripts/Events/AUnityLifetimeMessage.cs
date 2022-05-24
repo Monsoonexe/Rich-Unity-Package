@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.UnityMessages
 {
@@ -17,10 +18,10 @@ namespace RichPackage.UnityMessages
     /// <seealso cref="OnDestroyUnityMessage"/>
     /// <seealso cref="OnApplicationQuitUnityMessage"/>
     /// <seealso cref="OnApplicationPauseUnityMessage"/>
-    /// <seealso cref="TriggerCollisionEvent"/>
+    /// <seealso cref="UnityMessageListener"/>
     public abstract class AUnityLifetimeMessage : RichMonoBehaviour
     {
-        [SerializeField]
+        [SerializeField, FoldoutGroup(nameof(lifetimeEvent)), HideLabel]
         protected UnityEvent lifetimeEvent = new UnityEvent();
         public UnityEvent LifetimeEvent { get => lifetimeEvent; }
     }
