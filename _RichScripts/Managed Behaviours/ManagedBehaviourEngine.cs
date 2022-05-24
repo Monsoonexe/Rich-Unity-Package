@@ -15,6 +15,8 @@ using Debug = UnityEngine.Debug;
  *  You would do well to place this in the UnityExecutionOrder before 'defaultTime'.
  *  
  *  TODO - can an IManagedBehaviour be cast to multiple?????
+ *  
+ *  Should we try-catch inside the loop so exceptions don't screw up entire loop?
  */
 
 namespace RichPackage.Managed
@@ -295,33 +297,28 @@ namespace RichPackage.Managed
 
             quitListeners.Add(behaviour);
         }
+
         /// <summary>
-        /// This is a bit slower as it has to test against every possible IManagedBehaviour
+        /// Subscribe to one or more managed behaviors.
         /// </summary>
-        /// <param name="behaviour"></param>
-        public static void AddManagedListener(IManagedBehaviour behaviour)
+        /// <remarks>This can be slower as it has to test against every possible IManagedBehaviour.
+        /// Prefer this if you have implement many interfaces.</remarks>
+        public static void RegisterManagedBehavior(IManagedBehaviour behaviour)
         {
             Debug.Assert(behaviour != null,
                 "[ManagedBehaviourEngine] behaviour is null");
             //add one or multiple behaviours
-            //TODO - exception on subscribe Initializer
-            //if (behaviour is IManagedPreAwake a)
-            //    AddManagedListener(a);
-            //else if (behaviour is IManagedAwake b)
-            //    AddManagedListener(b);
-            //else if (behaviour is IManagedStart c)
-            //    AddManagedListener(c);
             if (behaviour is IManagedEarlyUpdate d)
                 AddManagedListener(d);
-            else if (behaviour is IManagedUpdate e)
+            if (behaviour is IManagedUpdate e)
                 AddManagedListener(e);
-            else if (behaviour is IManagedFixedUpdate f)
+            if (behaviour is IManagedFixedUpdate f)
                 AddManagedListener(f);
-            else if (behaviour is IManagedLateUpdate g)
+            if (behaviour is IManagedLateUpdate g)
                 AddManagedListener(g);
-            else if (behaviour is IManagedOnApplicationPause h)
+            if (behaviour is IManagedOnApplicationPause h)
                 AddManagedListener(h);
-            else if (behaviour is IManagedOnApplicationQuit i)
+            if (behaviour is IManagedOnApplicationQuit i)
                 AddManagedListener(i);
         }
         /// <summary>
