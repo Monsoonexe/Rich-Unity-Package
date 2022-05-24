@@ -1,13 +1,12 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
-using ScriptableObjectArchitecture;
 
 namespace RichPackage.Audio
 {
     /// <summary>
-    /// Play an audio clip using only a string reference to its tag.
+    /// Play an audio clip using only a string as the key.
     /// </summary>
     /// <seealso cref="GlobalAudioHub"/>
     public class AudioHub : RichMonoBehaviour
@@ -17,7 +16,10 @@ namespace RichPackage.Audio
         [Serializable]
         protected struct TableEntry
         {
+            [HorizontalGroup("entry"), LabelWidth(24)]
             public string tag;
+
+            [HorizontalGroup("entry"), LabelWidth(100)]
             public RichAudioClip audioClipRef;
         }
 
@@ -34,10 +36,19 @@ namespace RichPackage.Audio
         protected TableEntry[] clipEntries;
 
         //runtime data
-        protected Dictionary<string, TableEntry> audioClipTable;
+        protected Dictionary<string, RichAudioClip> audioClipTable;// = new Dictionary<string, TableEntry>(8);
+
+        [ShowInInspector, ReadOnly]
         public bool IsInitialized { get; private set; }
 
-        protected override void Awake()
+		#region UnityMessages
+
+		private void Reset()
+		{
+            SetDevDescription("Play an audio clip using only a string as the key.");
+		}
+
+		protected override void Awake()
         {
             base.Awake();
             IsInitialized = false;
@@ -46,19 +57,30 @@ namespace RichPackage.Audio
                 Inititialize();
         }
 
-        private void PlaySFX(AudioClip clip)
+		#endregion UnityMessages
+
+		private void PlaySFX(AudioClip clip)
             => AudioManager.PlaySFX(clip);
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Inititialize()
         {
-            var entries = clipEntries.Length;
-            audioClipTable = new Dictionary<string, TableEntry>(entries);
-            for (var i = 0; i < entries; ++i)
-                audioClipTable.Add(clipEntries[i].tag, clipEntries[i]);
-            IsInitialized = true;
+            if (IsInitialized)
+			{
+                Debug.LogWarning($"{nameof(AudioHub)} already initialized.");
+			}
+			else
+            {
+                var entries = clipEntries.Length;
+                audioClipTable = new Dictionary<string, RichAudioClip>(entries);
+                for (var i = 0; i < entries; ++i)
+                    audioClipTable.Add(clipEntries[i].tag, clipEntries[i].audioClipRef);
+                clipEntries = null; //release memory
+                IsInitialized = true;
+            }
         }
 
+        [Button, DisableInEditorMode]
         public void PlayAudioClipSFX(string clipTag)
         {
             //validation
@@ -67,8 +89,8 @@ namespace RichPackage.Audio
             Debug.Assert(IsInitialized,
                 "[AudioHub] Being used without being Init'd: " + this.name, this);
 
-            if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
-                entry.audioClipRef.PlaySFX();//actually do the thing
+            if (audioClipTable.TryGetValue(clipTag, out RichAudioClip entry))
+                entry.PlaySFX();//actually do the thing
             else
                 Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }
@@ -81,8 +103,8 @@ namespace RichPackage.Audio
             Debug.Assert(IsInitialized,
                 "[AudioHub] Being used without being Init'd: " + this.name, this);
 
-            if (audioClipTable.TryGetValue(clipTag, out TableEntry entry))
-                AudioManager.PlaySFX(entry.audioClipRef, options);//actually do the thing
+            if (audioClipTable.TryGetValue(clipTag, out RichAudioClip entry))
+                AudioManager.PlaySFX(entry, options);//actually do the thing
             else
                 Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }
