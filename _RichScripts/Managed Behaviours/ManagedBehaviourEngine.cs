@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Sirenix.OdinInspector;
+//clarifications
+using Debug = UnityEngine.Debug;
 
 /*  developer notes:
  *  consider Dictionary if lots of remove/add (slow iteration!).
@@ -16,14 +19,12 @@ using UnityEngine;
 
 namespace RichPackage.Managed
 {
-    //clarifications
-    using Debug = UnityEngine.Debug;
-    
+
     /// <summary>
     /// Managed callbacks are faster than UnityCallbacks (by about 3x!).
     /// Subscribe to these events instead to speed things up.
     /// </summary>
-    public class ManagedBehaviourEngine : RichMonoBehaviour
+    public sealed class ManagedBehaviourEngine : RichMonoBehaviour
     {
         private static ManagedBehaviourEngine instance;
         private const int STARTING_SIZE = 10;
@@ -77,18 +78,24 @@ namespace RichPackage.Managed
         /// </summary>
         public static float FixedDeltaTime;
 
-        #endregion  
+		#endregion
 
-        #region Unity Callbacks
+		#region Unity Messages
 
-        protected override void Awake()
+		private void Reset()
+		{
+            SetDevDescription("Managed UnityMessages reduce their overhead signifigantly.");
+		}
+
+		protected override void Awake()
         {
             //do my inits
             base.Awake();
 
+            //singleton
             if (!InitSingleton(this, ref instance, false))
             {
-                Debug.Log("[ManagedBehaviourEngine] Singleton violation. " +
+                Debug.LogWarning($"[{nameof(ManagedBehaviourEngine)}] Singleton violation. " +
                     "Disabling this duplicate.", this);
 
                 this.enabled = false;
@@ -134,6 +141,7 @@ namespace RichPackage.Managed
             RemoveAllManagedListeners();
         }
 
+        [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
         private void Update()
         {
             DeltaTime = Time.deltaTime; //update time step
@@ -151,6 +159,7 @@ namespace RichPackage.Managed
             //late update here?
         }
 
+        [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
         private void FixedUpdate()
         {
             FixedDeltaTime = Time.fixedDeltaTime; //update time step
@@ -161,6 +170,7 @@ namespace RichPackage.Managed
                 fixedUpdateListeners[i].ManagedFixedUpdate();
         }
 
+        [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
         private void LateUpdate()
         {
             //LateUpdate()
@@ -169,6 +179,7 @@ namespace RichPackage.Managed
                 lateUpdateListeners[i].ManagedLateUpdate();
         }
 
+        [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
         private void OnApplicationPause(bool pause)
         {
             //OnApplicationPause()
@@ -177,6 +188,7 @@ namespace RichPackage.Managed
                 pauseListeners[i].ManagedOnApplicationPause(pause);
         }
 
+        [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
         private void OnApplicationQuit()
         {
             isQuitting = true;
@@ -186,7 +198,7 @@ namespace RichPackage.Managed
                 quitListeners[i].ManagedOnApplicationQuit();
         }
 
-        #endregion
+        #endregion Unity Messages
 
         #region Add Listeners
 
@@ -534,7 +546,13 @@ namespace RichPackage.Managed
         }
         #endregion
 
-        [Conditional("UNITY_EDITOR")]
+        #region Editor
+
+#if UNITY_EDITOR
+        private const string ButtonGroup = "Functions";
+#endif
+
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         private static void AssertSingletonExists()
         {
             if (isQuitting) return;
@@ -556,9 +574,11 @@ namespace RichPackage.Managed
         {
             if (isQuitting) return;
             if (!instance)
-                instance = new GameObject("ManagedBehaviourEngine")
+                instance = new GameObject(nameof(ManagedBehaviourEngine))
                     .AddComponent<ManagedBehaviourEngine>();
             
         }
-    }
+
+		#endregion Editor
+	}
 }
