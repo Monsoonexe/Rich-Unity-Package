@@ -7,6 +7,7 @@ using DG.Tweening;
 /* TODO - cache fade tweens for less overhead
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
  * TODO - remove 'static' from source dictionary and make less functions static, if needed.
+ * TODO - support StopBGM (track BGM AudioIDs)
  */ 
 
 namespace RichPackage.Audio
