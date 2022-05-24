@@ -48,6 +48,9 @@ namespace RichPackage.Events.Signals
         public static SType Get<SType>() where SType : ISignal, new()
             => hub.Get<SType>();
 
+        public static ISignal Get(string hash)
+            => hub.Get(hash);
+
         public static void AddListenerToHash(string signalHash, Action handler)
             => hub.AddListenerToHash(signalHash, handler);
 
@@ -101,7 +104,7 @@ namespace RichPackage.Events.Signals
         private ISignal Bind<T>() where T : ISignal, new()
             => Bind(typeof(T));
 
-        private ISignal Get(string signalHash)
+        public ISignal Get(string signalHash)
         {
             foreach (ISignal signal in signals.Values)
             {
