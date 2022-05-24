@@ -3,18 +3,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 namespace ProjectEmpiresEdge.UI
 {
     [RequireComponent(typeof(Button))]
     public class NavigationPanelButton : RichMonoBehaviour
     {
-        [Header("---Navigation Panel Button---")]
-        [SerializeField]
+        [Title("References")]
+        [SerializeField, Required]
         private TextMeshProUGUI buttonLabel;
 
-        [SerializeField]
+        [SerializeField, Required]
         private Image icon;
+
+        [SerializeField, Required]
+        private Button myButton; // button Component
 
         /// <summary>
         /// Event for when the UI button was clicked.
@@ -26,8 +30,6 @@ namespace ProjectEmpiresEdge.UI
         /// </summary>
         private NavigationPanelEntry navigationData;
 
-        private Button myButton; // button Component
-
         public bool IsInteractable
         {
             get => myButton.interactable;
@@ -36,10 +38,17 @@ namespace ProjectEmpiresEdge.UI
 
         public string TargetScreen { get => navigationData.TargetScreen; }
 
-        protected override void Awake()
+		private void Reset()
+		{
+            SetDevDescription("A tab to navigate a menu.");
+            myButton = gameObject.GetComponent<Button>();
+		}
+
+		protected override void Awake()
         {
             base.Awake();
-            myButton = GetComponent<Button>();
+            if (myButton == null)
+                myButton = GetComponent<Button>();
         }
 
         /// <summary>
