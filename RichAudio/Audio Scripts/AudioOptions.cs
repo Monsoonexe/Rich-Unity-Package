@@ -82,7 +82,21 @@ namespace RichPackage.Audio
             this.crossfade = crossfade;
         }
 
-        #endregion
+        /// <summary>
+        /// Copy-constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        public AudioOptions(in AudioOptions other)
+		{
+            this.loop = other.loop;
+            this.pitchShift = other.pitchShift;
+            this.priority = other.priority;
+            this.volume = other.volume;
+            this.duration = other.duration;
+            this.crossfade = other.crossfade;
+		}
+
+        #endregion Constructors
 
         /// <summary>
         /// Default options suitable for sound effects.
