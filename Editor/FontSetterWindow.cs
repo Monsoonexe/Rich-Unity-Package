@@ -16,7 +16,8 @@ public class FontSetterWindow : OdinEditorWindow
     [SerializeField, Required]
     private TMP_FontAsset workingFont;
 
-    [SerializeField, ListDrawerSettings(Expanded = true, ShowItemCount = true, ShowPaging = true)]
+    [SerializeField, ListDrawerSettings(Expanded = true, ShowItemCount = true, ShowPaging = true),
+        PropertyOrder(2)]
     private List<TextMeshProUGUI> sceneTexts;
 
     [MenuItem("RichUtilities/Font Setter Window")]
