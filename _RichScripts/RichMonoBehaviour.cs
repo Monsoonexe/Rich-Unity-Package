@@ -14,14 +14,16 @@ namespace RichPackage
 #if UNITY_EDITOR
         [SerializeField, TextArea]
         [PropertyOrder(-5)]
-        private string developerDescription = "Please enter a description or a note.";
+#pragma warning disable IDE0052 // Remove unread private members
+		private string developerDescription = "Please enter a description or a note.";
+#pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-        /// <summary>
-        /// This call will be stripped out of Builds. Use anywhere.
-        /// </summary>
-        /// <param name="newDes"></param>
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+		/// <summary>
+		/// This call will be stripped out of Builds. Use anywhere.
+		/// </summary>
+		/// <param name="newDes"></param>
+		[Conditional(ConstStrings.UNITY_EDITOR)]
         public void SetDevDescription(string newDes)
         {
 #if UNITY_EDITOR
