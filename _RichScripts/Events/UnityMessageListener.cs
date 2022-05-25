@@ -1,4 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿/*	TODO - only subscribe events if flag is set
+ * 
+ */
+
+using System.Runtime.CompilerServices;
 using RichPackage.Managed;
 using Sirenix.OdinInspector;
 
@@ -8,12 +12,13 @@ namespace RichPackage.UnityMessages
 	/// "Invokes a <see cref="UnityEngine.Events.UnityEvent"/> when 
 	/// any of the given UnityMessages are called.
 	/// </summary>
+	/// <seealso cref="ManagedBehaviourEngine"/>
 	public sealed class UnityMessageListener : AUnityLifetimeMessage,
         IManagedFixedUpdate, IManagedEarlyUpdate, IManagedLateUpdate,
 		IManagedUpdate, IManagedOnApplicationPause, IManagedOnApplicationQuit
     {
 		[Title(nameof(messages)), HideLabel,
-			OnValueChanged(nameof(ClearBitsIfNoneSet))]
+			OnValueChanged(nameof(ClearBitsIfNoneIsSet))]
 		[EnumToggleButtons, PropertyOrder(-2)]
         public EUnityMessage messages = EUnityMessage.Start;
 
@@ -21,15 +26,20 @@ namespace RichPackage.UnityMessages
 
 		private void Reset()
 		{
-			SetDevDescription("Invokes a UnityEvent during any of the given" +
+			SetDevDescription("Invokes a UnityEvent when any of the given" +
 				" UnityMessages are called.");
 		}
 
 		protected override void Awake()
 		{
 			base.Awake();
-			ClearBitsIfNoneSet();
-			ManagedBehaviourEngine.RegisterManagedBehavior(this);
+			ClearBitsIfNoneIsSet();
+
+			//should I only subscribe to events to which flags are set?
+			//not as responsive, but more performant.
+			ManagedBehaviourEngine.RegisterManagedBehavior(this); //all of them
+
+			//awake
 			InvokeIfFlagSet(EUnityMessage.Awake);
 		}
 
@@ -84,10 +94,10 @@ namespace RichPackage.UnityMessages
 		/// Clear all bits if <see cref="EUnityMessage.None"/> is set.
 		/// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void ClearBitsIfNoneSet()
+		private void ClearBitsIfNoneIsSet()
 		{
 			if (messages.HasFlag(EUnityMessage.None))
-				messages &= 0; //clear all bits.
+				messages = 0x0; //clear all bits.
 		}
 	}
 }
