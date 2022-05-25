@@ -22,7 +22,7 @@ namespace RichPackage.Managed
 
         protected virtual void OnEnable()
         {
-            ManagedBehaviourEngine.AddManagedListener(this);
+            ManagedBehaviourEngine.RegisterManagedBehavior(this);
         }
 
         protected virtual void OnDisable()
