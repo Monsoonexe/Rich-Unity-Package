@@ -3,7 +3,8 @@
 namespace RichPackage.UnityMessages
 {
 	/// <summary>
-	/// 
+	/// An <see langword="enum"/> that represents UnityMessages 
+	/// like <see langword="Start"/> and <see langword="Update"/>.
 	/// </summary>
 	[Flags]
 	public enum EUnityMessage
