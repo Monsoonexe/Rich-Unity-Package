@@ -13,6 +13,7 @@ namespace RichPackage
             return output;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static StringBuilder ClearOrNew(this StringBuilder sb)
         {
             if (sb == null)
