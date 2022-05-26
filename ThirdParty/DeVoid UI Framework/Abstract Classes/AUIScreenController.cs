@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreenController
     where TProps : IScreenProperties
@@ -31,6 +32,8 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// <summary>
     /// Unique Identifier for this ID. Maybe it's prefab name?
     /// </summary>
+    [field: SerializeField, LabelText(nameof(ScreenID)),
+        PropertyTooltip("[Optional]. If this is null/empty, it'll be set to its prefab name.")]
     public virtual string ScreenID { get; set; }
 
     /// <summary>
