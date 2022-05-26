@@ -10,7 +10,6 @@ using RichPackage;
 public abstract class AUILayer<TScreen> : RichMonoBehaviour 
     where TScreen : IUIScreenController
 {
-
     /// <summary>
     /// Collection of Screens.
     /// </summary>
@@ -19,14 +18,12 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     /// <summary>
     /// Shows given Screen.
     /// </summary>
-    /// <param name="screen"></param>
     public abstract void ShowScreen(TScreen screen);
 
     /// <summary>
     /// Shows given Screen and passes in given Properties.
     /// </summary>
     /// <typeparam name="TProps">Type of data payload</typeparam>
-    /// <param name="screen"></param>
     /// <param name="properties">the data payload</param>
     public abstract void ShowScreen<TProps>(TScreen screen, TProps properties) 
         where TProps : IScreenProperties;
@@ -66,8 +63,6 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     /// <summary>
     /// Register a Screen this this Layer.
     /// </summary>
-    /// <param name="screenID"></param>
-    /// <param name="controller"></param>
     public void RegisterScreen(string screenID, TScreen controller)
     {
         if (!registeredScreens.ContainsKey(screenID))
@@ -76,7 +71,8 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AUILayer] ID already registered: " + screenID, this);
+            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] ID <{screenID}> is " +
+				"already registered to this Layer.", this);
         }
     }
 
@@ -88,8 +84,8 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AUILayer] Given screenID not registered to this Layer: " 
-                + screenID, this);
+            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
+                "is not registered to this Layer!", this);
         }
     }
 
@@ -125,8 +121,8 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AUILayer] screenID: " + screenID 
-                + " not registered to this Layer!", this);
+            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
+				"is not registered to this Layer!", this);
         }
     }
 
@@ -141,10 +137,9 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AUILayer] screenID: " + screenID 
-                + " not registered to this Layer!", this);
+            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
+                "is not registered to this Layer!", this);
         }
-
     }
 
     public void HideScreenByID(string screenID, bool animate = true)
@@ -157,7 +152,8 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError("[AUILayer] screenID: " + screenID + " not registered to this Layer!", this);
+            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
+                "is not registered to this Layer!", this);
         }
     }
 
@@ -169,7 +165,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
-    #endregion
+    #endregion Show/Hide Screens
 
     private void OnScreenDestroyed(IUIScreenController screen)//why not just take a TScreen?
     {
