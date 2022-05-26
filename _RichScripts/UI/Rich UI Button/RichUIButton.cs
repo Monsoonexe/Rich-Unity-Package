@@ -73,8 +73,10 @@ namespace RichPackage.UI
         //events
         public event Action<RichUIButton> OnPressedEvent;
 
-        protected virtual void Reset()
+
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("Automatically handles subscribing " +
                 "and responding to a button.");
             myButton = GetComponent<Button>();

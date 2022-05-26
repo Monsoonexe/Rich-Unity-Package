@@ -11,8 +11,9 @@ namespace RichPackage
     {
         //member functions for events to hook onto.
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I control the events and behaviour of this specifc level.");
         }
 

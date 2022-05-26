@@ -191,13 +191,13 @@ namespace RichPackage.Audio
         /// Create an AudioManager in the Scene.
         /// </summary>
     #if UNITY_EDITOR
-        [UnityEditor.MenuItem("Tools/Audio Manager/Create Instance in Scene")]
+        [UnityEditor.MenuItem("RichUtilities/Audio/Create Instance in Scene")]
     #endif
         public static void Init()
         {
             if (!Instance)
             {
-                var prefab = Resources.Load<AudioManager>("AudioManager");
+                var prefab = Resources.Load<AudioManager>(nameof(AudioManager));
     #if UNITY_EDITOR
                 UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
     #else

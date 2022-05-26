@@ -95,12 +95,12 @@ namespace RichPackage.UI
         private int VERTICAL_WIPE_OUT;
         public int VerticalWipeOutMessage { get => VERTICAL_WIPE_OUT; }
 
-		#endregion
+        #endregion
 
-		//public static event Action TransitionEndEvent;
-
-        private void Reset()
+        //public static event Action TransitionEndEvent;
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("Controls screen transitions and fades.");
             myAnimator = GetComponent<Animator>();
         }

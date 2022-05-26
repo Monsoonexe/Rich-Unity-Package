@@ -27,9 +27,11 @@ public class ScaleScreenTransition : ATransitionComponent
         callback = callWhenFinished;
         canvasGroup = null; // reset in case not fading
         
-        if (doFade) {
-            canvasGroup = rTransform.GetComponent<CanvasGroup>()
-                ?? rTransform.gameObject.AddComponent<CanvasGroup>();
+        if (doFade)
+        {
+            canvasGroup = GetComponentSelfOrChildren<CanvasGroup>(canvasGroup);
+            if (canvasGroup == null)
+                canvasGroup = rTransform.gameObject.AddComponent<CanvasGroup>();
 
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
         }

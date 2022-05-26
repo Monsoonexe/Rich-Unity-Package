@@ -11,8 +11,9 @@ namespace RichPackage
         [Min(0)]
         public float lifeTime = 10;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("Destroys parent GameObject after given time.");
         }
 

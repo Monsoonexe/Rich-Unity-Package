@@ -42,8 +42,9 @@ namespace RichPackage.UnityMessages
                 myCollider = GetComponent<Collider>();
         }
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             myCollider = GetComponent<Collider>();
         }
 

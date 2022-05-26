@@ -13,8 +13,9 @@ namespace RichPackage.PlayingCards
 		public virtual void UpdateVisuals(CardSO newCard)
 			=> FrontSprite = newCard.FaceImage;
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("I'm the world-space representation of a card!");
 		}
 	}

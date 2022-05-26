@@ -15,8 +15,9 @@ namespace RichPackage.UI
 		[Tooltip("[Optional] Canvas which needs an event camera.")]
 		public Canvas canvas;
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Quick and dirty script to automatically " +
 				"link the Main camera to a World Canvas's " + 
 				"world camera(event camera) property. " +

@@ -70,8 +70,9 @@ namespace RichPackage
 		//runtime data
 		private Coroutine timerRoutine;
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Counts down and raises an event when timer hits 0. Can loop.");
 		}
 

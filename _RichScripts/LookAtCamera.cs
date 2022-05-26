@@ -7,8 +7,9 @@ namespace RichPackage
     /// </summary>
     public class LookAtCamera : LookAtTransform
     {
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("Don't ask questions, just face the MainCamera while active.");
             dynamicallyAssign = false;
             findByTag = ConstStrings.TAG_MAIN_CAMERA;

@@ -30,12 +30,6 @@ namespace RichPackage.Spawning
             }
         }
 
-        private void Reset()
-        {
-            SetDevDescription("Always keeps given number of items spawned." +
-                " Useful for things like life counters.");
-        }
-
         protected override void Awake()
         {
             base.Awake();

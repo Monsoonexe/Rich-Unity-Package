@@ -37,8 +37,9 @@ namespace RichPackage.Raycasting
         }
         private float nextRayTime;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             Awake();
         }
 

@@ -49,10 +49,11 @@ namespace RichPackage.UI
 			}
 		}
 
-	#endif
+#endif
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("I display text. E.g. {0} % \t {0} | {1} | {2} \t {1} credits \t {1:n} \t {#,##0}.");
 			readoutUIElement = GetComponent<TextMeshProUGUI>(); //assume you want this one
 		}

@@ -73,8 +73,9 @@ namespace RichPackage.Pooling
         /// </summary>
         public int InUseCount { get => manifest.Count - pool.Count; }
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I replace Instantiate with a pool of objects. " +
                 "I'm doing my part to reduce garbage generation.");
             poolParent = GetComponent<Transform>();

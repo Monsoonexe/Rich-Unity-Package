@@ -40,8 +40,9 @@ namespace RichPackage.Logic
             Evaluate();
 		}
 
-		private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription($"Compares {nameof(InputA)} to {nameof(InputB)} and raises events based on the result.");
         }
 

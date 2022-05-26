@@ -48,8 +48,9 @@ namespace RichPackage.Animation
         [SerializeField]
         private PropertyStruct[] properties = null;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I help rig an Animator to UnityEvents! Rig me to SetBool, or SetFloat.");
             animator = GetComponent<Animator>();
         }

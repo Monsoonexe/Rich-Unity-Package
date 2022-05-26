@@ -24,13 +24,14 @@ namespace RichPackage.Audio
         }
 
 #if UNITY_EDITOR
-        [UnityEditor.MenuItem("Tools/Audio Manager/GlobalAudioHub")]
+        [UnityEditor.MenuItem("RichUtilities/Audio/GlobalAudioHub")]
 #endif
         public static void ConstructGlobal()
         {
             if (instance != null)
             {
-                Debug.Log("[GlobalAudioHub] GlobalAudioHub already Scene.", instance);
+                Debug.Log($"[{nameof(GlobalAudioHub)}] GlobalAudioHub already Scene.",
+                    instance);
                 return;
             }
             //set name

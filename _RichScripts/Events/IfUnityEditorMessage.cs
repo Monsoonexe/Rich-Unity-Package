@@ -24,8 +24,9 @@ namespace RichPackage.UnityMessages
 
 		#region Unity Messages
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Invokes 'ifEvent' if 'UNITY_EDITOR' is defined," +
 				" otherwise invokes 'ifNotEvent'.");
 			Awake();

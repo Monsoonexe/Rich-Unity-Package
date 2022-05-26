@@ -81,12 +81,13 @@ namespace RichPackage.Managed
         /// </summary>
         public static float FixedDeltaTime;
 
-		#endregion
+        #endregion
 
-		#region Unity Messages
+        #region Unity Messages
 
-		private void Reset()
-		{
+        protected override void Reset()
+        {
+            base.Reset();
             SetDevDescription("Managed UnityMessages reduce their overhead signifigantly.");
 		}
 

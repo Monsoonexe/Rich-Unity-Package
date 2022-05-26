@@ -11,8 +11,9 @@ namespace RichPackage.UI
     public abstract class VariableUIElement<T> : RichUIElement<T>
         where T : BaseVariable
     {
-        protected virtual void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription($"Displays a {typeof(T)} and updates when its events are called.");
         }
 

@@ -54,8 +54,9 @@ namespace RichPackage.Animation
 		/// </summary>
 		public Tween Tween { get => animTween; }
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Animates an Image's Color property.");
 
 			//make a general attempt to auto locate the necessary components.

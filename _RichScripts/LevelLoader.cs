@@ -56,8 +56,9 @@ namespace RichPackage
 
         private Stack<SceneVariable> levelHistory;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I help control the flow of changing between Levels.");
         }
 

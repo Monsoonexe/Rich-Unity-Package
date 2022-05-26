@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -34,6 +34,7 @@ namespace RichPackage
         /// <summary>
         /// Cached Transform.
         /// </summary>
+        [SerializeField, HideInInspector]
         protected Transform myTransform;
 
         /// <summary>
@@ -42,8 +43,13 @@ namespace RichPackage
         /// </summary>
         public new Transform transform { get => myTransform; }
 
+        protected virtual void Reset()
+		{
+            myTransform = gameObject.GetComponent<Transform>();
+		}
+
         protected virtual void Awake()
-            => myTransform = GetComponent<Transform>();
+            => myTransform = GetComponentIfNull<Transform>(myTransform);
 
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.
@@ -102,7 +108,7 @@ namespace RichPackage
         }
 
         public static T Construct<T>() where T : RichMonoBehaviour
-            => new GameObject().AddComponent<T>();
+            => new GameObject(typeof(T).Name).AddComponent<T>();
 
         public static T Construct<T>(string name) where T : RichMonoBehaviour
             => new GameObject(name).AddComponent<T>();

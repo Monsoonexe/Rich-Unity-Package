@@ -14,8 +14,9 @@ namespace RichPackage.SaveSystem
 		[SerializeField]
 		private BaseVariable[] savedVariables;
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Saves " +
 				"ScriptableObjectArchitecture data.");
 		}

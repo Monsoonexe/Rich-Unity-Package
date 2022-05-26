@@ -15,8 +15,7 @@ namespace RichPackage.Audio
         public bool playOnEnable = false;
         public bool stopOnDisable = false;
 
-        [Title(nameof(clip))]
-        [InlineProperty, HideLabel]
+        [InlineProperty, HideLabel, Title(nameof(clip))]
         public RichAudioClipReference clip
             = new RichAudioClipReference(AudioOptions.DefaultSFX);
 
@@ -25,8 +24,9 @@ namespace RichPackage.Audio
 
         #region Unity Messages
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription(" A Mono that will play audio from static " +
 				"AudioManager Helpful for rigging events and prefabs to audio" +
 				" that aren't yet aware of an AudioManager in a scene..");

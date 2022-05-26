@@ -33,8 +33,9 @@ namespace RichPackage.Animation
 
         private Tweener animTween;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             targetTransform = GetComponent<RectTransform>();
             SetDevDescription("I help animate UI elements!");
         }

@@ -24,8 +24,9 @@ namespace RichPackage.UnityMessages
 
 		#region Unity Messages
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Invokes a UnityEvent when any of the given" +
 				" UnityMessages are called.");
 		}

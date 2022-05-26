@@ -18,8 +18,9 @@ namespace RichPackage.UI
 		[SerializeField, Required]
 		private Slider slider;
 
-		protected virtual void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("Synchronizes a ScriptableObject with input from Slider.Value.");
 			slider = GetComponent<Slider>();
 		}

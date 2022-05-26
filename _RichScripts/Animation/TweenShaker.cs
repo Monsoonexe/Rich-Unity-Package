@@ -65,8 +65,9 @@ namespace RichPackage.Animation
 
 		#endregion
 
-		private void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDevDescription("I do a shake tween animation.");
 			target = GetComponent<Transform>();
 		}

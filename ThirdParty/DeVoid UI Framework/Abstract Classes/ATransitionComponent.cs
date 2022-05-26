@@ -18,9 +18,10 @@ public abstract class ATransitionComponent : RichMonoBehaviour
     public float Duration { get => duration; }
 
     public bool IsAnimating { get; protected set; }
-    
-    protected virtual void Reset()
+
+    protected override void Reset()
     {
+        base.Reset();
         SetDevDescription("Animates a UI element.");
     }
 

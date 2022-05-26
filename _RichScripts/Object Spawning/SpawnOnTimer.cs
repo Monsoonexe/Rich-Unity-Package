@@ -25,8 +25,9 @@ namespace RichPackage.Spawning
 
         private GameObjectPool hazardPool;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I spawn items from a pool at time intervals.");
             spawnPoint = GetComponent<Transform>();
         }

@@ -60,8 +60,9 @@ namespace RichPackage.Raycasting
         //runtime data
         protected YieldInstruction yieldInterval;
 
-        protected void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I raise an event on a successful raycast hit!");
             raycastOriginPoint = GetComponent<Transform>();
         }

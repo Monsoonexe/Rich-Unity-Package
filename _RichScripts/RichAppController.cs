@@ -27,8 +27,9 @@ namespace RichPackage
         
         public static float FixedDeltaTime { get; private set; }
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I control the application-level behaviour.");
         }
 

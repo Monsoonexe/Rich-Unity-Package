@@ -41,10 +41,11 @@ namespace RichPackage.Audio
         [ShowInInspector, ReadOnly]
         public bool IsInitialized { get; private set; }
 
-		#region UnityMessages
+        #region UnityMessages
 
-		private void Reset()
-		{
+        protected override void Reset()
+        {
+            base.Reset();
             SetDevDescription("Play an audio clip using only a string as the key.");
 		}
 

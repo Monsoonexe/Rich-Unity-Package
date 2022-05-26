@@ -140,8 +140,9 @@ namespace RichPackage.SaveSystem
 			public bool Equals(AState other) => this.saveID == other.saveID;
 		}
 
-		protected virtual void Reset()
+		protected override void Reset()
 		{
+			base.Reset();
 			SetDefaultSaveID();
 		}
 

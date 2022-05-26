@@ -33,8 +33,9 @@ namespace RichPackage.Events
 
         #region Unity Messages
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I invoke a UnityEvent after a delay.");
         }
 

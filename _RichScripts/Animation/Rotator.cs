@@ -18,8 +18,9 @@ namespace RichPackage.Animation
         [ShowInInspector, ReadOnly]
         public bool IsAnimating => enabled;
 
-		private void Reset()
-		{
+        protected override void Reset()
+        {
+            base.Reset();
             SetDevDescription("Rotates the target transform.");
             Awake();
         }

@@ -29,8 +29,9 @@ namespace RichPackage
         [SerializeField]
         private Transform raycastOriginPoint;
 
-        private void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("I act as gravity for objects with no non-kinematic rigidbody.");
             raycastOriginPoint = GetComponent<Transform>();
         }

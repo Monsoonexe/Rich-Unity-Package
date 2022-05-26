@@ -14,8 +14,9 @@ namespace RichPackage.UI
         [SerializeField, Required]
         private TMP_InputField inputField;
 
-        protected virtual void Reset()
+        protected override void Reset()
         {
+            base.Reset();
             SetDevDescription("Synchronizes a ScriptableObject with input from InputField.");
             inputField = GetComponent<TMP_InputField>();
         }

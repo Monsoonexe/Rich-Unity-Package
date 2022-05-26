@@ -38,8 +38,9 @@ namespace ProjectEmpiresEdge.UI
 
         public string TargetScreen { get => navigationData.TargetScreen; }
 
-		private void Reset()
+		protected override void Reset()
 		{
+            base.Reset();
             SetDevDescription("A tab to navigate a menu.");
             myButton = gameObject.GetComponent<Button>();
 		}
