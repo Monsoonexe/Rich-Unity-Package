@@ -49,8 +49,11 @@ public class UISettings : RichScriptableObject
 
                 if (screenController != null)
                 {
-                    newUI.RegisterScreen(screenPrefab.name,
-                        screenController, screenInstance.transform);
+                    bool usePrefabName = string.IsNullOrEmpty(screenController.ScreenID);
+                    string screenID = usePrefabName ? screenPrefab.name : screenController.ScreenID;
+
+                    newUI.RegisterScreen(screenID, screenController,
+                        screenInstance.transform);
 
                     if (deactivateScreenGOs && screenInstance.activeSelf)
                     {
@@ -59,8 +62,8 @@ public class UISettings : RichScriptableObject
                 }
                 else
                 {
-                    Debug.LogError("[UIConfig] " +
-                        "Screen doesn't contain a ScreenController! " +
+                    Debug.LogError($"[{nameof(UISettings)}] " +
+                        $"Screen doesn't contain a {nameof(IUIScreenController)}! " +
                         "Skipping " + screenPrefab.name, this);
                 }
             }
