@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -69,6 +69,27 @@ namespace RichPackage
                 valid = false;
             }
             return valid;
+        }
+
+        protected T GetComponentIfNull<T>(Maybe<T> maybeComponent)
+            where T : Component
+        {
+            return maybeComponent.GetValueOrDefault()
+                ?? gameObject.GetComponent<T>();
+        }
+
+        protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
+            where T : Component
+        {
+            return maybeComponent.GetValueOrDefault()
+                ?? gameObject.GetComponentInChildren<T>();
+        }
+
+        protected T GetComponentSelfOrChildren<T>(Maybe<T> maybeComponent)
+            where T : Component
+        {
+            return GetComponentIfNull(maybeComponent)
+                ?? GetComponentInChildrenIfNull(maybeComponent);
         }
 
         [Conditional(ConstStrings.UNITY_EDITOR)]
