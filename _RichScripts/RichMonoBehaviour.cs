@@ -80,22 +80,34 @@ namespace RichPackage
         protected T GetComponentIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
-            return maybeComponent.GetValueOrDefault()
-                ?? gameObject.GetComponent<T>();
+            T comp;
+            return ((comp = maybeComponent.GetValueOrDefault()) != null)
+                ? comp: gameObject.GetComponent<T>();
         }
 
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
-            return maybeComponent.GetValueOrDefault()
-                ?? gameObject.GetComponentInChildren<T>();
+            T comp;
+            return ((comp = maybeComponent.GetValueOrDefault()) != null)
+                ? comp : gameObject.GetComponentInChildren<T>();
         }
 
-        protected T GetComponentSelfOrChildren<T>(Maybe<T> maybeComponent)
+        /// <summary>
+        /// Try to get component on self, in children, and then add it on self if not found.
+        /// </summary>
+        protected T GetComponentOnPrefabAtAllCosts<T>(Maybe<T> maybeComponent)
             where T : Component
         {
-            return GetComponentIfNull(maybeComponent)
-                ?? GetComponentInChildrenIfNull(maybeComponent);
+            T comp;
+            if ((comp = maybeComponent.GetValueOrDefault()) != null)
+                return comp;
+            if ((comp = gameObject.GetComponent<T>()) != null)
+                return comp;
+            if ((comp = GetComponentInChildren<T>()) != null)
+                return comp;
+            
+            return gameObject.AddComponent<T>();
         }
 
         [Conditional(ConstStrings.UNITY_EDITOR)]
