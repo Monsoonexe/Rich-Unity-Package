@@ -1,24 +1,36 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 /// <summary>
-/// 
+/// UI Window scale in/out animation.
 /// </summary>
 /// <seealso cref="SlideScreenTransition"/>
 public class ScaleScreenTransition : ATransitionComponent
 {
-    [SerializeField] protected bool isOutAnimation;
-    [SerializeField] protected bool doFade;
-    [SerializeField] protected float fadeDurationPercent = 0.5f;
-    [SerializeField] protected Ease ease = Ease.Linear;
+    [Title("Options")]
+    [SerializeField] 
+    protected bool isOutAnimation;
+
+    [SerializeField] 
+    protected bool doFade;
+
+    [SerializeField] 
+    protected float fadeDurationPercent = 0.5f;
+
+    [SerializeField] 
+    protected Ease ease = Ease.Linear;
+
     [SerializeField] [Range(0f, 1f)] 
     protected float xYSplit = 0.25f;
+
+    [SerializeField, Title("References")]
+    private CanvasGroup canvasGroup = null;
 
     //cache variables to avoid Closure
     private Action callback;
     private RectTransform rTransform;
-    private CanvasGroup canvasGroup;
 
     public override void Animate(Transform target, Action callWhenFinished)
     {
@@ -29,10 +41,7 @@ public class ScaleScreenTransition : ATransitionComponent
         
         if (doFade)
         {
-            canvasGroup = GetComponentSelfOrChildren<CanvasGroup>(canvasGroup);
-            if (canvasGroup == null)
-                canvasGroup = rTransform.gameObject.AddComponent<CanvasGroup>();
-
+            canvasGroup = GetComponentOnPrefabAtAllCosts<CanvasGroup>(canvasGroup);
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
         }
 
@@ -57,7 +66,7 @@ public class ScaleScreenTransition : ATransitionComponent
         var xScale = rTransform.DOScaleX(targetScale, duration * xYSplit).SetEase(ease);
         var yScale = rTransform.DOScaleY(targetScale, duration * 1f - xYSplit).SetEase(ease);
 
-        scaleSequence.Append(xScale).Append(yScale);
+        scaleSequence.Join(xScale).Join(yScale);
 
         scaleSequence.Play();
     }

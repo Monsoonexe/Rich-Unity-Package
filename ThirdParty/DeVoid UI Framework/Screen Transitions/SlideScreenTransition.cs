@@ -1,9 +1,10 @@
 ﻿using System;
 using DG.Tweening;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 /// <summary>
-/// 
+/// UI Window slide in/out animation.
 /// </summary>
 /// <seealso cref="ScaleScreenTransition"/>
 public class SlideScreenTransition : ATransitionComponent
@@ -17,18 +18,33 @@ public class SlideScreenTransition : ATransitionComponent
         Bottom = 4,
     }
 
-    [SerializeField] protected Position origin = Position.Left;
-    [SerializeField] protected bool isOutAnimation;
-    [SerializeField] protected bool doFade;
-    [SerializeField] protected float fadeDurationPercent = 0.5f;
-    [SerializeField] protected Ease ease = Ease.Linear;
+    [Title("Options")]
+    [SerializeField] 
+    protected Position origin = Position.Left;
 
-    private RectTransform rTransform;
+    [SerializeField]
+    protected bool isOutAnimation;
+
+    [SerializeField] 
+    protected bool doFade;
+
+    [SerializeField] 
+    protected float fadeDurationPercent = 0.5f;
+
+    [SerializeField] 
+    protected Ease ease = Ease.Linear;
+
+    [SerializeField, Title("References")]
+    private CanvasGroup canvasGroup = null;
+
+    //cache variables to avoid Closure
     private Action callback;
+    private RectTransform rTransform;
 
-    public Position Origin {
+    public Position Origin
+    {
         get { return origin; }
-        set { origin = value; }
+        private set { origin = value; }
     }
 
     public override void Animate(Transform target, Action callWhenFinished = null)
@@ -59,12 +75,9 @@ public class SlideScreenTransition : ATransitionComponent
 
         rTransform.DOKill();
 
-        CanvasGroup canvasGroup = null;
-        if (doFade) 
+        if (doFade)
         {
-            canvasGroup = rTransform.GetComponent<CanvasGroup>() //TODO - null coalescing could be a lie!
-                ?? rTransform.gameObject.AddComponent<CanvasGroup>();
-            
+            canvasGroup = GetComponentIfNull<CanvasGroup>(canvasGroup);
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
         }
 
