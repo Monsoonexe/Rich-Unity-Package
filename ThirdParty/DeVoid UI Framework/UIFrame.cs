@@ -12,6 +12,8 @@ using Sirenix.OdinInspector;
 [SelectionBase]
 public class UIFrame : RichMonoBehaviour
 {
+    private const string ButtonGroup = "bg";
+
     [Tooltip("True if automatically initialized, False if manually initialized.")]
     [SerializeField]
     private bool initializeOnAwake = true;
@@ -157,7 +159,7 @@ public class UIFrame : RichMonoBehaviour
 
     #region Hide/Show Panels
 
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void HideAllPanels(bool animate = true)
     {
         panelLayer.HideAll(animate); // relay
@@ -176,7 +178,7 @@ public class UIFrame : RichMonoBehaviour
     /// Hide panel with given ID
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void HidePanel(string screenID)
     {
         panelLayer.HideScreenByID(screenID); // relay
@@ -186,7 +188,7 @@ public class UIFrame : RichMonoBehaviour
     /// Shows a panel by its ID, with no Properties.
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void ShowPanel(string screenID)
     {
         panelLayer.ShowScreenByID(screenID); // relay
@@ -221,7 +223,7 @@ public class UIFrame : RichMonoBehaviour
     /// Searches for a Window or Panel with given ID and opens it if found.
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void ShowScreen(string screenID)
     {
         Type type;
@@ -238,12 +240,12 @@ public class UIFrame : RichMonoBehaviour
             }
             else
             {
-                Debug.LogErrorFormat("ERROR! ScreenID is registered, but it is neither an IWindowController or IPanelController: {0}", screenID);
+                Debug.LogError($"ERROR! ScreenID is registered, but it is neither an IWindowController or IPanelController: {screenID}", this);
             }
         }
         else
         {
-            Debug.LogErrorFormat("ERROR! Tried to ShowScreen, but ID {0} is not registered.", screenID);
+            Debug.LogError($"ERROR! Tried to {nameof(ShowScreen)}, but ID {screenID} is not registered.", this);
         }
     }
 
