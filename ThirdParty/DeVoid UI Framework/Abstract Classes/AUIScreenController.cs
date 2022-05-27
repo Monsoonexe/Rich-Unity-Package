@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using RichPackage;
 using Sirenix.OdinInspector;
 
+[RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster))]
 public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreenController
     where TProps : IScreenProperties
 {
@@ -40,6 +41,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// Is this screen currently visible?
     /// </summary>
     /// <value><c>true</c> if visible; otherwise, <c>false</c>.</value>
+    [ReadOnly, ShowInInspector]
     public bool IsVisible { get; private set; }
 
     /// <summary>
@@ -64,13 +66,18 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// <value>The destruction action.</value>
     public Action<IUIScreenController> OnScreenDestroyed { get; set; }
 
-    protected override void Awake()
+	protected override void Reset()
+    {
+        gameObject.GetOrAddComponent<Canvas>();
+        gameObject.GetOrAddComponent<GraphicRaycaster>();
+    }
+
+	protected override void Awake()
     {
         base.Awake();
-        //TODO - add Canvas to limit redraw.
-        //give canvas for performance.
-        gameObject.AddComponent<Canvas>();
-        gameObject.AddComponent<GraphicRaycaster>();
+        //add Canvas to limit redraw.
+        gameObject.GetOrAddComponent<Canvas>();
+        gameObject.GetOrAddComponent<GraphicRaycaster>();
     }
 
     protected virtual void OnEnable()
@@ -78,8 +85,14 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         AddListeners();
     }
 
+    protected virtual void OnDisable()
+	{
+        RemoveListeners();
+	}
+
     protected virtual void OnDestroy()
     {
+        //death rattle
         OnScreenDestroyed?.Invoke(this);
 
         //release refs
@@ -87,8 +100,6 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         OnTransitionOutFinishedCallback = null; // release ref
         CloseRequest = null; // release ref
         OnScreenDestroyed = null; // release ref
-
-        RemoveListeners(); // clear events
     }
 
     /// <summary>
@@ -196,14 +207,14 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         //validate 
         if (payload != null)
         {
-            if(payload is TProps)
+            if(payload is TProps props)
             {
-                SetProperties((TProps)payload);
+                SetProperties(props);
             }
             else
             {
-                Debug.LogError("[AUIScreenController] Properties passed have wrong type! (" +
-                    payload.GetType() + " instead of " + typeof(TProps) + ")");
+                Debug.LogError($"[{nameof(AUIScreenController<TProps>)}] Properties passed have wrong type! " +
+					$"({payload.GetType()} instead of {typeof(TProps)}).");
 
                 // default to Inspector values
             }

@@ -2,6 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using RichPackage;
 
 /// <summary>
 /// UI Window slide in/out animation.
@@ -77,7 +78,7 @@ public class SlideScreenTransition : ATransitionComponent
 
         if (doFade)
         {
-            canvasGroup = GetComponentIfNull<CanvasGroup>(canvasGroup);
+            canvasGroup = gameObject.GetComponentIfNull<CanvasGroup>(canvasGroup);
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
         }
 

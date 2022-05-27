@@ -37,7 +37,7 @@ public class ScaleScreenTransition : ATransitionComponent
         IsAnimating = true;
         rTransform = target as RectTransform;
         callback = callWhenFinished;
-        canvasGroup = null; // reset in case not fading
+        //canvasGroup = null; // reset in case not fading
         
         if (doFade)
         {
@@ -60,7 +60,7 @@ public class ScaleScreenTransition : ATransitionComponent
         else
         {
             targetScale = 1f;
-            rTransform.localScale = new Vector3(0f, 0.02f, 0f);
+            rTransform.localScale = new Vector3(0f, 0.00f, 0f);
         }
 
         var xScale = rTransform.DOScaleX(targetScale, duration * xYSplit).SetEase(ease);
@@ -77,7 +77,16 @@ public class ScaleScreenTransition : ATransitionComponent
         rTransform.localScale = Vector3.one;
         if(canvasGroup)
             canvasGroup.alpha = 1f;
-        callback();
+        callback?.Invoke();
+        //try
+        //{
+        //          callback?.Invoke();
+        //}
+        //      catch(Exception ex)
+        //{
+        //          Debug.LogException(ex, this);
+        //          throw ex;
+        //}
         callback = null;
     }
 
