@@ -41,7 +41,7 @@ namespace RichPackage.Editor
             return;
 #endif
             Instance = this;
-            myAudioSource = GetComponentIfNull<AudioSource>(myAudioSource);
+            myAudioSource = gameObject.GetComponentIfNull(myAudioSource);
         }
 
 
