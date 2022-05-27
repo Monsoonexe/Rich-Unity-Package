@@ -49,7 +49,9 @@ namespace RichPackage
 		}
 
         protected virtual void Awake()
-            => myTransform = GetComponentIfNull<Transform>(myTransform);
+		{
+            myTransform = gameObject.GetComponentIfNull(myTransform);
+        }
 
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.
@@ -75,14 +77,6 @@ namespace RichPackage
                 valid = false;
             }
             return valid;
-        }
-
-        protected T GetComponentIfNull<T>(Maybe<T> maybeComponent)
-            where T : Component
-        {
-            T comp;
-            return ((comp = maybeComponent.GetValueOrDefault()) != null)
-                ? comp: gameObject.GetComponent<T>();
         }
 
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
