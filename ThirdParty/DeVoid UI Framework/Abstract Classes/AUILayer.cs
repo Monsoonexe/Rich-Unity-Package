@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Base class for UI Layers. Layers implement custom logic for Screens when opening, closing, etc.
@@ -111,6 +112,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
 
     #region Show/Hide Screens
 
+    [Button, DisableInEditorMode]
     public void ShowScreenByID(string screenID)
     {
         TScreen controller; 
@@ -142,6 +144,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
+    [Button, DisableInEditorMode]
     public void HideScreenByID(string screenID, bool animate = true)
     {
         TScreen controller;
@@ -157,6 +160,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
+    [Button, DisableInEditorMode]
     public virtual void HideAll(bool animateWhenHiding = true)
     {
         foreach(var screenEntry in registeredScreens)
