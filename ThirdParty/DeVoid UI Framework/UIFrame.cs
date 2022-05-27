@@ -2,9 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 /// <summary>
-/// All your calls should be directed at this. This is the central hub for all things UI.
+/// This is the central hub for all things UI. All your calls should be directed at this.
 /// </summary>
 [RequireComponent(typeof(Canvas))]
 [RequireComponent(typeof(GraphicRaycaster))]
@@ -15,32 +16,44 @@ public class UIFrame : RichMonoBehaviour
     [SerializeField]
     private bool initializeOnAwake = true;
 
-    [Header("---Scene Refs---")]
-    [SerializeField]
+    [Title("Prefab Refs")]
+    [SerializeField, Required]
     private PanelUILayer panelLayer;
 
-    [SerializeField]
+    [SerializeField, Required]
     private WindowUILayer windowLayer;
 
-    [SerializeField]
+    [SerializeField, Required]
     private Image raycastBlocker;
 
-    //member Components
-    public Canvas MainCanvas { get; private set; } //  // found using GetComponent()
+    [SerializeField, Required]
+    private Canvas mainCanvas;
 
-    private GraphicRaycaster myGraphicRaycaster; // found using GetComponent()
+    [SerializeField, Required]
+    private GraphicRaycaster myGraphicRaycaster;
 
-    public Camera UICamera { get => MainCanvas.worldCamera; }
+    public Camera UICamera { get => mainCanvas.worldCamera; }
 
-    protected override void Awake()
+	protected override void Reset()
+	{
+		base.Reset();
+        SetDevDescription("This is the central hub for all things UI. All your calls should be directed at this.");
+        mainCanvas = GetComponent<Canvas>();
+        myGraphicRaycaster = GetComponent<GraphicRaycaster>();
+        windowLayer = GetComponentInChildren<WindowUILayer>();
+        panelLayer = GetComponentInChildren<PanelUILayer>();
+	}
+
+	protected override void Awake()
     {
-        base.Awake();
-
         //init self
+        base.Awake();
+        mainCanvas = gameObject.GetComponentIfNull(mainCanvas);
+        myGraphicRaycaster = gameObject.GetComponentIfNull(myGraphicRaycaster);
+
+        //init others
         if (initializeOnAwake)
-        {
             Initialize();
-        }
     }
 
     protected void Start()
@@ -68,10 +81,6 @@ public class UIFrame : RichMonoBehaviour
 
     public virtual void Initialize()
     {
-        //init self
-        MainCanvas = GetComponent<Canvas>();
-        myGraphicRaycaster = MainCanvas.GetComponent<GraphicRaycaster>();
-
         //init panel
         panelLayer.Initialize();
 
@@ -148,6 +157,7 @@ public class UIFrame : RichMonoBehaviour
 
     #region Hide/Show Panels
 
+    [Button, DisableInEditorMode]
     public void HideAllPanels(bool animate = true)
     {
         panelLayer.HideAll(animate); // relay
@@ -166,6 +176,7 @@ public class UIFrame : RichMonoBehaviour
     /// Hide panel with given ID
     /// </summary>
     /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void HidePanel(string screenID)
     {
         panelLayer.HideScreenByID(screenID); // relay
@@ -175,6 +186,7 @@ public class UIFrame : RichMonoBehaviour
     /// Shows a panel by its ID, with no Properties.
     /// </summary>
     /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void ShowPanel(string screenID)
     {
         panelLayer.ShowScreenByID(screenID); // relay
@@ -209,6 +221,7 @@ public class UIFrame : RichMonoBehaviour
     /// Searches for a Window or Panel with given ID and opens it if found.
     /// </summary>
     /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void ShowScreen(string screenID)
     {
         Type type;
