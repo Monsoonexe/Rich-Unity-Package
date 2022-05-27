@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
@@ -308,16 +308,8 @@ public class UIFrame : RichMonoBehaviour
 
     public bool IsScreenRegistered(string screenID)
     {
-        if (windowLayer.IsScreenRegistered(screenID))
-        {
-            return true;
-        }
-        else if (panelLayer.IsScreenRegistered(screenID))
-        {
-            return true;
-        }
-
-        return false; // not found
+        return (windowLayer.IsScreenRegistered(screenID))
+            || (panelLayer.IsScreenRegistered(screenID));
     }
 
     /// <summary>
