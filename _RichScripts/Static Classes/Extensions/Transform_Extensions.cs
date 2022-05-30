@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.ComplierServices;
 using UnityEngine;
 
 namespace RichPackage
@@ -80,5 +81,13 @@ namespace RichPackage
                 ForEachTransformRecursive(child, action);
             }
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform GetFirstChild(this Transform transform)
+            => transform.GetChild(0);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform GetLastChild(this Transform transform)
+            => transform.GetChild(transform.childCount - 1);
     }
 }

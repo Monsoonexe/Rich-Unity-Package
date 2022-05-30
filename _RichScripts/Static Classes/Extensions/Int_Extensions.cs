@@ -17,5 +17,37 @@ namespace RichPackage
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool IsWithin0(this int i, int max)
 			=> IsWithin(i, 0, max);
+
+		/// <summary>
+		/// Functional notation for <paramref name="lhs"/> + <paramref name="rhs"/>.
+		/// </summary>
+		/// <returns><paramref name="lhs"/> + <paramref name="rhs"/></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Add(this int lhs, int rhs)
+			=> lhs + rhs;
+
+		/// <summary>
+		/// Functional notation for <paramref name="lhs"/> - <paramref name="rhs"/>.
+		/// </summary>
+		/// <returns><paramref name="lhs"/> - <paramref name="rhs"/></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Sub(this int lhs, int rhs)
+			=> lhs - rhs;
+
+		/// <summary>
+		/// Functional notation for <paramref name="lhs"/> ^ <paramref name="rhs"/>.
+		/// </summary>
+		/// <returns><paramref name="lhs"/> ^ <paramref name="rhs"/></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Xor(this int lhs, int rhs)
+			=> lhs ^ rhs;
+			
+		/// <summary>
+		/// Functional notation for <paramref name="lhs"/> !^ <paramref name="rhs"/>.
+		/// </summary>
+		/// <returns><paramref name="lhs"/> !^ <paramref name="rhs"/></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int Xnor(this int lhs, int rhs)
+			=> !(lhs ^ rhs);
 	}
 }

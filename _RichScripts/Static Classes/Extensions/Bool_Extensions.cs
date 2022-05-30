@@ -8,9 +8,6 @@ namespace RichPackage
         public const int TRUE_int = 1;
         public const int FALSE_int = 0;
 
-        /// <summary>
-        /// A && B in function form.
-        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool And(this bool a, bool b) => a && b;
 
@@ -48,6 +45,10 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Toggle(this ref bool a) => a = !a;
+
+        /// <returns> 1 if <see langword="true"/>, otherwise 0 if <see langword="false"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ToInt(this bool b) => b ? 1 : 0;
 
     }
 }
