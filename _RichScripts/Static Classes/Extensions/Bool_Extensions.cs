@@ -8,9 +8,6 @@ namespace RichPackage
         public const int TRUE_int = 1;
         public const int FALSE_int = 0;
 
-        /// <summary>
-        /// A && B in function form.
-        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool And(this bool a, bool b) => a && b;
 
