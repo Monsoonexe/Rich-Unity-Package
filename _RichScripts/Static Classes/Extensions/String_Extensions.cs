@@ -93,5 +93,19 @@ namespace RichPackage
             else
                 return str.Substring(startingIndex);
         }
+
+        /// <summary>
+        /// Shorthand for <see cref="float.Parse(string)"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float ToFloat(this string source)
+            => float.Parse(source);
+
+        /// <summary>
+        /// Shorthand for <see cref="int.Parse(string)"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ToInt(this string source)
+            => int.Parse(source);
     }
 }
