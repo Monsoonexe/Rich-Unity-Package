@@ -1,40 +1,46 @@
-﻿//TODO - maybe implement the Rent-Return pattern
-
-using System.Text;
+﻿using System.Text;
 
 namespace RichPackage.Pooling
 {
     /// <summary>
-    /// A <see cref="StringBuilder"/> that is re-used 
+    /// A thread-safe <see cref="StringBuilder"/> that can be re-used 
     /// </summary>
-    public static class CommunityStringBuilder
+    public static class StringBuilderCache
     {
-        private const int STARTING_AMOUNT = 128; //salt to needs of project.
+        internal const int MAX_BUILDER_SIZE = 360;
 
-        private static readonly StringBuilder communityStringBuilder 
-            = new StringBuilder(STARTING_AMOUNT);
+        [ThreadStatic]
+        private static StringBuilder CachedInstance;
 
-        /// <summary>
-        /// Lazily trims the string builder to the correct size on fetch.
-        /// </summary>
-        public static int MaxCapacity = 1024;
-
-        /// <summary>
-        /// Community String Builder (so you don't have to 'new' one).
-        /// Just don't bet it will hold its data. Always safe to use right away.
-        /// </summary>
-        public static StringBuilder Instance
+        public static StringBuilder Rent(int capacity = 64)
         {
-            get
+            if (capacity <= MAX_BUILDER_SIZE)
             {
-                communityStringBuilder.Clear(); // clear so it's safe to sue
-
-                //trim if getting too big
-                if (communityStringBuilder.Capacity > MaxCapacity)
-                    communityStringBuilder.Capacity = MaxCapacity;
-                    
-                return communityStringBuilder;
+                StringBuilder cachedInstance = CachedInstance;
+                if (cachedInstance != null && capacity <= cachedInstance.Capacity)
+                {
+                    CachedInstance = null;
+                    cachedInstance.Clear();
+                    return cachedInstance;
+                }
             }
+
+            return new StringBuilder(capacity);
+        }
+
+        public static void Return(StringBuilder sb)
+        {
+            if (sb.Capacity <= MAX_BUILDER_SIZE)
+            {
+                CachedInstance = sb;
+            }
+        }
+
+        public static string GetStringAndRelease(StringBuilder sb)
+        {
+            string result = sb.ToString();
+            Return(sb);
+            return result;
         }
     }
 }
