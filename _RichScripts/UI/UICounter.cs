@@ -66,13 +66,13 @@ namespace RichPackage.UI
 		{
 			//which display method?
 			if (targetData.Value > maxSpawns)
-			{   
+			{
+				var sb = StringBuilderCache.Rent();
 				//setup text element like: X5 lives
-				textReadout.text = CommunityStringBuilder.Instance
-					.Append(prefix)
-					.Append(ConstStrings.GetCachedString(targetData))
-					.Append(suffix)
-					.ToString();
+				textReadout.text = StringBuilderCache.GetStringAndReturn(
+					sb.Append(prefix)
+					.Append(targetData.Value.ToStringCached())
+					.Append(suffix));
 
 				//make change from AAAAAAAAA to A x5 lives
 				if (objectPool.InUseCount != 1) //only need to do this once 

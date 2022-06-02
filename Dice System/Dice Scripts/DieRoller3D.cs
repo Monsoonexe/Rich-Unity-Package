@@ -195,7 +195,7 @@ namespace RichPackage.DiceSystem
         private void PrintPendingResults()
         {
             var count = workingDice.Count;
-            var outLog = CommunityStringBuilder.Instance;
+            var outLog = StringBuilderCache.Rent();
 
             outLog.Append("Roll results: | ");
 
@@ -203,7 +203,7 @@ namespace RichPackage.DiceSystem
             for(var i = 0; i < count; ++i)
                 outLog.Append(Results[i].ToString() + " | ");
 
-            Debug.Log(outLog.ToString());
+            Debug.Log(StringBuilderCache.GetStringAndReturn(outLog));
         }
 
         /// <summary>
