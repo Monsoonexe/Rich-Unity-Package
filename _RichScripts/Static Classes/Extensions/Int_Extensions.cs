@@ -48,6 +48,6 @@ namespace RichPackage
 		/// <returns><paramref name="lhs"/> !^ <paramref name="rhs"/></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int Xnor(this int lhs, int rhs)
-			=> !(lhs ^ rhs);
+			=> ~(lhs ^ rhs);
 	}
 }
