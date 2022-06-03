@@ -6,6 +6,12 @@ namespace RichPackage.UnityMessages
     /// </summary>
     public sealed class OnDestroyUnityMessage : AUnityLifetimeMessage
     {
+        protected override void Reset()
+        {
+            base.Reset();
+            SetDevDescription($"Invokes {nameof(lifetimeEvent)} on {nameof(OnDestroy)}.");
+        }
+
         private void OnDestroy()
         {
             lifetimeEvent.Invoke();

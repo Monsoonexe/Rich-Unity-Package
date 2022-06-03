@@ -8,16 +8,22 @@ namespace RichPackage.Managed
     public sealed class ManagedUpdateEvent : AManagedEvent,
         IManagedUpdate
     {
+        protected override void Reset()
+        {
+            base.Reset();
+            SetDevDescription($"Invokes {nameof(lifetimeEvent)} on {nameof(ManagedUpdate)}.");
+        }
+
         //override because specific is better than vague for this system.
         private void OnEnable()
         {   //cast because specific is faster
-            ManagedBehaviourEngine.AddManagedListener((IManagedUpdate)this);
+            ManagedBehaviourEngine.AddManagedListener(this);
         }
 
         //override because specific is better than vague for this system.
         private void OnDisable()
         {   //cast because specific is faster
-            ManagedBehaviourEngine.RemoveManagedListener((IManagedUpdate)this);
+            ManagedBehaviourEngine.RemoveManagedListener(this);
         }
 
         public void ManagedUpdate()
@@ -25,5 +31,4 @@ namespace RichPackage.Managed
             lifetimeEvent.Invoke();
         }
     }
-
 }

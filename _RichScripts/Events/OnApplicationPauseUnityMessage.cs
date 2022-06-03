@@ -18,6 +18,12 @@ namespace RichPackage.UnityMessages
         private BoolUnityEvent onApplicationChangePauseStateEvent  = new BoolUnityEvent();
         public BoolUnityEvent OnApplicationChangePauseStateEvent { get => onApplicationChangePauseStateEvent; }
 
+        protected override void Reset()
+        {
+            base.Reset();
+            SetDevDescription($"Invokes {nameof(lifetimeEvent)} on {nameof(OnApplicationPause)}.");
+        }
+
         private void OnApplicationPause(bool paused)
         {
             if (paused)

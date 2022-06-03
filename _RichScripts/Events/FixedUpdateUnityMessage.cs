@@ -6,6 +6,12 @@ namespace RichPackage.UnityMessages
     /// </summary>
     public sealed class FixedUpdateUnityMessage : AUnityLifetimeMessage
     {
+        protected override void Reset()
+        {
+            base.Reset();
+            SetDevDescription($"Invokes {nameof(lifetimeEvent)} on {nameof(FixedUpdate)}.");
+        }
+
         private void FixedUpdate()
         {
             lifetimeEvent.Invoke();
