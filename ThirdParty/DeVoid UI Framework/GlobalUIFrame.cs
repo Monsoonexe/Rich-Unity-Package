@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// 
@@ -9,12 +10,12 @@ public class GlobalUIFrame : RichMonoBehaviour
     [SerializeField]
     protected UISettings uiSettings;
 
+    [ShowInInspector, ReadOnly]
     public static UIFrame UIFrame { get; private set; }
 
     protected override void Awake()
     {
         base.Awake();
-
         InitializeUI();
     }
 
