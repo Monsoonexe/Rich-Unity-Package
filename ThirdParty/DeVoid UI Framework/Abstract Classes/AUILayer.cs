@@ -11,10 +11,15 @@ using Sirenix.OdinInspector;
 public abstract class AUILayer<TScreen> : RichMonoBehaviour 
     where TScreen : IUIScreenController
 {
+    private const string FunctionBoxGroup = "Functions";
+
     /// <summary>
     /// Collection of Screens.
     /// </summary>
     protected Dictionary<string, TScreen> registeredScreens;
+
+    [ShowInInspector, ReadOnly]
+    public int ScreenCount => registeredScreens?.Count ?? 0;
 
     /// <summary>
     /// Shows given Screen.
@@ -108,11 +113,11 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         registeredScreens.Remove(screenID);
     }
 
-    #endregion
+    #endregion Screen Registration
 
     #region Show/Hide Screens
 
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
     public void ShowScreenByID(string screenID)
     {
         TScreen controller; 
@@ -144,7 +149,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
     public void HideScreenByID(string screenID, bool animate = true)
     {
         TScreen controller;
@@ -160,7 +165,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
-    [Button, DisableInEditorMode]
+    [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
     public virtual void HideAll(bool animateWhenHiding = true)
     {
         foreach(var screenEntry in registeredScreens)
@@ -177,6 +182,21 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
             && registeredScreens.ContainsKey(screen.ScreenID))
         {
             UnregisterScreen(screen.ScreenID, (TScreen)screen);
+        }
+    }
+
+    [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
+    private void LogRegisteredScreenIDs()
+    {
+        if (registeredScreens.Count == 0)
+		{
+            Debug.Log("No screens are registered to " + this.name);
+            return;
+		}
+
+        foreach (var screenEntry in registeredScreens)
+        {
+            Debug.Log(screenEntry.Value.ScreenID);
         }
     }
 }
