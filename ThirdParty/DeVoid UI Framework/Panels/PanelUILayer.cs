@@ -3,6 +3,7 @@
 /// <summary>
 /// 
 /// </summary>
+/// <seealso cref="WindowUILayer"/>
 /// <seealso cref="APanelController"/>
 public class PanelUILayer : AUILayer<IPanelController>
 {
@@ -26,16 +27,15 @@ public class PanelUILayer : AUILayer<IPanelController>
     public override void ReparentScreen(IUIScreenController controller, 
         Transform screenTransform)
     {
-        var panelController = controller as IPanelController;
-        if (panelController != null)
-        {
-            ReparentToParaLayer(panelController.Priority, screenTransform);
-        }
-        else
-        {
-            base.ReparentScreen(controller, screenTransform);
-        }
-    }
+		if (controller is IPanelController panelController)
+		{
+			ReparentToParaLayer(panelController.Priority, screenTransform);
+		}
+		else
+		{
+			base.ReparentScreen(controller, screenTransform);
+		}
+	}
 
     public override void HideScreen(IPanelController screen, bool animate = true)
     {
