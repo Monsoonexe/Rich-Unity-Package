@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
 
 public struct WindowHistoryEntry
 {
@@ -14,6 +14,7 @@ public struct WindowHistoryEntry
     /// <summary>
     /// Shortcut.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Show()
     {
         screen.Show(properties);

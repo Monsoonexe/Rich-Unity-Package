@@ -186,17 +186,20 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     }
 
     [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
-    private void LogRegisteredScreenIDs()
+    public void PrintRegisteredScreenIDs()
     {
         if (registeredScreens.Count == 0)
 		{
             Debug.Log("No screens are registered to " + this.name);
-            return;
 		}
-
-        foreach (var screenEntry in registeredScreens)
-        {
-            Debug.Log(screenEntry.Value.ScreenID);
+		else
+		{
+            Debug.Log($"{name} has {ScreenCount.ToStringCached()} registered screens:");
+            foreach (var screenEntry in registeredScreens)
+            {
+                Debug.Log(screenEntry.Value.ScreenID);
+            }
         }
+
     }
 }

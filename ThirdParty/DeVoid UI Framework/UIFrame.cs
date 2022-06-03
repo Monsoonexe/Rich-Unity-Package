@@ -12,7 +12,7 @@ using Sirenix.OdinInspector;
 [SelectionBase]
 public class UIFrame : RichMonoBehaviour
 {
-    private const string ButtonGroup = "bg";
+    private const string ButtonGroup = "Functions";
 
     [Tooltip("True if automatically initialized, False if manually initialized.")]
     public bool initializeOnAwake = true;
@@ -103,6 +103,7 @@ public class UIFrame : RichMonoBehaviour
 
     #region Hide/Show Windows
 
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void CloseAllWindows(bool animate = true)
     {
         windowLayer.HideAll(animate); // relay
@@ -118,6 +119,7 @@ public class UIFrame : RichMonoBehaviour
         windowLayer.HideScreenByID(screenID, animate); // relay
     }
 
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void CloseCurrentWindow(bool animate = true)
     {
         if (windowLayer.CurrentWindow != null)
@@ -187,7 +189,6 @@ public class UIFrame : RichMonoBehaviour
     /// Shows a panel by its ID, with no Properties.
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void ShowPanel(string screenID)
     {
         panelLayer.ShowScreenByID(screenID); // relay
@@ -229,11 +230,11 @@ public class UIFrame : RichMonoBehaviour
 
         if (IsScreenRegistered(screenID, out type))
         {
-            if (type is IWindowController)
+            if (type == typeof(IWindowController))
             {
                 OpenWindow(screenID);
             }
-            else if (type is IPanelController)
+            else if (type == typeof(IPanelController))
             {
                 ShowPanel(screenID);
             }
@@ -348,6 +349,13 @@ public class UIFrame : RichMonoBehaviour
         type = null;
         return false;
     }
+
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
+    public void PrintRegisteredScreenIDs()
+	{
+        windowLayer.PrintRegisteredScreenIDs();
+        panelLayer.PrintRegisteredScreenIDs();
+	}
 
     #endregion
 
