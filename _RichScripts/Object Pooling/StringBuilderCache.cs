@@ -18,7 +18,7 @@ namespace RichPackage.Pooling
 
         public static StringBuilder Rent(int capacity)
         {
-            StringBuilder cachedInstance;
+            StringBuilder cachedInstance = null;
             if (capacity <= MAX_BUILDER_SIZE)
             {
                 cachedInstance = CachedInstance;
@@ -28,12 +28,8 @@ namespace RichPackage.Pooling
                     cachedInstance.Clear();
                 }
             }
-			else
-			{
-                cachedInstance = new StringBuilder(capacity);
-            }
 
-            return cachedInstance;
+            return cachedInstance ?? new StringBuilder(capacity);
         }
 
         public static void Return(StringBuilder sb)
