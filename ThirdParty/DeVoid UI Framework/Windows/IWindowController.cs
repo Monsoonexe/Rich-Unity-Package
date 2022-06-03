@@ -1,4 +1,5 @@
 ﻿
+using System;
 /// <summary>
 /// Interface that all Windows must implement
 /// </summary>
@@ -10,6 +11,8 @@ public interface IWindowController : IUIScreenController
     bool IsPopup { get; }
 
     WindowPriorityENUM WindowPriority { get; }
+
+    event Action<IWindowController, bool> CloseRequest;
 
     void OnWindowOpen();//ugh
 }

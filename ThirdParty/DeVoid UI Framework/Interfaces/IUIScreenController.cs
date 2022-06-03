@@ -13,11 +13,9 @@ public interface IUIScreenController
 
     void Hide(bool animate = true);
 
-    Action<IUIScreenController> OnTransitionInFinishedCallback { get; set; }
+    event Action<IUIScreenController> OnTransitionInFinishedCallback;
 
-    Action<IUIScreenController> OnTransitionOutFinishedCallback { get; set; }
+    event Action<IUIScreenController> OnTransitionOutFinishedCallback;
 
-    Action<IUIScreenController, bool> CloseRequest { get; set; }
-
-    Action<IUIScreenController> OnScreenDestroyed { get; set; }
+    event Action<IUIScreenController> OnScreenDestroyed;
 }

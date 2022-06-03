@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 /// <summary>
 /// Base implementation for Window Screen Controllers that need no special Properties
 /// </summary>
@@ -21,7 +23,15 @@ public abstract class AWindowController<TProps>
 
     public WindowPriorityENUM WindowPriority { get => Properties.WindowQueuePriority; }
 
-    protected sealed override void SetProperties(TProps newProperties)
+    public event Action<IWindowController, bool> CloseRequest;
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+        CloseRequest = null; // release ref
+    }
+
+	protected sealed override void SetProperties(TProps newProperties)
     {
         if (newProperties != null)
         {
@@ -60,5 +70,4 @@ public abstract class AWindowController<TProps>
     {
         CloseRequest(this, true);
     }
-
 }
