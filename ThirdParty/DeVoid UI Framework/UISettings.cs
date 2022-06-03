@@ -32,6 +32,14 @@ public class UISettings : RichScriptableObject
     /// all the screens listed and registers them. If the deactivateScreenGOs flag is
     /// true, it will deactivate all Screen GameObjects in case they're active.
     /// </summary>
+    public void DoCreateUIInstance()
+        => CreateUIInstance(instanceAndRegisterScreens: true);
+
+    /// <summary>
+    /// Creates an instance of the UI Frame Prefab. By default, also instantiates
+    /// all the screens listed and registers them. If the deactivateScreenGOs flag is
+    /// true, it will deactivate all Screen GameObjects in case they're active.
+    /// </summary>
     /// <param name="instanceAndRegisterScreens">Should the screens listed in the Settings file be instanced and registered?</param>
     /// <returns>A new UI Frame</returns>
     public UIFrame CreateUIInstance(bool instanceAndRegisterScreens = true)
@@ -53,7 +61,7 @@ public class UISettings : RichScriptableObject
                     string screenID = usePrefabName ? screenPrefab.name : screenController.ScreenID;
 
                     newUI.RegisterScreen(screenID, screenController,
-                        screenInstance.transform);
+                        screenInstance.GetComponent<Transform>());
 
                     if (deactivateScreenGOs && screenInstance.activeSelf)
                     {
@@ -81,7 +89,7 @@ public class UISettings : RichScriptableObject
         for (int i = 0; i < screensToRegister.Count; i++)
         {
             var screenCtl = screensToRegister[i].GetComponent<IUIScreenController>();
-            if (screenCtl == null)
+            if (screenCtl is null)
             {
                 objectsToRemove.Add(screensToRegister[i]);
             }
@@ -90,14 +98,14 @@ public class UISettings : RichScriptableObject
         if (objectsToRemove.Count > 0)
         {
             Debug.LogError("[" + name + "] Some GameObjects that were added to the " 
-                + "Screen Prefab List didn't have ScreenControllers attached to them! " 
-                + "Removing.", this);
+                + $"Screen Prefab List didn't have a {nameof(IUIScreenController)} attached! " 
+                + "Removing...", this);
 
             foreach (var obj in objectsToRemove)
             {
-                Debug.LogError("[UISettings] Removed " + obj.name + " from " + name 
-                    + " as it has no Screen Controller attached!", this);
                 screensToRegister.Remove(obj);
+                Debug.LogError($"[{nameof(UISettings)}] Removed {obj.name } from {name}" 
+                    + $" as it has no {nameof(IUIScreenController)} component!", this);
             }
         }
     }
