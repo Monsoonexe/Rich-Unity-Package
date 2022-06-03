@@ -15,8 +15,7 @@ public class UIFrame : RichMonoBehaviour
     private const string ButtonGroup = "bg";
 
     [Tooltip("True if automatically initialized, False if manually initialized.")]
-    [SerializeField]
-    private bool initializeOnAwake = true;
+    public bool initializeOnAwake = true;
 
     [Title("Prefab Refs")]
     [SerializeField, Required]
