@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="AWindowController"/>
+/// <seealso cref="PanelUILayer"/>
 public class WindowUILayer : AUILayer<IWindowController>
 {
     [SerializeField]
@@ -98,7 +103,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         if(screen == CurrentWindow)
         {
             //remove from browser history
-            var removedWindowEntry = windowHistory.Pop();
+            var _ = windowHistory.Pop();
 
             //do transition
             AddTransition(screen);
