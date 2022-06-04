@@ -7,7 +7,7 @@ namespace RichPackage.ConsoleCommands
 	/// <summary>
 	/// 
 	/// </summary>
-	[CommandPrefix("GC.")]
+	[CommandPrefix("gc.")]
 	public static class GCCommands
 	{
 		[Command, CommandDescription("Invokes the C# garbage collector and prints runtime.")]
@@ -23,19 +23,16 @@ namespace RichPackage.ConsoleCommands
 				$"Time: {runtime}ms before: {heapSizeStart:n0}b after: {heapSizeEnd:n0}b diff: {heapSizeStart - heapSizeEnd:n0}b");
 		}
 
-		[Command, CommandDescription("Allocates a `new byte[size] * count`.")]
-		public static void Allocate(int size, int count = 1)
+		[Command, CommandDescription("Allocates memory")]
+		public static void Allocate(long bytes)
 		{
-			for(int i = 0; i < count; i++)
-			{
-				var bytes = new byte[size];
-			}
+			GC.AddMemoryPressure(bytes);
 		}
 
-		[CommandDescription("Retrieves the number of bytes currently thought to be allocated.")]
-		public static void GetTotalMemory(bool forceFullCollection = false )
+		[Command, Command(aliasOverride:"get-mem"), CommandDescription("Retrieves the number of bytes currently thought to be allocated.")]
+		public static long GetTotalMemory(bool forceFullCollection = false )
 		{
-			Debug.Log(GC.GetTotalMemory(forceFullCollection));
+			return GC.GetTotalMemory(forceFullCollection);
 		}
 
 		public static void StartNoGCRegion()
