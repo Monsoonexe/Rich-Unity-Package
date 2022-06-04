@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using QFSW.QC;
 using System.Collections.Generic;
+using QFSW.QC.Suggestors;
+using QFSW.QC.Suggestors.Tags;
+using static RichPackage.FunctionalProgramming.ConditionalFunctions;
 
 namespace RichPackage.ConsoleCommands
 {
@@ -83,8 +86,10 @@ namespace RichPackage.ConsoleCommands
 
 		#endregion Get Variables
 
-		[Command(aliasOverride: "rem-var")]
-		public static void RemoveVariable(string identifier)
-			=> variableTable.Remove(identifier);
+		[Command(aliasOverride: "rem-var",
+			description:"Removes a variable from the table.")]
+		public static void RemoveVariable( string identifier)
+			=> If(variableTable.ContainsKey(identifier), 
+				() => variableTable.Remove(identifier));
 	}
 }

@@ -4,9 +4,6 @@ using QFSW.QC;
 
 namespace RichPackage.ConsoleCommands
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	[CommandPrefix("gc.")]
 	public static class GCCommands
 	{
@@ -20,7 +17,7 @@ namespace RichPackage.ConsoleCommands
 			var runtime = DateTime.Now - startTime;
 			long heapSizeEnd = GC.GetTotalMemory(forceFullCollection: false);
 			Debug.Log("Done!\r\n"+
-				$"Time: {runtime}ms before: {heapSizeStart:n0}b after: {heapSizeEnd:n0}b diff: {heapSizeStart - heapSizeEnd:n0}b");
+				$"Time: {runtime.TotalMilliseconds}ms before: {heapSizeStart:n0}b after: {heapSizeEnd:n0}b diff: {heapSizeStart - heapSizeEnd:n0}b");
 		}
 
 		[Command, CommandDescription("Allocates memory")]
