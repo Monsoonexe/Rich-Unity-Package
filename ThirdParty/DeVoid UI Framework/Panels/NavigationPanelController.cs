@@ -20,7 +20,7 @@ namespace ProjectEmpiresEdge.UI
         [SerializeField]
         protected NavigationPanelEntry[] navTargets;
 
-        protected readonly List<NavigationPanelButton> currentButtons = new List<NavigationPanelButton>();
+        protected readonly List<NavigationPanelButton> currentButtons = new List<NavigationPanelButton>(8);
         
         //protected override void AddListeners()
         //{

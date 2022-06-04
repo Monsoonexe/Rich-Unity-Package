@@ -55,7 +55,7 @@ namespace RichPackage.GuardClauses
                 throw new ArgumentException($"{paramName} is false but should not be.");
         }
 
-        #endregion
+        #endregion Boolean
 
         #region Arithmetic
 
@@ -239,7 +239,7 @@ namespace RichPackage.GuardClauses
                 throw new ArgumentException($"{paramName} is 0 or negative number.");
         }
 
-        #endregion
+        #endregion Arithmetic
 
         #region Equivalence
 
@@ -265,7 +265,7 @@ namespace RichPackage.GuardClauses
                     $"{argumentValue} is not equal to {guardValue}.");
         }
 
-        #endregion
+        #endregion Equivalence
 
         #region Comparison
 
@@ -313,7 +313,7 @@ namespace RichPackage.GuardClauses
                 throw new ArgumentException(paramName, $"{argumentValue} < {compareValue}");
         }
 
-        #endregion
+        #endregion Comparison
 
         #region Collections
 
@@ -329,7 +329,16 @@ namespace RichPackage.GuardClauses
                     $"of characters: {maximumLength}.");
         }
 
-        #endregion
+        /// <exception cref="ArgumentException"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void IsNullOrEmpty(ICollection argumentValue,
+            string paramName = DEFAULT_PARAM_NAME)
+        {
+            if (argumentValue == null || argumentValue.Count == 0)
+                throw new ArgumentException($"{paramName} is null or empty Collection.");
+        }
+
+        #endregion Collections
 
         #region Strings
 
@@ -396,7 +405,7 @@ namespace RichPackage.GuardClauses
                 throw new ArgumentException($"{paramName} is null or empty string.");
         }
 
-        #endregion //strings
+        #endregion Strings
 
         /// <exception cref="ArgumentNullException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

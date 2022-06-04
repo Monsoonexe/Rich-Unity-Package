@@ -8,9 +8,8 @@ namespace RichPackage
     /// <summary>
     /// Maybes imply the intent that their underlying values might actually be null.
     /// In this context, you can assume non-maybe reference types to be not-null.
-    /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Underlying, backing type.</typeparam>
     [Serializable]
     public struct Maybe<T> : IEquatable<Maybe<T>>, IMaybe<T>
     {
@@ -72,7 +71,7 @@ namespace RichPackage
 
         public static implicit operator Maybe<T>(T value)
         {
-                return (value is Maybe<T> maybeValue) ? maybeValue : new Maybe<T>(value);
+            return (value is Maybe<T> maybeValue) ? maybeValue : new Maybe<T>(value);
         }
 
         public static implicit operator Maybe<T>(Maybe _) => None;
@@ -160,15 +159,5 @@ namespace RichPackage
         /// Creates a new <see cref="Maybe{T}" /> from the provided <paramref name="value"/>
         /// </summary>
         public static Maybe<T> From<T>(T value) => Maybe<T>.From(value);
-    }
-
-    /// <summary>
-    /// Useful in scenarios where you need to determine if a value is Maybe or not
-    /// </summary>
-    public interface IMaybe<T>
-    {
-        T Value { get; }
-        bool HasValue { get; }
-        bool HasNoValue { get; }
     }
 }

@@ -51,5 +51,5 @@ public class PanelPriorityLayerList
         paraLayers = entries;
     }
 
-    #endregion
+    #endregion Constructors
 }

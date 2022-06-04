@@ -44,27 +44,27 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     [ReadOnly, ShowInInspector]
     public bool IsVisible { get; private set; }
 
+    #region Events
+
     /// <summary>
     /// Get called when Transition IN Animation is complete.
     /// </summary>
-    public Action<IUIScreenController> OnTransitionInFinishedCallback { get; set; }
+    public event Action<IUIScreenController> OnTransitionInFinishedCallback;
 
     /// <summary>
     /// Get called when Transition OUT Animation is complete.
     /// </summary>
-    public Action<IUIScreenController> OnTransitionOutFinishedCallback { get; set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <value>The close request.</value>
-    public Action<IUIScreenController, bool> CloseRequest { get; set; }
+    public event Action<IUIScreenController> OnTransitionOutFinishedCallback;
 
     /// <summary>
     /// 
     /// </summary>
     /// <value>The destruction action.</value>
-    public Action<IUIScreenController> OnScreenDestroyed { get; set; }
+    public event Action<IUIScreenController> OnScreenDestroyed;
+
+	#endregion Events
+
+	#region Unity Messages
 
 	protected override void Reset()
     {
@@ -82,12 +82,12 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
     protected virtual void OnEnable()
     {
-        AddListeners();
+        SubscribeToEvents();
     }
 
     protected virtual void OnDisable()
 	{
-        RemoveListeners();
+        UnsubscribeFromEvents();
 	}
 
     protected virtual void OnDestroy()
@@ -98,14 +98,56 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         //release refs
         OnTransitionInFinishedCallback = null; // release ref
         OnTransitionOutFinishedCallback = null; // release ref
-        CloseRequest = null; // release ref
         OnScreenDestroyed = null; // release ref
     }
 
-    /// <summary>
-    /// Nada.
-    /// </summary>
-    protected virtual void AddListeners()
+	#endregion Unity Messages
+
+	#region Animation
+
+	private void Animate(ATransitionComponent animator,
+        Action onCompleteCallback, bool isVisible)
+    {
+        if (!animator)
+        {
+            //just toggle and move on
+            gameObject.SetActive(isVisible);
+            onCompleteCallback?.Invoke();
+        }
+        else // then do the animation
+        {
+            //if trying to be shown and not already shown
+            if (isVisible && !gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+
+            animator.Animate(transform, onCompleteCallback);
+        }
+    }
+    private void OnTransitionINFinished()
+    {
+        IsVisible = true;
+
+        OnTransitionInFinishedCallback?.Invoke(this);
+    }
+
+    private void OnTransitionOUTFinished()
+    {
+        IsVisible = false;
+        gameObject.SetActive(false);
+
+        OnTransitionOutFinishedCallback?.Invoke(this);
+    }
+
+	#endregion Animation
+
+	#region AUIScreenController
+
+	/// <summary>
+	/// Nada.
+	/// </summary>
+	protected virtual void SubscribeToEvents()
     {
         //nada
     }
@@ -113,7 +155,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// <summary>
     /// Nada.
     /// </summary>
-    protected virtual void RemoveListeners()
+    protected virtual void UnsubscribeFromEvents()
     {
         //nada
     }
@@ -151,45 +193,13 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         //nada
     }
 
-    private void Animate(ATransitionComponent animator, 
-        Action onCompleteCallback, bool isVisible)
-    {
-        if (!animator)
-        {
-            //just toggle and move on
-            gameObject.SetActive(isVisible);
-            onCompleteCallback?.Invoke();
-        }
-        else // then do the animation
-        {
-            //if trying to be shown and not already shown
-            if(isVisible && !gameObject.activeSelf)
-            {
-                gameObject.SetActive(true);
-            }
+    #endregion AUIScreenController
 
-            animator.Animate(transform, onCompleteCallback);
-        }
-    }
+    #region Hide/Show Interface
 
-    private void OnTransitionINFinished()
-    {
-        IsVisible = true;
+    public void Hide() => Hide(animate: true);
 
-        OnTransitionInFinishedCallback?.Invoke(this);
-    }
-
-    private void OnTransitionOUTFinished()
-    {
-        IsVisible = false;
-        gameObject.SetActive(false);
-
-        OnTransitionOutFinishedCallback?.Invoke(this);
-    }
-
-    #region API
-
-    public void Hide(bool animate = true)
+    public void Hide(bool animate)
     {
         //cancel in animation
         transitionINAnimator?.Stop(); // 
@@ -202,7 +212,9 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         OnHide(); 
     }
 
-    public void Show(IScreenProperties payload = null)
+    public void Show() => Show(payload: null);
+
+    public void Show(IScreenProperties payload)
     {
         //validate 
         if (payload != null)
@@ -235,5 +247,5 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
     }//end function
 
-    #endregion
+    #endregion Hide/Show Interface
 }

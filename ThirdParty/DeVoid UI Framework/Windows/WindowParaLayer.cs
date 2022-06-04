@@ -2,12 +2,16 @@
 using UnityEngine;
 using RichPackage;
 
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="WindowUILayer"/>
 public class WindowParaLayer : RichMonoBehaviour
 {
     [SerializeField]
     private Transform darkenBackgroundObject = null;
 
-    private List<GameObject> containedScreens = new List<GameObject>();
+    private readonly List<GameObject> containedScreens = new List<GameObject>();
 
     public void AddScreen(Transform screenRect)
     {

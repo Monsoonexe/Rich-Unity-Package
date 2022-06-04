@@ -12,11 +12,10 @@ using Sirenix.OdinInspector;
 [SelectionBase]
 public class UIFrame : RichMonoBehaviour
 {
-    private const string ButtonGroup = "bg";
+    private const string ButtonGroup = "Functions";
 
     [Tooltip("True if automatically initialized, False if manually initialized.")]
-    [SerializeField]
-    private bool initializeOnAwake = true;
+    public bool initializeOnAwake = true;
 
     [Title("Prefab Refs")]
     [SerializeField, Required]
@@ -35,6 +34,8 @@ public class UIFrame : RichMonoBehaviour
     private GraphicRaycaster myGraphicRaycaster;
 
     public Camera UICamera { get => mainCanvas.worldCamera; }
+
+	#region Unity Messages
 
 	protected override void Reset()
 	{
@@ -63,10 +64,12 @@ public class UIFrame : RichMonoBehaviour
         OnRequestScreenUnblock();
     }
 
-    /// <summary>
-    /// Block UI interactability
-    /// </summary>
-    private void OnRequestScreenBlock()
+	#endregion Unity Messages
+
+	/// <summary>
+	/// Block UI interactability
+	/// </summary>
+	private void OnRequestScreenBlock()
     {
         raycastBlocker.enabled = true; // block with a clear image
         myGraphicRaycaster.enabled = false; // disable raycast receiver for children of this canvas
@@ -93,16 +96,11 @@ public class UIFrame : RichMonoBehaviour
     }
 
     /// <summary>
-    /// Returns true if a Window is Transitioning.
+    /// Returns <see langword="true"/> if a Window is Transitioning.
     /// </summary>
-    /// <returns></returns>
-    public bool IsTransitioning()
-    {
-        //what about panelLayer?
-        return windowLayer.IsScreenTransitionInProgress;
-    }
+    public bool IsTransitioning => windowLayer.IsScreenTransitionInProgress;
 
-    #region Hide/Show Windows
+    #region Window Interface
 
     public void CloseAllWindows(bool animate = true)
     {
@@ -119,6 +117,7 @@ public class UIFrame : RichMonoBehaviour
         windowLayer.HideScreenByID(screenID, animate); // relay
     }
 
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void CloseCurrentWindow(bool animate = true)
     {
         if (windowLayer.CurrentWindow != null)
@@ -155,9 +154,9 @@ public class UIFrame : RichMonoBehaviour
         windowLayer.CurrentWindow.OnWindowOpen();
     }
 
-    #endregion
+    #endregion Window Interface
 
-    #region Hide/Show Panels
+    #region Panel Interface
 
     [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void HideAllPanels(bool animate = true)
@@ -178,7 +177,6 @@ public class UIFrame : RichMonoBehaviour
     /// Hide panel with given ID
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void HidePanel(string screenID)
     {
         panelLayer.HideScreenByID(screenID); // relay
@@ -188,7 +186,6 @@ public class UIFrame : RichMonoBehaviour
     /// Shows a panel by its ID, with no Properties.
     /// </summary>
     /// <param name="screenID"></param>
-    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
     public void ShowPanel(string screenID)
     {
         panelLayer.ShowScreenByID(screenID); // relay
@@ -207,13 +204,15 @@ public class UIFrame : RichMonoBehaviour
         panelLayer.ShowScreenByID(screenID, properties); // relay
     }
 
-    #endregion
+	#endregion Panel Interface
 
-    /// <summary>
-    /// Hide all Panels and close all Windows.
-    /// </summary>
-    /// <param name="animate"></param>
-    public void HideAll(bool animate = true)
+	#region Screen Interface
+
+	/// <summary>
+	/// Hide all Panels and close all Windows.
+	/// </summary>
+	/// <param name="animate"></param>
+	public void HideAll(bool animate = true)
     {
         CloseAllWindows(animate);
         HideAllPanels(animate);
@@ -230,11 +229,11 @@ public class UIFrame : RichMonoBehaviour
 
         if (IsScreenRegistered(screenID, out type))
         {
-            if (type is IWindowController)
+            if (type == typeof(IWindowController))
             {
                 OpenWindow(screenID);
             }
-            else if (type is IPanelController)
+            else if (type == typeof(IPanelController))
             {
                 ShowPanel(screenID);
             }
@@ -249,9 +248,40 @@ public class UIFrame : RichMonoBehaviour
         }
     }
 
-    #region Screen Registration
 
-    public void RegisterPanel<TPanel>(string screenID, TPanel controller)
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
+    public void HideScreen(string screenID)
+	{
+        Type type;
+
+        if (IsScreenRegistered(screenID, out type))
+        {
+            if (type == typeof(IWindowController))
+            {
+                CloseWindow(screenID);
+            }
+            else if (type == typeof(IPanelController))
+            {
+                HidePanel(screenID);
+            }
+            else
+            {
+                Debug.LogError($"ERROR! {nameof(screenID)} <{screenID}> is registered, " +
+					$"but it is neither an {nameof(IWindowController)} or " +
+					$"{nameof(IPanelController)}.", this);
+            }
+        }
+        else
+        {
+            Debug.LogError($"ERROR! Tried to {nameof(ShowScreen)}, but ID {screenID} is not registered.", this);
+        }
+    }
+
+#endregion Screen Interface
+
+	#region Screen Registration
+
+	public void RegisterPanel<TPanel>(string screenID, TPanel controller)
         where TPanel : IPanelController
     {
         panelLayer.RegisterScreen(screenID, controller);
@@ -327,12 +357,6 @@ public class UIFrame : RichMonoBehaviour
             || (panelLayer.IsScreenRegistered(screenID));
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="screenID"></param>
-    /// <param name="type"></param>
-    /// <returns></returns>
     public bool IsScreenRegistered(string screenID, out Type type)
     {
         if (windowLayer.IsScreenRegistered(screenID))
@@ -349,6 +373,13 @@ public class UIFrame : RichMonoBehaviour
         type = null;
         return false;
     }
+
+    [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
+    public void PrintRegisteredScreenIDs()
+	{
+        windowLayer.PrintRegisteredScreenIDs();
+        panelLayer.PrintRegisteredScreenIDs();
+	}
 
     #endregion
 

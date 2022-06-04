@@ -24,5 +24,11 @@ namespace RichPackage.UnityMessages
         [SerializeField, FoldoutGroup(nameof(lifetimeEvent)), HideLabel]
         protected UnityEvent lifetimeEvent = new UnityEvent();
         public UnityEvent LifetimeEvent { get => lifetimeEvent; }
+
+#if UNITY_EDITOR
+        [Button("InvokeEvent()"), ContextMenu("InvokeEvent()"), FoldoutGroup(nameof(lifetimeEvent))]
+        private void Editor_InvokeEvent()
+            => lifetimeEvent.Invoke();
+#endif
     }
 }
