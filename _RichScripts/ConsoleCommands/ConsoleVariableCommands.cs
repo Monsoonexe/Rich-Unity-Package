@@ -29,10 +29,17 @@ namespace RichPackage.ConsoleCommands
 		public static string SetString(string identifier, string value)
 			=> SetInternal(identifier, value);
 
+		[Command(aliasOverride: "set-comp")]
+		public static Component SetComponent(string identifier, Component value)
+			=> SetInternal(identifier, value);
+
 		[Command(aliasOverride: "set-gameObject")]
 		public static GameObject SetGameObject(string identifier, GameObject value)
 			=> SetInternal(identifier, value);
 
+		/// <summary>
+		/// Internal helper method.
+		/// </summary>
 		private static T SetInternal<T>(string identifier, T value)
 		{
 			variableTable[identifier] = value;
@@ -59,10 +66,18 @@ namespace RichPackage.ConsoleCommands
 		public static string GetString(string identifier)
 			=> GetInternal<string>(identifier);
 
+		[Command(aliasOverride: "get-comp",
+			description:"Loads a " + nameof(Component) + " variable.")]
+		public static Component GetComponent(string identifier)
+			=> GetInternal<Component>(identifier);
+
 		[Command(aliasOverride: "get-gameObject")]
 		public static GameObject GetGameObject(string identifier)
 			=> GetInternal<GameObject>(identifier);
 
+		/// <summary>
+		/// Internal helper method.
+		/// </summary>
 		private static T GetInternal<T>(string identifier)
 			=> (T)variableTable[identifier];
 
