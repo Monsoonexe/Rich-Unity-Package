@@ -15,9 +15,12 @@ namespace RichPackage.ConsoleCommands
 		{
 			Debug.Log("Invoking C# runtime GC...");
 			var startTime = DateTime.Now;
+			long heapSizeStart = GC.GetTotalMemory(forceFullCollection: false); 
 			GC.Collect();
 			var runtime = DateTime.Now - startTime;
-			Debug.Log($"Done! ({runtime.TotalMilliseconds}ms)");
+			long heapSizeEnd = GC.GetTotalMemory(forceFullCollection: false);
+			Debug.Log("Done!\r\n"+
+				$"Time: {runtime}ms before: {heapSizeStart:n0}b after: {heapSizeEnd:n0}b diff: {heapSizeStart - heapSizeEnd:n0}b");
 		}
 
 		[Command, CommandDescription("Allocates a `new byte[size] * count`.")]
@@ -27,6 +30,22 @@ namespace RichPackage.ConsoleCommands
 			{
 				var bytes = new byte[size];
 			}
+		}
+
+		[CommandDescription("Retrieves the number of bytes currently thought to be allocated.")]
+		public static void GetTotalMemory(bool forceFullCollection = false )
+		{
+			Debug.Log(GC.GetTotalMemory(forceFullCollection));
+		}
+
+		public static void StartNoGCRegion()
+		{
+			//Debug.Log(GC.TryStartNoGCRegion())
+		}
+
+		public static void EndNoGCRegion()
+		{
+
 		}
 	}
 }
