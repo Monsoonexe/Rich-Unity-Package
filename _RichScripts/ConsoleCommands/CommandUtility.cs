@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using QFSW.QC;
+using RichPackage.Administration;
 
 namespace RichPackage.ConsoleCommands
 {
@@ -38,5 +39,21 @@ namespace RichPackage.ConsoleCommands
 			QuantumRegistry.RegisterObject(
 				FindGameObject(gameObjectName).GetComponent<TComp>());
 		}
+
+		#region Admin
+
+		[Command("admin-login")]
+		public static void AdminLogin(string password = "")
+		{
+			Admin.Login(password);
+		}
+
+		[Command("admin-logout")]
+		public static void AdminLogout()
+		{
+			Admin.Logout();
+		}
+
+		#endregion Admin
 	}
 }

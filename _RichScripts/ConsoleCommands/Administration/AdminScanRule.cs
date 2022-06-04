@@ -22,18 +22,6 @@ namespace RichPackage.ConsoleCommands.Administration
             => QuantumConsoleProcessor.GenerateCommandTable(
                 deployThread: true, forceReload: true);
 
-        [Command("admin-login")]
-        public static void AdminLogin(string password = "")
-        {
-            Admin.Login(password);
-        }
-
-        [Command("admin-logout")]
-        public static void AdminLogout()
-        {
-            Admin.Logout();
-        }
-
         public ScanRuleResult ShouldScan<T>(T entity) where T : ICustomAttributeProvider
         {
             //admin is always enabled in editor
