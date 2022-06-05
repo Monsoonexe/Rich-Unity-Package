@@ -29,17 +29,6 @@ namespace RichPackage.ConsoleCommands
 			return gameObject;
 		}
 
-		[Command(aliasOverride: "register-component", 
-			description: "Finds a GameObject named 'gameObjectName`," +
-			" gets the Component of type `<TComp>`, and registers it to the " +
-			"QuantumRegistry.")]
-		public static void RegisterComponent<TComp>(string gameObjectName)
-			where TComp : Component
-		{
-			QuantumRegistry.RegisterObject(
-				FindGameObject(gameObjectName).GetComponent<TComp>());
-		}
-
 		#region Admin
 
 		[Command("admin-login")]
