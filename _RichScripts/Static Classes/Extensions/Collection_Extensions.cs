@@ -19,24 +19,6 @@ namespace RichPackage
     public static class Collection_Extensions
     {
         #region Collection Helpers
-        
-        /// <summary>
-        /// Sets first null item to 'newItem'. O(n) time b.c doesn't cache index.
-        /// </summary>
-        /// <typeparam name="T">Must be class.</typeparam>
-        public static void Add<T>(this T[] array, T newItem)
-            where T : class
-        {
-            var count = array.Length;
-            for(var i = 0; i < count; ++i)
-            {
-                if (array[i] == null)
-                {
-                    array[i] = newItem;
-                    return;
-                }
-            }
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AddIfNew<T>(this List<T> list, T item)
@@ -205,22 +187,6 @@ namespace RichPackage
         #endregion 
 
         #region Contains
-
-        /// <summary>
-        /// Returns 'true' if at least 1 item in array `Equals()` given item.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <param name="elem"></param>
-        /// <returns></returns>
-        public static bool Contains<T>(this T[] array, T elem)
-        {
-            var length = array.Length;
-            for (var i = 0; i < length; ++i)
-                if (elem.Equals(array[i]))
-                    return true;
-            return false;
-        }
         
         /// <summary>
         /// Returns 'true' if at least 1 item in array `elem.CompareTo(other) == 0`.
@@ -515,22 +481,6 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Returns a new array of given size with as many elements (or fewer) copied over.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arr"></param>
-        /// <param name="newSize"></param>
-        public static T[] GetResized<T>(this T[] arr, int newSize)
-        {
-            var newArr = new T[newSize];
-            var len = arr.Length;
-            var smallerSize = newSize < len ? newSize : len;
-            for (var i = 0; i < smallerSize; ++i)
-                newArr[i] = arr[i];
-            return newArr;
-        }
-
-        /// <summary>
         /// Returns List with lowest Count from List of Lists.
         /// </summary>
         public static T GetShortestList<T>(this IList<T> lists)
@@ -593,13 +543,6 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNotEmpty<T>(this IList<T> list)
             => list.Count != 0;
-
-        /// <summary>
-        /// Returns the first index matching the given element, or -1 if not found.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int IndexOf<T>(this T[] array, T element)
-            => Array.IndexOf(array, element);
 
         /// <summary>
         /// A and B are the same size and every element in A is in B (order agnostic).
