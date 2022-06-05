@@ -24,7 +24,6 @@ namespace RichPackage.ConsoleCommands.Administration
 
         public ScanRuleResult ShouldScan<T>(T entity) where T : ICustomAttributeProvider
         {
-            //admin is always enabled in editor
             //if admin, suggest to scan everything
             if (!Admin.IsAdmin)
 			{
