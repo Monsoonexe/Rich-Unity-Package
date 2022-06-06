@@ -897,6 +897,17 @@ namespace RichPackage
             list[b] = tmp;
         }
 
+        /// <summary>
+        /// Calls <see cref="List{T}.ToArray"/> and <see cref="List{T}.Clear"/> and returns the array.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T[] ToArrayAndClear<T>(this List<T> list)
+        {
+            T[] array = list.ToArray();
+            list.Clear();
+            return array;
+        }
+
         #endregion
 
         #region Random and Collections
