@@ -5,10 +5,10 @@ using RichPackage.YieldInstructions;
 
 namespace RichPackage
 {
-	/// <summary>
-	/// Utilities for quickly kicking off common coroutines.
-	/// </summary>
-	public static class CoroutineUtilities
+    /// <summary>
+    /// Utilities for quickly kicking off common coroutines.
+    /// </summary>
+    public static class CoroutineUtilities
     {
         public static IEnumerator InvokeAtEndOfFrame(Action action)
         {
