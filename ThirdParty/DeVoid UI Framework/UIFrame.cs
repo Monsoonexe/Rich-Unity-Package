@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
 using Sirenix.OdinInspector;
+using QFSW.QC;
 
 /// <summary>
 /// This is the central hub for all things UI. All your calls should be directed at this.
@@ -10,6 +11,7 @@ using Sirenix.OdinInspector;
 [RequireComponent(typeof(Canvas))]
 [RequireComponent(typeof(GraphicRaycaster))]
 [SelectionBase]
+[CommandPrefix("uiframe.")]
 public class UIFrame : RichMonoBehaviour
 {
     private const string ButtonGroup = "Functions";
@@ -212,7 +214,8 @@ public class UIFrame : RichMonoBehaviour
 	/// Hide all Panels and close all Windows.
 	/// </summary>
 	/// <param name="animate"></param>
-	public void HideAll(bool animate = true)
+	[Command("hide-all", MonoTargetType.Registry)]
+    public void HideAll(bool animate = true)
     {
         CloseAllWindows(animate);
         HideAllPanels(animate);
@@ -223,7 +226,8 @@ public class UIFrame : RichMonoBehaviour
     /// </summary>
     /// <param name="screenID"></param>
     [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
-    public void ShowScreen(string screenID)
+	[Command("show", MonoTargetType.Registry)]
+    public void ShowScreen([ScreenID] string screenID)
     {
         Type type;
 
@@ -248,8 +252,8 @@ public class UIFrame : RichMonoBehaviour
         }
     }
 
-
     [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
+	[Command("hide", MonoTargetType.Registry)]
     public void HideScreen(string screenID)
 	{
         Type type;
@@ -277,7 +281,7 @@ public class UIFrame : RichMonoBehaviour
         }
     }
 
-#endregion Screen Interface
+    #endregion Screen Interface
 
 	#region Screen Registration
 
@@ -341,8 +345,7 @@ public class UIFrame : RichMonoBehaviour
         windowLayer.UnregisterScreen(screenID, controller); // relay
     }
 
-
-    #endregion
+    #endregion Screen Registration
 
     #region Querries
 
