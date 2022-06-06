@@ -22,11 +22,11 @@ namespace RichPackage.YieldInstructions
         /// Held <see langword="true"/> until the event is fired, 
         /// then is set <see langword="false"/>.
         /// </summary>
-        private bool flag;
+        public bool Flag { get; private set; }
         private float endTime;
         private float timeout;
 
-        public override bool keepWaiting { get => flag  &&  endTime > Time.time; }
+        public override bool keepWaiting { get => Flag  &&  endTime > Time.time; }
 
         #region Constructors
 
@@ -54,7 +54,7 @@ namespace RichPackage.YieldInstructions
 
         private void OnEventRaised()
         {
-            flag = false;
+            Flag = false;
             gameEvent.RemoveListener(OnEventRaised);
         }
 
@@ -63,7 +63,7 @@ namespace RichPackage.YieldInstructions
             gameEvent.RemoveListener(OnEventRaised); //ensure no duplicate subscriptions
             gameEvent.AddListener(OnEventRaised);
             endTime = timeout < 0 ? INFINITE_TIMEOUT : Time.time + timeout;
-            flag = true;
+            Flag = true;
         }
 
         /// <summary>

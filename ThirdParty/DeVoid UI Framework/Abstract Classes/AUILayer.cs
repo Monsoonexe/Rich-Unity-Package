@@ -2,6 +2,7 @@
 using UnityEngine;
 using RichPackage;
 using Sirenix.OdinInspector;
+using System.Linq;
 
 /// <summary>
 /// Base class for UI Layers. Layers implement custom logic for Screens when opening, closing, etc.
@@ -65,6 +66,13 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     {
         return registeredScreens.ContainsKey(screenID);
     }
+
+    /// <summary>
+    /// Returns an array of all the ScreenIDs that are registered to this layer.
+    /// </summary>
+    /// <returns></returns>
+    public string[] GetRegisteredScreenIDs()
+        => registeredScreens.Values.Select((s) => s.ScreenID).ToArray();
 
     /// <summary>
     /// Register a Screen this this Layer.

@@ -8,6 +8,19 @@ namespace RichPackage.FunctionalProgramming
 	/// </summary>
 	public static class ConditionalFunctions
 	{
+		/// <summary>
+		/// No-operation. Do nothing.
+		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Noop() { }
+
+		/// <summary>
+		/// Returns <see langword="null"/>.
+		/// </summary>
+		/// <returns></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static object Null() => null;
+
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T If<T>(bool condition, T a, T b)
 			=> condition ? a : b;
@@ -23,6 +36,13 @@ namespace RichPackage.FunctionalProgramming
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T If<T>(bool condition, Func<T> funcA, T b)
 			=> condition ? funcA() : b;
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void If(bool condition, Action action1)
+		{
+			if (condition)
+				action1();
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void If(bool condition, Action actionA, Action actionB)

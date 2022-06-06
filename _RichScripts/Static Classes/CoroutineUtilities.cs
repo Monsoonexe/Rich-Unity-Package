@@ -5,10 +5,10 @@ using RichPackage.YieldInstructions;
 
 namespace RichPackage
 {
-	/// <summary>
-	/// Utilities for quickly kicking off common coroutines.
-	/// </summary>
-	public static class CoroutineUtilities
+    /// <summary>
+    /// Utilities for quickly kicking off common coroutines.
+    /// </summary>
+    public static class CoroutineUtilities
     {
         public static IEnumerator InvokeAtEndOfFrame(Action action)
         {
@@ -37,6 +37,12 @@ namespace RichPackage
             YieldInstruction yieldInstruction)
         {
             yield return yieldInstruction;
+            action();
+        }
+        public static IEnumerator InvokeAfterFrameDelay(Action action, int frameDelay)
+        {
+            while (frameDelay > 0)
+                yield return null;
             action();
         }
     }

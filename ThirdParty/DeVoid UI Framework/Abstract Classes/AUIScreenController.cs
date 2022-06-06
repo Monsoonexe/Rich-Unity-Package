@@ -4,7 +4,8 @@ using UnityEngine.UI;
 using RichPackage;
 using Sirenix.OdinInspector;
 
-[RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster))]
+[RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster)),
+    SelectionBase]
 public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreenController
     where TProps : IScreenProperties
 {
@@ -233,7 +234,16 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         }//end validate
 
         OnHierarchyFix(); // react to change in hierarchy
-        OnPropertiesSet(); // validate and load data
+
+        //catch exception but don't let it interrupt the opening of the window.
+		try
+		{
+            OnPropertiesSet(); // validate and load data
+		}
+		catch (Exception ex)
+		{
+            Debug.LogError($"An exception occurred in {nameof(OnPropertiesSet)}:\n {ex}");
+		}
 
         if (!gameObject.activeSelf) // if currently hidden
         {

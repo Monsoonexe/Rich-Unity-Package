@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -15,15 +16,15 @@ namespace RichPackage
         [SerializeField, TextArea]
         [PropertyOrder(-5)]
 #pragma warning disable IDE0052 // Remove unread private members
-		private string developerDescription = "Please enter a description or a note.";
+        private string developerDescription = "Please enter a description or a note.";
 #pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-		/// <summary>
-		/// This call will be stripped out of Builds. Use anywhere.
-		/// </summary>
-		/// <param name="newDes"></param>
-		[Conditional(ConstStrings.UNITY_EDITOR)]
+        /// <summary>
+        /// This call will be stripped out of Builds. Use anywhere.
+        /// </summary>
+        /// <param name="newDes"></param>
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public void SetDevDescription(string newDes)
         {
 #if UNITY_EDITOR
@@ -43,15 +44,48 @@ namespace RichPackage
         /// </summary>
         public new Transform transform { get => myTransform; }
 
+        #region Unity Messages
+
         protected virtual void Reset()
-		{
+        {
             myTransform = gameObject.GetComponent<Transform>();
-		}
+        }
 
         protected virtual void Awake()
-		{
+        {
             myTransform = gameObject.GetComponentIfNull(myTransform);
         }
+
+        #endregion Unity Messages
+
+        #region Invokation Timing Helpers
+
+        protected void InvokeAtEndOfFrame(Action action)
+        {
+            StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
+        }
+
+        protected void InvokeNextFrame(Action action)
+        {
+            StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
+        }
+
+        protected void InvokeAfterDelay(Action action, float delay_s)
+        {
+            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
+        }
+
+        protected void InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
+        {
+            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
+        }
+
+        protected void InvokeAfterFrameDelay(Action action, int frameDelay)
+        {
+            StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
+        }
+
+        #endregion Invokation Timing Helpers
 
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.

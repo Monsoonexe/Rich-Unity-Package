@@ -35,9 +35,36 @@ namespace RichPackage
         [SerializeField, FoldoutGroup("Events")]
         private UnityEvent action = new UnityEvent();
 
-        protected void Update()
+		#region Unity Messages
+
+		private void OnEnable()
+		{
+            QFSW.QC.QuantumConsole.Instance.OnActivate += OnConsoleActivate;
+		}
+
+		private void OnDisable()
+        {
+            QFSW.QC.QuantumConsole.Instance.OnActivate -= OnConsoleActivate;
+        }
+
+		protected void Update()
         {
             ReactToButtonPress();
+        }
+
+		#endregion Unity Messages
+
+		private void OnConsoleDeactivate()
+		{
+            enabled = true;
+            QFSW.QC.QuantumConsole.Instance.OnDeactivate -= OnConsoleDeactivate;
+        }
+
+        private void OnConsoleActivate()
+        {
+            enabled = false;
+            QFSW.QC.QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
+
         }
 
         [Button("Force()"), DisableInEditorMode]
