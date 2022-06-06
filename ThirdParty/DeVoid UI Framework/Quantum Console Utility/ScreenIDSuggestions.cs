@@ -1,5 +1,5 @@
-﻿/* Classes to help suggest ScreenIDs in Quantum Console when working with UIFrame commands.
- * 
+﻿/* reference: https://www.qfsw.co.uk/docs/QC/articles/extending/suggestors.html
+ * Classes to help suggest ScreenIDs in Quantum Console when working with UIFrame commands.
  */
 
 using System;
@@ -42,7 +42,7 @@ public class ScreenIDSuggestor : BasicCachedQcSuggestor<string>
 
     protected override IEnumerable<string> GetItems(SuggestionContext context, SuggestorOptions options)
     {
-        UIFrame frame = QuantumRegistry.GetRegisteredObject<UIFrame>();
+        UIFrame frame = QuantumRegistry.GetRegisteredObject<UIFrame>();//I wrote this
         return frame?.GetRegisteredScreenIDs() ?? new string[0];
     }
 }
