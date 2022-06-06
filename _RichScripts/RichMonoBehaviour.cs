@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
@@ -43,7 +44,9 @@ namespace RichPackage
         /// </summary>
         public new Transform transform { get => myTransform; }
 
-        protected virtual void Reset()
+		#region Unity Messages
+
+		protected virtual void Reset()
 		{
             myTransform = gameObject.GetComponent<Transform>();
 		}
@@ -53,14 +56,40 @@ namespace RichPackage
             myTransform = gameObject.GetComponentIfNull(myTransform);
         }
 
-        /// <summary>
-        /// Set a reference to a singleton to the given instance if valid.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
-        /// <returns>False if a SingletonError occured.</returns>
-        protected static bool InitSingleton<T>(T instance, ref T singletonRef,
+		#endregion Unity Messages
+
+		#region Invokation Timing Helpers
+
+		protected void InvokeAtEndOfFrame(Action action)
+		{
+            StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
+		}
+
+        protected void InvokeNextFrame(Action action)
+		{
+            StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
+		}
+
+        protected void InvokeAfterDelay(Action action, float delay_s)
+		{
+            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
+		}
+
+        protected void InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
+		{
+            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
+		}
+
+		#endregion Invokation Timing Helpers
+
+		/// <summary>
+		/// Set a reference to a singleton to the given instance if valid.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="instance"></param>
+		/// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+		/// <returns>False if a SingletonError occured.</returns>
+		protected static bool InitSingleton<T>(T instance, ref T singletonRef,
             bool dontDestroyOnLoad = true)
             where T : RichMonoBehaviour
         {
