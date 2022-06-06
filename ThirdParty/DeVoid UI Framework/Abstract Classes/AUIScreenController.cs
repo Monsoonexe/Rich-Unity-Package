@@ -4,7 +4,8 @@ using UnityEngine.UI;
 using RichPackage;
 using Sirenix.OdinInspector;
 
-[RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster))]
+[RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster)),
+    SelectionBase]
 public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreenController
     where TProps : IScreenProperties
 {
@@ -241,7 +242,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 		}
 		catch (Exception ex)
 		{
-            Debug.LogError($"An exception occurred in ${nameof(OnPropertiesSet)}:\n {ex}");
+            Debug.LogError($"An exception occurred in {nameof(OnPropertiesSet)}:\n {ex}");
 		}
 
         if (!gameObject.activeSelf) // if currently hidden
