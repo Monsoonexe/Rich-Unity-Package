@@ -1,4 +1,5 @@
-﻿
+﻿using Sirenix.OdinInspector;
+
 namespace RichPackage.UI
 {
 	/// <summary>
@@ -7,5 +8,12 @@ namespace RichPackage.UI
 	public class ObjectButton : RichUIButton<object>
 	{
 		//exists
+
+#if UNITY_EDITOR
+
+		[ShowInInspector, ReadOnly]
+		public string Payload { get => PayloadData?.ToString() ?? "nada"; }
+
+#endif
 	}
 }
