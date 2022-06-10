@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using RichPackage;
 using Sirenix.OdinInspector;
+using QFSW.QC;
 
 /// <summary>
 /// 
@@ -22,5 +23,6 @@ public class GlobalUIFrame : RichMonoBehaviour
     protected void InitializeUI()
     {
         UIFrame = uiSettings.CreateUIInstance();
+        QuantumRegistry.RegisterObject(UIFrame);
     }
 }
