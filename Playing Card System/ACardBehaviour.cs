@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
+using RichPackage.UI;
 
 namespace RichPackage.PlayingCards
 {
 	/// <summary>
 	/// Base class for card scene behaviours.
 	/// </summary>
-	public abstract class ACardBehaviour : RichMonoBehaviour
+	public abstract class ACardBehaviour : RichUIElement
 	{
 		public abstract Sprite FrontSprite { get; set; }
 		public abstract Sprite BackSprite { get; set; }
 
-		public virtual void UpdateVisuals(CardSO newCard)
+		public virtual void UpdateUI(CardSO newCard)
 			=> FrontSprite = newCard.FaceImage;
 
 		protected override void Reset()
