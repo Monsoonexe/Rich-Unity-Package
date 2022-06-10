@@ -646,8 +646,8 @@ namespace RichPackage
         /// Element at 0 or the <see langword="default"/> value if empty.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T FirstOrDefault<T>(this IList<T> col)
-            => col.Count == 0 ? default : col[0];
+        public static T FirstOrDefault<T>(this IList<T> col, T defaultValue = default)
+            => col.Count == 0 ? defaultValue : col[0];
 
         /// <summary>
         /// First element in a sequence or a default value if it is empty.
