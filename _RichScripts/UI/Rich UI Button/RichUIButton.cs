@@ -31,6 +31,7 @@ namespace RichPackage.UI
         }
 
         public Image Image { get => myButton.targetGraphic as Image; }
+
         public bool ImageEnabled
         {
             get => myButton.targetGraphic.enabled;
@@ -52,6 +53,7 @@ namespace RichPackage.UI
         [SerializeField]
         protected TextMeshProUGUI myText;
         public TextMeshProUGUI Label { get => myText; }
+
         public string Text
         {
             get => myText.text;
@@ -73,8 +75,9 @@ namespace RichPackage.UI
         //events
         public event Action<RichUIButton> OnPressedEvent;
 
+		#region Unity Messages
 
-        protected override void Reset()
+		protected override void Reset()
         {
             base.Reset();
             SetDevDescription("Automatically handles subscribing " +
@@ -114,7 +117,9 @@ namespace RichPackage.UI
         protected virtual void OnDisable()
             => myButton.onClick.RemoveListener(OnButtonClick);
 
-        public void AddListener(Action action) => myButton.onClick.AddListener(action.Invoke);
+		#endregion Unity Messages
+
+		public void AddListener(Action action) => myButton.onClick.AddListener(action.Invoke);
 
         public void RemoveListener(Action action) => myButton.onClick.RemoveListener(action.Invoke);
 
