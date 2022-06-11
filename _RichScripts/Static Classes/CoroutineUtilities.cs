@@ -39,9 +39,10 @@ namespace RichPackage
             yield return yieldInstruction;
             action();
         }
+        
         public static IEnumerator InvokeAfterFrameDelay(Action action, int frameDelay)
         {
-            while (frameDelay > 0)
+            while (frameDelay-- > 0)
                 yield return null;
             action();
         }
