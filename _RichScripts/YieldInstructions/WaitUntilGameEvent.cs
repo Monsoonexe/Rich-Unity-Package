@@ -15,23 +15,26 @@ namespace RichPackage.YieldInstructions
     public class WaitUntilGameEvent : CustomYieldInstruction
     {
         public const int INFINITE_TIMEOUT = -1;
-        private GameEvent gameEvent;
 
         /// <summary>
         /// Flag for when <see cref="gameEvent"/> has been raised.
-        /// Held <see langword="true"/> until the event is fired, 
-        /// then is set <see langword="false"/>.
+        /// Held <see langword="false"/> until the event is fired, 
+        /// then is set <see langword="true"/>.
         /// </summary>
-        public bool Flag { get; private set; }
+        private bool eventRaised;
         private float endTime;
         private float timeout;
-
-        public override bool keepWaiting { get => Flag  &&  endTime > Time.time; }
+        private GameEvent gameEvent;
 
         #region Constructors
 
+        /// <summary>
+        /// Wait until the event is fired or timeout.
+        /// </summary>
+        public override bool keepWaiting { get => !(eventRaised || endTime > Time.time); }
+
         public WaitUntilGameEvent(GameEvent gameEvent)
-            : this (gameEvent, INFINITE_TIMEOUT)
+            :this (gameEvent, INFINITE_TIMEOUT)
         {
             //nada
         }
@@ -54,7 +57,7 @@ namespace RichPackage.YieldInstructions
 
         private void OnEventRaised()
         {
-            Flag = false;
+            eventRaised = true;
             gameEvent.RemoveListener(OnEventRaised);
         }
 
@@ -63,12 +66,12 @@ namespace RichPackage.YieldInstructions
             gameEvent.RemoveListener(OnEventRaised); //ensure no duplicate subscriptions
             gameEvent.AddListener(OnEventRaised);
             endTime = timeout < 0 ? INFINITE_TIMEOUT : Time.time + timeout;
-            Flag = true;
+            eventRaised = false;
         }
 
         /// <summary>
         /// Only need to call this if the Coroutine was interrupted to ensure that 
-        /// the events is unsubscribed.
+        /// the event is unsubscribed.
         /// </summary>
         public void Close()
         {
