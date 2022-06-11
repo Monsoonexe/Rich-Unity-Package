@@ -643,6 +643,13 @@ namespace RichPackage
         public static T First<T>(this IList<T> col) => col[0];
 
         /// <summary>
+        /// Element at 0 or the <see langword="default"/> value if empty.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T FirstOrDefault<T>(this IList<T> col, T defaultValue = default)
+            => col.Count == 0 ? defaultValue : col[0];
+
+        /// <summary>
         /// First element in a sequence or a default value if it is empty.
         /// </summary>
         public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
