@@ -12,6 +12,7 @@ namespace RichPackage.UI
 	/// <summary>
 	/// Synchronizes a Slider with a FloatVariable.
 	/// </summary>
+	/// <seealso cref="FloatVariableToSlider"/>
 	[SelectionBase]
 	public sealed class UISliderToFloatVariable : RichUIElement<FloatVariable>
 	{

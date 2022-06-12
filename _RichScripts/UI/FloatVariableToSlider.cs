@@ -9,6 +9,8 @@ namespace RichPackage.UI
 	/// <summary>
 	/// Sets a UI <see cref="Slider"/> to the value of a <see cref="FloatVariable"/>.
 	/// </summary>
+	/// <seealso cref="UISliderToFloatVariable"/>
+	[SelectionBase]
 	public sealed class FloatVariableToSlider : RichUIElement<FloatVariable>
 	{
 		[SerializeField, Required]
