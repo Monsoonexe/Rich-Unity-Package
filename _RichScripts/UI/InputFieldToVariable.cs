@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 namespace RichPackage.UI
 {
     [SelectionBase]
-    public class InputFieldToVariable : RichUIElement<BaseVariable>
+    public sealed class InputFieldToVariable : RichUIElement<BaseVariable>
     {
         //member Components
         [SerializeField, Required]
