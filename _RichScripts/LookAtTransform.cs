@@ -10,8 +10,7 @@ namespace RichPackage
     /// <seealso cref="LookAtCamera"/>
     public class LookAtTransform : RichMonoBehaviour
     {
-        [SerializeField]
-        protected bool dynamicallyAssign = false;
+        public bool dynamicallyAssign = false;
 
         [HideIf("@dynamicallyAssign")]
         public Transform target;
