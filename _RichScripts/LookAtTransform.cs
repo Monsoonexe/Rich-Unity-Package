@@ -17,7 +17,7 @@ namespace RichPackage
         public Transform target;
 
         [Tag, ShowIf("@dynamicallyAssign")]
-        public string findByTag = ConstStrings.TAG_PLAYER;
+        public string findByTag = GameObjectTags.Player;
 
         private void LateUpdate()
         {

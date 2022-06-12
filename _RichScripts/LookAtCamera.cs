@@ -12,7 +12,7 @@ namespace RichPackage
             base.Reset();
             SetDevDescription("Don't ask questions, just face the MainCamera while active.");
             dynamicallyAssign = false;
-            findByTag = ConstStrings.TAG_MAIN_CAMERA;
+            findByTag = GameObjectTags.MainCamera;
             target = GameObject.FindGameObjectWithTag(findByTag)
                 .GetComponent<Transform>();
         }

@@ -17,7 +17,7 @@ namespace RichPackage.TriggerVolumes
         #endregion Constants
 
         [SerializeField, NaughtyAttributes.Tag]
-        protected string reactToTag = ConstStrings.TAG_PLAYER;
+        protected string reactToTag = GameObjectTags.Player;
 
         /// <summary>
         /// Running total of times this has been triggered.
