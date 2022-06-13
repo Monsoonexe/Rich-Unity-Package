@@ -24,6 +24,7 @@ namespace RichPackage.UI
         /// <summary>
         /// Update UI elements with current values.
         /// </summary>
+        [Button]
         public override void UpdateUI()
             => tmp.text = targetData.ToString();
     }
