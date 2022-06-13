@@ -8,14 +8,14 @@ namespace RichPackage.WeightedProbabilities
     /// </summary>
     public static class WeightedProbabilityUtilities
     {
-
         /// <summary>
         /// Get a random element using Weighted algorithm.
         /// </summary>
         /// <returns>Scales of weights do not affect performance.
         /// Guarantees 1 or less iteration.</returns>
-        public static int GetWeightedIndex(
-            this IList<AWeightedProbability> items)
+        public static int GetWeightedIndex<T>(
+            this IList<T> items)
+            where T : AWeightedProbability
         {
             var totalWeight = GetTotalWeight(items);
             var randomValue = Random.Range(0, totalWeight) + 1;
@@ -38,35 +38,30 @@ namespace RichPackage.WeightedProbabilities
         /// Guarantees 1 or less iteration.</returns>
         public static T GetWeightedRandomElement<T>(
             this IList<AWeightedProbability<T>> items)
+		{
+            return GetWeightedRandomElement<T, AWeightedProbability<T>>(items);
+		}
+
+        /// <summary>
+        /// Get a random element using Weighted algorithm.
+        /// </summary>
+        /// <returns>Scales of weights do not affect performance
+        /// Guarantees 1 or less iteration.</returns>
+        public static T GetWeightedRandomElement<T, U>(
+            this IList<U> items)
+            where U : AWeightedProbability<T>
         {
-            var totalWeight = GetTotalWeight((IList<AWeightedProbability>)items);
-            var randomValue = Random.Range(0, totalWeight) + 1;
-            var index = 0;
-            AWeightedProbability<T> result = null;
-
-            while (randomValue > 0)
-            {
-                result = items[index++];
-                randomValue -= result.Weight;
-            }
-
-            return result.Value;
+            return items[GetWeightedIndex(items)].Value;
         }
 
         /// <summary>
         /// Sum the <see cref="AWeightedProbability.Weight"/>.
         /// </summary>
-        public static int GetTotalWeight(this IList<AWeightedProbability>
+        public static int GetTotalWeight<T>(this IList<T>
             probabilityTemplates)
+            where T : AWeightedProbability
         {
-            var totalWeight = 0;
-
-            for (var i = 0; i < probabilityTemplates.Count; ++i)
-            {
-                totalWeight += probabilityTemplates[i].Weight;
-            }
-
-            return totalWeight;
+            return probabilityTemplates.Sum((prob) => prob.Weight);
         }
     }
 }
