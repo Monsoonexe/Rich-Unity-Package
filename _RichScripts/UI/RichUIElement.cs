@@ -41,7 +41,7 @@ namespace RichPackage.UI
 
         [Button, HorizontalGroup("A")]
         public void Hide() => ToggleVisuals(false);
-        
+
         /// <summary>
         /// Used to refresh UI with current values.
         /// </summary>
