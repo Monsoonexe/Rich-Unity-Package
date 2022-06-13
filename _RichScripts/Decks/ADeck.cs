@@ -57,14 +57,12 @@ namespace RichPackage.Decks
         /// <summary>
         /// Get a card out of the deck.
         /// </summary>
-        /// <returns></returns>
         public abstract T Draw();
 
         /// <summary>
         /// Get a card out of the deck and cast it.
         /// </summary>
         /// <typeparam name="U"></typeparam>
-        /// <returns></returns>
         public U Draw<U>() where U : T => (U)Draw();
 
         [Button]
