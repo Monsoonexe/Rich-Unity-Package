@@ -29,15 +29,13 @@ namespace RichPackage.Decks
                 manifest.Add(weightedManifest[i].Value); //add card to manifest
         }
 
-        /// <seealso cref="WeightedProbabilityUtilities.GetWeightedRandomElement)"/>
         public override TValue Draw()
         {
             var deck = weightedManifest;
             if (deck.Count == 0) 
                 return default;
 
-            var iCard = GetWeightedIndex(deck);
-            return deck[iCard].Value;         
+            return deck.GetWeightedRandomElement<TValue, TContainer>();
         }
 
         /// <summary>
@@ -54,36 +52,5 @@ namespace RichPackage.Decks
         /// Has no effect but is not an error.
         /// </summary>
         public override void ShuffleRemaining() { }//nada
-
-        //in-line since generics don't play well together
-        /// <seealso cref="WeightedProbabilityUtilities.GetTotalWeight)"/>
-        protected static int GetTotalWeight(IList<TContainer>
-            probabilityTemplates)
-        {
-            var totalWeight = 0;
-            var length = probabilityTemplates.Count;
-
-            for (var i = 0; i < length; ++i)
-                totalWeight += probabilityTemplates[i].Weight;
-
-            return totalWeight;
-        }
-
-        //in-line since generics don't play well together
-        /// <seealso cref="WeightedProbabilityUtilities.GetWeightedIndex)"/>
-        protected static int GetWeightedIndex(IList<TContainer> items)
-        {
-            var totalWeight = GetTotalWeight(items);
-            var randomValue = Random.Range(0, totalWeight) + 1;
-            var index = 0;
-
-            while (randomValue > 0)
-            {
-                TContainer result = items[index++];
-                randomValue -= result.Weight;
-            }
-
-            return index - 1;
-        }
     }
 }
