@@ -12,7 +12,28 @@ namespace RichPackage.Decks
     /// </summary>
     public abstract class ADeck : RichScriptableObject
     {
-        //exists as base class
+        /// <summary>
+        /// Draw()s remaining until Deck needs to Reload().
+        /// </summary>
+        [ShowInInspector, ReadOnly]
+        public abstract int CardsRemaining { get; }
+
+        protected virtual void OnEnable()
+        {
+            Reload();
+        }
+
+        /// <summary>
+        /// Recombine un/used cards.
+        /// </summary>
+        [Button]
+        public abstract void Reload();
+
+        [Button]
+        public abstract void Shuffle();
+
+        [Button]
+        public abstract void ShuffleRemaining();
     }
 
     /// <summary>
@@ -34,17 +55,6 @@ namespace RichPackage.Decks
         public int TotalDeckSize { get => manifest.Count; }
 
         /// <summary>
-        /// Draw()s remaining until Deck needs to Reload().
-        /// </summary>
-        [ShowInInspector]
-        public abstract int CardsRemaining { get; }
-
-        protected virtual void OnEnable()
-        {
-            Reload();
-        }
-
-        /// <summary>
         /// Get a card out of the deck.
         /// </summary>
         /// <returns></returns>
@@ -57,18 +67,8 @@ namespace RichPackage.Decks
         /// <returns></returns>
         public U Draw<U>() where U : T => (U)Draw();
 
-        /// <summary>
-        /// Recombine un/used cards.
-        /// </summary>
         [Button]
-        public abstract void Reload();
-        [Button]
-        public abstract void Shuffle();
-        [Button]
-        public abstract void ShuffleRemaining();
-
-        [Button]
-        [Conditional("UNITY_EDITOR")]
+        [Conditional(ConstStrings.UNITY_EDITOR)]
         public void TestDraw()
         {
             var card = Draw(); //breakpoint here.
