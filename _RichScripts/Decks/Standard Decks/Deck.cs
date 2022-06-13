@@ -140,8 +140,7 @@ namespace RichPackage.Decks
         /// Look at next item without moving it.
         /// </summary>
         /// <returns></returns>
-        public T PeekAtTop()
-            => PeekAt(0);
+        public T PeekAtTop() => PeekAt(0);
 
         /// <summary>
         /// Look at last item without moving it.
