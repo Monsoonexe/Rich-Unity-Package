@@ -86,6 +86,9 @@ namespace RichPackage.Tweening
 
         public static Coroutine StartCoroutine(IEnumerator routine)
             => tweenHolder.StartCoroutine(routine);
+
+        public static void StopCoroutine(Coroutine routine)
+            => tweenHolder.StopCoroutine(routine);
     }
 
 }
