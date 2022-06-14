@@ -10,7 +10,7 @@ namespace RichPackage
     /// </summary>
     /// <seealso cref="RichScriptableObject"/>
     [SelectionBase]
-    public class RichMonoBehaviour : MonoBehaviour
+    public abstract class RichMonoBehaviour : MonoBehaviour
     {
 #if UNITY_EDITOR
         [SerializeField, TextArea]
