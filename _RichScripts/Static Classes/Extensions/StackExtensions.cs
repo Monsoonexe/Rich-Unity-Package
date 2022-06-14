@@ -20,5 +20,9 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNotEmpty<T>(this Stack<T> s)
             => s.Count > 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T PopOrDefault(this Stack<T> s, T defaultValue = default)
+            => s.IsEmpty() ? defaultValue : s.Pop();
     }
 }
