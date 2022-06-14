@@ -41,6 +41,11 @@ namespace RichPackage
             return RichTweens.StartCoroutine(routine);
 		}
 
+        protected void StopCoroutine(Coroutine routine)
+		{
+            RichTweens.StopCoroutine(routine);
+		}
+
         protected Coroutine InvokeAtEndOfFrame(Action action)
         {
             return StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
