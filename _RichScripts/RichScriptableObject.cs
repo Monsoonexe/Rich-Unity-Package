@@ -11,7 +11,7 @@ namespace RichPackage
     /// Common base class for scriptable objects.
     /// </summary>
     /// <seealso cref="RichMonoBehaviour"/>
-    public class RichScriptableObject : ScriptableObject
+    public abstract class RichScriptableObject : ScriptableObject
     {
 #if UNITY_EDITOR
         [SerializeField, TextArea]
@@ -94,7 +94,7 @@ namespace RichPackage
         #endregion Editor
     }
 
-    public class RichScriptableObject<T> : RichScriptableObject
+    public abstract class RichScriptableObject<T> : RichScriptableObject
     {
         [SerializeField]
         protected T _value;
