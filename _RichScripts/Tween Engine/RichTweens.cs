@@ -16,6 +16,7 @@ namespace RichPackage.Tweening
         /// Holds the coroutines that back tweens so disabling components won't kill animation.
         /// </summary>
         private static TweenHolder tweenHolder;
+
         public static bool IsInitialized { get; private set; }
 
         /// <summary>
@@ -82,6 +83,9 @@ namespace RichPackage.Tweening
 
             callback();
         }
+
+        public static Coroutine StartCoroutine(IEnumerator routine)
+            => tweenHolder.StartCoroutine(routine);
     }
 
 }
