@@ -60,29 +60,29 @@ namespace RichPackage
 
         #region Invokation Timing Helpers
 
-        protected void InvokeAtEndOfFrame(Action action)
+        protected Coroutine InvokeAtEndOfFrame(Action action)
         {
-            StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
+            return StartCoroutine(CoroutineUtilities.InvokeAtEndOfFrame(action));
         }
 
-        protected void InvokeNextFrame(Action action)
+        protected Coroutine InvokeNextFrame(Action action)
         {
-            StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
+            return StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
         }
 
-        protected void InvokeAfterDelay(Action action, float delay_s)
+        protected Coroutine InvokeAfterDelay(Action action, float delay_s)
         {
-            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
+            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
         }
 
-        protected void InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
+        protected Coroutine InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
         {
-            StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
+            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
         }
 
-        protected void InvokeAfterFrameDelay(Action action, int frameDelay)
+        protected Coroutine InvokeAfterFrameDelay(Action action, int frameDelay)
         {
-            StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
+            return StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
         }
 
         #endregion Invokation Timing Helpers
