@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using RichPackage;
 
 /// <summary>
 /// Template for an UI. You can rig the prefab for the UI Frame itself and all the screens that should
