@@ -12,7 +12,7 @@ namespace RichPackage.YieldInstructions
     /// <see cref="CommonYieldInstructions"/>.</remarks>
     /// <seealso cref="WaitWhile"/>
     /// <seealso cref="WaitUntil"/>
-    public class WaitUntilGameEvent : CustomYieldInstruction
+    public class WaitForGameEvent : CustomYieldInstruction
     {
         public const int INFINITE_TIMEOUT = -1;
 
@@ -33,14 +33,14 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public override bool keepWaiting { get => !(eventRaised || endTime > Time.time); }
 
-        public WaitUntilGameEvent(GameEvent gameEvent)
+        public WaitForGameEvent(GameEvent gameEvent)
             :this (gameEvent, INFINITE_TIMEOUT)
         {
             //nada
         }
 
         /// <param name="timeout">value &lt; 0 implies infinite timeout.</param>
-        public WaitUntilGameEvent(GameEvent gameEvent, float timeout)
+        public WaitForGameEvent(GameEvent gameEvent, float timeout)
         {
             //validate
             GuardAgainst.ArgumentIsNull(gameEvent, nameof(gameEvent));
