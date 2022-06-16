@@ -20,5 +20,9 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNotEmpty<T>(this Queue<T> q)
             => q.Count > 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T DequeueOrDefault(this Queue<T> q, T defaultValue = default)
+            => q.IsEmpty() ? defaultValue : q.Dequeue();
     }
 }
