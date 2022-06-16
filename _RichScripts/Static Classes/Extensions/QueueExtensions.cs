@@ -22,7 +22,7 @@ namespace RichPackage
             => q.Count > 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T DequeueOrDefault(this Queue<T> q, T defaultValue = default)
+        public static T DequeueOrDefault<T>(this Queue<T> q, T defaultValue = default)
             => q.IsEmpty() ? defaultValue : q.Dequeue();
     }
 }

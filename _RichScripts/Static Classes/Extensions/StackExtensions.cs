@@ -22,7 +22,7 @@ namespace RichPackage
             => s.Count > 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T PopOrDefault(this Stack<T> s, T defaultValue = default)
+        public static T PopOrDefault<T>(this Stack<T> s, T defaultValue = default)
             => s.IsEmpty() ? defaultValue : s.Pop();
     }
 }
