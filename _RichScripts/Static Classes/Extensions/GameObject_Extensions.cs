@@ -33,7 +33,7 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Shortcut for a.enabled = false;
+        /// Shortcut for `gameObject.SetActive(!gameObject.activeSelf);`
         /// </summary>
         /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -97,8 +97,6 @@ namespace RichPackage
         /// <summary>
         /// Perform an action on every Transform on each of its children, etc, recursively.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="newLayer"></param>
         public static void ForEachChildRecursive(this GameObject obj, 
             Action<Transform> action)
         {
@@ -112,10 +110,19 @@ namespace RichPackage
         }
 
         /// <summary>
+        /// Returns true if TComponent was found and not null.
+        /// </summary>
+        /// <returns>True if Component was found and is not null.</returns>
+        public static bool TryGetComponent<TComponent>(this GameObject gameObject,
+            out TComponent component)
+        {
+            component = gameObject.GetComponent<TComponent>();
+            return component != null;
+        }
+
+        /// <summary>
         /// Get a new List each TComponent that is on each the root of each GameObject.
         /// </summary>
-        /// <typeparam name="TComponent"></typeparam>
-        /// <param name="gameObjects"></param>
         /// <returns>A list of non-null component references.</returns>
         public static List<TComponent> GetComponents<TComponent>
             (this IList<GameObject> gameObjects)
