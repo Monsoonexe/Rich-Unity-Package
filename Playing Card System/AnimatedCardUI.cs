@@ -2,7 +2,6 @@
 using UnityEngine.Events;
 using DG.Tweening;
 using Sirenix.OdinInspector;
-using RichPackage.Audio;
 
 /*TODO - Use composition to implement both sprite and ui versions
  * 
@@ -30,10 +29,6 @@ namespace RichPackage.PlayingCards
 		public Vector3 punchScale = new Vector3(0.25f, 0.25f, 0);
 		public int punchVibrato = 5;
 
-		[Title("Audio")]
-		[SerializeField, Required]
-		private RichAudioClip flipSound;
-
 		[FoldoutGroup("Events")]
 		[SerializeField]
 		private UnityEvent onFlipFaceDownCompleteEvent;
@@ -58,7 +53,6 @@ namespace RichPackage.PlayingCards
 
 			Tweener flipTween = transform.DOLocalRotate(
 				faceUpRotation, flipDuration)
-				.OnStart(flipSound.DoPlaySFX)
 				.SetEase(flipEase);
 
 			flipSequence.Append(flipTween);
@@ -69,7 +63,7 @@ namespace RichPackage.PlayingCards
 				flipSequence.Join(transform.DOPunchScale(
 					punchScale, flipDuration, punchVibrato)); //combine into single animation
 			}
-			//flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
+			flipSequence.OnComplete(onFlipFaceUpCompleteEvent.Invoke);
 			flipSequence.OnStart(onFlipFaceUpCompleteEvent.Invoke);
 
 			return flipSequence;
@@ -77,11 +71,9 @@ namespace RichPackage.PlayingCards
 
 		public Tween FlipFaceDown()
 		{
-
 			Tweener flipTween = transform.DOLocalRotate(
 				faceDownRotation, flipDuration)
 				.SetEase(flipEase)
-				.OnStart(flipSound.DoPlaySFX)
 				.OnComplete(onFlipFaceDownCompleteEvent.Invoke);
 
 			return flipTween;
