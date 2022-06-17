@@ -20,15 +20,25 @@ namespace RichPackage.Animation
 		private UnityEvent onAnimationEnd = new UnityEvent();
 		public UnityEvent OnAnimationEnd => onAnimationEnd;
 
-		public float duration;
+		[Title("Settings")]
+		public Transform target;
+		[Min(0)]
+		public float duration = 0.85f;
 		public bool loop;
-		[HideIf(nameof(loop))]
+		[HideIf(nameof(loop)), Min(-1)]
 		public int loops = -1;
 
 		public Tween Tween { get; protected set; }
 
 		[ShowInInspector, ReadOnly]
 		public bool IsAnimating => Tween != null && Tween.IsPlaying();
+
+		protected override void Reset()
+		{
+			SetDevDescription("Helps provide DOTween animations.");
+			myTransform = GetComponent<Transform>();
+			target = myTransform;
+		}
 
 		[Button, DisableInEditorMode, HorizontalGroup("b")]
 		public abstract void Play();
@@ -57,6 +67,6 @@ namespace RichPackage.Animation
 		public void StopAllTweens() => StopAllTweens(complete: false);
 
 		public void StopAllTweens(bool complete)
-			=> transform.DOKill(complete);
+			=> target.DOKill(complete);
 	}
 }
