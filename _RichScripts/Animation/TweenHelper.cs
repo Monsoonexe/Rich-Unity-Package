@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Animation
 {
@@ -10,25 +10,25 @@ namespace RichPackage.Animation
     /// </summary>
     public class TweenHelper : RichMonoBehaviour
     {
-        [Header("---Settings---")]
+        [Title("Settings")]
         [Min(0)]
         public float duration = 0.85f;
 
         public Ease ease = Ease.OutQuart;
 
-        [Foldout("---Events---")]
+        [FoldoutGroup("Events")]
         [SerializeField]
-        private UnityEvent onAnimationBegin = new UnityEvent();
+        protected UnityEvent onAnimationBegin = new UnityEvent();
         public UnityEvent OnAnimationBegin { get => onAnimationBegin; }//readonly
 
-        [Foldout("---Events---")]
+        [FoldoutGroup("Events")]
         [SerializeField]
-        private UnityEvent onAnimationComplete = new UnityEvent();
+        protected UnityEvent onAnimationComplete = new UnityEvent();
         public UnityEvent OnAnimationComplete { get => onAnimationComplete; }//readonly
 
         public bool IsAnimating { get => animTween != null; }
 
-        private Tweener animTween;
+        protected Tweener animTween;
 
         public void DoMove(Transform place)
         {
@@ -115,32 +115,32 @@ namespace RichPackage.Animation
         /// <summary>
         /// Shortcut to Yaw right.
         /// </summary>
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90Right() => RotateLocalBy(new Vector3(0, 90, 0));
 
         /// <summary>
         /// Shortcut to Yaw left.
         /// </summary>
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90Left() => RotateLocalBy(new Vector3(0, -90, 0));
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90Forward() => RotateLocalBy(new Vector3(0, 0, 90));
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90Backward() => RotateLocalBy(new Vector3(0, 0, -90));
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90Clockwise() => RotateWorldBy(new Vector3(90, 0, 0));
 
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void Rotate90CounterClockwise() => RotateWorldBy(new Vector3(-90, 0, 0));
 
         public void RotateLocalX(int x) => RotateLocalBy(new Vector3(x, 0, 0));
         public void RotateLocalY(int y) => RotateLocalBy(new Vector3(0, y, 0));
         public void RotateLocalZ(int z) => RotateLocalBy(new Vector3(0, 0, z));
 
-        private void OnAnimationCompleteHandler()
+        protected void OnAnimationCompleteHandler()
         {
             animTween = null;
             onAnimationComplete.Invoke();
