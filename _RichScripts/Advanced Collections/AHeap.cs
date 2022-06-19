@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using RichPackage.GuardClauses;
 
 //TODO - implement ICollection or IEnumerable or something
 
@@ -30,8 +31,7 @@ namespace RichPackage.Collections
             get => comparer; 
             set 
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
+                GuardAgainst.ArgumentIsNull(value, nameof(value));
 
                 comparer = value;
                 if (Size > 1)
@@ -52,14 +52,20 @@ namespace RichPackage.Collections
         {
             PushRange(source);
         }
-        
+
         #endregion
 
-        /// <summary>
-        /// Look at the next item in the heap (without actually removing it).
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Peek() => (elements.Count > 0) ? elements[FRONT] 
+        #region Query
+
+        public bool IsEmpty() => Size == 0;
+
+        public bool IsNotEmpty() => Size > 0;
+
+		/// <summary>
+		/// Look at the next item in the heap (without actually removing it).
+		/// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Peek() => elements.IsNotEmpty() ? elements[FRONT] 
             : throw new InvalidOperationException("No elements in heap.");
 
         /// <summary>
@@ -67,7 +73,7 @@ namespace RichPackage.Collections
         /// </summary>
         public T Pop()
         {
-            if (elements.Count == 0)
+            if (elements.IsEmpty())
                 throw new InvalidOperationException("No elements in heap.");
             
             int BACK = elements.Count - 1; //cache for re-use
@@ -87,14 +93,16 @@ namespace RichPackage.Collections
             HeapifyUp(elements.Count - 1);
         }
 
-        #region Modify
-            
-        /// <summary>
-        /// Modify the first item that returns true from <paramref name="query"/> and
-        /// process it with <paramref name="procedure"/>. <br/>
-        /// Prefer <see cref="ModifyItem(Predicate{T}, Action{T})"/> if {T} is an object.
-        /// </summary> <br/>
-        public void ModifyItem(Predicate<T> query, ActionRef<T> procedure)
+		#endregion Query
+
+		#region Modify
+
+		/// <summary>
+		/// Modify the first item that returns true from <paramref name="query"/> and
+		/// process it with <paramref name="procedure"/>. <br/>
+		/// Prefer <see cref="ModifyItem(Predicate{T}, Action{T})"/> if {T} is an object.
+		/// </summary> <br/>
+		public void ModifyItem(Predicate<T> query, ActionRef<T> procedure)
         {
             int count = elements.Count;
             for(int i = 0; i < count; ++i)
