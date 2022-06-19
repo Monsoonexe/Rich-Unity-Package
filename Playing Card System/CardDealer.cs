@@ -28,7 +28,7 @@ namespace RichPackage.PlayingCards
         public Transform deckOriginPoint;
 
         [Header("---Resources---")]
-        public ScriptableObjectDeck cardDeck;
+        public ADeck cardDeck;
 
         [SerializeField]
         private GameObjectPool gameObjectPool;
@@ -50,10 +50,13 @@ namespace RichPackage.PlayingCards
                 gameObjectPool.InitPool();
         }
 
+        private CardSO DrawCardInternal()
+            => cardDeck.DrawAs<CardSO>();
+
         public Tween Deal(Transform targetPoint, out CardSO cardData)
         {
             //draw data from deck
-            cardData = cardDeck.Draw<CardSO>();
+            cardData = DrawCardInternal();
 
             //draw mono from pool
             var mono = gameObjectPool.Depool<ACardBehaviour>();
@@ -101,7 +104,7 @@ namespace RichPackage.PlayingCards
         /// <summary>
         /// Discard the top card.
         /// </summary>
-        public void Discard() => cardDeck.Draw();
+        public void Discard() => DrawCardInternal();
 
         /// <summary>
         /// Hide all the cards dealt.

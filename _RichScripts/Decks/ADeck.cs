@@ -24,6 +24,11 @@ namespace RichPackage.Decks
         }
 
         /// <summary>
+        /// Get a card out of the deck and cast it.
+        /// </summary>
+        public abstract U DrawAs<U>() where U : class;
+
+        /// <summary>
         /// Recombine un/used cards.
         /// </summary>
         [Button]
@@ -62,8 +67,12 @@ namespace RichPackage.Decks
         /// <summary>
         /// Get a card out of the deck and cast it.
         /// </summary>
-        /// <typeparam name="U"></typeparam>
         public U Draw<U>() where U : T => (U)Draw();
+
+        /// <summary>
+        /// Get a card out of the deck and cast it.
+        /// </summary>
+        public override U DrawAs<U>() => Draw() as U;
 
         [Button]
         [Conditional(ConstStrings.UNITY_EDITOR)]
