@@ -34,7 +34,7 @@ namespace RichPackage.Collections
                 GuardAgainst.ArgumentIsNull(value, nameof(value));
 
                 comparer = value;
-                if (Size > 1)
+                if (Count > 1)
                     Heapify();
             }
         }
@@ -57,9 +57,9 @@ namespace RichPackage.Collections
 
         #region Query
 
-        public bool IsEmpty() => Size == 0;
+        public bool IsEmpty() => Count == 0;
 
-        public bool IsNotEmpty() => Size > 0;
+        public bool IsNotEmpty() => Count > 0;
 
 		/// <summary>
 		/// Look at the next item in the heap (without actually removing it).
@@ -222,7 +222,7 @@ namespace RichPackage.Collections
 
         #region Collection interface
 
-        public int Size => elements.Count;
+        public int Count => elements.Count;
 
         public void PushRange(IEnumerable<T> source)
         {
@@ -247,7 +247,7 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         public void ForEach(ActionRef<T> action)
         {
-            for(int i = 0; i < Size; ++i)
+            for(int i = 0; i < Count; ++i)
             {
                 //support structs
                 T element = elements[i];
