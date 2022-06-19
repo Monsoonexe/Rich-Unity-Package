@@ -1,28 +1,32 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities.Editor;
 
-public class GetComponentContextMenuItemDrawer<T>
-	: OdinValueDrawer<T>, IDefinesGenericMenuItems
-    where T : Component
+namespace RichPackage.Editor
 {
-	protected override void Initialize()
-	{
-		// We don't use this drawer to "draw" something so skip it when drawing.
-		SkipWhenDrawing = true;
-    }
-
-    public void PopulateGenericMenu(InspectorProperty property, GenericMenu genericMenu)
+    public class GetComponentContextMenuItemDrawer<T>
+        : OdinValueDrawer<T>, IDefinesGenericMenuItems
+        where T : Component
     {
-        genericMenu.AddItem(GUIHelper.TempContent($"{nameof(Component.GetComponent)}<{typeof(T).Name}>()"), 
-            on: false, () => GetComponentAndSetReference(property));
-    }
+        protected override void Initialize()
+        {
+            // We don't use this drawer to "draw" something so skip it when drawing.
+            SkipWhenDrawing = true;
+        }
 
-    private void GetComponentAndSetReference(InspectorProperty property)
-    {
-        Component comp = ((Component)property.Parent.BaseValueEntry.WeakSmartValue).GetComponent<T>();
-        property.ValueEntry.WeakValues[0] = comp;
-    }
+        public void PopulateGenericMenu(InspectorProperty property, GenericMenu genericMenu)
+        {
+            genericMenu.AddItem(new GUIContent(
+                $"{nameof(Component.GetComponent)}<{typeof(T).Name}>()"),
+                on: false, () => GetComponentAndSetReference(property));
+        }
 
+        private void GetComponentAndSetReference(InspectorProperty property)
+        {
+            Component comp = property.Parent.BaseValueEntry.WeakSmartValue
+                .CastTo<Component>().GetComponent<T>();
+            property.ValueEntry.WeakValues[0] = comp;
+        }
+
+    }
 }
