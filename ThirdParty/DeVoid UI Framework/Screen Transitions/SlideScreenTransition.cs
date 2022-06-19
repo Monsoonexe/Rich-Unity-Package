@@ -29,7 +29,7 @@ public class SlideScreenTransition : ATransitionComponent
     [SerializeField] 
     protected bool doFade;
 
-    [SerializeField] 
+    [SerializeField, EnableIf(nameof(doFade))]
     protected float fadeDurationPercent = 0.5f;
 
     [SerializeField] 
