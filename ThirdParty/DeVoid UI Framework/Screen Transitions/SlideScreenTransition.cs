@@ -78,7 +78,7 @@ public class SlideScreenTransition : ATransitionComponent
 
         if (doFade)
         {
-            canvasGroup = gameObject.GetComponentIfNull<CanvasGroup>(canvasGroup);
+            canvasGroup = gameObject.GetComponentIfNull(canvasGroup);
             canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
         }
 
