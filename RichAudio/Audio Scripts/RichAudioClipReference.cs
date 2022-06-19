@@ -15,8 +15,6 @@ namespace RichPackage.Audio
 		[SerializeField, HideIf(nameof(UseConstant))]
 		private RichAudioClip audioClipVariable;
 
-		[CustomContextMenu("SFX Options", nameof(ConfigureOptionsForSFX))]
-		[CustomContextMenu("BGM Options", nameof(ConfigureOptionsForBGM))]
 		[SerializeField, ShowIf(nameof(UseConstant))]
 		private AudioOptions overrideOptions = AudioOptions.DefaultSFX;
 
@@ -63,12 +61,6 @@ namespace RichPackage.Audio
 		}
 
 		#endregion Constructors
-
-		public void ConfigureOptionsForBGM()
-			=> overrideOptions = AudioOptions.DefaultBGM;
-
-		public void ConfigureOptionsForSFX()
-			=> overrideOptions = AudioOptions.DefaultSFX;
 
 		/// <summary>
 		/// Procedural form of <see cref="PlaySFX"/>

@@ -15,8 +15,6 @@ namespace RichPackage.Audio
         /// </summary>
         [BoxGroup(nameof(Options))]
         [SerializeField, HideLabel, InlineProperty]
-        [CustomContextMenu("SFX Options", nameof(ConfigureOptionsForSFX))]
-        [CustomContextMenu("BGM Options", nameof(ConfigureOptionsForBGM))]
         private AudioOptions options = AudioOptions.DefaultSFX;
 
         public AudioOptions Options { get => options; private set => options = value; }
@@ -25,12 +23,6 @@ namespace RichPackage.Audio
 		{
             SetDevDescription("Audio with information on how to play it.");
 		}
-
-        public void ConfigureOptionsForBGM()
-            => Options = AudioOptions.DefaultBGM;
-
-        public void ConfigureOptionsForSFX()
-            => Options = AudioOptions.DefaultSFX;
 
         public AudioID DoPlayBGM()
         {
