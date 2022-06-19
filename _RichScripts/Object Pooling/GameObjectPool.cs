@@ -15,7 +15,7 @@ namespace RichPackage.Pooling
     public class GameObjectPool : RichMonoBehaviour
     {
         [Title("Resources")]
-        [PreviewField, Required]
+        [PreviewField, Required, AssetsOnly]
         public GameObject objectPrefab;
 
         [Header("---Settings---")]
@@ -206,7 +206,7 @@ namespace RichPackage.Pooling
         /// <summary>
         /// Take an item out of the pool and GetComponent{T} on it.
         /// </summary>
-        /// <returns>Newly de-pool object or null if the Component wasn't found.</returns>
+        /// <returns>Newly de-pool object or null if the <seealso cref="Component"/> wasn't found.</returns>
         public T Depool<T>() where T : Component
         {
             T component = null;
