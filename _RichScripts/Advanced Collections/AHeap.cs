@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace RichPackage.Collections
 {
-    public abstract class AHeap<T>
+    public abstract class AHeap<T> : IEnumerable<T>
     {
         protected const int FRONT = 0;
 
@@ -272,9 +272,16 @@ namespace RichPackage.Collections
             }
         }
 
-        #endregion
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		#endregion
+
+		#region IEnumerable
+
+        public IEnumerator<T> GetEnumerator() => elements.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => elements.GetEnumerator();
+
+		#endregion IEnumerable
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Swap(int a, int b)
         {
             T item = elements[a];
