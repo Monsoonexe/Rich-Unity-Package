@@ -22,9 +22,16 @@ namespace RichPackage.YieldInstructions
         /// then is set <see langword="true"/>.
         /// </summary>
         private bool eventRaised;
+
+        /// <summary>
+        /// Flag for when <see cref="gameEvent"/> has been raised.
+        /// Held <see langword="false"/> until the event is fired, 
+        /// then is set <see langword="true"/>.
+        /// </summary>
+        public bool EventRaised { get => eventRaised; }
         private float endTime;
-        private float timeout;
-        private GameEvent gameEvent;
+        private readonly float timeout;
+        private readonly GameEvent gameEvent;
 
         #region Constructors
 
