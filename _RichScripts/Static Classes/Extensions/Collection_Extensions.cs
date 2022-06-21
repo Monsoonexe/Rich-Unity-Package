@@ -679,6 +679,16 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T Last<T>(this IList<T> col) => col[col.Count - 1];
+
+        /// <summary>
+        /// <see cref="Last"/> or <paramref name="defaultValue"/> if <paramref name="col"/>
+        /// <see cref="IsNullOrEmpty"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T LastOrDefault<T>(this IList<T> col, T defaultValue)
+            => col.IsNullOrEmpty()
+            ? defaultValue
+            : col[col.Count - 1];
         
         /// <summary>
         /// Returns a 'new' list if <paramref name="list"/> is null or calls
