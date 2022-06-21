@@ -40,14 +40,18 @@ namespace RichPackage.PlayingCards
         [SerializeField]
         private RichAudioClipReference flipCardAudio;
 
-        private void Start()
-        {
+		protected override void Awake()
+		{
+			base.Awake();
+
             //configure pool
             gameObjectPool.OnEnpoolMethod += (item) => item.GetComponent<ACardBehaviour>().Hide(); //hide show
             gameObjectPool.OnDepoolMethod += (item) => item.GetComponent<ACardBehaviour>().Show(); //hide show
+        }
 
-            if (!gameObjectPool.initOnAwake)
-                gameObjectPool.InitPool();
+        private void Start()
+        {
+            gameObjectPool.InitPool();
         }
 
         private CardSO DrawCardInternal()

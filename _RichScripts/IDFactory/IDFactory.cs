@@ -12,5 +12,7 @@ namespace RichPackage
         {
             previousID = 0;
         }
+
+        public int Peek() => previousID + 1;
     }
 }

@@ -53,7 +53,6 @@ namespace RichPackage.YieldInstructions
             }
         }
 
-
 		#endregion Constructors
     }
 }

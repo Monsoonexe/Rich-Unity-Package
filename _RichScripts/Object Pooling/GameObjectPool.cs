@@ -1,26 +1,31 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using RichPackage.Assertions;
+using Sirenix.Serialization;
 
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
-//TODO: ability to pre-spawn items in the Editor.
 
 namespace RichPackage.Pooling
 {
     public delegate void GameObjectMethod(GameObject poolable);
+
     /// <summary>
     /// Pools a GameObject Prefab. Depool() replaces Instantiate(), and Enpool() replaces Destroy().
     /// </summary>
     /// <seealso cref="PoolablePool"/>
-    public class GameObjectPool : RichMonoBehaviour
+    public sealed class GameObjectPool : RichMonoBehaviour
     {
         [Title("Resources")]
         [PreviewField, Required, AssetsOnly]
         public GameObject objectPrefab;
 
         [Header("---Settings---")]
-        public bool initOnAwake = true;
+		[PreviouslySerializedAs("initOnAwake")]
+        public bool initOnStart = true;
         public bool createWhenEmpty = true;
+		[Tooltip("Should this pool enpool any existing children when init'g?")]
+        public bool enpoolChildrenOnInit = false;
 
         [Min(0)]
         public int startingAmount = 6;
@@ -73,7 +78,16 @@ namespace RichPackage.Pooling
         /// </summary>
         public int InUseCount { get => manifest.Count - pool.Count; }
 
-        protected override void Reset()
+        /// <summary>
+        /// <see langword="true"/> after <see cref="InitPool"/> has been completed,
+        /// otherwise <see langword="false"/>.
+        /// </summary>
+        /// <remarks>Enables idempotency of <see cref="InitPool"/>.</remarks>
+        private bool isInitialized;
+
+		#region Unity Messages
+
+		protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I replace Instantiate with a pool of objects. " +
@@ -81,33 +95,15 @@ namespace RichPackage.Pooling
             poolParent = GetComponent<Transform>();
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            if (initOnAwake)
+		private void Start()
+		{
+            if (initOnStart)
                 InitPool();
         }
 
-        private GameObject CreatePoolable()
-        {
-            GameObject newGameObject = null;//return value
-            if (maxAmount >= 0 && PopulationCount >= maxAmount)
-            {
-                Debug.Log("[" + name + "] Pool is exhausted. "
-                    + "Count: " + ConstStrings.GetCachedString(maxAmount)
-                    + ". Consider increasing 'maxAmount' or setting 'createWhenEmpty'."
-                    , this);
-            }
-            else
-            {
-                newGameObject = Instantiate(objectPrefab, poolParent);
-                manifest.Add(newGameObject);//track
-            }
+		#endregion Unity Messages
 
-            return newGameObject;
-        }
-
-        public void AddItems(int amount = 1)
+		public void AddItems(int amount = 1)
         {
             for (var i = amount - 1; i >= 0; --i)
             {
@@ -117,11 +113,13 @@ namespace RichPackage.Pooling
             }
         }
 
-        /// <summary>
-        /// Take an item out of the pool.
-        /// </summary>
-        /// <returns>Newly de-pool object.</returns>
-        public GameObject Depool()
+		#region En/Depool
+
+		/// <summary>
+		/// Take an item out of the pool.
+		/// </summary>
+		/// <returns>Newly de-pool object.</returns>
+		public GameObject Depool()
         {
             GameObject depooledItem = null;
 
@@ -259,25 +257,59 @@ namespace RichPackage.Pooling
             }
         }
 
+        #endregion En/Depool
+
+        #region Initialization
+
+        private GameObject CreatePoolable()
+        {
+            GameObject newGameObject = null;//return value
+            if (maxAmount >= 0 && PopulationCount >= maxAmount)
+            {
+                Debug.Log("[" + name + "] Pool is exhausted. "
+                    + "Count: " + ConstStrings.GetCachedString(maxAmount)
+                    + ". Consider increasing 'maxAmount' or setting 'createWhenEmpty'."
+                    , this);
+            }
+            else
+            {
+                newGameObject = Instantiate(objectPrefab, poolParent);
+                manifest.Add(newGameObject);//track
+            }
+
+            return newGameObject;
+        }
+
         /// <summary>
         /// Create entire pool
         /// </summary>
         public void InitPool()
         {
-            initOnAwake = false; //to prevent double-init'g
+            // prevent double-init'g
+            if (isInitialized)
+                return;
+
+            // validate
+            objectPrefab.ShouldNotBeNull();
+
+            // work
             int poolSize = RichMath.Max(startingAmount, maxAmount);
             manifest = new List<GameObject>(poolSize);
             pool = new Stack<GameObject>(poolSize);
 
-            //preload pool
-            for (var i = startingAmount; i > 0; --i)
-            {
-                var newP = CreatePoolable();
-                InitPoolableMethod?.Invoke(newP);
+            //load children?
+			if (enpoolChildrenOnInit && poolParent != null)
+			{
+                foreach (Transform child in poolParent)
+                    InitPoolable(child.gameObject);
+			}
 
-                pool.Push(newP);
-                OnEnpoolMethod?.Invoke(newP);//SetActive(false) by default
-            }
+            //preload pool
+            for (var i = startingAmount - pool.Count; i > 0; --i)
+                InitPoolable(CreatePoolable());
+
+            //state
+            isInitialized = true;
         }
 
         public void InitPool(int startingAmount, int maxAmount)
@@ -287,11 +319,21 @@ namespace RichPackage.Pooling
             InitPool();
         }
 
-        /// <summary>
-        /// Resize the pool.
-        /// </summary>
-        /// <param name="newCapacity"></param>
-        public void Resize(int newCapacity)
+        private void InitPoolable(GameObject obj)
+        {
+            InitPoolableMethod?.Invoke(obj);
+
+            pool.Push(obj);
+            OnEnpoolMethod?.Invoke(obj);//SetActive(false) by default
+        }
+
+		#endregion Initialization
+
+		/// <summary>
+		/// Resize the pool.
+		/// </summary>
+		/// <param name="newCapacity"></param>
+		public void Resize(int newCapacity)
         {
             maxAmount = RichMath.Min(newCapacity, ReadyCount);
             while (pool.Count > maxAmount) //shrink
