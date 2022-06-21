@@ -34,10 +34,14 @@ namespace RichPackage.Spawning
         {
             base.Awake();
             objectPool = GetComponent<GameObjectPool>();
+        }
+
+		private void Start()
+        {
             objectPool.InitPool();
         }
 
-        private void OnEnable()
+		private void OnEnable()
         {
             targetData.AddListener(UpdateSpawnCount);
             UpdateSpawnCount();
