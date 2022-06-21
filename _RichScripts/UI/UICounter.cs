@@ -45,7 +45,6 @@ namespace RichPackage.UI
 			objectPool = GetComponent<GameObjectPool>();
 
 			//configure objectPool
-			objectPool.initOnAwake = false; //I will init you.
 			objectPool.startingAmount = maxSpawns; //spawn all at once
 			objectPool.maxAmount = maxSpawns;//
 
