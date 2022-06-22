@@ -45,17 +45,39 @@ namespace RichPackage
 			return newArr;
 		}
 
-		/// <summary>
-		/// Returns 'true' if at least 1 item in array `Equals()` given item.
-		/// </summary>
-		public static bool Contains<T>(this T[] array, T elem)
+		/// <returns>
+		/// <see langword="true"/> if <paramref name="item"/> is found in
+		/// <paramref name="array"/>; otherwise <see langword="false"/>.
+		/// </returns>
+		/// <seealso cref="List{T}.Contains(T)"/>
+		public static bool Contains<T>(this T[] array, T item)
 		{
-			var length = array.Length;
-			for (var i = 0; i < length; ++i)
-				if (elem.Equals(array[i]))
+			int _size = array.Length;
+			if (item == null)
+			{
+				for (int i = 0; i < _size; i++)
+					if (array[i] == null)
+						return true;
+
+				return false;
+			}
+
+			EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+			for (int j = 0; j < _size; j++)
+				if (comparer.Equals(array[j], item))
 					return true;
+
 			return false;
 		}
+
+		/// <returns>
+		/// <see langword="false"/> if <paramref name="item"/> is found in
+		/// <paramref name="array"/>; otherwise <see langword="true"/>.
+		/// </returns>
+		/// <seealso cref="List{T}.Contains(T)"/>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool DoesNotContain<T>(this T[] array, T query)
+			=> !Contains(array, query);
 
 		/// <summary>
 		/// Returns a new array of given size with as many elements (or fewer) copied over.
