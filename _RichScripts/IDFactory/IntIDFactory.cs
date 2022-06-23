@@ -5,7 +5,7 @@ namespace RichPackage
     {
         public override int GetNext()
         {
-            return previousID++;
+            return ++previousID;
         }
 
         public override void Reset()
