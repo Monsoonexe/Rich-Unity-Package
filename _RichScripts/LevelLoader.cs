@@ -7,6 +7,7 @@ using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using RichPackage.UI;
 using RichPackage.Events.Signals;
+using RichPackage.YieldInstructions;
 
 //TODO - handle additive scenes.
 
@@ -41,15 +42,8 @@ namespace RichPackage
         //runtime data
         [ShowInInspector, ReadOnly]
         public static bool IsTransitioning { get; private set; } = false;
-        private bool levelHasLoaded;
 
-        /// <summary>
-        /// Predicate to pass to WaitUntil
-        /// </summary>
-        /// <returns></returns>
-        private bool LevelHasFinishedLoading() => levelHasLoaded;
-
-        private static Stack<SceneVariable> levelHistory = new Stack<SceneVariable>();
+        private static readonly Stack<SceneVariable> levelHistory = new Stack<SceneVariable>();
 
         protected override void Reset()
         {
@@ -120,7 +114,6 @@ namespace RichPackage
         {
             //reset flags
             IsTransitioning = true;
-            levelHasLoaded = false;
 
             var transitionWait = new WaitForSeconds(
                 ScreenTransitionController.TransitionDuration);
@@ -134,24 +127,22 @@ namespace RichPackage
                 .TriggerTransition(outTransitionMessage);//hide scene
             transitionOUTClip.Value.PlaySFX();
 
+            yield return null;
+            RichAppController.EnsureInstance(); //just to be sure.
+
             //wait for the darkness to envelope you, and then a bit longer
             yield return transitionWait;
 
             //last call before a scene is destroyed.
-            GlobalSignals.Get<ScenePreUnload>().Dispatch();
+            GlobalSignals.Get<ScenePreUnloadSignal>().Dispatch();
 
             //perform scene load
-            SceneManager.sceneLoaded += OnLevelLoaded; //subscribe to event
-            //SceneManager.LoadScene(index);
             LoadSceneAction(); //many ways to load a scene, but use this one.
 
             //wait
-            yield return new WaitUntil(LevelHasFinishedLoading); //levelHasLoaded = true
-
-            levelHasLoaded = false; //reset flag
+            yield return new WaitUntilEvent(GlobalSignals.Get<SceneLoadedSignal>()); //levelHasLoaded = true
 
             //clean up while screen still black
-            SceneManager.sceneLoaded -= OnLevelLoaded; //unsubscribe to event
             GC.Collect(); //why not? screen is totally black now.
 
             //wait until next frame
@@ -169,16 +160,6 @@ namespace RichPackage
             //finalize
             IsTransitioning = false;
             Destroy(gameObject);//left over from previous level
-        }
-
-        /// <summary>
-        /// Rigged to SceneManager.levelLoaded
-        /// </summary>
-        /// <param name="scene"></param>
-        /// <param name="mode"></param>
-        private void OnLevelLoaded(Scene scene, LoadSceneMode mode)
-        {
-            levelHasLoaded = true;//set flag
         }
 
         #region Static Interface
