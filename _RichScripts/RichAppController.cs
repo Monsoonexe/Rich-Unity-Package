@@ -1,8 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
-using Sirenix.OdinInspector;
+using RichPackage.FunctionalProgramming;
 
 namespace RichPackage
 {
@@ -16,18 +15,23 @@ namespace RichPackage
         public static RichAppController Instance => instance;
 
         /// <summary>
-        /// Time.deltaTime that has been cached and un-marshalled.
+        /// <see cref="Time.deltaTime"/> that has been cached and un-marshalled.
         /// </summary>
         public static float DeltaTime { get; private set; }
 
         /// <summary>
-        /// Time.time that has been cached and un-marshalled.
+        /// <see cref="Time.time"/> that has been cached and un-marshalled.
         /// </summary>
         public static float Time { get; private set; }
-        
+
+        /// <summary>
+        /// <see cref="Time.fixedDeltaTime"/> that has been cached and un-marshalled.
+        /// </summary>
         public static float FixedDeltaTime { get; private set; }
 
-        protected override void Reset()
+		#region Unity Messages
+
+		protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I control the application-level behaviour.");
@@ -36,26 +40,25 @@ namespace RichPackage
         protected override void Awake()
         {
             base.Awake();
+            if (InitSingleton(this, ref instance, dontDestroyOnLoad: true)
+                .IsFalse())
+                return;
+
             instance = this;//low-key singleton
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
             DG.Tweening.DOTween.Init();
-            DG.Tweening.DOTween.SetTweensCapacity(500, 20);
+            DG.Tweening.DOTween.SetTweensCapacity(250, 20);
         }
 
         private void OnDestroy()
         {
             GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
             SceneManager.sceneLoaded -= SceneLoadedHandler;
-        }
 
-        public void QuitGame()
-        {
-            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
-    #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-    #endif
-            Application.Quit();
+            //release singleton
+            if (instance == this)
+                instance = null;
         }
 
         public void Update()
@@ -71,7 +74,20 @@ namespace RichPackage
             FixedDeltaTime = UnityEngine.Time.fixedDeltaTime;
         }
 
-        private void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
+		#endregion Unity Messages
+
+		public void QuitGame()
+        {
+            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+            Application.Quit();
+        }
+
+		#region Static Interface
+
+		private static void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
             => GlobalSignals.Get<SceneLoadedSignal>().Dispatch();
 
         public static void ReloadCurrentLevel()
@@ -80,27 +96,18 @@ namespace RichPackage
 
         public static RichAppController Construct()
             => new GameObject(nameof(RichAppController)).AddComponent<RichAppController>();
-    }
 
-    /// <summary>
-    /// Request that the app be closed.
-    /// </summary>
-    public class RequestQuitGameSignal : ASignal { }
+        public static void EnsureInstance()
+		{
+            if (!instance) Construct();
+		}
+
+		#endregion Static Interface
+	}
 
     /// <summary>
     /// Dispatched when the Player has requested to close the app.
     /// </summary>
     public class GameIsQuittingSignal : ASignal { }
 
-    /// <summary>
-    /// Dispatched by SceneManager.sceneLoaded when such.
-    /// </summary>
-    public class SceneLoadedSignal : ASignal { }
-
-    /// <summary>
-    /// The scene is about to be unloaded. Last call before your possible demise! <br/>
-    /// NOTE: If multiple scenes exist, it may not be 'your' scene that is being unloaded.
-    /// See also: <seealso cref="SceneManager.sceneUnloaded"/>
-    /// </summary>
-    public class ScenePreUnload : ASignal { }
 }
