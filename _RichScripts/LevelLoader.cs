@@ -49,12 +49,7 @@ namespace RichPackage
         /// <returns></returns>
         private bool LevelHasFinishedLoading() => levelHasLoaded;
 
-        /// <summary>
-        /// Supports asynchronous loading.
-        /// </summary>
-        private WaitUntil waitUntilFinishedLoading;
-
-        private Stack<SceneVariable> levelHistory;
+        private static Stack<SceneVariable> levelHistory = new Stack<SceneVariable>();
 
         protected override void Reset()
         {
@@ -64,8 +59,7 @@ namespace RichPackage
 
         private void Start()
         {
-            levelHistory = new Stack<SceneVariable>();
-            waitUntilFinishedLoading = new WaitUntil(LevelHasFinishedLoading);
+            // TODO - get current scene
         }
 
         /// <summary>
@@ -152,7 +146,7 @@ namespace RichPackage
             LoadSceneAction(); //many ways to load a scene, but use this one.
 
             //wait
-            yield return waitUntilFinishedLoading; //levelHasLoaded = true
+            yield return new WaitUntil(LevelHasFinishedLoading); //levelHasLoaded = true
 
             levelHasLoaded = false; //reset flag
 
