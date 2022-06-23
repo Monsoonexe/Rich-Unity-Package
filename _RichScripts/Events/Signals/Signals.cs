@@ -25,6 +25,10 @@
 //
 // ========================================================================================
 
+/* TODO -  implement IUnityEvent
+ * 
+ */
+
 using System;
 using System.Collections.Generic;
 
@@ -45,7 +49,8 @@ namespace RichPackage.Events.Signals
     {
         private static readonly SignalHub hub = new SignalHub();
 
-        public static SType Get<SType>() where SType : ISignal, new()
+        public static SType Get<SType>()
+            where SType : ISignal, new()
             => hub.Get<SType>();
 
         public static ISignal Get(string hash)
@@ -63,7 +68,7 @@ namespace RichPackage.Events.Signals
     /// </summary>
     public class SignalHub
     {
-        private Dictionary<Type, ISignal> signals = new Dictionary<Type, ISignal>();
+        private readonly Dictionary<Type, ISignal> signals = new Dictionary<Type, ISignal>();
 
         /// <summary>
         /// Manually provide a SignalHash and bind it to a given listener
@@ -83,55 +88,33 @@ namespace RichPackage.Events.Signals
         public void RemoveListenerFromHash(string signalHash, Action handler)
             => (Get(signalHash) as ASignal)?.RemoveListener(handler);
 
-        private ISignal Bind(Type signalType)
-        {
-            ISignal signal;
-            if (signals.TryGetValue(signalType, out signal)) // 
-            {
-                UnityEngine.Debug.LogError(
-                    string.Format("[Signals]Signal already registered for type {0}",
-                    signalType.ToString()));
-            }
-            else
-            {
-                signal = Activator.CreateInstance(signalType) as ISignal; // new SignalType()
-                signals.Add(signalType, signal);
-            }
-
-            return signal;
-        }
-
-        private ISignal Bind<T>() where T : ISignal, new()
-            => Bind(typeof(T));
-
-        public ISignal Get(string signalHash)
-        {
-            foreach (ISignal signal in signals.Values)
-            {
-                if (signal.Hash == signalHash)
-                {
-                    return signal;
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Getter for a signal of a given type
         /// </summary>
         /// <typeparam name="SType">Type of signal</typeparam>
         /// <returns>The proper signal binding</returns>
-        public SType Get<SType>() where SType : ISignal, new()
-        {
-            Type signalType = typeof(SType); // cache - multiple use
-            ISignal signal;
+        public SType Get<SType>()
+            where SType : ISignal, new()
+            => (SType)GetInternal(typeof(SType));
 
-            if (signals.TryGetValue(signalType, out signal)) // if exists
-                return (SType)signal;
-            else
-                return (SType)Bind(signalType); // create new
+        /// <summary>
+        /// Getter for a <see cref="ISignal"/> where <paramref name="signalHash"/> 
+        /// is an object that implements <see cref="ISignal"/>.
+        /// </summary>
+        public ISignal Get(string signalHash)
+            => GetInternal(Type.GetType(signalHash));
+
+        private ISignal GetInternal(Type signalType)
+        {
+            if (!signals.TryGetValue(signalType, out ISignal signal))
+			{   // bind
+                signal = Activator.CreateInstance(signalType) as ISignal; // new SignalType()
+                signals.Add(signalType, signal);
+            }
+            return signal;
         }
+
+        public void Clear() => signals.Clear();
     }
 
     /// <summary>
