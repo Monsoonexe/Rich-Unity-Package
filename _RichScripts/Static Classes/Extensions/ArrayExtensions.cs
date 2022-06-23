@@ -1,6 +1,7 @@
 ﻿//source that this is faster concatenate method https://stackoverflow.com/questions/1547252/how-do-i-concatenate-two-arrays-in-c#:~:text=The%20result%20was%3A-,Roll%20your%20own%20wins.,-Share
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace RichPackage
