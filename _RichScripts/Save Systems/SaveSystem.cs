@@ -148,7 +148,7 @@ namespace RichPackage.SaveSystem
 		{
 			//subscribe to events
 			GlobalSignals.Get<SaveGame>().AddListener(Save);
-			GlobalSignals.Get<ScenePreUnload>().AddListener(Save);
+			GlobalSignals.Get<ScenePreUnloadSignal>().AddListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
 		}
 
@@ -156,7 +156,7 @@ namespace RichPackage.SaveSystem
 		{
 			//unsubscribe from events
 			GlobalSignals.Get<SaveGame>().RemoveListener(Save);
-			GlobalSignals.Get<ScenePreUnload>().RemoveListener(Save);
+			GlobalSignals.Get<ScenePreUnloadSignal>().RemoveListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
 		}
 
