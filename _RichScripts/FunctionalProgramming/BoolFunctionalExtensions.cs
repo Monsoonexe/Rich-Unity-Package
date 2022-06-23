@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ApexCommon.FunctionalProgramming
+namespace RichPackage.FunctionalProgramming
 {
     public static class BoolFunctionalExtensions
     {
