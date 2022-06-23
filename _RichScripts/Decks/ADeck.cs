@@ -12,9 +12,9 @@ namespace RichPackage.Decks
     /// </summary>
     public abstract class ADeck : RichScriptableObject
     {
-        /// <summary>
-        /// Draw()s remaining until Deck needs to Reload().
-        /// </summary>
+		/// <summary>
+		/// Draw()s remaining until Deck needs to Reload().
+		/// </summary>
         [ShowInInspector, ReadOnly]
         public abstract int CardsRemaining { get; }
 

@@ -4,9 +4,10 @@ using RichPackage.WeightedProbabilities;
 
 namespace RichPackage.Decks
 {
-    /// <summary>
-    /// Not every card has the same probability of being drawn.
-    /// </summary>
+	/// <summary>
+	/// A <see cref="ADeck{TValue}"/> where not every card has the same probability of being drawn.
+	/// </summary>
+	[Sirenix.OdinInspector.InfoBox("A deck where not every card has the same probability of being drawn.")]
     public class StackedDeck<TContainer, TValue> : ADeck<TValue>
         where TContainer : AWeightedProbability<TValue>
     {

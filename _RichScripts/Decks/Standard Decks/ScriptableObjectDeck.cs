@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Decks
 {
@@ -11,12 +12,13 @@ namespace RichPackage.Decks
 	/// <seealso cref="ScriptableObjectDeck"/>
 	/// <seealso cref="ScriptableSequentialDeck"/>
 	[CreateAssetMenu(fileName = "DeckOfScriptableObjects",
-		menuName = "ScriptableObjects/Decks/Deck of ScriptableObjects")]
+		menuName = "ScriptableObjects/Decks/Deck of ScriptableObjects"),
+		InfoBox("Draws a random card without replacement. Standard deck of playing cards.")]
 	public class ScriptableObjectDeck : Deck<ScriptableObject>
 	{
 		private void Reset()
 		{
-			SetDevDescription("Draws a random card without replacement. Standard deck.");
+			SetDevDescription("Draws a random card without replacement. Standard deck of playing cards.");
 		}
 	}
 }
