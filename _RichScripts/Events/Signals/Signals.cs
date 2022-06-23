@@ -26,7 +26,7 @@
 // ========================================================================================
 
 /* TODO -  implement IUnityEvent
- * 
+ * TODO - consider implementing a List<Action> over Action, like SCOARCH
  */
 
 using System;
@@ -34,14 +34,6 @@ using System.Collections.Generic;
 
 namespace RichPackage.Events.Signals
 {
-    /// <summary>
-    /// Base interface for Signals
-    /// </summary>
-    public interface ISignal
-    {
-        string Hash { get; }
-    }
-
     /// <summary>
     /// Signals main facade class for global, game-wide signals
     /// </summary>
@@ -115,6 +107,14 @@ namespace RichPackage.Events.Signals
         }
 
         public void Clear() => signals.Clear();
+    }
+
+    /// <summary>
+    /// Base interface for Signals
+    /// </summary>
+    public interface ISignal
+    {
+        string Hash { get; }
     }
 
     /// <summary>
