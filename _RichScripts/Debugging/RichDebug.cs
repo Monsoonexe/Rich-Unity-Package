@@ -13,14 +13,14 @@ namespace RichPackage.Debugging
         /// <summary>
         /// Only Logs in Editor. Call is removed from Builds.
         /// </summary>
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR), DebuggerHidden]
         public static void EditorLog(string message)
             => Debug.Log(message);
 
         /// <summary>
         /// Only Logs in Editor. Call is removed from Builds.
         /// </summary>
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+        [Conditional(ConstStrings.UNITY_EDITOR), DebuggerHidden]
         public static void EditorLog(string message, UnityEngine.Object context)
             => Debug.Log(message, context);
 
