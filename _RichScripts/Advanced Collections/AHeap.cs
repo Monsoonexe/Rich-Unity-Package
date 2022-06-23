@@ -57,20 +57,32 @@ namespace RichPackage.Collections
 
         #region Query
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsEmpty() => Count == 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsNotEmpty() => Count > 0;
 
 		/// <summary>
 		/// Look at the next item in the heap (without actually removing it).
 		/// </summary>
+        /// <exception cref="InvalidOperationException"/>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Peek() => elements.IsNotEmpty() ? elements[FRONT] 
             : throw new InvalidOperationException("No elements in heap.");
 
         /// <summary>
+        /// Look at the next item in the heap (without actually removing it),
+        /// or get <see langword="default"/> if <see cref="IsEmpty"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T PeekOrDefault(T defaultValue = default)
+		    => elements.IsNotEmpty() ? elements[FRONT] : defaultValue;
+
+        /// <summary>
         /// Get the next item from the heap.
         /// </summary>
+        /// <exception cref="InvalidOperationException"/>
         public T Pop()
         {
             if (elements.IsEmpty())
@@ -222,7 +234,7 @@ namespace RichPackage.Collections
 
         #region Collection interface
 
-        public int Count => elements.Count;
+        public int Count { get => elements.Count; }
 
         public void PushRange(IEnumerable<T> source)
         {
@@ -247,7 +259,8 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)] 
         public void ForEach(ActionRef<T> action)
         {
-            for(int i = 0; i < Count; ++i)
+            int count = Count; // fetch once
+            for (int i = 0; i < count; ++i)
             {
                 //support structs
                 T element = elements[i];
