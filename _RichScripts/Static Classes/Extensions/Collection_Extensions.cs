@@ -535,6 +535,14 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNullOrEmpty<T>(this IList<T> list)
             => list == null || list.Count == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsEmpty(this IList list)
+            => list.Count == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsEmpty<T>(this List<T> list)
+            => list.Count == 0;
             
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty<T>(this IList<T> list)
