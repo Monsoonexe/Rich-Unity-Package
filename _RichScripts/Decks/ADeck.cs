@@ -10,6 +10,10 @@ namespace RichPackage.Decks
     /// <summary>
     /// Base class for decks to help with serialization.
     /// </summary>
+    /// <seealso cref="Deck{T}"/>
+    /// <seealso cref="StackedDeck{TContainer, TValue}"/>
+    /// <seealso cref="SequentialDeck{T}"/>
+    /// <seealso cref="CardGenerator{TContainer, TValue}"/>
     public abstract class ADeck : RichScriptableObject
     {
 		/// <summary>
