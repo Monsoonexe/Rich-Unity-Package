@@ -1,6 +1,6 @@
 {
     "name": "com.smoldersoft.richpackage",
-    "version": "1.0.0.1",
+    "version": "1.0.1",
     "displayName": "RichPackage",
     "description": "A helpful collection of reusable code.",
     "author": { "name" : "SmolderSoft",
