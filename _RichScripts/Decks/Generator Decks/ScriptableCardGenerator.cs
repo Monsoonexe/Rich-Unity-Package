@@ -10,14 +10,11 @@ namespace RichPackage.Decks
 	/// <seealso cref="ScriptableSequentialDeck"/>
 	/// <seealso cref="StackedScriptableDeck"/>
 	/// <seealso cref="ScriptableObjectDeck"/>
-	[CreateAssetMenu(fileName = "ScriptableCardGenerator",
-		menuName = "ScriptableObjects/Decks/ScriptableCardGenerator")]
+	[CreateAssetMenu(fileName = nameof(ScriptableCardGenerator),
+		menuName = "ScriptableObjects/Decks/" + nameof(ScriptableCardGenerator))]
 	public class ScriptableCardGenerator 
 		: CardGenerator<WeightedScriptable, ScriptableObject>
 	{
-		private void Reset()
-		{
-			SetDevDescription("Draws a weighted random card from a pool with replacement.");
-		}
+		//exists
 	}
 }

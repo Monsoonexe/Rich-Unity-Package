@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RichPackage.WeightedProbabilities;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Decks
 {
 	/// <summary>
 	/// A <see cref="ADeck{TValue}"/> where not every card has the same probability of being drawn.
 	/// </summary>
-	[Sirenix.OdinInspector.InfoBox("A deck where not every card has the same probability of being drawn.")]
+	[InfoBox("StackedDeck: A deck where not every card has the same " +
+		"probability of being drawn and is not replaced.")]
     public class StackedDeck<TContainer, TValue> : ADeck<TValue>
         where TContainer : AWeightedProbability<TValue>
     {
@@ -26,7 +28,13 @@ namespace RichPackage.Decks
 
         public override int CardsRemaining { get => unusedCards.Count; }
 
-        private void OnValidate()
+		private void Reset()
+		{
+            SetDevDescription("StackedDeck: A deck where not every card " +
+				"has the same probability of being drawn and is not replaced");
+		}
+
+		private void OnValidate()
         {
             manifest.Clear();// reload card values
             var len = weightedManifest.Count;

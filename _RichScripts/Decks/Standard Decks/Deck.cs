@@ -1,15 +1,17 @@
 ﻿using RichPackage.Assertions;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.Decks
 {
-    /// <summary>
-    /// A deck of something (cards).
-    /// </summary>
-    /// <seealso cref="SequentialDeck{T}"/>
-    /// <seealso cref="StackedDeck{TContainer, TValue}"/>
-    /// <seealso cref="CardGenerator{TContainer, TValue}"/>
+	/// <summary>
+	/// A deck of something (cards).
+	/// </summary>
+	/// <seealso cref="SequentialDeck{T}"/>
+	/// <seealso cref="StackedDeck{TContainer, TValue}"/>
+	/// <seealso cref="CardGenerator{TContainer, TValue}"/>
+	[InfoBox("Standard Deck: A standard deck of cards with no replacement.")]
     public class Deck<T> : ADeck<T>
     {
         public readonly List<T> unusedCards = new List<T>(16); //face-down deck
@@ -17,10 +19,15 @@ namespace RichPackage.Decks
 
         public override int CardsRemaining { get => unusedCards.Count; }
 
-        /// <summary>
-        /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
-        /// </summary>
-        public void AddToManifest(T newItem)
+		protected virtual void Reset()
+		{
+            SetDevDescription("Standard Deck: A standard deck of cards with no replacement.");
+		}
+
+		/// <summary>
+		/// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
+		/// </summary>
+		public void AddToManifest(T newItem)
             => manifest.Add(newItem);
 
         /// <summary>

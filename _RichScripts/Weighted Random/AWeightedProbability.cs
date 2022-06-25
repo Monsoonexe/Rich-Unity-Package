@@ -50,7 +50,7 @@ namespace RichPackage.WeightedProbabilities
             this.value = value;
         }
 
-        #endregion
+        #endregion Constructors
 
         /// <summary>
         /// Value: xxx | Weight: xxx

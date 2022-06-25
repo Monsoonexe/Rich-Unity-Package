@@ -11,6 +11,7 @@ namespace RichPackage.Decks
     /// <typeparam name="TContainer">Weight and value.</typeparam>
     /// <typeparam name="TValue">The underlying <see cref="System.Type"/>
     /// of the thing you expect to get back.</typeparam>
+    [InfoBox("CardGenerator: Draws a weighted random card from a pool with replacement.")]
     public class CardGenerator<TContainer, TValue> : ADeck<TValue>
         where TContainer : AWeightedProbability<TValue>
     {
@@ -27,6 +28,11 @@ namespace RichPackage.Decks
             var len = weightedManifest.Count;
             for (var i = 0; i < len; ++i)
                 manifest.Add(weightedManifest[i].Value); //add card to manifest
+        }
+
+        private void Reset()
+        {
+            SetDevDescription("Draws a weighted random card from a pool with replacement.");
         }
 
         public override TValue Draw()

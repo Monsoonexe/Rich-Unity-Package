@@ -1,13 +1,19 @@
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Decks
 {
 	/// <summary>
 	/// Always draws cards in the exact same order.
 	/// </summary>
-	[Sirenix.OdinInspector.InfoBox("Always draws cards in the exact same order.")]
+	[InfoBox("Sequential Deck: Always draws cards in the exact same order.")]
     public class SequentialDeck<T> : Deck<T>
     {
+        protected override void Reset()
+		{
+            SetDevDescription("Sequential Deck: Always draws cards in the exact same order.");
+		}
+
         /// <summary>
         /// Just calls <see cref="Reload"/>.
         /// </summary>
