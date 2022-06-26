@@ -1,10 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using DG.Tweening;
 
 namespace RichPackage.Animation
 {
 	public class DOMover : ADoer
 	{
+		public bool From = false;
 		public Space space = Space.World;
 
 		public Vector3 destination;
@@ -23,6 +24,8 @@ namespace RichPackage.Animation
 			Tween.SetEase(ease);
 			if (loop)
 				Tween.SetLoops(loops);
+			if (From)
+				Tween.CastAs<Tweener>().From();
 			SubscribeTweenEvents(Tween);
 		}
 	}
