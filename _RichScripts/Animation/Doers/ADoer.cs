@@ -31,7 +31,7 @@ namespace RichPackage.Animation
 		public Tween Tween { get; protected set; }
 
 		[ShowInInspector, ReadOnly]
-		public bool IsAnimating => Tween != null && Tween.IsActive() && Tween.IsPlaying();
+		public bool IsAnimating => Tween != null && Tween.IsPlaying();
 
 		protected override void Reset()
 		{
@@ -54,7 +54,10 @@ namespace RichPackage.Animation
 			=> onAnimationStart.Invoke();
 
 		protected void CallOnAnimationEndEvent()
-			=> onAnimationEnd.Invoke();
+		{
+			onAnimationEnd.Invoke();
+			Tween = null;
+		}
 
 		protected Tween SubscribeTweenEvents(Tween tween)
 		{
