@@ -69,6 +69,7 @@ namespace RichPackage.Animation
             Tween = target.DOLocalRotate(
                 rotationVector, duration, RotateMode.LocalAxisAdd);
             Tween.SetEase(ease);
+            SubscribeTweenEvents(Tween);
         }
 
         public void RotateWorldBy(Vector3 rotationVector)
@@ -78,6 +79,7 @@ namespace RichPackage.Animation
             Tween = target.DORotate(
                 rotationVector, duration, RotateMode.WorldAxisAdd);
             Tween.SetEase(ease);
+            SubscribeTweenEvents(Tween);
         }
     }
 }
