@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using DG.Tweening;
 
 namespace RichPackage.Animation
@@ -14,7 +14,7 @@ namespace RichPackage.Animation
 		public override void Play()
 		{
 			//local or world space?
-			if (space == Space.World)
+			if (space == Space.Self)
 				Tween = target.DOLocalMove(destination, duration);
 			else
 				Tween = target.DOMove(destination, duration);
