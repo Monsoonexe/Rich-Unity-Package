@@ -31,7 +31,7 @@ namespace RichPackage.Animation
 		public Tween Tween { get; protected set; }
 
 		[ShowInInspector, ReadOnly]
-		public bool IsAnimating => Tween != null && Tween.IsPlaying();
+		public bool IsAnimating => Tween != null && Tween.IsActive() && Tween.IsPlaying();
 
 		protected override void Reset()
 		{
