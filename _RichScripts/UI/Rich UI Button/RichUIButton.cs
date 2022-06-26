@@ -8,16 +8,53 @@ namespace RichPackage.UI
 {
     /// <summary>
     /// Automatically handles subscribing and responding to a button. 
-    /// No need to rig Button in Scene.
+    /// Can also store information in its Properties and retrieve it later.
     /// </summary>
-    /// <seealso cref="RichUIButton{Tpayload}"/>
     [SelectionBase]
     public class RichUIButton : RichUIElement
     {
-        [Header("---Button---")]
+        #region Constants
+
+        private const string Default_String_Property = "--";
+        private const string Properties_Group = "Properties";
+
+		#endregion Constants
+
+		[Title("Refs")]
         [SerializeField, Required]
         protected Button myButton;
         public Button Button { get => myButton; }
+
+        [SerializeField]
+        protected TextMeshProUGUI myText;
+        public TextMeshProUGUI Label { get => myText; }
+
+		[Tooltip("Optional value that can be stored and retrieved later.")]
+        [LabelWidth(100), BoxGroup(Properties_Group)]
+        public int IntegerProperty = -1;
+
+        [Tooltip("Optional value that can be stored and retrieved later.")]
+        [LabelWidth(100), BoxGroup(Properties_Group)]
+        public string StringProperty = Default_String_Property;
+
+        /// <summary>
+        /// An optional value that can be placed on the button and retrieved later. Useful
+        /// to help with mapping data to controls.
+        /// </summary>
+        public object ObjectProperty;
+
+#if UNITY_EDITOR
+
+        [ShowInInspector, ReadOnly, BoxGroup(Properties_Group),
+            LabelText(nameof(ObjectProperty)), LabelWidth(100),
+            PropertyTooltip("Optional value that can be stored and retrieved later.")]
+        public string Editor_ObjectPayloadString
+        {
+            get => ObjectProperty?.ToString() ?? Default_String_Property;
+        }
+
+#endif
+
         public bool ButtonEnabled
         {
             get => myButton.enabled;
@@ -50,10 +87,6 @@ namespace RichPackage.UI
             set => myButton.targetGraphic.color = value; 
         }
 
-        [SerializeField]
-        protected TextMeshProUGUI myText;
-        public TextMeshProUGUI Label { get => myText; }
-
         public string Text
         {
             get => myText.text;
@@ -72,7 +105,9 @@ namespace RichPackage.UI
             set => myButton.interactable = value;
         }
 
-        //events
+        /// <summary>
+        /// Calls events with <see langword="this"/> as the argument.
+        /// </summary>
         public event Action<RichUIButton> OnPressedEvent;
 
 		#region Unity Messages
@@ -81,8 +116,9 @@ namespace RichPackage.UI
         {
             base.Reset();
             SetDevDescription("Automatically handles subscribing " +
-                "and responding to a button.");
-            myButton = GetComponent<Button>();
+                "and responding to a button. Can store and retrieve data.");
+            if (!TryGetComponent(out myButton))
+                myButton = GetComponentInChildren<Button>();
             myText = GetComponentInChildren<TextMeshProUGUI>();
         }
 
@@ -94,11 +130,8 @@ namespace RichPackage.UI
             base.Awake();
             if (!myButton)
             {
-                myButton = GetComponent<Button>(); //keep looking
-                if (!myButton)
-                {
-                    myButton = GetComponentInChildren<Button>(); // don't give up!
-                }
+                if (!TryGetComponent(out myButton))
+                    myButton = GetComponentInChildren<Button>();
             }
         }
 
@@ -107,7 +140,7 @@ namespace RichPackage.UI
         /// </summary>
         protected override void OnEnable()
         {
-            myButton.onClick.AddListener(OnButtonClick);
+            myButton.onClick.AddListener(Click);
             UpdateUI();
         }
 
@@ -115,7 +148,7 @@ namespace RichPackage.UI
         /// call base.OnDisable() to auto unsubscribe from button
         /// </summary>
         protected virtual void OnDisable()
-            => myButton.onClick.RemoveListener(OnButtonClick);
+            => myButton.onClick.RemoveListener(Click);
 
 		#endregion Unity Messages
 
@@ -123,13 +156,20 @@ namespace RichPackage.UI
 
         public void RemoveListener(Action action) => myButton.onClick.RemoveListener(action.Invoke);
 
-        public void RemoveAllListeners() => myButton.onClick.RemoveAllListeners();
+        /// <summary>
+        /// Removes all listeners except my own.
+        /// </summary>
+        public void RemoveAllListeners()
+        {
+            myButton.onClick.RemoveAllListeners();
+            myButton.onClick.AddListener(Click);
+        }
 
         /// <summary>
         /// Function called by Button.
         /// </summary>
         [Button("Click"), DisableInEditorMode]
-        protected virtual void OnButtonClick() => OnPressedEvent?.Invoke(this);
+        public void Click() => OnPressedEvent?.Invoke(this);
 
         /// <summary>
         /// Hide/Show visual elements.
@@ -187,6 +227,10 @@ namespace RichPackage.UI
             Show();
         }
 
+        /// <returns>The <see cref="ObjectProperty"/> value cast to <typeparamref name="T"/>.</returns>
+        /// <exception cref="InvalidCastException"/>
+        public T GetPayload<T>() => (T)ObjectProperty;
+
         #region Button Helpers
 
         public void SetNormalColor(in Color newColor)
@@ -206,56 +250,5 @@ namespace RichPackage.UI
         #endregion
 
         public static implicit operator Button (RichUIButton a) => a.Button;
-    }
-
-    /// <summary>
-    /// Automatically handles subscribing and responding to a button. 
-    /// No need to rig Button in the Scene.
-    /// </summary>
-    /// <remarks>A "Payload" is any other data the button should hold. This is useful for mapping
-    /// a button to information, like "when I push this button, give me one tall potion". 
-    /// You can assign the payload to the button, then get the payload off the button 
-    /// when it is pushed.
-    /// </remarks>
-    /// <seealso cref="IntButton"/>
-    public abstract class RichUIButton<TPayload> : RichUIButton
-        where TPayload : new()//has a default constructor
-    {
-        /// <summary>
-        /// class that holds the actual payload and any other data. Like if you want to play
-        /// particle effect on click or something, that data would be held inside.
-        /// </summary>
-        [SerializeField]
-        [Tooltip("Can be set in Inspector, but probably should be set " +
-            "using Configure() at runtime")]
-        public TPayload PayloadData = default;
-
-        public event Action<TPayload> OnPressedPayloadEvent;
-
-        protected override void Reset()
-        {
-            SetDevDescription("Automatically handles subscribing " +
-                "and responding to a button." +
-                "\r\nAnnounces its payload when pressed.");
-
-            //assume this hierarchy when initializing, but not always.
-            myButton = GetComponent<Button>();
-            myText = GetComponentInChildren<TextMeshProUGUI>();
-        }
-
-        public virtual void Show(TPayload newPayloadData, string label, Sprite image)
-        {
-            PayloadData = newPayloadData;
-            Show(label, image);//forward
-        }
-
-        protected override void OnButtonClick()
-        {
-            base.OnButtonClick();
-            OnPressedPayloadEvent?.Invoke(PayloadData);
-        }
-
-        public static implicit operator TPayload(RichUIButton<TPayload> a)
-            => a.PayloadData;
     }
 }
