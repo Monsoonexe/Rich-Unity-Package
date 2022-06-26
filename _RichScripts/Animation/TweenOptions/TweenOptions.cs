@@ -5,14 +5,14 @@ using DG.Tweening;
 namespace RichPackage.Animation
 {
 	[Serializable]
-	public class TweenOptionsBase
+	public class TweenOptions
 	{
 		public float Duration;
 		public Ease Ease;
 	}
 
 	[Serializable]
-	public class Vector3TweenOptions : TweenOptionsBase
+	public class Vector3TweenOptions : TweenOptions
 	{
 		/// <summary>
 		/// Position, rotation, or scale.
