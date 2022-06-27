@@ -714,6 +714,17 @@ namespace RichPackage
         }
 
         /// <summary>
+        /// A call to <see cref="List.Clear"/> that can be chained.
+        /// </summary>
+        /// <returns><paramref name="list"/></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static List<T> FluentClear<T>(this List<T> list)
+        {
+            list.Clear();
+            return list;
+        }
+
+        /// <summary>
         /// A 'foreach' with a 'for' backbone
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
