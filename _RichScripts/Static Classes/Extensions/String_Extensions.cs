@@ -113,5 +113,21 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this string source)
             => int.Parse(source);
+            
+        /// <summary>
+        /// Returns a new <see cref="string"/> with all the <see cref="char"/>s reversed.
+        /// Results may vary when operating on strings with <see cref="System.Text.Encoding.Unicode"/> 
+        /// (UTF-16) characters.
+        /// </summary>
+        /// <returns>A new <see cref="String"/> with all the <see cref="char"/>s reversed.</returns>
+        public static string ReverseUTF8(this string source)
+        {
+            if (source is null)
+                return null;
+
+            char[] arr = source.ToCharArray();
+            Array.Reverse(arr);
+            return new string(arr);
+        }
     }
 }
