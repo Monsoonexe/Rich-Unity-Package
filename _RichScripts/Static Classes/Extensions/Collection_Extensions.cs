@@ -756,6 +756,19 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IEnumerable<T> GetEnumerable<T>(this IList<T> array) => array;
+
+        public static string ToSeparatedString<T>(this IList<T> source, string separator = ",")
+        {
+            var sb = new StringBuilder();
+            foreach (var item in source)
+                sb.Append(item.ToString())
+                    .Append(separator);
+
+            // remove final separator
+            sb.Remove(sb.Length - separator.Length, separator.Length);
+
+            return sb.ToString();
+        }
         
         //TODO - make this mirror Select from LINQ
         public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
