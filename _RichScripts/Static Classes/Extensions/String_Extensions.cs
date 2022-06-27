@@ -93,6 +93,12 @@ namespace RichPackage
             else
                 return str.Substring(startingIndex);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char First(this string str) => str[0];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char Last(this string str) => str[str.Length - 1];
 
         /// <summary>
         /// Shorthand for <see cref="float.Parse(string)"/>.
