@@ -129,5 +129,9 @@ namespace RichPackage
             Array.Reverse(arr);
             return new string(arr);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string Remove(this string source, string query)
+            => source.Replace(query, string.Empty);
     }
 }
