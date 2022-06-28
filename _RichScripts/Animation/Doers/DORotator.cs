@@ -7,8 +7,8 @@ namespace RichPackage.Animation
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="DoMover"/>
-    public class DORotator : ADoer
+    /// <seealso cref="DOMover"/>
+    public sealed class DORotator : ADoer
     {
         [Title("Animation Settings")]
         public Space space = Space.World;

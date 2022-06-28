@@ -3,7 +3,7 @@ using DG.Tweening;
 
 namespace RichPackage.Animation
 {
-	public class DOMover : ADoer
+	public sealed class DOMover : ADoer
 	{
 		public bool From = false;
 		public Space space = Space.World;
