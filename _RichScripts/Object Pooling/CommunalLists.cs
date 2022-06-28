@@ -46,7 +46,8 @@ namespace RichPackage
 	/// <example>var newList = CommunityLists.Get{int}();</example>
 	public class ListHub
 	{
-		public int MaxListSize = 1024;
+		public const int DefaultMaxListSize = 128;
+		public int MaxListSize = DefaultMaxListSize;
 		public int startingSize = 8;
 		public int ListCount => listTable.Count;
 
@@ -81,11 +82,9 @@ namespace RichPackage
 		public void Return<T>(List<T> list)
 		{
 			list.Clear();
-			if (!listTable.ContainsKey(typeof(T)))
+			if (list.Count <= MaxListSize && !listTable.ContainsKey(typeof(T)))
 			{
 				listTable.Add(typeof(T), list);
-				if (list.Count > MaxListSize)
-					list.Capacity = MaxListSize;
 			}
 		}
 
