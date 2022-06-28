@@ -10,6 +10,7 @@ using RichPackage.Assertions;
 //clarifications
 using Random = UnityEngine.Random;
 using Debug = UnityEngine.Debug;
+using System.Text;
 
 namespace RichPackage
 {
