@@ -7,7 +7,7 @@ using RichPackage.Assertions;
 /// <summary>
 /// Fades a CanvasGroup in/out.
 /// </summary>
-public class FadeScreenTransition : ATransitionComponent
+public sealed class FadeScreenTransition : ATransitionComponent
 {
     [Header("---Settings---")]
     public bool isOutAnimation;
@@ -17,10 +17,16 @@ public class FadeScreenTransition : ATransitionComponent
     [Required]
     public CanvasGroup canvasGroup;
 
-    public new bool IsAnimating { get => animationTween != null; }
+    public override bool IsAnimating
+    {
+        get => Tween != null;
+        protected set => throw new NotImplementedException(nameof(IsAnimating));
+    }
+
+    //public Tween Tween { get => animationTween; }
 
     //runtime data
-    private Tweener animationTween;
+    public Tweener Tween { get; private set; }
     private float cachedAlpha;
 
     protected override void Awake()
@@ -55,19 +61,19 @@ public class FadeScreenTransition : ATransitionComponent
             fadeAmount = cachedAlpha; //current amount
         }
 
-        animationTween = canvasGroup.DOFade(fadeAmount, duration);
+        Tween = canvasGroup.DOFade(fadeAmount, duration);
 
         //rig on complete callback
         onCompleteCallback += OnAnimationComplete;
-        animationTween.OnComplete(onCompleteCallback.Invoke);
+        Tween.OnComplete(onCompleteCallback.Invoke);
     }
 
     private void OnAnimationComplete()
     {
-        animationTween = null;//clear flag
+        Tween = null;//clear flag
         canvasGroup.alpha = cachedAlpha; //leave it how you found it
     }
 
     public override void Stop()
-        => animationTween?.Kill();
+        => Tween?.Kill();
 }
