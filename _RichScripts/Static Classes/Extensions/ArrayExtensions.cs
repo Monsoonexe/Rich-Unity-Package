@@ -99,5 +99,15 @@ namespace RichPackage
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int IndexOf<T>(this T[] array, T element)
 			=> Array.IndexOf(array, element);
+
+		/// <summary>Gets a sub array of an existing array.</summary>
+		/// <param name="index">Index to take the sub array from.</param>
+		/// <param name="length">The length of the sub array.</param>
+		public static T[] SubArray<T>(this T[] data, int index, int length)
+		{
+			T[] result = new T[length];
+			Array.Copy(data, index, result, 0, length);
+			return result;
+		}
 	}
 }
