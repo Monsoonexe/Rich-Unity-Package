@@ -75,7 +75,7 @@ namespace RichPackage.UI
             for (int i = 0; i < len; ++i)
             {
                 ColorLimit col = colorLimits[i];
-                if (value < col.limit)
+                if (value <= col.limit)
                     return col.color;
             }
 
