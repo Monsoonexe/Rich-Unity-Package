@@ -140,10 +140,10 @@ namespace ScriptableObjectArchitecture
         #region Operators
 
         public static float operator +(FloatVariable x, float y)
-            => x.Value += y;
+            => x.Value + y;
 
         public static float operator -(FloatVariable x, float y)
-            => x.Value -= y;
+            => x.Value - y;
 
 		#endregion Operators
 	}

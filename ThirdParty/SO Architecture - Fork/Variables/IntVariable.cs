@@ -31,10 +31,10 @@ namespace ScriptableObjectArchitecture
 		#region Operators
 
 		public static int operator +(IntVariable x, int y)
-            => x.Value += y;
+            => x.Value + y;
 
         public static int operator -(IntVariable x, int y)
-            => x.Value -= y;
+            => x.Value - y;
 
 		#endregion Operators
 
