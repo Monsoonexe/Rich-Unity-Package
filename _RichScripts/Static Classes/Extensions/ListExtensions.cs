@@ -16,6 +16,13 @@ namespace RichPackage
             return isNew;
         }
 
+        public static void AddRange<T>(this List<T> source, IList<T> other)
+		{
+            int len = other.Count;
+            for (int i = 0; i < len; i++)
+				source.Add(other[i]);
+		}
+
         /// <summary>
         /// Pop <paramref name="count"/> items off of <paramref name="src"/>
         /// and add them to <paramref name="dest"/>.
