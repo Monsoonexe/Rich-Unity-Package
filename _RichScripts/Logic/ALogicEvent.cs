@@ -41,7 +41,8 @@ namespace RichPackage.Logic
 
 		private void OnValidate()
         {
-            Evaluate();
+            if (InputA.IsValueDefined && InputB.IsValueDefined)
+                Evaluate();
         }
 
         protected override void Reset()
