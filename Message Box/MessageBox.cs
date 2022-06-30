@@ -176,7 +176,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw new NotImplementedException($"{style} not implemented.");
+					throw ExceptionUtilities.GetEnumNotImplementedException(style);
 			}
 
 			Show();//show visuals
@@ -303,7 +303,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw new NotImplementedException($"{style} not implemented.");
+					throw ExceptionUtilities.GetEnumNotImplementedException(style);
 			}
 
 			Show();//show visuals
