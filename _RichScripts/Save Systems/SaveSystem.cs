@@ -306,58 +306,16 @@ namespace RichPackage.SaveSystem
 
 		#endregion ISaveable Consumers
 
-		#region Console Commands
-		// TODO - move these to its own file
-
-		//[ConsoleCommand("save")]
-		public static void Save_()
-		{
-			if (Instance)
-				Instance.Save();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("load")]
-		public static void Load_()
-		{
-			if(Instance)
-				Instance.Load();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("loadSlot")]
-		public static void Load_(int slot)
-		{
-			if(Instance)
-				Instance.Load(slot);
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("deleteSave")]
-		public static void DeleteSave_()
-		{
-			if (Instance)
-				Instance.DeleteSave();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("deleteSaveSlot")]
-		public static void DeleteSave_(int slot)
-		{
-			if (Instance)
-				Instance.DeleteSave(slot);
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("openSaveFile"), Button]
+		[QFSW.QC.Command("openSaveFile"), Button]
 		public static void OpenSaveFileInVSCode()
 		{
 			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
+			if (ins == null)
+			{
+				Debug.LogWarning("No SaveSystem in Scene.");
+				return;
+			}
+
 			ins.LoadFile(ins.saveGameSlotIndex);
 			string arg = $"\"code '\"{ins.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
 			var options = new System.Diagnostics.ProcessStartInfo()
@@ -370,7 +328,5 @@ namespace RichPackage.SaveSystem
 			process.EnableRaisingEvents = true;
 			process.Exited += (obj, ctx) => ((System.Diagnostics.Process)obj).Dispose();
 		}
-
-		#endregion
 	}
 }
