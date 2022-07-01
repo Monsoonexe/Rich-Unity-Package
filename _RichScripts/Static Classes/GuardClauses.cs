@@ -13,11 +13,13 @@ namespace RichPackage.GuardClauses
     {
         // https://devblogs.microsoft.com/csharpfaq/what-is-the-difference-between-const-and-static-readonly/
         private const string VALID_EMAIL_ADDRESS_PATTERN =
-            (@"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+            @"^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$";
         //https://regex101.com/r/8M0MqB/1
         //https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
         private const string VALID_URL_PATTERN =
             @"([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?";
+        
+        private const string VALID_WINDOWS_FILEPATH_PATTERN = @"^(.*\\)([^\\]*)$";
 
         private const string DEFAULT_PARAM_NAME = "argument";
 
@@ -26,6 +28,8 @@ namespace RichPackage.GuardClauses
                 RegexOptions.IgnoreCase);
         private static readonly Regex urlRegex = new Regex(VALID_URL_PATTERN,
                 RegexOptions.IgnoreCase);
+        private static readonly Regex filepathRegex = new Regex(VALID_WINDOWS_FILEPATH_PATTERN,
+            RegexOptions.IgnoreCase);
 
         #region Boolean
 
@@ -464,6 +468,31 @@ namespace RichPackage.GuardClauses
 
         #region File IO
 
+        /// <exception cref="ArgumentException"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void InvalidFilePath(string path)
+        {
+            if (!filepathRegex.IsMatch(path))
+                throw new ArgumentException($"{path} is not a valid path.");
+        }
+
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void DirectoryNotFound(string dirPath)
+        {
+            if (!Directory.Exists(dirPath))
+                throw new DirectoryNotFoundException(dirPath);
+        }
+
+        /// <exception cref="ArgumentException"></exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void DirectoryAlreadyExists(string dirPath)
+        {
+            if (Directory.Exists(dirPath))
+                throw new ArgumentException(
+                    $"The directory at {dirPath} already exists.");
+        }
+
         /// <exception cref="FileNotFoundException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void FileDoesNotExist(string filePath)
@@ -482,6 +511,6 @@ namespace RichPackage.GuardClauses
                     $"at <{filePath}> already exists.");
         }
 
-        #endregion
+        #endregion File IO
     }
 }

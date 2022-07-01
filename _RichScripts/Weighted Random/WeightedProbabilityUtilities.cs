@@ -16,6 +16,8 @@ namespace RichPackage.WeightedProbabilities
             where T : AWeightedProbability
         {
             int totalWeight = GetTotalWeight(items);
+            if (totalWeight <= 0)
+                throw new System.InvalidOperationException("The weighted pool cannot have non-positive weight: " + totalWeight.ToString());
             int randomValue = Random.Range(0, totalWeight) + 1;
             return GetWeightedIndex(items, randomValue);
         }

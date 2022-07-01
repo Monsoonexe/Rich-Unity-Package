@@ -11,9 +11,9 @@ namespace RichPackage.Decks
 	/// <seealso cref="ScriptableObjectDeck"/>
 	[CreateAssetMenu(fileName = "ScriptableSequentialDeck",
 		menuName = "ScriptableObjects/Decks/ScriptableSequentialDeck")]
-	public class ScriptableSequentialDeck : SequentialDeck<ScriptableObject>
+	public sealed class ScriptableSequentialDeck : SequentialDeck<ScriptableObject>
 	{
-		private void Reset()
+		protected override void Reset()
 		{
 			SetDevDescription("Draws the next card in a pre-determined sequence.");
 		}

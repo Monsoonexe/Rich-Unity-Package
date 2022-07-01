@@ -44,10 +44,11 @@ namespace RichPackage.Decks
 
         public override TValue Draw()
         {
-            var deck = unusedCards;
-            if (deck.Count == 0) return default;
+            var deck = weightedManifest;
+            if (deck.Count == 0)
+                return default;
 
-            var iCard = GetWeightedIndex(deck);
+            var iCard = deck.GetWeightedIndex();
             var cardAt = deck[iCard];
             MoveCardToDiscard(iCard);
             return cardAt.Value;
@@ -77,33 +78,5 @@ namespace RichPackage.Decks
         /// Shuffling has no effect on a weighted random deck but is not an error to do so.
         /// </summary>
         public override void ShuffleRemaining() { } //nada
-
-        protected static int GetTotalWeight(IList<TContainer>
-            probabilityTemplates)
-        {
-            var totalWeight = 0;
-            var length = probabilityTemplates.Count;
-
-            for (var i = 0; i < length; ++i)
-                totalWeight += probabilityTemplates[i].Weight;
-
-            return totalWeight;
-        }
-
-        protected static int GetWeightedIndex(IList<TContainer> items)
-        {
-            var totalWeight = GetTotalWeight(items);
-            var randomValue = Random.Range(0, totalWeight) + 1;
-            var index = 0;
-            TContainer result;
-
-            while (randomValue > 0)
-            {
-                result = items[index++];
-                randomValue -= result.Weight;
-            }
-
-            return index - 1;
-        }
     }
 }

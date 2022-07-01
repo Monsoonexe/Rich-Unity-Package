@@ -28,7 +28,17 @@ namespace ScriptableObjectArchitecture
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
-        public void Add(int x) => Value += x;
+		#region Operators
+
+		public static int operator +(IntVariable x, int y)
+            => x.Value + y;
+
+        public static int operator -(IntVariable x, int y)
+            => x.Value - y;
+
+		#endregion Operators
+
+		public void Add(int x) => Value += x;
         public void Add(IntVariable x) => Value += x;
         public void Add(FloatVariable x) => Value += (int)x;
 

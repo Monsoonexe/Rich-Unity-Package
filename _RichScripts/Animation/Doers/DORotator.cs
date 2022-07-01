@@ -7,8 +7,8 @@ namespace RichPackage.Animation
     /// <summary>
     /// 
     /// </summary>
-    /// <seealso cref="DoMover"/>
-    public class DORotator : ADoer
+    /// <seealso cref="DOMover"/>
+    public sealed class DORotator : ADoer
     {
         [Title("Animation Settings")]
         public Space space = Space.World;
@@ -69,6 +69,7 @@ namespace RichPackage.Animation
             Tween = target.DOLocalRotate(
                 rotationVector, duration, RotateMode.LocalAxisAdd);
             Tween.SetEase(ease);
+            SubscribeTweenEvents(Tween);
         }
 
         public void RotateWorldBy(Vector3 rotationVector)
@@ -78,6 +79,7 @@ namespace RichPackage.Animation
             Tween = target.DORotate(
                 rotationVector, duration, RotateMode.WorldAxisAdd);
             Tween.SetEase(ease);
+            SubscribeTweenEvents(Tween);
         }
     }
 }

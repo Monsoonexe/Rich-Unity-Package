@@ -122,7 +122,7 @@ namespace RichPackage.Editor
                 var t = this.SelectedType;
                 if (t != null && !t.IsAbstract)
                 {
-                    this.previewObject = CreateInstance(t) as ScriptableObject;
+                    this.previewObject = CreateInstance(t);
                 }
             };
 

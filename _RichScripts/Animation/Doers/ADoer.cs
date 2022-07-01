@@ -54,7 +54,10 @@ namespace RichPackage.Animation
 			=> onAnimationStart.Invoke();
 
 		protected void CallOnAnimationEndEvent()
-			=> onAnimationEnd.Invoke();
+		{
+			onAnimationEnd.Invoke();
+			Tween = null;
+		}
 
 		protected Tween SubscribeTweenEvents(Tween tween)
 		{

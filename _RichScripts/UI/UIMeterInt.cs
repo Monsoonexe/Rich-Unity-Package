@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/* TODO - AUIMeter with common behavior
+ * 
+ */
+
+using System;
+using UnityEngine;
 using UnityEngine.UI;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
@@ -6,15 +11,28 @@ using Sirenix.OdinInspector;
 namespace RichPackage.UI
 {
     /// <summary>
-    /// Controls a meter fill amount between min and max
+    /// Controls a meter fill amount between min and max.
     /// </summary>
+    /// <seealso cref="UIMeterFloat"/>
     [SelectionBase]
     public class UIMeterInt : VariableUIElement<IntVariable>
     {
-        [Header("---Prefab Refs---")]
-        [SerializeField]
-        [Required]
+        private const string ColorLimitsGroup = "Color Limits";
+
+        [SerializeField, Required]
         private Image myImage;
+
+        [BoxGroup(ColorLimitsGroup)]
+        public bool applyColorLimits = false;
+
+        [Tooltip("Must be ascending.")]
+        [ShowIf(nameof(applyColorLimits)), BoxGroup(ColorLimitsGroup)]
+        public ColorLimit[] colorLimits = new ColorLimit[]
+        {
+            new ColorLimit(15, Color.red),
+            new ColorLimit(50, Color.yellow),
+            new ColorLimit(100, Color.green),
+        };
 
         /// <summary>
         /// Change sprite used to fill image.
@@ -26,10 +44,34 @@ namespace RichPackage.UI
         /// </summary>
         public Color FillTint { get => myImage.color; set => myImage.color = value; }
 
-        public void OnValidate()
+		#region Unity Messages
+
+		protected override void Reset()
+		{
+			base.Reset();
+            SetDevDescription("Controls a meter fill amount between min and max.");
+            myImage = GetComponent<Image>();
+		}
+
+		public void OnValidate()
         {
             if (targetData != null && !targetData.Clampable)
-                Debug.LogError("[UIMeterInt] sourceValue is not clampable! " + targetData.name, this);
+                Debug.LogWarning($"{nameof(UIMeterInt)}] {targetData.name} is not clampable!", targetData);
+        }
+
+        #endregion Unity Messages
+
+        public Color GetColorBasedOnLimit(int value)
+        {
+            int len = colorLimits.Length;
+            for (int i = 0; i < len; ++i)
+            {
+                ColorLimit col = colorLimits[i];
+                if (value <= col.limit)
+                    return col.color;
+            }
+
+            throw new InvalidOperationException("Could not get a " + nameof(ColorLimit) + " from value: " + value);
         }
 
         /// <summary>
@@ -38,9 +80,12 @@ namespace RichPackage.UI
         [Button]
         public override void UpdateUI()
         {
-            var min = targetData.MinClampValue; //cache
+            int min = targetData.MinClampValue; //cache
             float range = targetData.MaxClampValue - min;
             myImage.fillAmount = (targetData - min) / range;
+
+            if (applyColorLimits)
+                FillTint = GetColorBasedOnLimit(targetData);
         }
 
         public override void ToggleVisuals(bool active)

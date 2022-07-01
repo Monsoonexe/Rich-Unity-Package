@@ -15,9 +15,11 @@ using RichPackage.Assertions;
  *  
  *  You would do well to place this in the UnityExecutionOrder before 'defaultTime'.
  *  
- *  TODO - can an IManagedBehaviour be cast to multiple?????
+ *  TODO - add/remove IManagedBehaviours during that lists update loop will cause problems.
+ *  Fix this by iterating backwards through the list, replace changed items entries with 'null' (and null-check), then remove null entries at the end of the loop.
  *  
  *  Should we try-catch inside the loop so exceptions don't screw up entire loop?
+ *  --- YES!!!!!!
  */
 
 namespace RichPackage.Managed
@@ -161,6 +163,7 @@ namespace RichPackage.Managed
                 updateListeners[i].ManagedUpdate();
             
             //late update here?
+            LateUpdate();
         }
 
         [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]

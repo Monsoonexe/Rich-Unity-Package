@@ -18,7 +18,7 @@ public abstract class ATransitionComponent : RichMonoBehaviour, IAnimate<Transfo
 
     public float Duration { get => duration; }
 
-    public bool IsAnimating { get; protected set; }
+    public virtual bool IsAnimating { get; protected set; }
 
     [SerializeField]
     private Transform target;

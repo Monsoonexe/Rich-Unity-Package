@@ -93,6 +93,12 @@ namespace RichPackage
             else
                 return str.Substring(startingIndex);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char First(this string str) => str[0];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char Last(this string str) => str[str.Length - 1];
 
         /// <summary>
         /// Shorthand for <see cref="float.Parse(string)"/>.
@@ -107,5 +113,25 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this string source)
             => int.Parse(source);
+            
+        /// <summary>
+        /// Returns a new <see cref="string"/> with all the <see cref="char"/>s reversed.
+        /// Results may vary when operating on strings with <see cref="System.Text.Encoding.Unicode"/> 
+        /// (UTF-16) characters.
+        /// </summary>
+        /// <returns>A new <see cref="String"/> with all the <see cref="char"/>s reversed.</returns>
+        public static string ReverseUTF8(this string source)
+        {
+            if (source is null)
+                return null;
+
+            char[] arr = source.ToCharArray();
+            Array.Reverse(arr);
+            return new string(arr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string Remove(this string source, string query)
+            => source.Replace(query, string.Empty);
     }
 }

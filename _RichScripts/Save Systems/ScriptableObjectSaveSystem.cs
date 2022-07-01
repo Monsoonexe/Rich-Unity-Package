@@ -24,15 +24,15 @@ namespace RichPackage.SaveSystem
 		private void OnEnable()
 		{
 			//subscribe to save events
-			GlobalSignals.Get<SaveStateToFile>().AddListener(SaveState);
-			GlobalSignals.Get<LoadStateFromFile>().AddListener(LoadState);
+			GlobalSignals.Get<SaveStateToFileSignal>().AddListener(SaveState);
+			GlobalSignals.Get<LoadStateFromFileSignal>().AddListener(LoadState);
 		}
 
 		private void OnDisable()
 		{
 			//ubsubscribe from save events
-			GlobalSignals.Get<SaveStateToFile>().RemoveListener(SaveState);
-			GlobalSignals.Get<LoadStateFromFile>().RemoveListener(LoadState);
+			GlobalSignals.Get<SaveStateToFileSignal>().RemoveListener(SaveState);
+			GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
 		}
 
 		private void SaveState(ES3File saveFile)

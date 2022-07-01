@@ -3,8 +3,9 @@ using DG.Tweening;
 
 namespace RichPackage.Animation
 {
-	public class DOMover : ADoer
+	public sealed class DOMover : ADoer
 	{
+		public bool From = false;
 		public Space space = Space.World;
 
 		public Vector3 destination;
@@ -14,7 +15,7 @@ namespace RichPackage.Animation
 		public override void Play()
 		{
 			//local or world space?
-			if (space == Space.World)
+			if (space == Space.Self)
 				Tween = target.DOLocalMove(destination, duration);
 			else
 				Tween = target.DOMove(destination, duration);
@@ -23,6 +24,8 @@ namespace RichPackage.Animation
 			Tween.SetEase(ease);
 			if (loop)
 				Tween.SetLoops(loops);
+			if (From)
+				Tween.CastAs<Tweener>().From();
 			SubscribeTweenEvents(Tween);
 		}
 	}

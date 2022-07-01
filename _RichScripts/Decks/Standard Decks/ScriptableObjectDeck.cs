@@ -14,9 +14,9 @@ namespace RichPackage.Decks
 	[CreateAssetMenu(fileName = "DeckOfScriptableObjects",
 		menuName = "ScriptableObjects/Decks/Deck of ScriptableObjects"),
 		InfoBox("Draws a random card without replacement. Standard deck of playing cards.")]
-	public class ScriptableObjectDeck : Deck<ScriptableObject>
+	public sealed class ScriptableObjectDeck : Deck<ScriptableObject>
 	{
-		private void Reset()
+		protected override void Reset()
 		{
 			SetDevDescription("Draws a random card without replacement. Standard deck of playing cards.");
 		}
