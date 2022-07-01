@@ -140,6 +140,8 @@ namespace RichPackage.SaveSystem
 			public bool Equals(AState other) => this.saveID == other.saveID;
 		}
 
+		#region Unity Messages
+
 		protected override void Reset()
 		{
 			base.Reset();
@@ -164,6 +166,8 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<SaveStateToFileSignal>().RemoveListener(SaveState);
 			GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
 		}
+
+		#endregion Unity Messages
 
 		#region ISaveable Implementation
 
