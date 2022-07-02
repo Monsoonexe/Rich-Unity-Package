@@ -19,7 +19,7 @@ namespace RichPackage.Decks
 #pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-		[InlineProperty, HideLabel, Title(nameof(Deck))]
+		[InlineEditor, HideLabel, Title(nameof(Deck))]
 		public ADeck<TCard> Deck;
 
 		public static implicit operator ADeck<TCard>(
