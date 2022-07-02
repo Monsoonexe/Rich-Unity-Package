@@ -1,4 +1,4 @@
-﻿
+﻿using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 namespace RichPackage
@@ -7,6 +7,7 @@ namespace RichPackage
     {
         /// <returns><see langword="true"/> if the <paramref name="value"/> was added to 
         /// <paramref name="dic"/>, otherwise <see langword="false"/>.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AddIfNew<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, TValue value)
 		{
@@ -21,6 +22,7 @@ namespace RichPackage
         /// which indicates the value was removed.
         /// Otherwise, returns <see langword="false"/>. Will not throw an exception if key does not exist.
         /// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool GetRemove<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, out TValue value)
         {
@@ -33,6 +35,7 @@ namespace RichPackage
         /// Removes and returns either the <paramref name="defaultValue"/> or the value 
         /// keyed by <paramref name="key"/> if it exists.
         /// </summary>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TValue GetRemoveOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, TValue defaultValue = default)
 		{
@@ -42,9 +45,11 @@ namespace RichPackage
                 return defaultValue;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
             => dictionary.Count == 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNotEmpty<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
             => dictionary.Count != 0;
     }
