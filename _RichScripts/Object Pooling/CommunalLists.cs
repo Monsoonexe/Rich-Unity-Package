@@ -62,17 +62,8 @@ namespace RichPackage
 		/// <returns>Ready-to-use <see cref="List{T}"/>.</returns>
 		public List<T> Rent<T>()
 		{
-			//get from dictionary, if already exists
-			if (listTable.TryGetValue(typeof(T), out IList list))
-			{
-				list.Clear(); //reset list
-			}
-			else //create and add
-			{
+			if (!listTable.TryGetValue(typeof(T), out IList list))
 				list = new List<T>(startingSize);
-				listTable.Add(typeof(T), list);
-			}
-
 			return list.CastAs<List<T>>();
 		}
 
@@ -85,6 +76,9 @@ namespace RichPackage
 			if (list.Capacity <= MaxListSize)
 				listTable.AddIfNew(typeof(T), list);
 		}
+
+		public void AddList<T>()
+			=> listTable.AddIfNew(typeof(T), new List<T>(startingSize));
 
 		public void Remove<T>() => listTable.Remove(typeof(T));
 	}
