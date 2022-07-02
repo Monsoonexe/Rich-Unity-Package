@@ -273,18 +273,6 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Returns 'true' if the dictionary contains the given key, which indicates the value was removed.
-        /// Otherwise, returns false. Will not throw exception if key does not exist.
-        /// </summary>
-        public static bool Remove<TKey, UValue>(this Dictionary<TKey, UValue> dic,
-            TKey key, out UValue value)
-        {
-            var found = dic.TryGetValue(key, out value);
-            if (found) dic.Remove(key);
-            return found;
-        }
-
-        /// <summary>
         /// Returns List with lowest Count from List of Lists.
         /// </summary>
         public static T GetShortestList<T>(this IList<T> lists)
