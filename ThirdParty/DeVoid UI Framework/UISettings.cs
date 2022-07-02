@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using RichPackage;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Template for an UI. You can rig the prefab for the UI Frame itself and all the screens that should
@@ -12,16 +13,21 @@ using RichPackage;
 public class UISettings : RichScriptableObject
 {
     [Tooltip("Prefab for the UI Frame structure itself")]
-    [SerializeField]
+    [SerializeField, Required]
     private UIFrame templateUIPrefab = null;
 
     [Tooltip("Prefabs for all the screens (both Panels and Windows) that are to be instanced and registered when the UI is instantiated")]
     [SerializeField]
     private List<GameObject> screensToRegister = new List<GameObject>();
 
+	[Title("Settings")]
     [Tooltip("In case a screen prefab is not deactivated, should the system automatically deactivate its GameObject upon instantiation? If false, the screen will be at a visible state upon instantiation.")]
     [SerializeField]
     private bool deactivateScreenGOs = true;
+
+    [Title("Runtime")]
+    [ShowInInspector, ReadOnly]
+    public UIFrame Instance { get; private set; }
     
     private void OnValidate()
     {
@@ -45,7 +51,7 @@ public class UISettings : RichScriptableObject
     /// <returns>A new UI Frame</returns>
     public UIFrame CreateUIInstance(bool instanceAndRegisterScreens = true)
     {
-        var newUI = Instantiate(templateUIPrefab);
+        Instance = Instantiate(templateUIPrefab);
 
         if (instanceAndRegisterScreens)
         {
@@ -61,7 +67,7 @@ public class UISettings : RichScriptableObject
                     bool usePrefabName = string.IsNullOrEmpty(screenController.ScreenID);
                     string screenID = usePrefabName ? screenPrefab.name : screenController.ScreenID;
 
-                    newUI.RegisterScreen(screenID, screenController,
+                    Instance.RegisterScreen(screenID, screenController,
                         screenInstance.GetComponent<Transform>());
 
                     if (deactivateScreenGOs && screenInstance.activeSelf)
@@ -78,7 +84,7 @@ public class UISettings : RichScriptableObject
             }
         }
 
-        return newUI;
+        return Instance;
     }
 
     /// <summary>
