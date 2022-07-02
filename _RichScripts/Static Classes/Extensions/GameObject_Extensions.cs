@@ -13,7 +13,7 @@ namespace RichPackage
         /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveTrue(this GameObject a)
-            => SetActiveInternal(a, true);
+            => SetActiveChecked(a, true);
 
         /// <summary>
         /// Shortcut for a.enabled = false;
@@ -21,15 +21,15 @@ namespace RichPackage
         /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveFalse(this GameObject a)
-            => SetActiveInternal(a, false);
+            => SetActiveChecked(a, false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void SetActiveInternal(GameObject a, bool enabled)
+        public static void SetActiveChecked(this GameObject a, bool active)
         {
-            //it's been tested that checking before calling to native code
-            //is more performant if the change isn't needed
-            if (a.activeSelf != enabled)
-                a.SetActive(enabled);
+            // it's been tested that checking before calling to native code
+            // is more performant if the change isn't needed
+            if (a.activeSelf != active)
+                a.SetActive(active);
         }
 
         /// <summary>
