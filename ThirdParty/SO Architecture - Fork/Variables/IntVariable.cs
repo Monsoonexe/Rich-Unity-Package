@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -63,5 +63,31 @@ namespace ScriptableObjectArchitecture
         public void Halve() => Value /= 2;
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
-    } 
+
+        #region Static Constructors
+
+        public static IntVariable Create(int value)
+		{
+            var newVariable = Create(value, int.MinValue, int.MaxValue);
+
+            newVariable._isClamped = false;
+
+            return newVariable;
+		}
+
+        public static IntVariable Create(int initial, int min, int max)
+        {
+            var newVariable = CreateInstance<IntVariable>();
+
+            newVariable.SetMaxClampValue(max);
+            newVariable.SetMinClampValue(min);
+            newVariable.Value = initial;
+            newVariable._isClamped = true;
+            newVariable._readOnly = false;
+
+            return newVariable;
+        }
+
+		#endregion Static Constructors
+	}
 }
