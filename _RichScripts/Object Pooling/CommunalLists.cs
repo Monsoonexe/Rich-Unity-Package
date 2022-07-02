@@ -82,10 +82,8 @@ namespace RichPackage
 		public void Return<T>(List<T> list)
 		{
 			list.Clear();
-			if (list.Count <= MaxListSize && !listTable.ContainsKey(typeof(T)))
-			{
-				listTable.Add(typeof(T), list);
-			}
+			if (list.Capacity <= MaxListSize)
+				listTable.AddIfNew(typeof(T), list);
 		}
 
 		public void Remove<T>() => listTable.Remove(typeof(T));
