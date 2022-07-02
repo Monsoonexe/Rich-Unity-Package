@@ -32,13 +32,27 @@ namespace ScriptableObjectArchitecture
         /// Change the max clamp value. Does not raise events.
         /// </summary>
         public void SetMaxClampValue(int value)
-            => _maxClampedValue = value;
+		{
+            if (ReadOnly)
+			{
+                RaiseReadonlyWarning();
+                return;
+			}
+            _maxClampedValue = value;
+        }
 
         /// <summary>
         /// Change the min clamp value. Does not raise events.
         /// </summary>
         public void SetMinClampValue(int value)
-            => _minClampedValue = value;
+        {
+            if (ReadOnly)
+            {
+                RaiseReadonlyWarning();
+                return;
+            }
+            _minClampedValue = value;
+        }
 
 		#region Operators
 
