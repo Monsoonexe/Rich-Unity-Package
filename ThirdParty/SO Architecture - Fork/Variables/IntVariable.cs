@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -27,6 +27,18 @@ namespace ScriptableObjectArchitecture
         public override bool IsInitializeable { get => !_readOnly; }
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
+
+        /// <summary>
+        /// Change the max clamp value. Does not raise events.
+        /// </summary>
+        public void SetMaxClampValue(int value)
+            => _maxClampedValue = value;
+
+        /// <summary>
+        /// Change the min clamp value. Does not raise events.
+        /// </summary>
+        public void SetMinClampValue(int value)
+            => _minClampedValue = value;
 
 		#region Operators
 
