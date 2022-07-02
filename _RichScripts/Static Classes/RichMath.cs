@@ -34,33 +34,45 @@ namespace RichPackage
         #region Clamp
 
         /// <summary>
-        /// Clamps IComparable value
-        /// </summary> 
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Clamp<T>(T value, T min, T max)
+        public static T Clamp<T>(this T value, T min, T max)
             where T : IComparable<T>
             => value.CompareTo(max) > 0 ?
                 max : value.CompareTo(min) < 0 ?
                 min : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Clamp(int value, int min, int max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Clamp(uint value, uint min, uint max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp(double value, double min,
             double max)
