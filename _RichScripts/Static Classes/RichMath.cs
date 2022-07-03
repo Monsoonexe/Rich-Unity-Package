@@ -89,7 +89,7 @@ namespace RichPackage
         /// </summary>
         /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int AbsoluteValue(int i)
+        public static int AbsoluteValue(this int i)
             => i >= 0 ? i : -i;
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace RichPackage
         /// </summary>
         /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float AbsoluteValue(float f)
+        public static float AbsoluteValue(this float f)
             => f >= 0 ? f : -f;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -121,13 +121,19 @@ namespace RichPackage
 
         #region Min/Max
 
+        /// <summary>
+        /// Returns lesser of the two inputs.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Min<T>(T x, T y)
+        public static T Min<T>(this T x, T y)
             where T : IComparable<T>
             => x.CompareTo(y) < 0 ? x : y;
 
+        /// <summary>
+        /// Returns greater of the two inputs.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Max<T>(T x, T y)
+        public static T Max<T>(this T x, T y)
             where T : IComparable<T>
             => x.CompareTo(y) > 0 ? x : y;
 
@@ -283,7 +289,7 @@ namespace RichPackage
             => a == 0 ? b : b == 0 ? a
                 : GreatestCommonDenominator(b, a % b);
 
-        public static bool IsPrime(long n)
+        public static bool IsPrime(this long n)
         {
             //Primality test using 6k+-1 optimization.
             //early exits
