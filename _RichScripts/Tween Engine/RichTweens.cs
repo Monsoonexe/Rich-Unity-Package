@@ -74,6 +74,10 @@ namespace RichPackage.Tweening
             => tweenHolder.StartCoroutine(InvokeAfterDelayRoutine(
                 callback, delay));
 
+        public static void InvokeAfterDelay(Action callback, YieldInstruction delay)
+            => tweenHolder.StartCoroutine(InvokeAfterDelayRoutine(
+                callback, delay));
+
         private static IEnumerator InvokeAfterDelayRoutine(Action callback, float delay)
         {
             var callTime = RichAppController.Time + delay;
@@ -83,6 +87,12 @@ namespace RichPackage.Tweening
 
             callback();
         }
+
+        private static IEnumerator InvokeAfterDelayRoutine(Action callback, YieldInstruction delay)
+		{
+            yield return delay;
+            callback();
+		}
 
         public static Coroutine StartCoroutine(IEnumerator routine)
             => tweenHolder.StartCoroutine(routine);
