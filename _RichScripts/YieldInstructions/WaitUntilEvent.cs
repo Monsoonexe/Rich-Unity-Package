@@ -1,4 +1,8 @@
-﻿using System;
+﻿/* TODO - support timeout and/or cancellation
+ * 
+ */
+
+using System;
 using UnityEngine;
 using ScriptableObjectArchitecture;
 using RichPackage.Events.Signals;
@@ -8,8 +12,20 @@ namespace RichPackage.YieldInstructions
 {
     public class WaitUntilEvent : CustomYieldInstruction
     {
-        private bool eventRaised = false;
-        public override bool keepWaiting { get => !eventRaised; }
+		#region Constants
+
+		//public const int INFINITE_TIMEOUT = -1;
+
+        #endregion Constants
+
+        /// <summary>
+        /// Flag for when the event has been raised.
+        /// Held <see langword="false"/> until the event is fired, 
+        /// then is set <see langword="true"/>.
+        /// </summary>
+        public bool EventRaised { get; private set; } = false;
+        public override bool keepWaiting { get => !EventRaised; }
+        private readonly Action response;
 
         #region Constructors
 
@@ -18,12 +34,13 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(Action _event)
         {
-            _event += Response;
-            void Response()
+            response = () =>
             {
-                eventRaised = true;
-                _event -= Response;
-            }
+                EventRaised = true;
+                _event -= response;
+            };
+
+            _event += response;
         }
 
         /// <summary>
@@ -31,12 +48,13 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(GameEvent _event)
         {
-            _event.AddListener(Response);
-            void Response()
+            response = () =>
             {
-                eventRaised = true;
-                _event.RemoveListener(Response);
-            }
+                EventRaised = true;
+                _event.RemoveListener(response);
+            };
+
+            _event.AddListener(response);
         }
 
         /// <summary>
@@ -44,12 +62,13 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(ASignal _event)
         {
-            _event.AddListener(Response);
-            void Response()
+            response = () =>
             {
-                eventRaised = true;
-                _event.RemoveListener(Response);
-            }
+                EventRaised = true;
+                _event.RemoveListener(response);
+            };
+
+            _event.AddListener(response);
         }
 
         /// <summary>
@@ -57,14 +76,25 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(UnityEvent _event)
         {
-            _event.AddListener(Response);
             void Response()
             {
-                eventRaised = true;
+                EventRaised = true;
                 _event.RemoveListener(Response);
             }
+            _event.AddListener(Response);
+            response = Response; // because Action != UnityAction
         }
 
 		#endregion Constructors
+
+        public void Cancel()
+		{
+            // guard against cancelling after already expired.
+            if (!EventRaised)
+            {
+                response();
+                EventRaised = false; // was cancelled, not raised.
+            }
+		}
     }
 }
