@@ -12,12 +12,13 @@ namespace RichPackage.TriggerVolumes
     {
         #region Constants
 
-        private const string EVENT_GROUP = "EG";
+        private const string EVENT_GROUP = "Events";
 
         #endregion Constants
 
-        [SerializeField, NaughtyAttributes.Tag]
-        protected string reactToTag = GameObjectTags.Player;
+        [NaughtyAttributes.Tag,
+            Tooltip("Will filter collisions that don't have the given tag. Null or empty to filter nothing.")]
+        public string reactToTag = GameObjectTags.Player;
 
         /// <summary>
         /// Running total of times this has been triggered.
@@ -29,10 +30,12 @@ namespace RichPackage.TriggerVolumes
         [FoldoutGroup(EVENT_GROUP)]
         [SerializeField]
         protected UnityEvent enterEvent = new UnityEvent();
+        public UnityEvent OnEnterEvent { get => enterEvent; }
 
         [FoldoutGroup(EVENT_GROUP)]
         [SerializeField]
         protected UnityEvent exitEvent = new UnityEvent();
+        public UnityEvent OnExitEvent { get => exitEvent; }
 
         [Button, DisableInEditorMode]
         public void ForceEnter() => enterEvent.Invoke();
