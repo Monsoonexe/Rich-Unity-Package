@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using RichPackage.Audio;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.ProjectileSystem
 {
@@ -43,21 +44,23 @@ namespace RichPackage.ProjectileSystem
         //member components
         private ILaunchable launcher;
 
-        protected override void Awake()
+        public virtual bool CanShoot { get => Time.time > nextShootTime; }
+
+		#region Unity Messages
+
+		protected override void Awake()
         {
             base.Awake();
             launcher = GetComponent<ILaunchable>();
             projSpawnPointCount = projectileSpawnPoints.Length;
         }
 
-        public virtual bool CanShoot()
-        {
-            return Time.time > nextShootTime;
-        }
+		#endregion Unity Messages
 
+		[Button, DisableInEditorMode]
         public void FireWeapon()
         {
-            if (CanShoot())
+            if (CanShoot)
             {
                 nextShootTime = Time.time + shotDelay;
                 launcher.Launch(GetNextSpawnPoint()); // do the thing
@@ -67,7 +70,7 @@ namespace RichPackage.ProjectileSystem
         
         public void FireWeapon(Transform target)
         {
-            if (CanShoot())
+            if (CanShoot)
             {
                 nextShootTime = Time.time + shotDelay;
                 var nextSpawnPoint = GetNextSpawnPoint();

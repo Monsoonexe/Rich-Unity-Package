@@ -22,7 +22,7 @@ namespace RichPackage
 
         [Header("---Raycast Settings---")]
         [MinValue(0)]
-        [OnValueChanged("UpdateYieldInstruction")]//useful for changing during edit time
+        [OnValueChanged(nameof(UpdateYieldInstruction))]//useful for changing during edit time
         [SerializeField]
         private float raycastInterval = 1.0f;
 
@@ -57,7 +57,9 @@ namespace RichPackage
         private Coroutine raycastIntervalRoutine;
         private YieldInstruction yieldInstruction;
 
-        protected override void Awake()
+		#region Unity Messages
+
+		protected override void Awake()
         {
             base.Awake();
             rangeDetectCollider = GetComponent<SphereCollider>();
@@ -111,11 +113,13 @@ namespace RichPackage
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>Called when raycastInterval changed.</remarks>
-        private void UpdateYieldInstruction()
+		#endregion Unity Messages
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks>Called when raycastInterval changed.</remarks>
+		private void UpdateYieldInstruction()
             => yieldInstruction = new WaitForSeconds(raycastInterval);
 
         // Update is called once per frame
@@ -127,7 +131,7 @@ namespace RichPackage
             {
                 yield return yieldInstruction;//wait
 
-                if (attackTarget && targetInEngagementRange && hardpoint.CanShoot())
+                if (attackTarget && targetInEngagementRange && hardpoint.CanShoot)
                 {
                     HandleShooting();
                 }
