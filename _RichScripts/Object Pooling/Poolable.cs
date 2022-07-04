@@ -13,12 +13,10 @@ namespace RichPackage.Pooling
         [MinValue(0)]
         public float lifetime = 10f;
 
-        public PoolablePool PoolOwner { get; set; }
-
         [ShowInInspector, ReadOnly]
         public bool InUse { get; private set; }
 
-        PoolablePool IPoolable.PoolOwner { get; set; }
+        public PoolablePool PoolOwner { get; set; }
         private Coroutine lifetimeCoroutine;
 
         public virtual void OnCreate()
@@ -32,8 +30,8 @@ namespace RichPackage.Pooling
             gameObject.SetActive(true);
             if (lifetime > 0)
             {
-                lifetimeCoroutine = StartCoroutine(
-                    Utility.InvokeAfterDelay(ReturnToPool, lifetime));
+                lifetimeCoroutine = 
+                    InvokeAfterDelay(ReturnToPool, lifetime);
             }
         }
 
