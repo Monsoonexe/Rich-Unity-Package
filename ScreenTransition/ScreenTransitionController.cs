@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using NaughtyAttributes;
 using Sirenix.OdinInspector;
 
@@ -7,7 +6,7 @@ using Sirenix.OdinInspector;
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
 
-/* Callback system for OnTransitionEnd
+/* Callback system for OnTransitionEnd (UnityEvent)
  * 
  */ 
 
@@ -95,10 +94,12 @@ namespace RichPackage.UI
         private int VERTICAL_WIPE_OUT;
         public int VerticalWipeOutMessage { get => VERTICAL_WIPE_OUT; }
 
-        #endregion
+		#endregion Animator Params
 
-        //public static event Action TransitionEndEvent;
-        protected override void Reset()
+		#region Unity Messages
+
+		//public static event Action TransitionEndEvent;
+		protected override void Reset()
         {
             base.Reset();
             SetDevDescription("Controls screen transitions and fades.");
@@ -118,11 +119,13 @@ namespace RichPackage.UI
                 dontDestroyOnLoad: false);
         }
 
-        /// <summary>
-        /// Safely set animation speed based on desired duration.
-        /// </summary>
-        /// <param name="duration"></param>
-        public static void SetAnimationSpeed(float duration)
+		#endregion Unity Messages
+
+		/// <summary>
+		/// Safely set animation speed based on desired duration.
+		/// </summary>
+		/// <param name="duration"></param>
+		public static void SetAnimationSpeed(float duration)
         {
             //guard against division by zero
             if (duration <= 0)
@@ -224,6 +227,6 @@ namespace RichPackage.UI
         //public void RandomTransitionIn()
         //public void RandomTransitionOut()
 
-        #endregion
+        #endregion Transition API
     }
 }
