@@ -6,12 +6,12 @@ namespace RichPackage.UI
     [Serializable]
     public struct ColorLimit
     {
-        public int limit;
+        public int percentile;
         public Color color;
 
-        public ColorLimit(int limit, Color color)
+        public ColorLimit(int percentile, Color color)
         {
-            this.limit = limit;
+            this.percentile = percentile;
             this.color = color;
         }
     }
