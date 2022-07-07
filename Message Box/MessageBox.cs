@@ -46,7 +46,7 @@ namespace RichPackage.UI
 		/// For loading really complex payloads.
 		/// </summary>
 		[Serializable]
-		public struct Payload //TODO implement
+		public struct Payload
 		{
 			[Serializable]
 			public struct ButtonPayload
@@ -114,6 +114,9 @@ namespace RichPackage.UI
 
 		public EMessageBoxResult LastResult { get; private set; } = EMessageBoxResult.None;
 
+		/// <summary>
+		/// Used in <see cref="ShowAsync"/> to avoid a closure.
+		/// </summary>
 		private bool asyncResultPending = false;
 		private CancellationTokenSource cancellationTokenSource;
 
@@ -199,6 +202,8 @@ namespace RichPackage.UI
 		public override void ToggleVisuals(bool active)
 			=> windowCanvas.enabled = active;
 
+		public void Close() => Close(EMessageBoxResult.None);
+
 		public void Close(EMessageBoxResult result)
 		{
 			LastResult = result;
@@ -227,8 +232,8 @@ namespace RichPackage.UI
 		{
 			if (_payload.HasValue)
 			{
-				Action completeAction = _payload.Value.action; //do the thing
-				completeAction += () => Close(EMessageBoxResult.None); //invoke closing the window.
+				Action completeAction = _payload.Value.action; // do the thing
+				completeAction += Close; // then close the window.
 				_button.Show(completeAction, _payload.Value.text, _payload.Value.sprite);
 			}
 			else
@@ -251,13 +256,19 @@ namespace RichPackage.UI
 			Show();//show visuals
 			if (animate && transitionINAnimator != null)
 			{
-				ToggleButtonInteractivity(false); //disallow interaction until open.
+				ToggleButtonInteractivityFalse(); // disallow interaction until open.
 				transitionINAnimator.Animate(windowTransform,
-					onCompleteCallback: () => ToggleButtonInteractivity(true));
+					onCompleteCallback: ToggleButtonInteractivityTrue);
 			}
 		}
 
 		#region Async
+
+		/// <summary>
+		/// Avoids a closure.
+		/// </summary>
+		private void AsyncResultComplete(EMessageBoxResult result)
+			=> asyncResultPending = false;
 
 		/// <summary>
 		/// Call like EMessageBoxResult result = await ShowAsync(...);
@@ -286,9 +297,8 @@ namespace RichPackage.UI
 
 			// async stuff
 			cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
-			var cancelToken = cancellationTokenSource.Token;
-
-			OnResult = (_) => asyncResultPending = false;
+			asyncResultPending = true;
+			OnResult = AsyncResultComplete;
 
 			// setup
 			switch (style)
@@ -313,14 +323,15 @@ namespace RichPackage.UI
 					throw ExceptionUtilities.GetEnumNotImplementedException(style);
 			}
 
-			Show();//show visuals
+			Show(); //show visuals
 			if (animate && transitionINAnimator != null)
 			{
-				ToggleButtonInteractivity(false); //disallow interaction until open.
+				ToggleButtonInteractivityFalse(); //disallow interaction until open.
 				transitionINAnimator.Animate(windowTransform,
-					onCompleteCallback: () => ToggleButtonInteractivity(true));
+					onCompleteCallback: ToggleButtonInteractivityTrue);
 			}
 
+			var cancelToken = cancellationTokenSource.Token;
 			while (asyncResultPending && !cancelToken.IsCancellationRequested)
 				await UniTask.Yield(); //basically yield return null;
 
@@ -378,6 +389,12 @@ namespace RichPackage.UI
 			LastResult = EMessageBoxResult.None;
 			OnResult = null;
 		}
+
+		private void ToggleButtonInteractivityTrue()
+			=> ToggleButtonInteractivity(true);
+
+		private void ToggleButtonInteractivityFalse()
+			=> ToggleButtonInteractivity(false);
 
 		private void ToggleButtonInteractivity(bool interactable)
 		{
