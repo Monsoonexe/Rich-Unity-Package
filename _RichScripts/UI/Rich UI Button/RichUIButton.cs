@@ -229,7 +229,14 @@ namespace RichPackage.UI
 
         /// <returns>The <see cref="ObjectProperty"/> value cast to <typeparamref name="T"/>.</returns>
         /// <exception cref="InvalidCastException"/>
+        /// <seealso cref="SetPayload(object)"/>
         public T GetPayload<T>() => (T)ObjectProperty;
+
+        /// <summary>
+        /// Sets the <see cref="ObjectProperty"/>.
+        /// </summary>
+        /// <seealso cref="GetPayload{T}"/>
+        public void SetPayload(object value) => ObjectProperty = value;
 
         #region Button Helpers
 
