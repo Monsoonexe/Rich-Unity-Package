@@ -113,6 +113,23 @@ namespace RichPackage
             return valid;
         }
 
+        public static void InitSingletonOrThrow<T>(T instance, ref T singletonRef,
+            bool dontDestroyOnLoad = true)
+            where T : RichMonoBehaviour
+        {
+            if (!InitSingleton(instance, ref singletonRef, dontDestroyOnLoad))
+                throw new SingletonException(typeof(T).Name);
+		}
+
+        protected static bool ReleaseSingleton<T>(T instance, ref T singletonRef)
+            where T : RichMonoBehaviour
+        {
+            bool released = instance == singletonRef;
+            if (released)
+                singletonRef = null;
+            return released;
+		}
+
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
