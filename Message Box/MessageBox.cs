@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
 using RichPackage.Assertions;
+using Cysharp.Threading.Tasks;
 
 /*
  * On a message box that has an OK button, OK is returned if:
@@ -116,6 +117,8 @@ namespace RichPackage.UI
 		private bool asyncResultPending = false;
 		private CancellationTokenSource cancellationTokenSource;
 
+		#region Unity Messages
+
 		private void Start()
 		{
 			if (hideOnStart)
@@ -131,6 +134,8 @@ namespace RichPackage.UI
 				cancellationTokenSource.Dispose();
 			}
 		}
+
+		#endregion Unity Messages
 
 		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
 		/// <param name="messageBoxTitle">Title of the window.</param>
@@ -266,7 +271,7 @@ namespace RichPackage.UI
 		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="animate">Should the window animate opened and closed?</param>
 		/// <exception cref="NotImplementedException"></exception>
-		public async Task<EMessageBoxResult> ShowAsync(string messageBoxText,
+		public async UniTask<EMessageBoxResult> ShowAsync(string messageBoxText,
 			string messageBoxTitle = ConstStrings.EMPTY,
 			EMessageBoxButton style = EMessageBoxButton.OK,
 			bool animate = false,
@@ -278,12 +283,14 @@ namespace RichPackage.UI
 			this.Style = style;
 			promptText.text = messageBoxText;
 			titleText.text = messageBoxTitle;
-			asyncResultPending = true;
+
+			// async stuff
 			cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
 			var cancelToken = cancellationTokenSource.Token;
 
 			OnResult = (_) => asyncResultPending = false;
 
+			// setup
 			switch (style)
 			{
 				case EMessageBoxButton.OK:
@@ -315,7 +322,7 @@ namespace RichPackage.UI
 			}
 
 			while (asyncResultPending && !cancelToken.IsCancellationRequested)
-				await Task.Yield(); //basically yield return null;
+				await UniTask.Yield(); //basically yield return null;
 
 			return LastResult;
 		}
