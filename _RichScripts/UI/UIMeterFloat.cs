@@ -11,7 +11,7 @@ namespace RichPackage.UI
     /// </summary>
     /// <seealso cref="UIMeterInt"/>
     [SelectionBase]
-    public class UIMeterFloat : VariableUIElement<FloatVariable>
+    public sealed class UIMeterFloat : VariableUIElement<FloatVariable>
     {
         private const string ColorLimitsGroup = "Color Limits";
 
