@@ -84,21 +84,11 @@ namespace RichPackage
 
         #region Absolute Value
 
-        /// <summary>
-        /// Runs ~twice as fast as Mathf.Abs().
-        /// </summary>
-        /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int AbsoluteValue(this int i)
-            => i >= 0 ? i : -i;
+        public static int AbsoluteValue(this int i) => Math.Abs(i);
 
-        /// <summary>
-        /// Runs ~twice as fast as Mathf.Abs().
-        /// </summary>
-        /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float AbsoluteValue(this float f)
-            => f >= 0 ? f : -f;
+        public static float AbsoluteValue(this float f) => Math.Abs(f);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 AbsoluteValue(in Vector2 v)
@@ -115,7 +105,7 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetAbsoluteValue(this ref float f)
-            => f = f >= 0 ? f : -f;
+            => f = f.AbsoluteValue();
 
         #endregion
 
