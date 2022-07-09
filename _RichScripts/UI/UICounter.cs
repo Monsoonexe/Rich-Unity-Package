@@ -68,7 +68,7 @@ namespace RichPackage.UI
 			{
 				var sb = StringBuilderCache.Rent();
 				//setup text element like: X5 lives
-				textReadout.text = StringBuilderCache.GetStringAndReturn(
+				textReadout.text = StringBuilderCache.ToStringAndReturn(
 					sb.Append(prefix)
 					.Append(targetData.Value.ToStringCached())
 					.Append(suffix));

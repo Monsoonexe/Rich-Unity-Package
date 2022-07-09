@@ -8,7 +8,7 @@ namespace RichPackage.Pooling
     /// </summary>
     public static class StringBuilderCache
     {
-        internal const int MAX_BUILDER_SIZE = 360;
+        internal const int MAX_BUILDER_SIZE = 512;
 
         [ThreadStatic]
         private static StringBuilder CachedInstance;
@@ -40,12 +40,13 @@ namespace RichPackage.Pooling
         }
 
         /// <summary>
-        /// Get the resulting <see cref="string"/> and return to the <see cref="StringBuilderCache"/>.
+        /// Get the resulting <see cref="string"/> and returns instance 
+        /// to the <see cref="StringBuilderCache"/>.
         /// </summary>
         /// <param name="sb">A <see cref="StringBuilder"/> instance
         /// <see cref="StringBuilderCache.Rent"/>ed from
         /// <see cref="StringBuilderCache"/>.</param>
-        public static string GetStringAndReturn(this StringBuilder sb)
+        public static string ToStringAndReturn(this StringBuilder sb)
         {
             string result = sb.ToString();
             Return(sb);
