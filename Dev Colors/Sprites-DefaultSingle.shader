@@ -22,6 +22,7 @@ Shader "Sprites/DefaultSingle"
 		}
 
 		  ///  Cull Off
+			Cull Back
 			Lighting Off
 			ZWrite Off
 			Blend One OneMinusSrcAlpha
