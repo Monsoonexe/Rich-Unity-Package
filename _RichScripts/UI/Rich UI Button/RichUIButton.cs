@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
+using UnityEngine.Events;
 
 namespace RichPackage.UI
 {
@@ -152,9 +153,9 @@ namespace RichPackage.UI
 
 		#endregion Unity Messages
 
-		public void AddListener(Action action) => myButton.onClick.AddListener(action.Invoke);
+		public void AddListener(UnityAction action) => myButton.onClick.AddListener(action);
 
-        public void RemoveListener(Action action) => myButton.onClick.RemoveListener(action.Invoke);
+        public void RemoveListener(UnityAction action) => myButton.onClick.RemoveListener(action);
 
         /// <summary>
         /// Removes all listeners except my own.
