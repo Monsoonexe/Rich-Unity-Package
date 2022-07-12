@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
-using UnityEngine.Events;
 
 namespace RichPackage.UI
 {
@@ -123,9 +123,6 @@ namespace RichPackage.UI
             myText = GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        /// <summary>
-        /// Please call base.Awake() for maximum ease.
-        /// </summary>
         protected override void Awake()
         {
             base.Awake();
@@ -169,8 +166,8 @@ namespace RichPackage.UI
         /// <summary>
         /// Function called by Button.
         /// </summary>
-        [Button("Click"), DisableInEditorMode]
-        public void Click() => OnPressedEvent?.Invoke(this);
+        [Button, DisableInEditorMode]
+        public void Click() => OnPressedEvent?.Invoke(this); // FIXME - doesn't call myButton.OnClick events.
 
         /// <summary>
         /// Hide/Show visual elements.
@@ -197,26 +194,26 @@ namespace RichPackage.UI
             Show();
         }
 
-        public void Show(Action onPress)
+        public void Show(UnityAction onPress)
         {
             RemoveAllListeners();
-            AddListener(onPress.Invoke);
+            AddListener(onPress);
             Show();
         }
 
-        public void Show(Action onPress, Sprite sprite)
+        public void Show(UnityAction onPress, Sprite sprite)
         {
             Sprite = sprite;
             Show(onPress);
         }
 
-        public void Show(Action onPress, string text)
+        public void Show(UnityAction onPress, string text)
         {
             Text = text;
             Show(onPress);
         }
 
-        public void Show(Action onPress, string text, Sprite sprite)
+        public void Show(UnityAction onPress, string text, Sprite sprite)
         {
             Sprite = sprite;
             Show(onPress, text);
