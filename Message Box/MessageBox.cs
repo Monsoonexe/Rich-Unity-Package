@@ -335,6 +335,7 @@ namespace RichPackage.UI
 			while (asyncResultPending && !cancelToken.IsCancellationRequested)
 				await UniTask.Yield(); //basically yield return null;
 
+			cancelToken.ThrowIfCancellationRequested(); // stop execution if cancelled.
 			return LastResult;
 		}
 
@@ -425,22 +426,24 @@ namespace RichPackage.UI
 		None = 0,
 
 		/// <summary>
-		/// Acquiesce
+		/// Acquiesce.
+		/// Identical to <see cref="Left"/> and <see cref="Yes"/>.
 		/// </summary>
 		Okay = 1,
 
 		/// <summary>
-		/// Agree.
+		/// Identical to <see cref="Left"/> and <see cref="Okay"/>.
 		/// </summary>
 		Yes = 1,
 
 		/// <summary>
-		/// Identical to <see cref="Yes"/>.
+		/// Identical to <see cref="Yes"/> and <see cref="Okay"/>.
 		/// </summary>
 		Left = 1,
 
 		/// <summary>
 		/// Reject.
+		/// Identical to <see cref="Middle"/>.
 		/// </summary>
 		No = 2,
 
@@ -451,6 +454,7 @@ namespace RichPackage.UI
 
 		/// <summary>
 		/// Cancel
+		/// Identical to <see cref="Right"/>.
 		/// </summary>
 		Cancel = 3,
 
