@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.Audio;
 using DG.Tweening;
 
-/* TODO - cache fade tweens for less overhead
+/* 
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
- * TODO - remove 'static' from source dictionary and make less functions static, if needed.
+ * TODO - reduce 'static' interface surface
  * TODO - support StopBGM (track BGM AudioIDs)
  */ 
 
@@ -59,10 +59,12 @@ namespace RichPackage.Audio
         /// <summary>
         /// This is so the caller can query the sound after the fact, like for interruping a spell.
         /// </summary>
-        private static Dictionary<uint, AudioSource> sourceDictionary
-            = new Dictionary<uint, AudioSource>(6);
+        private static Dictionary<AudioID, AudioSource> sourceDictionary
+            = new Dictionary<AudioID, AudioSource>(6);
 
-        protected override void Awake()
+		#region Unity Messages
+
+		protected override void Awake()
         {
             base.Awake();
             if (InitSingleton(this, ref Instance, dontDestroyOnLoad: true))
@@ -91,16 +93,18 @@ namespace RichPackage.Audio
             }
         }
 
-        /// <summary>
-        /// Create all the AudioSources needed for the whole game.
-        /// </summary>
-        /// <remarks>Create all at once on same GameObject to help with cache.</remarks>
-        private void CreateAudioSources()
+		#endregion Unity Messages
+
+		/// <summary>
+		/// Create all the AudioSources needed for the whole game.
+		/// </summary>
+		/// <remarks>Create all at once on same GameObject to help with cache.</remarks>
+		private void CreateAudioSources()
         {
             //create SFX audio sources
             SFXAudioSources = new AudioSource[sfxAudioSourceCount];
 
-            for (var i = 0; i < sfxAudioSourceCount; ++i)
+            for (int i = 0; i < sfxAudioSourceCount; ++i)
             {
                 SFXAudioSources[i] = gameObject.AddComponent<AudioSource>(); // new AudioSource
                 SFXAudioSources[i].playOnAwake = false;
@@ -115,7 +119,7 @@ namespace RichPackage.Audio
             if (audioMixer)
             {   //this section of code makes a lot of assumptions about the given audio mixer
                 var sfxGroup = audioMixer.FindMatchingGroups("SFX")[0];
-                for (var i = 0; i < sfxAudioSourceCount; ++i)
+                for (int i = 0; i < sfxAudioSourceCount; ++i)
                 {
                     SFXAudioSources[i].outputAudioMixerGroup = sfxGroup;
                 }
@@ -133,7 +137,7 @@ namespace RichPackage.Audio
         private static AudioID TrackAudio(AudioSource source)
         {
             //maybe use a List of custom structs
-            var key = AudioID.GetNextKey();
+            var key = AudioID.GetNext();
 
             sourceDictionary.Add(key, source);
 
@@ -180,8 +184,8 @@ namespace RichPackage.Audio
             //TODO - don't 'new' 
             yield return new WaitForSeconds(clipLength); // wait until duration over
 
-            sourceDictionary.Remove(key.ID);
-            if (source.loop)//only need to stop if looping.
+            sourceDictionary.Remove(key);
+            if (source.loop) // only need to stop if looping.
                 source.Stop();
         }
 
@@ -250,13 +254,13 @@ namespace RichPackage.Audio
                 options = AudioOptions.DefaultSFX;
 
             //find an audio source with the lowest volume, or that is not playing
-            var size = SFXSources.Length;
             var sources = SFXSources;
-            var lowestPriority = 255; //[0 - 255]
-            var lowestIndex = 0;
-            AudioSource source = null;
+            int size = sources.Length;
+            int lowestPriority = 255; //[0 - 255]
+            int lowestIndex = 0;
+            AudioSource source;
 
-            for (var i = 0; i < size; ++i)
+            for (int i = 0; i < size; ++i)
             {
                 source = sources[i];
                 if (!source.isPlaying) // if this one isn't busy
@@ -312,7 +316,7 @@ namespace RichPackage.Audio
             //TODO - take into account Coroutine
             //check key is valid and source is active
             if (key != AudioID.Invalid 
-                && sourceDictionary.TryGetValue(key.ID, 
+                && sourceDictionary.TryGetValue(key, 
                     out AudioSource source))
             {
                 source.Stop();
@@ -376,14 +380,13 @@ namespace RichPackage.Audio
         /// <param name="key"></param>
         public static void StopSFX(AudioID key, float fadeOutDuration = 0.0f)
         {
-            var id = key.ID;
-            if (id == AudioID.Invalid) return;//check for invalid key
+            if (key.Equals(AudioID.Invalid)) return;//check for invalid key
 
-            var found = sourceDictionary.TryGetValue(id, out AudioSource source);
+            var found = sourceDictionary.TryGetValue(key, out AudioSource source);
 
             if (found)
             {
-                sourceDictionary.Remove(id);
+                sourceDictionary.Remove(key);
                 if (fadeOutDuration > 0.01f)
                     source.DOFade(0, fadeOutDuration)
                     .SetEase(FadeEase);
@@ -395,14 +398,14 @@ namespace RichPackage.Audio
         public static void StopAllSFX()
         {
             var sources = SFXSources;
-            for (var i = sources.Length - 1; i >= 0; --i)
+            for (int i = sources.Length - 1; i >= 0; --i)
                 sources[i].Stop();
         }
 
         public static void StopAllSFX(float fadeOutDuration)
         {
             var sources = SFXSources;
-            for (var i = sources.Length - 1; i >= 0; --i)
+            for (int i = sources.Length - 1; i >= 0; --i)
             {
                 sources[i].DOFade(0, fadeOutDuration)
                     .SetEase(FadeEase)
