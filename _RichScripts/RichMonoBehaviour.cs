@@ -120,7 +120,7 @@ namespace RichPackage
             where T : RichMonoBehaviour
         {
             bool valid;
-            if (!valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad))
+            if (!(valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad)))
                 Destroy(instance.gameObject);
 
             return valid;
