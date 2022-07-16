@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -108,6 +108,24 @@ namespace RichPackage
             {   //there are two Singletons
                 //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
                 //instance.ToString(), singletonRef.ToString()));
+                valid = false;
+            }
+            return valid;
+        }
+
+        protected static bool InitSingletonOrDestroy<T>(T instance, ref T singletonRef)
+            where T : RichMonoBehaviour
+        {
+            var valid = true; //return value
+            if (singletonRef == null)
+            {   //we are the singleton
+                singletonRef = instance;
+            }
+            else if (!instance.Equals(singletonRef))
+            {   //there are two Singletons
+                //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
+                //instance.ToString(), singletonRef.ToString()));
+                Destroy(instance);
                 valid = false;
             }
             return valid;
