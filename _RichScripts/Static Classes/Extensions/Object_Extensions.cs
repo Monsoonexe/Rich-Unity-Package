@@ -22,7 +22,15 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T CastAs<T>(this object obj)
             where T : class  => obj as T;
-           
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Is<T>(this object obj)
+            where T : class => obj is T;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsNot<T>(this object obj)
+            where T : class => !(obj is T);
+
         /// <summary>
         /// Throws an <see cref="ArgumentNullException"/> if <paramref name="obj"/> is null.
         /// </summary>
