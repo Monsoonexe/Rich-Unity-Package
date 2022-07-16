@@ -85,16 +85,18 @@ namespace RichPackage
             return StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
         }
 
-        #endregion Invokation Timing Helpers
+		#endregion Invokation Timing Helpers
 
-        /// <summary>
-        /// Set a reference to a singleton to the given instance if valid.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
-        /// <returns>False if a SingletonError occured.</returns>
-        protected static bool InitSingleton<T>(T instance, ref T singletonRef,
+		#region Singleton Helpers
+
+		/// <summary>
+		/// Set a reference to a singleton to the given instance if valid.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="instance"></param>
+		/// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+		/// <returns>False if a SingletonError occured.</returns>
+		protected static bool InitSingleton<T>(T instance, ref T singletonRef,
             bool dontDestroyOnLoad = true)
             where T : RichMonoBehaviour
         {
@@ -113,21 +115,14 @@ namespace RichPackage
             return valid;
         }
 
-        protected static bool InitSingletonOrDestroy<T>(T instance, ref T singletonRef)
+        protected static bool InitSingletonOrDestroyGameObject<T>(T instance, ref T singletonRef,
+            bool dontDestroyOnLoad = true)
             where T : RichMonoBehaviour
         {
-            var valid = true; //return value
-            if (singletonRef == null)
-            {   //we are the singleton
-                singletonRef = instance;
-            }
-            else if (!instance.Equals(singletonRef))
-            {   //there are two Singletons
-                //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
-                //instance.ToString(), singletonRef.ToString()));
-                Destroy(instance);
-                valid = false;
-            }
+            bool valid;
+            if (valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad))
+                Destroy(instance.gameObject);
+
             return valid;
         }
 
@@ -148,7 +143,9 @@ namespace RichPackage
             return released;
 		}
 
-        protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
+		#endregion Singleton Helpers
+
+		protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
             T comp;
