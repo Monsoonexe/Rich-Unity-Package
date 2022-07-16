@@ -7,6 +7,7 @@ using TMPro;
 using Sirenix.OdinInspector;
 using RichPackage.Assertions;
 using Cysharp.Threading.Tasks;
+using UnityEngine.Events;
 
 /*
  * On a message box that has an OK button, OK is returned if:
@@ -51,7 +52,7 @@ namespace RichPackage.UI
 			[Serializable]
 			public struct ButtonPayload
 			{
-				public Action action;
+				public UnityAction action;
 				public string text;
 				public Sprite sprite;
 			}
@@ -232,7 +233,7 @@ namespace RichPackage.UI
 		{
 			if (_payload.HasValue)
 			{
-				Action completeAction = _payload.Value.action; // do the thing
+				UnityAction completeAction = _payload.Value.action; // do the thing
 				completeAction += Close; // then close the window.
 				_button.Show(completeAction, _payload.Value.text, _payload.Value.sprite);
 			}
