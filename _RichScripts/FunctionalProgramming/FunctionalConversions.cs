@@ -18,6 +18,8 @@ namespace RichPackage.FunctionalProgramming
         public static int ToInt(this float value) => (int)value;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this double value) => (int)value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ToInt(this System.Enum value) => value.GetHashCode();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToFloat(this byte value) => (float)value;
