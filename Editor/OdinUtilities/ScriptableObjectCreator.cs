@@ -1,4 +1,4 @@
-﻿/* Source: https://odininspector.com/community-tools/540/scriptableobject-creator
+/* Source: https://odininspector.com/community-tools/540/scriptableobject-creator
  * 
  */
 
@@ -90,7 +90,7 @@ namespace RichPackage.Editor
             get
             {
                 var m = this.MenuTree.Selection.LastOrDefault();
-                return m == null ? null : m.Value as Type;
+                return m?.Value as Type;
             }
         }
 
