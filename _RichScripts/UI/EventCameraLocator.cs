@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using Sirenix.OdinInspector;
+using System.Diagnostics;
 
 namespace RichPackage.UI
 {
@@ -9,7 +11,8 @@ namespace RichPackage.UI
 	/// </summary>
 	public class EventCameraLocator : RichMonoBehaviour
 	{
-		[Tooltip("[Optional] Camera to assign to canvas.worldCamera.")]
+		[Tooltip("[Optional] Camera to assign to canvas.worldCamera."),
+			CustomContextMenu(nameof(SetToMainCamera), nameof(SetToMainCamera))]
 		public Camera worldEventCamera;
 
 		[Tooltip("[Optional] Canvas which needs an event camera.")]
@@ -30,7 +33,7 @@ namespace RichPackage.UI
 
 			if(worldEventCamera == null)
 				worldEventCamera = GameObject.FindGameObjectWithTag(
-					"MainCamera").GetComponent<Camera>();
+					GameObjectTags.MainCamera).GetComponent<Camera>();
 			
 			//assign if you can
 			if (canvas != null && canvas.worldCamera == null)
@@ -50,5 +53,16 @@ namespace RichPackage.UI
 
 			Destroy(this);//my job is done!
 		}
+
+		#region Editor
+
+		[Conditional(ConstStrings.UNITY_EDITOR)]
+		private void SetToMainCamera()
+		{
+			worldEventCamera = GameObject.FindGameObjectWithTag(
+					GameObjectTags.MainCamera).GetComponent<Camera>();
+		}
+
+		#endregion Editor
 	}
 }
