@@ -40,7 +40,8 @@ namespace RichPackage.Editor
 				{
 					ShowMenu();
 					PropertyTree tree = PropertyTree.Create(new SerializedObject(property.serializedObject.targetObject));
-					TreeValuesHolder holder = _instance._properties.FirstOrDefault(o => o.Tree.WeakTargets[0] == property.serializedObject.targetObject);
+					TreeValuesHolder holder = _instance._properties.FirstOrDefault(
+						o => ReferenceEquals(o.Tree.WeakTargets[0], property.serializedObject.targetObject));
 					if (holder == null)
 					{
 						holder = new TreeValuesHolder(tree);
@@ -209,15 +210,15 @@ namespace RichPackage.Editor
 							holder.ValuePaths[dragdrop.Index] = ptemp;
 						}
 
-						InspectorProperty propertyAtPath = holder.Tree.GetPropertyAtPath(path);
-						if (propertyAtPath == null)
-							propertyAtPath = holder.Tree.GetPropertyAtUnityPath(path);
+						InspectorProperty propertyAtPath = holder.Tree.GetPropertyAtPath(path) ?? holder.Tree.GetPropertyAtUnityPath(path);
 						if (propertyAtPath != null)
 						{
 							propertyAtPath.Draw();
 						}
-						else
+                        else
+                        {
 							EditorGUILayout.LabelField($"Could not find property ({path})");
+                        }
 
 						if (SirenixEditorGUI.IconButton(EditorIcons.X))
 						{
