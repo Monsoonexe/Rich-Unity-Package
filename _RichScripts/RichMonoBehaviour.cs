@@ -179,9 +179,20 @@ namespace RichPackage
 #endif
         }
 
+        /// <summary>
+        /// Creates a new <see cref="GameObject"/> with the given 
+        /// <typeparamref name="T"/> component attached.
+        /// </summary>
+        /// <returns>The newly created instance.</returns>
         public static T Construct<T>() where T : RichMonoBehaviour
             => new GameObject(typeof(T).Name).AddComponent<T>();
 
+        /// <summary>
+        /// Creates a new <see cref="GameObject"/> with the given 
+        /// <typeparamref name="T"/> component attached.
+        /// </summary>
+        /// <param name="name">The name of the new <see cref="GameObject"/>.</param>
+        /// <returns>The newly created instance.</returns>
         public static T Construct<T>(string name) where T : RichMonoBehaviour
             => new GameObject(name).AddComponent<T>();
     }
