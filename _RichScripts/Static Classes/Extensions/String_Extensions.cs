@@ -95,7 +95,23 @@ namespace RichPackage
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool EqualsOrdinal(this string strA, string strB)
+            => string.CompareOrdinal(strA, strB) == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool EqualsOrdinalIgnoreCase(this string strA, string strB)
+            => string.Compare(strA, strB, StringComparison.OrdinalIgnoreCase) == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SafeLength(this string value)
+            => value?.Length ?? 0;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char First(this string str) => str[0];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char FirstOrDefault(this string str, char defaultValue = '\0')
+            => str.Length > 0 ? str[0] : defaultValue;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char Last(this string str) => str[str.Length - 1];
