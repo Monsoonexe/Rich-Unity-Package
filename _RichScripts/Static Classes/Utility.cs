@@ -143,23 +143,6 @@ namespace RichPackage
         public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
             => SetLayerRecursively(gameObj.transform, newLayer);
 
-        /// <summary>
-        /// Case insensitive check. True iff source == "true".
-        /// </summary>
-        /// <param name="source">Source string.</param>
-        /// <param name="result">Result is invalid if 'false' is returned.</param>
-        /// <returns>True if parse was successful. Result is invalid if 'false' is returned.</returns>
-        public static bool TryStringToBool(this string source, out bool result)
-        {
-            bool isTrue = string.Equals(source, bool.TrueString, StringComparison.OrdinalIgnoreCase);
-            bool isFalse = string.Equals(source, bool.FalseString, StringComparison.OrdinalIgnoreCase);
-            bool success = isTrue || isFalse;
-
-            result = isTrue;
-
-            return success;
-        }
-
         #region Functional Iterating
 
         /// <summary>
