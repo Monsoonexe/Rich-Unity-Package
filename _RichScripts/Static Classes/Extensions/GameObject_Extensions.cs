@@ -143,5 +143,11 @@ namespace RichPackage
                     components.Add(comp);
             return components;
         }
+
+        /// <summary>
+        /// Set this and all children (and on) to given layer.
+        /// </summary>
+        public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
+            => gameObj.transform.SetLayerRecursively(newLayer);
     }
 }

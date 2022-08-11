@@ -6,7 +6,6 @@ namespace RichPackage
 {
     public static class Transform_Extensions
     {
-
         ///<summary>
         ///
         ///</summary>
@@ -89,5 +88,19 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform GetLastChild(this Transform transform)
             => transform.GetChild(transform.childCount - 1);
+
+        /// <summary>
+        /// Set this and all children (and on) to given layer.
+        /// </summary>
+        public static void SetLayerRecursively(this Transform obj, int newLayer)
+        {
+            obj.gameObject.layer = newLayer;
+            var childCount = obj.childCount;
+            for (var i = 0; i < childCount; ++i)
+            {
+                var child = obj.GetChild(i);
+                SetLayerRecursively(child, newLayer);
+            }
+        }
     }
 }
