@@ -40,7 +40,7 @@ namespace RichPackage
 
         /// <summary>
         /// Cached Transform  
-        /// (because native 'transform' is secretly <see cref="GameObject.GetComponent{Transform}"/>()' which is expensive on repeat).
+        /// (because native 'transform' is secretly <see cref="GameObject.GetComponent{Transform}"/>' which is expensive on repeat).
         /// </summary>
         public new Transform transform { get => myTransform; }
 
@@ -143,9 +143,11 @@ namespace RichPackage
             return released;
 		}
 
-		#endregion Singleton Helpers
+        #endregion Singleton Helpers
 
-		protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
+        #region GetComponent Helpers
+
+        protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
             T comp;
@@ -170,14 +172,7 @@ namespace RichPackage
             return gameObject.AddComponent<T>();
         }
 
-        [Conditional(ConstStrings.UNITY_EDITOR)]
-        public void Editor_MarkDirty()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-                UnityEditor.EditorUtility.SetDirty(this);
-#endif
-        }
+        #endregion GetComponent Helpers
 
         /// <summary>
         /// Creates a new <see cref="GameObject"/> with the given 
@@ -195,5 +190,18 @@ namespace RichPackage
         /// <returns>The newly created instance.</returns>
         public static T Construct<T>(string name) where T : RichMonoBehaviour
             => new GameObject(name).AddComponent<T>();
+
+        #region Editor
+
+        [Conditional(ConstStrings.UNITY_EDITOR)]
+        public void Editor_MarkDirty()
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                UnityEditor.EditorUtility.SetDirty(this);
+#endif
+        }
+
+        #endregion Editor
     }
 }
