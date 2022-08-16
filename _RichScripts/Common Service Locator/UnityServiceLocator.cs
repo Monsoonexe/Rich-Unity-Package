@@ -165,7 +165,13 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TService Get<TService>() => Instance.GetInstance<TService>(null);
-        
+
+        /// <summary>
+        /// Static shortcut for <see cref="DoGetInstance(Type)"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TService Get<TService>(TService _) => Instance.GetInstance<TService>(null);
+
         #endregion Static Interface
     }
 }
