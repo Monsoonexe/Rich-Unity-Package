@@ -96,6 +96,7 @@ namespace RichPackage
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         public void RegisterProvider<TService>(Provider provider)
+            where TService : class
         {
             // validate
             GuardAgainst.ArgumentIsNull(provider, nameof(provider));
@@ -120,43 +121,58 @@ namespace RichPackage
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         public void RegisterService<TService>(TService service)
+            where TService : class
         {
             // validate
             GuardAgainst.ArgumentIsNull(service, nameof(service));
+            RegisterService(typeof(TService), service);
+        }
 
-            if (services.ContainsKey(typeof(TService)))
+        public void RegisterService(Type serviceType, object service)
+        {
+            // validate
+            GuardAgainst.ArgumentIsNull(serviceType, nameof(serviceType));
+
+            if (services.ContainsKey(serviceType))
             {
                 // error
-                throw new InvalidOperationException($"There is already a {typeof(TService).Name}" +
+                throw new InvalidOperationException($"There is already a {serviceType.Name}" +
                     $" service registered to {nameof(UnityServiceLocator)}.");
             }
             else
             {
-                services.Add(typeof(TService), service);
+                services.Add(serviceType, service);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DeregisterProvider<TService>(TService _) // handy way of avoiding <Type>
+            where TService : class
         {
             DeregisterProvider<TService>();
         }
 
         public void DeregisterProvider<TService>()
+            where TService : class
         {
             providers.Remove(typeof(TService));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DeregisterService<TService>(TService _) // handy way of avoiding <Type>
+            where TService : class
         {
-            DeregisterService<TService>();
+            DeregisterService(typeof(TService));
         }
 
         public void DeregisterService<TService>()
+            where TService : class
         {
-            services.Remove(typeof(TService));
+            DeregisterService(typeof(TService));
         }
+
+        public void DeregisterService(Type serviceType)
+            => services.Remove(serviceType);
 
         #region Static Interface
 
@@ -164,13 +180,17 @@ namespace RichPackage
         /// Static shortcut for <see cref="DoGetInstance(Type)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TService Get<TService>() => Instance.GetInstance<TService>(null);
+        public static TService Get<TService>()
+            where TService : class
+            => Instance.GetInstance<TService>(null);
 
         /// <summary>
         /// Static shortcut for <see cref="DoGetInstance(Type)"/>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TService Get<TService>(TService _) => Instance.GetInstance<TService>(null);
+        public static TService Get<TService>(TService _)
+            where TService : class
+            => Instance.GetInstance<TService>(null);
 
         #endregion Static Interface
     }
