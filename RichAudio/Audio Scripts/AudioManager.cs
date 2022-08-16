@@ -69,6 +69,7 @@ namespace RichPackage.Audio
             base.Awake();
             if (InitSingleton(this, ref Instance, dontDestroyOnLoad: true))
             {
+                UnityServiceLocator.Instance.RegisterService(this);
                 CreateAudioSources();
                 ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
                 instanceIsInitialized = true;
@@ -89,6 +90,7 @@ namespace RichPackage.Audio
                 foreach (var source in SFXAudioSources)
                     DOTween.Kill(source);
                 sourceDictionary.Clear();
+                UnityServiceLocator.Instance.DeregisterService(this);
                 instanceIsInitialized = false;
             }
         }
@@ -197,7 +199,7 @@ namespace RichPackage.Audio
     #if UNITY_EDITOR
         [UnityEditor.MenuItem("RichUtilities/Audio/Create Instance in Scene")]
     #endif
-        public static void Init()
+        public static AudioManager Init()
         {
             if (!Instance)
             {
@@ -208,6 +210,7 @@ namespace RichPackage.Audio
                 Instantiate(prefab);
     #endif
             }
+            return Instance;
         }
 
         public static bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }

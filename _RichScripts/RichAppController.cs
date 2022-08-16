@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
 using RichPackage.FunctionalProgramming;
+using RichPackage.Audio;
 
 namespace RichPackage
 {
@@ -61,10 +62,12 @@ namespace RichPackage
                 .IsFalse())
                 return;
 
+            // init stuff
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
             DG.Tweening.DOTween.Init();
             DG.Tweening.DOTween.SetTweensCapacity(250, 20);
+            UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
         }
 
         private void OnDestroy()
