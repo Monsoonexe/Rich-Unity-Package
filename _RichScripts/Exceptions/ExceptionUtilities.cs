@@ -4,16 +4,17 @@ namespace RichPackage
 {
 	public static class ExceptionUtilities
 	{
-		public static string GetEnumMemberNotImplementedExceptionString<TEnum>(TEnum value)
+		public static string GetEnumMemberNotAccountedExceptionString<TEnum>(TEnum value)
 			where TEnum : Enum
 		{
 			return $"{value} is not implemented. You should do so!";
 		}
 
-		public static Exception GetEnumNotImplementedException<TEnum>(TEnum value)
+		public static Exception GetEnumNotAccountedException<TEnum>(TEnum value)
 			where TEnum : Enum
 		{
-			return new NotImplementedException(GetEnumMemberNotImplementedExceptionString(value));
+			return new ArgumentOutOfRangeException(
+				GetEnumMemberNotAccountedExceptionString(value));
 		}
 	}
 }
