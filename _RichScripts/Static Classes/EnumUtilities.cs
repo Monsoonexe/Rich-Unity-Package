@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace RichPackage
 {
-    public static class EnumUtilities
+    public static partial class EnumUtilities
     {
-        /// <summary>
-        /// Creates a dictionary that maps enums to their string representations.
-        /// Useful because reflection is expensive and this operation caches the results.
-        /// </summary>
-        public static Dictionary<int, string> EnumNamedValues<TEnum>()
+		/// <summary>
+		/// Creates a dictionary that maps enums to their string representations.
+		/// Useful because reflection is expensive and this operation caches the results.
+		/// </summary>
+		public static Dictionary<int, string> EnumNamedValues<TEnum>()
             where TEnum : Enum
         {
             var values = Enum.GetValues(typeof(TEnum));
