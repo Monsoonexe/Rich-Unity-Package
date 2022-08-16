@@ -157,5 +157,15 @@ namespace RichPackage
         {
             services.Remove(typeof(TService));
         }
+
+        #region Static Interface
+
+        /// <summary>
+        /// Static shortcut for <see cref="DoGetInstance(Type)"/>
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TService Get<TService>() => Instance.GetInstance<TService>(null);
+        
+        #endregion Static Interface
     }
 }
