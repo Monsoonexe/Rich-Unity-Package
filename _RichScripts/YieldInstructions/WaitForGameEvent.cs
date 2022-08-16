@@ -4,14 +4,15 @@ using RichPackage.GuardClauses;
 
 namespace RichPackage.YieldInstructions
 {
-    /// <summary>
-    /// Waits until the GameEvent has been raised or an optional timeout.
-    /// </summary>
-    /// <remarks>Note: Instances should be <see cref="Reset"/> if reusing
-    /// and cannot be used synchronously like 
-    /// <see cref="CommonYieldInstructions"/>.</remarks>
-    /// <seealso cref="WaitWhile"/>
-    /// <seealso cref="WaitUntil"/>
+	/// <summary>
+	/// Waits until the GameEvent has been raised or an optional timeout.
+	/// </summary>
+	/// <remarks>Note: Instances should be <see cref="Reset"/> if reusing
+	/// and cannot be used synchronously like 
+	/// <see cref="CommonYieldInstructions"/>.</remarks>
+	/// <seealso cref="WaitWhile"/>
+	/// <seealso cref="WaitUntil"/>
+	[System.Obsolete("Use " + nameof(WaitUntilEvent) + " instead.")]
     public class WaitForGameEvent : CustomYieldInstruction
     {
         public const int INFINITE_TIMEOUT = -1;

@@ -34,33 +34,45 @@ namespace RichPackage
         #region Clamp
 
         /// <summary>
-        /// Clamps IComparable value
-        /// </summary> 
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Clamp<T>(T value, T min, T max)
+        public static T Clamp<T>(this T value, T min, T max)
             where T : IComparable<T>
             => value.CompareTo(max) > 0 ?
                 max : value.CompareTo(min) < 0 ?
                 min : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Clamp(int value, int min, int max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Clamp(uint value, uint min, uint max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Clamp(float value, float min, float max)
             => value > max ? max
                 : value < min ? min
                 : value;
 
+        /// <summary>
+        /// Returns a value within [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Clamp(double value, double min,
             double max)
@@ -72,21 +84,11 @@ namespace RichPackage
 
         #region Absolute Value
 
-        /// <summary>
-        /// Runs ~twice as fast as Mathf.Abs().
-        /// </summary>
-        /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int AbsoluteValue(int i)
-            => i >= 0 ? i : -i;
+        public static int AbsoluteValue(this int i) => Math.Abs(i);
 
-        /// <summary>
-        /// Runs ~twice as fast as Mathf.Abs().
-        /// </summary>
-        /// <returns>Because Mathf.Abs() is managed code.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float AbsoluteValue(float f)
-            => f >= 0 ? f : -f;
+        public static float AbsoluteValue(this float f) => Math.Abs(f);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 AbsoluteValue(in Vector2 v)
@@ -103,19 +105,25 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetAbsoluteValue(this ref float f)
-            => f = f >= 0 ? f : -f;
+            => f = f.AbsoluteValue();
 
         #endregion
 
         #region Min/Max
 
+        /// <summary>
+        /// Returns lesser of the two inputs.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Min<T>(T x, T y)
+        public static T Min<T>(this T x, T y)
             where T : IComparable<T>
             => x.CompareTo(y) < 0 ? x : y;
 
+        /// <summary>
+        /// Returns greater of the two inputs.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T Max<T>(T x, T y)
+        public static T Max<T>(this T x, T y)
             where T : IComparable<T>
             => x.CompareTo(y) > 0 ? x : y;
 
@@ -271,7 +279,7 @@ namespace RichPackage
             => a == 0 ? b : b == 0 ? a
                 : GreatestCommonDenominator(b, a % b);
 
-        public static bool IsPrime(long n)
+        public static bool IsPrime(this long n)
         {
             //Primality test using 6k+-1 optimization.
             //early exits

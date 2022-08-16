@@ -95,10 +95,35 @@ namespace RichPackage
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool EqualsOrdinal(this string strA, string strB)
+            => string.CompareOrdinal(strA, strB) == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool EqualsOrdinalIgnoreCase(this string strA, string strB)
+            => string.Compare(strA, strB, StringComparison.OrdinalIgnoreCase) == 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SafeLength(this string value)
+            => value?.Length ?? 0;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char First(this string str) => str[0];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static char FirstOrDefault(this string str, char defaultValue = '\0')
+            => str.Length > 0 ? str[0] : defaultValue;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char Last(this string str) => str[str.Length - 1];
+
+        #region Functional Conversions
+
+        /// <summary>
+        /// Returns <see langword="true"/> if and only if <paramref name="source"/>
+        /// is the string 'true' (ignoring case).
+        /// </summary>
+        public static bool ToBool(this string source)
+            => source.EqualsOrdinalIgnoreCase(bool.TrueString);
 
         /// <summary>
         /// Shorthand for <see cref="float.Parse(string)"/>.
@@ -113,7 +138,27 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this string source)
             => int.Parse(source);
-            
+
+        /// <summary>
+        /// Case insensitive check. True iff source == "true".
+        /// </summary>
+        /// <param name="source">Source string.</param>
+        /// <param name="result">Result is invalid if 'false' is returned.</param>
+        /// <returns>True if parse was successful. Result is invalid if 'false' is returned.</returns>
+        public static bool TryToBool(this string source, out bool result)
+        {
+            // result is true iff equal to 'true'.
+            result = source.EqualsOrdinalIgnoreCase(bool.TrueString);
+
+            // success is true iff equal to 'true' or 'false'
+            bool success = result
+                || source.EqualsOrdinalIgnoreCase(bool.FalseString);
+
+            return success;
+        }
+
+        #endregion Functional Conversions
+
         /// <summary>
         /// Returns a new <see cref="string"/> with all the <see cref="char"/>s reversed.
         /// Results may vary when operating on strings with <see cref="System.Text.Encoding.Unicode"/> 

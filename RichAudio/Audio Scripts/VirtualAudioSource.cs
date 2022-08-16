@@ -71,6 +71,7 @@ namespace RichPackage.Audio
             stopOnDisable = false;
             PlaySFX();
             Destroy(this);
+            clip = null;
         }
 
         [Button, HorizontalGroup("butts_off"), DisableInEditorMode]

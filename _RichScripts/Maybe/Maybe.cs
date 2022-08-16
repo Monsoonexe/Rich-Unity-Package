@@ -25,7 +25,7 @@ namespace RichPackage
         {
             if (HasNoValue)
                 throw new InvalidOperationException(errorMessage
-                    ?? $"{nameof(Maybe)} has no value.");
+                    ?? $"{nameof(Maybe<T>)} has no value.");
 
             return _value;
         }
@@ -109,19 +109,15 @@ namespace RichPackage
                 return false;
 
             //TODO - remove reflection in favor of 'is'
-            if (obj.GetType() != typeof(Maybe<T>))
+            if (obj.GetType() != typeof(Maybe<T>)) // why not: (!(obj is Maybe<T>))
             {
                 if (obj is T objT)
-                {
-                    obj = new Maybe<T>(objT);
-                }
-
-                if (!(obj is Maybe<T>))
-                    return false;
+                    obj = From(objT);
+                else if (!(obj is Maybe<T>))
+                        return false;
             }
 
-            var other = (Maybe<T>)obj;
-            return Equals(other);
+            return Equals((Maybe<T>)obj);
         }
 
         public bool Equals(Maybe<T> other)
@@ -133,18 +129,12 @@ namespace RichPackage
 
         public override int GetHashCode()
         {
-            if (HasNoValue)
-                return 0;
-
-            return _value.GetHashCode();
+            return HasNoValue ? 0 : _value.GetHashCode();
         }
 
         public override string ToString()
         {
-            if (HasNoValue)
-                return "No value";
-
-            return _value.ToString();
+            return HasNoValue ? "No value" : _value.ToString();
         }
     }
 

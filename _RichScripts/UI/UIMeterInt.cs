@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using RichPackage.FunctionalProgramming;
 
 namespace RichPackage.UI
 {
@@ -61,13 +62,14 @@ namespace RichPackage.UI
 
         #endregion Unity Messages
 
-        public Color GetColorBasedOnLimit(int value)
+        public Color GetColorBasedOnLimit(float fillPercent)
         {
+            int value = (fillPercent * 100).ToInt();
             int len = colorLimits.Length;
             for (int i = 0; i < len; ++i)
             {
                 ColorLimit col = colorLimits[i];
-                if (value <= col.limit)
+                if (value <= col.percentile)
                     return col.color;
             }
 
@@ -82,10 +84,11 @@ namespace RichPackage.UI
         {
             int min = targetData.MinClampValue; //cache
             float range = targetData.MaxClampValue - min;
-            myImage.fillAmount = (targetData - min) / range;
+            float fillPercent = (targetData - min) / range;
+            myImage.fillAmount = fillPercent;
 
             if (applyColorLimits)
-                FillTint = GetColorBasedOnLimit(targetData);
+                FillTint = GetColorBasedOnLimit(fillPercent);
         }
 
         public override void ToggleVisuals(bool active)

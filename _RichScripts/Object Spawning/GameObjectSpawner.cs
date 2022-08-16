@@ -1,21 +1,36 @@
 ﻿using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Spawning
 {
     /// <summary>
     /// Provides helpful functions to make spawning GameObjects easier.
     /// </summary>
-    public class GameObjectSpawner : RichMonoBehaviour
+    public sealed class GameObjectSpawner : RichMonoBehaviour
     {
-        [Header("---Resources---")]
+        [Title("Resources")]
+		[Required, PreviewField(Alignment = ObjectFieldAlignment.Center, Height = 150f)]
         public GameObject spawnable;
 
+		[Title("Settings")]
         [Tooltip("The Transform that should hold spawned items " +
-            "[can be null].")]
+            "[can be null]."), SceneObjectsOnly]
         public Transform spawnableParent;
 
-        public void SetSpawnablePrefab(GameObject newPrefab)
+		[Tooltip("A name to give spawned object. Null or empty will ignore this behavior.")]
+        public string SpawneeNameOverride = null;
+
+		#region Unity Messages
+
+		protected override void Reset()
+		{
+            myTransform = GetComponent<Transform>();
+            SetDevDescription("Provides helpful functions to make spawning GameObjects easier.");
+		}
+
+		#endregion Unity Messages
+
+		public void SetSpawnablePrefab(GameObject newPrefab)
             => spawnable = newPrefab;
 
         /// <summary>
@@ -30,7 +45,14 @@ namespace RichPackage.Spawning
         {
             var newInstance = Instantiate(prefab);
             var newITransform = newInstance.GetComponent<Transform>();
-            newITransform.SetParent(spawnableParent);
+
+            // set parent
+            if (spawnableParent != null)
+                newITransform.SetParent(spawnableParent);
+
+            // set name
+            if (!string.IsNullOrWhiteSpace(SpawneeNameOverride))
+                newInstance.name = SpawneeNameOverride;
 
             return newITransform;
         }
@@ -42,7 +64,14 @@ namespace RichPackage.Spawning
         {
             var newInstance = Instantiate(prefab, position, Quaternion.identity);
             var newITransform = newInstance.GetComponent<Transform>();
-            newITransform.SetParent(spawnableParent);
+
+            // set parent
+            if (spawnableParent != null)
+                newITransform.SetParent(spawnableParent);
+
+            // set name
+            if (!string.IsNullOrWhiteSpace(SpawneeNameOverride))
+                newInstance.name = SpawneeNameOverride;
 
             return newITransform;
         }
@@ -54,7 +83,14 @@ namespace RichPackage.Spawning
         {
             var newInstance = Instantiate(prefab, position, rotation);
             var newITransform = newInstance.GetComponent<Transform>();
-            newITransform.SetParent(spawnableParent);
+
+            // set parent
+            if (spawnableParent != null)
+                newITransform.SetParent(spawnableParent);
+
+            // set name
+            if (!string.IsNullOrWhiteSpace(SpawneeNameOverride))
+                newInstance.name = SpawneeNameOverride;
 
             return newITransform;
         }
@@ -110,7 +146,7 @@ namespace RichPackage.Spawning
         public void DoSpawnNew(GameObject prefab)
             => SpawnNew();
 
-        [Button("DoSpawnNewHere()", EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void DoSpawnNewHere()
             => SpawnNewHere();
 

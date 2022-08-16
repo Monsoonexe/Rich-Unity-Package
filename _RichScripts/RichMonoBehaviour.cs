@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -40,7 +40,7 @@ namespace RichPackage
 
         /// <summary>
         /// Cached Transform  
-        /// (because native 'transform' is secretly <see cref="GameObject.GetComponent{Transform}"/>()' which is expensive on repeat).
+        /// (because native 'transform' is secretly <see cref="GameObject.GetComponent{Transform}"/>' which is expensive on repeat).
         /// </summary>
         public new Transform transform { get => myTransform; }
 
@@ -85,16 +85,18 @@ namespace RichPackage
             return StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
         }
 
-        #endregion Invokation Timing Helpers
+		#endregion Invokation Timing Helpers
 
-        /// <summary>
-        /// Set a reference to a singleton to the given instance if valid.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
-        /// <returns>False if a SingletonError occured.</returns>
-        protected static bool InitSingleton<T>(T instance, ref T singletonRef,
+		#region Singleton Helpers
+
+		/// <summary>
+		/// Set a reference to a singleton to the given instance if valid.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="instance"></param>
+		/// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+		/// <returns>False if a SingletonError occured.</returns>
+		protected static bool InitSingleton<T>(T instance, ref T singletonRef,
             bool dontDestroyOnLoad = true)
             where T : RichMonoBehaviour
         {
@@ -112,6 +114,38 @@ namespace RichPackage
             }
             return valid;
         }
+
+        protected static bool InitSingletonOrDestroyGameObject<T>(T instance, ref T singletonRef,
+            bool dontDestroyOnLoad = true)
+            where T : RichMonoBehaviour
+        {
+            bool valid;
+            if (!(valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad)))
+                Destroy(instance.gameObject);
+
+            return valid;
+        }
+
+        public static void InitSingletonOrThrow<T>(T instance, ref T singletonRef,
+            bool dontDestroyOnLoad = true)
+            where T : RichMonoBehaviour
+        {
+            if (!InitSingleton(instance, ref singletonRef, dontDestroyOnLoad))
+                throw new SingletonException(typeof(T).Name);
+		}
+
+        protected static bool ReleaseSingleton<T>(T instance, ref T singletonRef)
+            where T : RichMonoBehaviour
+        {
+            bool released = instance == singletonRef;
+            if (released)
+                singletonRef = null;
+            return released;
+		}
+
+        #endregion Singleton Helpers
+
+        #region GetComponent Helpers
 
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
@@ -138,6 +172,27 @@ namespace RichPackage
             return gameObject.AddComponent<T>();
         }
 
+        #endregion GetComponent Helpers
+
+        /// <summary>
+        /// Creates a new <see cref="GameObject"/> with the given 
+        /// <typeparamref name="T"/> component attached.
+        /// </summary>
+        /// <returns>The newly created instance.</returns>
+        public static T Construct<T>() where T : RichMonoBehaviour
+            => new GameObject(typeof(T).Name).AddComponent<T>();
+
+        /// <summary>
+        /// Creates a new <see cref="GameObject"/> with the given 
+        /// <typeparamref name="T"/> component attached.
+        /// </summary>
+        /// <param name="name">The name of the new <see cref="GameObject"/>.</param>
+        /// <returns>The newly created instance.</returns>
+        public static T Construct<T>(string name) where T : RichMonoBehaviour
+            => new GameObject(name).AddComponent<T>();
+
+        #region Editor
+
         [Conditional(ConstStrings.UNITY_EDITOR)]
         public void Editor_MarkDirty()
         {
@@ -147,10 +202,6 @@ namespace RichPackage
 #endif
         }
 
-        public static T Construct<T>() where T : RichMonoBehaviour
-            => new GameObject(typeof(T).Name).AddComponent<T>();
-
-        public static T Construct<T>(string name) where T : RichMonoBehaviour
-            => new GameObject(name).AddComponent<T>();
+        #endregion Editor
     }
 }

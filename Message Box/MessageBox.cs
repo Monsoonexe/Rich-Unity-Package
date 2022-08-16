@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
 using RichPackage.Assertions;
+using Cysharp.Threading.Tasks;
+using UnityEngine.Events;
 
 /*
  * On a message box that has an OK button, OK is returned if:
@@ -45,12 +47,12 @@ namespace RichPackage.UI
 		/// For loading really complex payloads.
 		/// </summary>
 		[Serializable]
-		public struct Payload //TODO implement
+		public struct Payload
 		{
 			[Serializable]
 			public struct ButtonPayload
 			{
-				public Action action;
+				public UnityAction action;
 				public string text;
 				public Sprite sprite;
 			}
@@ -113,8 +115,13 @@ namespace RichPackage.UI
 
 		public EMessageBoxResult LastResult { get; private set; } = EMessageBoxResult.None;
 
+		/// <summary>
+		/// Used in <see cref="ShowAsync"/> to avoid a closure.
+		/// </summary>
 		private bool asyncResultPending = false;
 		private CancellationTokenSource cancellationTokenSource;
+
+		#region Unity Messages
 
 		private void Start()
 		{
@@ -131,6 +138,8 @@ namespace RichPackage.UI
 				cancellationTokenSource.Dispose();
 			}
 		}
+
+		#endregion Unity Messages
 
 		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
 		/// <param name="messageBoxTitle">Title of the window.</param>
@@ -176,7 +185,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw new NotImplementedException($"{style} not implemented.");
+					throw ExceptionUtilities.GetEnumNotAccountedException(style);
 			}
 
 			Show();//show visuals
@@ -193,6 +202,8 @@ namespace RichPackage.UI
 
 		public override void ToggleVisuals(bool active)
 			=> windowCanvas.enabled = active;
+
+		public void Close() => Close(EMessageBoxResult.None);
 
 		public void Close(EMessageBoxResult result)
 		{
@@ -222,8 +233,8 @@ namespace RichPackage.UI
 		{
 			if (_payload.HasValue)
 			{
-				Action completeAction = _payload.Value.action; //do the thing
-				completeAction += () => Close(EMessageBoxResult.None); //invoke closing the window.
+				UnityAction completeAction = _payload.Value.action; // do the thing
+				completeAction += Close; // then close the window.
 				_button.Show(completeAction, _payload.Value.text, _payload.Value.sprite);
 			}
 			else
@@ -246,13 +257,19 @@ namespace RichPackage.UI
 			Show();//show visuals
 			if (animate && transitionINAnimator != null)
 			{
-				ToggleButtonInteractivity(false); //disallow interaction until open.
+				ToggleButtonInteractivityFalse(); // disallow interaction until open.
 				transitionINAnimator.Animate(windowTransform,
-					onCompleteCallback: () => ToggleButtonInteractivity(true));
+					onCompleteCallback: ToggleButtonInteractivityTrue);
 			}
 		}
 
 		#region Async
+
+		/// <summary>
+		/// Avoids a closure.
+		/// </summary>
+		private void AsyncResultComplete(EMessageBoxResult result)
+			=> asyncResultPending = false;
 
 		/// <summary>
 		/// Call like EMessageBoxResult result = await ShowAsync(...);
@@ -266,7 +283,7 @@ namespace RichPackage.UI
 		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="animate">Should the window animate opened and closed?</param>
 		/// <exception cref="NotImplementedException"></exception>
-		public async Task<EMessageBoxResult> ShowAsync(string messageBoxText,
+		public async UniTask<EMessageBoxResult> ShowAsync(string messageBoxText,
 			string messageBoxTitle = ConstStrings.EMPTY,
 			EMessageBoxButton style = EMessageBoxButton.OK,
 			bool animate = false,
@@ -278,12 +295,13 @@ namespace RichPackage.UI
 			this.Style = style;
 			promptText.text = messageBoxText;
 			titleText.text = messageBoxTitle;
-			asyncResultPending = true;
+
+			// async stuff
 			cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
-			var cancelToken = cancellationTokenSource.Token;
+			asyncResultPending = true;
+			OnResult = AsyncResultComplete;
 
-			OnResult = (_) => asyncResultPending = false;
-
+			// setup
 			switch (style)
 			{
 				case EMessageBoxButton.OK:
@@ -303,20 +321,22 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw new NotImplementedException($"{style} not implemented.");
+					throw ExceptionUtilities.GetEnumNotAccountedException(style);
 			}
 
-			Show();//show visuals
+			Show(); //show visuals
 			if (animate && transitionINAnimator != null)
 			{
-				ToggleButtonInteractivity(false); //disallow interaction until open.
+				ToggleButtonInteractivityFalse(); //disallow interaction until open.
 				transitionINAnimator.Animate(windowTransform,
-					onCompleteCallback: () => ToggleButtonInteractivity(true));
+					onCompleteCallback: ToggleButtonInteractivityTrue);
 			}
 
+			var cancelToken = cancellationTokenSource.Token;
 			while (asyncResultPending && !cancelToken.IsCancellationRequested)
-				await Task.Yield(); //basically yield return null;
+				await UniTask.Yield(); //basically yield return null;
 
+			cancelToken.ThrowIfCancellationRequested(); // stop execution if cancelled.
 			return LastResult;
 		}
 
@@ -372,6 +392,12 @@ namespace RichPackage.UI
 			OnResult = null;
 		}
 
+		private void ToggleButtonInteractivityTrue()
+			=> ToggleButtonInteractivity(true);
+
+		private void ToggleButtonInteractivityFalse()
+			=> ToggleButtonInteractivity(false);
+
 		private void ToggleButtonInteractivity(bool interactable)
 		{
 			leftButton.enabled = interactable;
@@ -401,22 +427,24 @@ namespace RichPackage.UI
 		None = 0,
 
 		/// <summary>
-		/// Acquiesce
+		/// Acquiesce.
+		/// Identical to <see cref="Left"/> and <see cref="Yes"/>.
 		/// </summary>
 		Okay = 1,
 
 		/// <summary>
-		/// Agree.
+		/// Identical to <see cref="Left"/> and <see cref="Okay"/>.
 		/// </summary>
 		Yes = 1,
 
 		/// <summary>
-		/// Identical to <see cref="Yes"/>.
+		/// Identical to <see cref="Yes"/> and <see cref="Okay"/>.
 		/// </summary>
 		Left = 1,
 
 		/// <summary>
 		/// Reject.
+		/// Identical to <see cref="Middle"/>.
 		/// </summary>
 		No = 2,
 
@@ -427,6 +455,7 @@ namespace RichPackage.UI
 
 		/// <summary>
 		/// Cancel
+		/// Identical to <see cref="Right"/>.
 		/// </summary>
 		Cancel = 3,
 

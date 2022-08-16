@@ -28,6 +28,32 @@ namespace ScriptableObjectArchitecture
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
+        /// <summary>
+        /// Change the max clamp value. Does not raise events.
+        /// </summary>
+        public void SetMaxClampValue(int value)
+		{
+            if (ReadOnly)
+			{
+                RaiseReadonlyWarning();
+                return;
+			}
+            _maxClampedValue = value;
+        }
+
+        /// <summary>
+        /// Change the min clamp value. Does not raise events.
+        /// </summary>
+        public void SetMinClampValue(int value)
+        {
+            if (ReadOnly)
+            {
+                RaiseReadonlyWarning();
+                return;
+            }
+            _minClampedValue = value;
+        }
+
 		#region Operators
 
 		public static int operator +(IntVariable x, int y)
@@ -51,5 +77,31 @@ namespace ScriptableObjectArchitecture
         public void Halve() => Value /= 2;
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
-    } 
+
+        #region Static Constructors
+
+        public static IntVariable Create(int value)
+		{
+            var newVariable = Create(value, int.MinValue, int.MaxValue);
+
+            newVariable._isClamped = false;
+
+            return newVariable;
+		}
+
+        public static IntVariable Create(int initial, int min, int max)
+        {
+            var newVariable = CreateInstance<IntVariable>();
+
+            newVariable.SetMaxClampValue(max);
+            newVariable.SetMinClampValue(min);
+            newVariable.Value = initial;
+            newVariable._isClamped = true;
+            newVariable._readOnly = false;
+
+            return newVariable;
+        }
+
+		#endregion Static Constructors
+	}
 }

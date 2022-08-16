@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
@@ -122,9 +123,6 @@ namespace RichPackage.UI
             myText = GetComponentInChildren<TextMeshProUGUI>();
         }
 
-        /// <summary>
-        /// Please call base.Awake() for maximum ease.
-        /// </summary>
         protected override void Awake()
         {
             base.Awake();
@@ -152,9 +150,9 @@ namespace RichPackage.UI
 
 		#endregion Unity Messages
 
-		public void AddListener(Action action) => myButton.onClick.AddListener(action.Invoke);
+		public void AddListener(UnityAction action) => myButton.onClick.AddListener(action);
 
-        public void RemoveListener(Action action) => myButton.onClick.RemoveListener(action.Invoke);
+        public void RemoveListener(UnityAction action) => myButton.onClick.RemoveListener(action);
 
         /// <summary>
         /// Removes all listeners except my own.
@@ -168,8 +166,8 @@ namespace RichPackage.UI
         /// <summary>
         /// Function called by Button.
         /// </summary>
-        [Button("Click"), DisableInEditorMode]
-        public void Click() => OnPressedEvent?.Invoke(this);
+        [Button, DisableInEditorMode]
+        public void Click() => OnPressedEvent?.Invoke(this); // FIXME - doesn't call myButton.OnClick events.
 
         /// <summary>
         /// Hide/Show visual elements.
@@ -196,26 +194,26 @@ namespace RichPackage.UI
             Show();
         }
 
-        public void Show(Action onPress)
+        public void Show(UnityAction onPress)
         {
             RemoveAllListeners();
-            AddListener(onPress.Invoke);
+            AddListener(onPress);
             Show();
         }
 
-        public void Show(Action onPress, Sprite sprite)
+        public void Show(UnityAction onPress, Sprite sprite)
         {
             Sprite = sprite;
             Show(onPress);
         }
 
-        public void Show(Action onPress, string text)
+        public void Show(UnityAction onPress, string text)
         {
             Text = text;
             Show(onPress);
         }
 
-        public void Show(Action onPress, string text, Sprite sprite)
+        public void Show(UnityAction onPress, string text, Sprite sprite)
         {
             Sprite = sprite;
             Show(onPress, text);
@@ -229,7 +227,14 @@ namespace RichPackage.UI
 
         /// <returns>The <see cref="ObjectProperty"/> value cast to <typeparamref name="T"/>.</returns>
         /// <exception cref="InvalidCastException"/>
+        /// <seealso cref="SetPayload(object)"/>
         public T GetPayload<T>() => (T)ObjectProperty;
+
+        /// <summary>
+        /// Sets the <see cref="ObjectProperty"/>.
+        /// </summary>
+        /// <seealso cref="GetPayload{T}"/>
+        public void SetPayload(object value) => ObjectProperty = value;
 
         #region Button Helpers
 

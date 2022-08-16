@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Sirenix.OdinInspector;
 
 namespace RichPackage.Debugging
@@ -9,7 +9,7 @@ namespace RichPackage.Debugging
 	/// <remarks>Helpful for debugging events.</remarks>
 	public class DebugLogger : RichMonoBehaviour
 	{
-		private const string BUTTON_GROUP_TAG = "b";
+		private const string BUTTON_GROUP_TAG = "Log Helpers";
 
 		/// <summary>
 		/// Log a message to the console with Debug.Log(string).
@@ -17,6 +17,11 @@ namespace RichPackage.Debugging
 		[Title("Log Helpers")]
 		[Button, FoldoutGroup(BUTTON_GROUP_TAG)]
 		public void Log(string message) => Debug.Log(message);
+
+		/// <summary>
+		/// Logs <see langword="this"/>'s <see cref="UnityEngine.Object.name"/>.
+		/// </summary>
+		public void LogSelf() => Debug.Log(name, this);
 
 		/// <summary>
 		/// Log a message to the console with Debug.Log(string, object) and gives self as context.
@@ -31,6 +36,11 @@ namespace RichPackage.Debugging
 		public void LogError(string message) => Debug.LogError(message);
 
 		/// <summary>
+		/// Logs <see langword="this"/>'s <see cref="UnityEngine.Object.name"/>.
+		/// </summary>
+		public void LogErrorSelf() => Debug.LogError(name, this);
+
+		/// <summary>
 		/// Log a message to the console with Debug.LogError(string, object) and gives self as context.
 		/// </summary>
 		[Button, FoldoutGroup(BUTTON_GROUP_TAG)]
@@ -43,11 +53,14 @@ namespace RichPackage.Debugging
 		public void LogWarning(string message) => Debug.LogWarning(message);
 
 		/// <summary>
+		/// Logs <see langword="this"/>'s <see cref="UnityEngine.Object.name"/>.
+		/// </summary>
+		public void LogWarningSelf() => Debug.LogWarning(name, this);
+
+		/// <summary>
 		/// Log a message to the console with Debug.LogWarning(string, object) and gives self as context.
 		/// </summary>
 		[Button, FoldoutGroup(BUTTON_GROUP_TAG)]
 		public void LogWarningSelf(string message) => Debug.LogWarning(message, this);
-
 	}
-
 }

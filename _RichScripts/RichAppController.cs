@@ -12,7 +12,24 @@ namespace RichPackage
     public class RichAppController : RichMonoBehaviour
     {
         private static RichAppController instance;
-        public static RichAppController Instance => instance;
+        public static RichAppController Instance
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (!instance)
+                {
+                    Debug.LogWarning($"[{nameof(RichAppController)}] " +
+                        "Instance is being created. In a build, this would be a " +
+                        $"{nameof(System.NullReferenceException)}, " +
+                        "but in the editor you are protected.");
+
+                    EnsureInstance();
+                }
+#endif
+                return instance;
+            }
+        }
 
         /// <summary>
         /// <see cref="Time.deltaTime"/> that has been cached and un-marshalled.
@@ -40,11 +57,10 @@ namespace RichPackage
         protected override void Awake()
         {
             base.Awake();
-            if (InitSingleton(this, ref instance, dontDestroyOnLoad: true)
+            if (InitSingletonOrDestroyGameObject(this, ref instance, dontDestroyOnLoad: true)
                 .IsFalse())
                 return;
 
-            instance = this;//low-key singleton
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
             DG.Tweening.DOTween.Init();
@@ -95,7 +111,7 @@ namespace RichPackage
                 SceneManager.GetActiveScene().buildIndex);
 
         public static RichAppController Construct()
-            => new GameObject(nameof(RichAppController)).AddComponent<RichAppController>();
+            => Construct<RichAppController>(nameof(RichAppController));
 
         public static void EnsureInstance()
 		{

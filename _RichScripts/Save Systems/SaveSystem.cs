@@ -28,7 +28,11 @@ namespace RichPackage.SaveSystem
 
 		//singleton
 		private static SaveSystem instance;
-		public static SaveSystem Instance { get => instance; }
+		public static SaveSystem Instance 
+		{
+			get => instance;
+			private set => instance = value;
+		}
 
 		[Serializable]
 		public class SaveSystemData : AState
@@ -136,6 +140,10 @@ namespace RichPackage.SaveSystem
 		private void OnDestroy()
 		{
 			SaveMetaInformation(); //just to be safe
+
+			// release singleton
+			if (Instance == this)
+				Instance = null;
 		}
 
 		private void Start()
@@ -147,20 +155,22 @@ namespace RichPackage.SaveSystem
 		protected override void OnEnable()
 		{
 			//subscribe to events
-			GlobalSignals.Get<SaveGame>().AddListener(Save);
+			GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
 			GlobalSignals.Get<ScenePreUnloadSignal>().AddListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
+			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(SaveMe);
 		}
 
 		protected override void OnDisable()
 		{
 			//unsubscribe from events
-			GlobalSignals.Get<SaveGame>().RemoveListener(Save);
+			GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
 			GlobalSignals.Get<ScenePreUnloadSignal>().RemoveListener(Save);
 			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
+			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(SaveMe);
 		}
 
-		#endregion
+		#endregion Unity Messages
 
 		private void LoadFile(int slot)
 		{
@@ -172,13 +182,13 @@ namespace RichPackage.SaveSystem
 		}
 
 		/// <summary>
-		/// Triggered by dispatching <see cref="SaveGame"/>.
+		/// Triggered by dispatching <see cref="SaveGameSignal"/>.
 		/// </summary>
 		[Button, DisableInEditorMode]
 		public void Save()
 		{
 			SaveFile.Save(HAS_SAVE_DATA_KEY, value: true);//flag to indicate there is indeed some save data
-			GlobalSignals.Get<SaveStateToFile>().Dispatch(SaveFile);//broadcast save command
+			GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(SaveFile);//broadcast save command
 			SaveFile.Sync();//save from RAM to Disk
 			RichDebug.EditorLog($"Saved file: {SaveFile.settings.path}.");
 		}
@@ -207,7 +217,7 @@ namespace RichPackage.SaveSystem
 			LoadFile(saveGameSlotIndex);
 
 			//broadcast load command
-			GlobalSignals.Get<LoadStateFromFile>().Dispatch(SaveFile);
+			GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
 
 			//load player inventory
 			RichDebug.EditorLog($"Loaded file: {SaveFile.settings.path}.");
@@ -258,7 +268,7 @@ namespace RichPackage.SaveSystem
 			//initialize
 		}
 
-		#endregion
+		#endregion Meta Save Data
 
 		/// <summary>
 		/// Checks to see if there is any save data in the active file.
@@ -294,59 +304,18 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		public void DeleteMe(ISaveable item) => item.LoadState(SaveFile);
 
-		#endregion
+		#endregion ISaveable Consumers
 
-		#region Console Commands
-
-		//[ConsoleCommand("save")]
-		public static void Save_()
-		{
-			if (Instance)
-				Instance.Save();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("load")]
-		public static void Load_()
-		{
-			if(Instance)
-				Instance.Load();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("loadSlot")]
-		public static void Load_(int slot)
-		{
-			if(Instance)
-				Instance.Load(slot);
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("deleteSave")]
-		public static void DeleteSave_()
-		{
-			if (Instance)
-				Instance.DeleteSave();
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("deleteSaveSlot")]
-		public static void DeleteSave_(int slot)
-		{
-			if (Instance)
-				Instance.DeleteSave(slot);
-			else
-				Debug.LogWarning("No SaveSystem in Scene.");
-		}
-
-		//[ConsoleCommand("openSaveFile"), Button]
+		[QFSW.QC.Command("openSaveFile"), Button]
 		public static void OpenSaveFileInVSCode()
 		{
 			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
+			if (ins == null)
+			{
+				Debug.LogWarning("No SaveSystem in Scene.");
+				return;
+			}
+
 			ins.LoadFile(ins.saveGameSlotIndex);
 			string arg = $"\"code '\"{ins.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
 			var options = new System.Diagnostics.ProcessStartInfo()
@@ -359,7 +328,5 @@ namespace RichPackage.SaveSystem
 			process.EnableRaisingEvents = true;
 			process.Exited += (obj, ctx) => ((System.Diagnostics.Process)obj).Dispose();
 		}
-
-		#endregion
 	}
 }

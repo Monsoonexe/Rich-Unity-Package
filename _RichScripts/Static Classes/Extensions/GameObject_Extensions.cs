@@ -13,7 +13,7 @@ namespace RichPackage
         /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveTrue(this GameObject a)
-            => SetActiveInternal(a, true);
+            => SetActiveChecked(a, true);
 
         /// <summary>
         /// Shortcut for a.enabled = false;
@@ -21,15 +21,15 @@ namespace RichPackage
         /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveFalse(this GameObject a)
-            => SetActiveInternal(a, false);
+            => SetActiveChecked(a, false);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void SetActiveInternal(GameObject a, bool enabled)
+        public static void SetActiveChecked(this GameObject a, bool active)
         {
-            //it's been tested that checking before calling to native code
-            //is more performant if the change isn't needed
-            if (a.activeSelf != enabled)
-                a.SetActive(enabled);
+            // it's been tested that checking before calling to native code
+            // is more performant if the change isn't needed
+            if (a.activeSelf != active)
+                a.SetActive(active);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace RichPackage
         public static void Destroy(this GameObject a)
             => UnityEngine.Object.Destroy(a);
 
-        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, 
+        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
         /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/> if not not null,
         /// otherwise <see cref="GameObject.AddComponent"/>.
         /// </returns>
@@ -56,26 +56,34 @@ namespace RichPackage
         public static T GetOrAddComponent<T>(this GameObject gameObject, T comp = null)
             where T : Component
         {
-            if (comp != null)
-                return comp;
-
-            if ((comp = gameObject.GetComponent<T>()) != null)
+            if (comp != null || (comp = gameObject.GetComponent<T>()) != null)
                 return comp;
 
             return gameObject.AddComponent<T>();
         }
 
-        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, 
+        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
         /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetComponentIfNull<T>(this GameObject gameObject, T comp = null)
             where T : Component
         {
-            return (comp == null) ? gameObject.GetComponent<T>() : comp;
+            return (comp != null) ? comp : gameObject.GetComponent<T>();
         }
 
-        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, 
+        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
+        /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
+        /// </returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetComponentIfNull<T>(this GameObject gameObject, ref T comp)
+            where T : Component
+		{
+            if (comp == null)
+                comp = gameObject.GetComponent<T>();
+		}
+
+        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
         /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
         /// </returns>
         public static T GetComponentIfNull<T>(this GameObject gameObject, Maybe<T> maybeComponent)
@@ -135,5 +143,11 @@ namespace RichPackage
                     components.Add(comp);
             return components;
         }
+
+        /// <summary>
+        /// Set this and all children (and on) to given layer.
+        /// </summary>
+        public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
+            => gameObj.transform.SetLayerRecursively(newLayer);
     }
 }

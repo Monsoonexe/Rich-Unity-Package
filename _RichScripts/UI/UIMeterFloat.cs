@@ -11,7 +11,7 @@ namespace RichPackage.UI
     /// </summary>
     /// <seealso cref="UIMeterInt"/>
     [SelectionBase]
-    public class UIMeterFloat : VariableUIElement<FloatVariable>
+    public sealed class UIMeterFloat : VariableUIElement<FloatVariable>
     {
         private const string ColorLimitsGroup = "Color Limits";
 
@@ -75,7 +75,7 @@ namespace RichPackage.UI
             for (int i = 0; i < len; ++i)
             {
                 ColorLimit col = colorLimits[i];
-                if (value <= col.limit)
+                if (value * 100 <= col.percentile)
                     return col.color;
             }
 

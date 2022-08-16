@@ -1,64 +1,68 @@
-﻿using UnityEngine;
-using RichPackage.Pooling;
-using RichPackage.HealthSystem;
+﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using RichPackage.TriggerVolumes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.ProjectileSystem
 {
     /// <summary>
     /// 
     /// </summary>
-    [RequireComponent(typeof(Collider2D))]
-    public class Projectile2D : Poolable
+    /// <seealso cref="Projectile"/>
+    [RequireComponent(typeof(Collider2D)),
+        RequireComponent(typeof(TriggerVolume))]
+	[Obsolete("Just use Projectile instead. it's exactly the same.")]
+    public class Projectile2D : RichMonoBehaviour
     {
-        [Header("---Projectile---")]
+        [Title("Projectile"), Min(0)]
         public float speed = 5.0f;
-        public int damage = 10;
 
-        [NaughtyAttributes.Tag]
-        public string boundsTag = string.Empty;
+        [Title("References")]
+        [field: SerializeField, Required, LabelText(nameof(Collider))]
+        public Collider2D Collider { get; private set; }
 
-        /// <summary>
-        /// Entity which created this projectile
-        /// </summary>
-        public GameObject ProjectileOwner { get; private set; }
+        [field: SerializeField, Required, LabelText(nameof(TriggerVolume))]
+        public TriggerVolume TriggerVolume { get; private set; }
 
+        #region Unity Messages
+
+        protected override void Reset()
+        {
+            myTransform = GetComponent<Transform>();
+            Collider = GetComponent<Collider2D>();
+            TriggerVolume = GetComponent<TriggerVolume>();
+        }
+
+        // Update is called once per frame
         private void Update()
         {
-            var move = Time.deltaTime * speed * myTransform.forward;
-            myTransform.position += move;
+            // TODO - move with rigidbody instead of translation
+            myTransform.position += myTransform.forward
+                * (Time.deltaTime * speed);
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            var other = collision.gameObject;
-            if (other == ProjectileOwner) return;
+        #endregion Unity Messages
 
-            var damageable = other.GetComponent<IDamageable>();
-            if(damageable != null)
+        /// <summary>
+        /// Returns a <see cref="UniTask"/> that completes when this impacts something,
+        /// the <paramref name="lifetime"/> expires, or the <see cref="Component.gameObject"/> is destroyed.
+        /// </summary>
+        public UniTask GetImpactOrLifetimeOrDestroyAwaiter(float lifetime)
+        {
+            var cts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+            var onImpactHandler = TriggerVolume.OnEnterEvent.GetAsyncEventHandler(cts.Token);
+            UniTask lifetimeTask = UniTask.Delay(TimeSpan.FromSeconds(lifetime), cancellationToken: cts.Token);
+            UniTask awaiter = UniTask.WhenAny(onImpactHandler.OnInvokeAsync(), lifetimeTask); // return value
+            return awaiter.ContinueWith(() =>
             {
-                damageable.TakeDamage(damage);
-                ReturnToPool();
-            }
-        }
+                cts.Cancel();
+                cts.Dispose();
+                onImpactHandler.Dispose();
+            });
 
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            var other = collision.gameObject;
-            if (other == ProjectileOwner) //don't hit owner
-            {
-                return;
-            }
-            else //check if out of bounds
-            if(!string.IsNullOrEmpty(boundsTag)
-                && other.CompareTag(boundsTag))
-            {   //tag matches bounds
-                ReturnToPool();
-            }
-        }
-
-        public void Initialize(GameObject owner)
-        {
-            ProjectileOwner = owner;
+            //return awaiter;
         }
     }
 }

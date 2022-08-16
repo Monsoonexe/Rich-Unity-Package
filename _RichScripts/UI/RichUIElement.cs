@@ -25,9 +25,7 @@ namespace RichPackage.UI
         /// <param name="active"></param>
         public virtual void ToggleVisuals(bool active)
         {
-            //do show if not showing and should be -- and stop showing if are and should not be
-            if (gameObject.activeSelf != active)//ignore if already in requested state
-                gameObject.SetActive(active);
+            gameObject.SetActiveChecked(active);
         }
 
         /// <summary>

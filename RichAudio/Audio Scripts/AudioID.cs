@@ -1,18 +1,20 @@
+using System;
 
 namespace RichPackage.Audio
 {
     /// <summary>
-    /// Holds an immutable ID.
+    /// Holds an immutable, unique ID which can be used to interact with the <see cref="AudioManager"/>
+    /// after an <see cref="UnityEngine.AudioClip"/> has been played.
     /// </summary>
-    public struct AudioID
+    public struct AudioID : IEquatable<AudioID>
     {
-        private static uint IDCounter = 1;
         public const uint INVALID_ID = 0;
+        private static uint IDCounter = 1;
 
         public readonly uint ID;
 
         /// <summary>
-        /// preferred method: var key = new AudioID(AudioID.GetNextID);
+        /// Use <see cref="GetNext"/>.
         /// </summary>
         private AudioID(uint id)
         {
@@ -24,8 +26,14 @@ namespace RichPackage.Audio
         /// </summary>
         public static AudioID Invalid => new AudioID(INVALID_ID);
 
-        public static AudioID GetNextKey() => new AudioID(IDCounter++); 
+        public static AudioID GetNext() => new AudioID(IDCounter++);
 
-        public static implicit operator uint(AudioID a) => a.ID;
+		public bool Equals(AudioID other) => this.ID == other.ID;
+
+		public override int GetHashCode() => ID.GetHashCode();
+
+		public override string ToString() => $"{nameof(AudioID)}-{ID}";
+
+		public static implicit operator uint(AudioID a) => a.ID;
     }
 }

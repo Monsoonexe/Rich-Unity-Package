@@ -203,7 +203,7 @@ namespace RichPackage.DiceSystem
             for(var i = 0; i < count; ++i)
                 outLog.Append(Results[i].ToString() + " | ");
 
-            Debug.Log(StringBuilderCache.GetStringAndReturn(outLog));
+            Debug.Log(StringBuilderCache.ToStringAndReturn(outLog));
         }
 
         /// <summary>

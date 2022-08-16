@@ -40,6 +40,9 @@ namespace RichPackage
         public static readonly string SPACE_SLASH_SPACE = " / ";
         public static readonly string SPACE = " ";
 
+        /// <summary>
+        /// A <see langword="const"/> version of <see cref="string.Empty"/> ("").
+        /// </summary>
         public const string EMPTY = "";
 
         //const chars
@@ -56,6 +59,9 @@ namespace RichPackage
         //multiplier
         public static readonly string X_UPPER = "X";
         public static readonly string X_LOWER = "x";
+
+        // Rich Package
+        public const string RICH_PACKAGE = nameof(RichPackage);
 
         /// <summary>
         /// Cached string versions of commonly-used numbers. 
