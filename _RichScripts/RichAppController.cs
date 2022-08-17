@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
 using RichPackage.FunctionalProgramming;
@@ -58,26 +58,22 @@ namespace RichPackage
         protected override void Awake()
         {
             base.Awake();
-            if (InitSingletonOrDestroyGameObject(this, ref instance, dontDestroyOnLoad: true)
-                .IsFalse())
+            if (!InitSingletonOrDestroyGameObject(this, ref instance, dontDestroyOnLoad: true)
                 return;
-
-            // init stuff
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
             DG.Tweening.DOTween.Init();
-            DG.Tweening.DOTween.SetTweensCapacity(250, 20);
             UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
         }
 
         private void OnDestroy()
         {
-            GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
-            SceneManager.sceneLoaded -= SceneLoadedHandler;
-
             //release singleton
-            if (instance == this)
-                instance = null;
+            if (ReleaseSingleton(this, ref instance))
+            {
+                GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
+                SceneManager.sceneLoaded -= SceneLoadedHandler;
+            }
         }
 
         public void Update()
