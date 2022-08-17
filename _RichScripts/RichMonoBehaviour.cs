@@ -174,6 +174,28 @@ namespace RichPackage
 
         #endregion GetComponent Helpers
 
+        #region Service Locator
+
+        protected static void TryRegisterServiceOrDestroyAndThrow<T>(T instance)
+            where T : RichMonoBehaviour
+        {
+            try
+            {
+                UnityServiceLocator.Instance.RegisterService(typeof(T), instance);
+            }
+            catch
+            {
+                Destroy(instance);
+                throw;
+            }
+        }
+
+        protected static void ReleaseService<T>(T _)
+            where T : RichMonoBehaviour
+            => UnityServiceLocator.Instance.DeregisterService<T>();
+
+        #endregion Service Locator
+
         /// <summary>
         /// Creates a new <see cref="GameObject"/> with the given 
         /// <typeparamref name="T"/> component attached.
