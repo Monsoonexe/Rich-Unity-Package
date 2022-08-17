@@ -58,7 +58,8 @@ namespace RichPackage
         protected override void Awake()
         {
             base.Awake();
-            if (!InitSingletonOrDestroyGameObject(this, ref instance, dontDestroyOnLoad: true)
+            if (!InitSingletonOrDestroyGameObject(
+                this, ref instance, dontDestroyOnLoad: true))
                 return;
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
