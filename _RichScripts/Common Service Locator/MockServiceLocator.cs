@@ -19,8 +19,9 @@ namespace ServiceLocation
 
         protected override object DoGetInstance(Type serviceType, string key)
         {
-            return null == key ? _objects.First(o => serviceType.IsAssignableFrom(o.GetType()))
-                               : _objects.First(o => serviceType.IsAssignableFrom(o.GetType()) && Equals(key, o.GetType().FullName));
+            return null == key 
+                ? _objects.First(o => serviceType.IsAssignableFrom(o.GetType()))
+                : _objects.First(o => serviceType.IsAssignableFrom(o.GetType()) && Equals(key, o.GetType().FullName));
         }
 
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
