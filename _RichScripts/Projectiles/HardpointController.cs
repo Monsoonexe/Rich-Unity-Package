@@ -38,8 +38,9 @@ namespace RichPackage.ProjectileSystem
         /// </summary>
         private int projSpawnPointCount = 0; // ++performance : --memory
 
-        private AudioOptions laserSoundOptions = new AudioOptions // must explicitly initialize
-        { loop = false, pitchShift = true, priority = 127, volume = 1.0f };
+        // must explicitly initialize
+        private AudioOptions laserSoundOptions = new AudioOptions
+        (loop: false, pitchShift: true, priority: 127, volume: 1.0f);
 
         //member components
         private ILaunchable launcher;
