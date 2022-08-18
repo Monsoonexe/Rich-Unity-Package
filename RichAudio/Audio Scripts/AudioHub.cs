@@ -91,7 +91,7 @@ namespace RichPackage.Audio
                 "[AudioHub] Being used without being Init'd: " + this.name, this);
 
             if (audioClipTable.TryGetValue(clipTag, out RichAudioClip entry))
-                entry.PlaySFX();//actually do the thing
+                entry.PlayOneShot();//actually do the thing
             else
                 Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }
