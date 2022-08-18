@@ -62,16 +62,11 @@ namespace RichPackage.Audio
 
 		#endregion Constructors
 
-		/// <summary>
-		/// Procedural form of <see cref="PlaySFX"/>
-		/// </summary>
-		public void DoPlaySFX() => PlaySFX();
+		public void PlaySFX()
+			=> AudioManager.Instance.PlaySFX(Clip, Options);
 
-		public AudioID PlaySFX()
-			=> AudioManager.PlaySFX(Clip, Options);
-
-		public AudioID PlayBGM()
-			=> AudioManager.PlaySFX(Clip, Options);
+		public AudioID PlayMusic()
+			=> AudioManager.Instance.PlayMusic(Clip, Options);
 
 		public static implicit operator AudioClip (RichAudioClipReference a)
 			=> a.Clip;
