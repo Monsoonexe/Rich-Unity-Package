@@ -16,7 +16,7 @@ namespace RichPackage.Audio
 		private RichAudioClip audioClipVariable;
 
 		[SerializeField, ShowIf(nameof(UseConstant))]
-		private AudioOptions overrideOptions = AudioOptions.DefaultSFX;
+		private AudioOptions overrideOptions = AudioOptions.DefaultSfx;
 
 		#region Properties
 
@@ -28,7 +28,7 @@ namespace RichPackage.Audio
 		public bool IsValueDefined => UseConstant || audioClipVariable != null;
 
 		public AudioOptions Options => IsValueDefined
-			? overrideOptions : AudioOptions.DefaultSFX;
+			? overrideOptions : AudioOptions.DefaultSfx;
 
 		public AudioClip Clip => (UseConstant || audioClipVariable == null)
 			? _constantClip : audioClipVariable;
