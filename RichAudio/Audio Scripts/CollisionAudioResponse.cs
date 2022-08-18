@@ -9,18 +9,32 @@ namespace RichPackage.Audio
     {
         [Header("---Settings---")]
         [SerializeField]
-        private float maxForceFactor = 0.25f;
+        private float volumeModifyFactor = 0.25f;
 
         [Header("---Audio---")]
         [SerializeField]
-        private RichAudioClip collisionClip = new RichAudioClip();
+        private RichAudioClipReference collisionClip = new RichAudioClipReference();
 
         public void OnCollisionEnter(Collision collision)
         {
-            var options = collisionClip.Options; //override option's volume
-            options.volume *= (collision.relativeVelocity.magnitude 
-                * maxForceFactor); //volume relative to impact force
-            AudioManager.PlaySFX(collisionClip, options);
+            PlayCollisionAudio(collision);
+        }
+
+        // allows riggin in inspector with CollisionUnityEvent or something
+        public void PlayCollisionAudio(Collision collision)
+        {
+            float modifiedVolume = collision.relativeVelocity.magnitude
+                * volumeModifyFactor * collisionClip.Options.Volume;
+
+            var options = collisionClip.Options;
+
+            // prefer library code so it can be more easily changed
+            AudioManager.Instance.PlaySFX(collisionClip,
+                options.Loop,
+                options.PitchShift,
+                options.Priority,
+                modifiedVolume, // override volume
+                options.Duration);
         }
     }
 }
