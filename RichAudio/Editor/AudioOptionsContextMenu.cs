@@ -25,7 +25,7 @@ namespace RichPackage.Audio.Editor
 
 		private void ConfigureForDefaultSFX(InspectorProperty property)
 		{
-			AudioOptions options = AudioOptions.DefaultSFX;
+			AudioOptions options = AudioOptions.DefaultSfx;
 			property.ValueEntry.WeakValues[0] = options;
 		}
 
