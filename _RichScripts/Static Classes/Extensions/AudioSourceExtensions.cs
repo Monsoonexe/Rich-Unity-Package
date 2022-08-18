@@ -1,11 +1,7 @@
-﻿using DG.Tweening;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace RichPackage.Audio
+namespace UnityEngine
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public static class AudioSourceExtensions
 	{
 		public static AudioSource Restart(this AudioSource source)
@@ -14,7 +10,13 @@ namespace RichPackage.Audio
 			source.Play();
 			return source;
 		}
+	}
+}
 
+namespace DG.Tweening
+{
+    public static class AudioSourceTweenExtensions
+	{
 		public static Tween DOFadeIn(this AudioSource source, float duration, Ease ease = Ease.Linear, float volume = 1.0f)
 		{
 			source.volume = 0; // start quiet
