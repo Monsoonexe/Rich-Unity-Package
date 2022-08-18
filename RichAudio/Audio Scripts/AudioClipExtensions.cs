@@ -15,9 +15,9 @@ namespace RichPackage.Audio
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlayOneShot(this AudioClip clip, bool loop = false,
-                bool pitchShift = true, float crossfade = 0.0f, int priority = 128,
+                bool pitchShift = true, int priority = 128,
                 float volume = 1.0f, float duration = 0.0f)
-            => AudioManager.Instance.PlaySFX(clip, loop, pitchShift, crossfade, priority, volume, duration);
+            => AudioManager.Instance.PlaySFX(clip, loop, pitchShift, priority, volume, duration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlayOneShot(this AudioClip clip, AudioOptions options)
