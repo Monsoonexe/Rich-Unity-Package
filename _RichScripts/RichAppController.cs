@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
-using RichPackage.FunctionalProgramming;
 using RichPackage.Audio;
 
 namespace RichPackage
@@ -91,6 +90,7 @@ namespace RichPackage
         }
 
 		#endregion Unity Messages
+
 
 		public void QuitGame()
         {
