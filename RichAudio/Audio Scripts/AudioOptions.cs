@@ -1,8 +1,6 @@
-﻿//TODO - make a class, not struct
-//but keep in mind some code probably expects the struct behavior
-
-using System;
+﻿using System;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Audio
 {
@@ -11,121 +9,126 @@ namespace RichPackage.Audio
     /// </summary>
     /// <seealso cref="AudioManager"/>
     [Serializable]
-    public struct AudioOptions
+    public sealed class AudioOptions
     {
         #region Constants
 
-        public const float DEFAULT_BGM_CROSSFADE = 2.5f;
-        public const int PRIORITY_UI = 50;
+        public const byte Priority_UI = 96;
+        public const byte Priority_BGM = 32;
+        public const byte Priority_Default = 128;
+        public const float DefaultBgmCrossFade = 2.5f;
+        public const float DefaultVolume = 1.0f;
+        public const int UseClipDuration = -1;
 
-        #endregion  
+        #endregion Constants
+
+        #region Properties
 
         /// <summary>
         /// Repeat when complete.
         /// </summary>
-        [Tooltip("Repeat when complete.")]
-        public bool loop;
+        [PropertyTooltip("Repeat when complete.")]
+        [field: SerializeField, LabelText(nameof(Loop))]
+        public bool Loop { get; private set; } = false;
 
         /// <summary>
         /// Randomize pitch slightly for variation.
         /// </summary>
-        [Tooltip("Randomize pitch slightly for variation.")]
-        public bool pitchShift;
+        [PropertyTooltip("Randomize pitch slightly for variation.")]
+        [field: SerializeField, LabelText(nameof(PitchShift))]
+        public bool PitchShift { get; private set; } = false;
+
+        /// <summary>
+        /// [hi, lo] : [0, 255]
+        /// </summary>
+        [PropertyTooltip("[hi, lo] : [0, 255]")]
+        [PropertyRange(0, 255)]
+        [field: SerializeField, LabelText(nameof(Priority))]
+        public int Priority { get; private set; } = Priority_Default; // should be byte
 
         /// <summary>
         /// How much time should this clip should be played for.
         /// Value LTE 0 means "play full length of clip".
         /// </summary>
-        [Tooltip("How much time should this clip should be played for. \nValue LT 0 means 'full length of clip'.")]
-        public float duration;
+        [PropertyTooltip("How much time should this clip should be played for. \nValue LT 0 means 'full length of clip'.")]
+        [field: SerializeField, LabelText(nameof(Duration))]
+        public float Duration { get; private set; } = UseClipDuration;
 
         /// <summary>
         /// Slowly fade out old track to replace with this one. Useful for background music.
         /// </summary>
-        [Tooltip("Slowly fade out old track to replace with this one. Useful for background music.")]
-        public float crossfade;
+        [PropertyTooltip("Slowly fade out old track to replace with this one. Useful for background music.")]
+        [field: SerializeField, LabelText(nameof(CrossFade))]
+        public float CrossFade { get; private set; } = 0.0f;
 
         /// <summary>
-        /// 0.0 - 1.0
+        /// [0.0, 1.0]
         /// </summary>
-        [Tooltip("[0.0 - 1.0")]
-        [Range(0, 1.0f)]
-        public float volume;
+        [PropertyTooltip("[0.0, 1.0]")]
+        [PropertyRange(0, 1.0f)]
+        [field: SerializeField, LabelText(nameof(Volume))]
+        public float Volume { get; private set; } = 1.0f;
+
+        #endregion Properties
+
+        #region Defaults Options
 
         /// <summary>
-        /// 0 (high) - 255 (low).
+        /// Default options suitable for a one-shot sound effect.
         /// </summary>
-        [Tooltip("0 (hi) - 255 (lo).")]
-        [Range(0, 255)]
-        public int priority;
+        public static readonly AudioOptions DefaultSfx
+            = new AudioOptions(
+                loop: false,
+                pitchShift: true,
+                priority: Priority_Default,
+                duration: UseClipDuration,
+                crossfade: 0.0f);
+
+        /// <summary>
+        /// Default options suitable for persitant background music.
+        /// </summary>
+        public static readonly AudioOptions DefaultBGM
+            = new AudioOptions(
+                loop: true,
+                pitchShift: false,
+                priority: Priority_BGM,
+                crossfade: DefaultBgmCrossFade);
+
+        #endregion Default Options
 
         #region Constructors
 
-        //nope//no guarantee this gets called. Don't rely on it.
-        //public AudioOptions()
-        //{
-        //    loop = false;
-        //    pitchShift = true;
-        //    volume = 1;
-        //    priority = 128;
-        //}
-
         public AudioOptions(bool loop = false, bool pitchShift = true,
-            float volume = 1.0f, int priority = 128,
-            float duration = -1.0f, float crossfade = 0.0f)
+            int priority = Priority_Default, float volume = DefaultVolume,
+            float duration = UseClipDuration, float crossfade = 0.0f)
         {
-            this.loop = loop;
-            this.pitchShift = pitchShift;
-            this.priority = priority;
-            this.volume = volume;
-            this.duration = duration;
-            this.crossfade = crossfade;
+            this.Loop = loop;
+            this.PitchShift = pitchShift;
+            this.Priority = priority;
+            this.Volume = volume;
+            this.Duration = duration;
+            this.CrossFade = crossfade;
         }
 
         /// <summary>
         /// Copy-constructor.
         /// </summary>
-        /// <param name="other"></param>
-        public AudioOptions(in AudioOptions other)
+        public AudioOptions(in AudioOptions source)
 		{
-            this.loop = other.loop;
-            this.pitchShift = other.pitchShift;
-            this.priority = other.priority;
-            this.volume = other.volume;
-            this.duration = other.duration;
-            this.crossfade = other.crossfade;
+            this.Loop = source.Loop;
+            this.PitchShift = source.PitchShift;
+            this.Priority = source.Priority;
+            this.Volume = source.Volume;
+            this.Duration = source.Duration;
+            this.CrossFade = source.CrossFade;
 		}
+
+        public static AudioOptions From(in AudioOptions source)
+            => new AudioOptions(source);
 
         #endregion Constructors
 
-        /// <summary>
-        /// Default options suitable for sound effects.
-        /// </summary>
-        public static AudioOptions DefaultSFX
-        {
-            get => new AudioOptions
-            (
-                loop: false,
-                pitchShift: true,
-                priority: 128,
-                duration: -1.0f,
-                crossfade: 0.0f,
-                volume: 1.0f
-            );
-        }
-
-        /// <summary>
-        /// Default options suitable for background music.
-        /// </summary>
-        public static AudioOptions DefaultBGM
-        {
-            get => new AudioOptions
-            (
-                loop: true,
-                pitchShift: false,
-                priority: 127,
-                crossfade: DEFAULT_BGM_CROSSFADE
-            );
-        }
+        public AudioOptions Clone(in AudioOptions source)
+            => new AudioOptions(source);
     }
 }
