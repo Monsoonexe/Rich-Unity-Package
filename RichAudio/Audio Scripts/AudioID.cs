@@ -9,6 +9,7 @@ namespace RichPackage.Audio
     public struct AudioID : IEquatable<AudioID>
     {
         public const uint INVALID_ID = 0;
+
         private static uint IDCounter = 1;
 
         public readonly uint ID;
@@ -26,7 +27,13 @@ namespace RichPackage.Audio
         /// </summary>
         public static AudioID Invalid => new AudioID(INVALID_ID);
 
-        public static AudioID GetNext() => new AudioID(IDCounter++);
+        public static AudioID GetNext()
+        {
+            unchecked // allow integer overflow (in a billion years)
+            {
+                return new AudioID(IDCounter++);
+            }
+        }
 
 		public bool Equals(AudioID other) => this.ID == other.ID;
 
