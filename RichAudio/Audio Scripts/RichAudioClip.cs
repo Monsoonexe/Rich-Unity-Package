@@ -15,34 +15,30 @@ namespace RichPackage.Audio
         /// </summary>
         [BoxGroup(nameof(Options))]
         [SerializeField, HideLabel, InlineProperty]
-        private AudioOptions options = AudioOptions.DefaultSFX;
+        private AudioOptions options = AudioOptions.DefaultSfx;
 
-        public AudioOptions Options { get => options; private set => options = value; }
+        public AudioOptions Options
+        {
+            get => options;
+            private set => options = value;
+        }
 
         private void Reset()
 		{
             SetDevDescription("Audio with information on how to play it.");
 		}
 
-        public AudioID DoPlayBGM()
+        public AudioID PlayBGM()
         {
-            return AudioManager.PlayBackgroundTrack(AudioClip, Options);
+            return AudioClip.PlayMusic(Options);
         }
 
-        public void DoPlaySFX()
+        public void PlayOneShot()
         {
-            AudioManager.PlaySFX(AudioClip, Options);
+            AudioClip.PlayOneShot(Options);
         }
 
-        public void PlayBGM()
-        {
-            AudioManager.PlayBackgroundTrack(AudioClip, Options);
-        }
-
-        public AudioID PlaySFX()
-        {
-            return AudioManager.PlaySFX(AudioClip, Options);
-        }
+        #region Operators
 
         public static implicit operator AudioClip (RichAudioClip a)
         {
@@ -53,5 +49,7 @@ namespace RichPackage.Audio
         {
             return a.Options;
         }
+
+        #endregion Operators
     }
 }
