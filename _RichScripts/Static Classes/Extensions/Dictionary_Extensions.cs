@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 namespace RichPackage
@@ -26,8 +26,9 @@ namespace RichPackage
         public static bool TryGetRemove<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, out TValue value)
         {
-            bool found = dic.TryGetValue(key, out value);
-            if (found) dic.Remove(key);
+            bool found; // return value
+            if (found = dic.TryGetValue(key, out value))
+                dic.Remove(key);
             return found;
         }
 
@@ -39,10 +40,7 @@ namespace RichPackage
         public static TValue GetRemoveOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, TValue defaultValue = default)
 		{
-            if (dic.TryGetValue(key, out TValue value))
-                return value;
-            else
-                return defaultValue;
+            return dic.TryGetValue(key, out TValue value) ? value : defaultValue;
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
