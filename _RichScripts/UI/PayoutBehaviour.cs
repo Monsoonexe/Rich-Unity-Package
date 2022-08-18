@@ -2,6 +2,7 @@
 using DG.Tweening;
 using TMPro;
 using ScriptableObjectArchitecture;
+using RichPackage.Audio;
 
 namespace RichPackage.UI
 {
@@ -63,7 +64,7 @@ namespace RichPackage.UI
             //effects to play while money is paying out
             void DoStartEffects()
             {
-                pingPingPingAudio.Value.PlaySFX(
+                pingPingPingAudio.Value.PlayOneShot(
                     loop: true, pitchShift: false, duration: duration);
 
                 creditsTMP.color = creditPayoutTMPColor; // make color while paying out
