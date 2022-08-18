@@ -52,13 +52,13 @@ namespace RichPackage.Audio
 
         [Button, HorizontalGroup("butts"), DisableInEditorMode]
         public void PlayOneShot()
-            => AudioManager.Instance.PlaySFX(clip.Clip, clip.Options);
+            => AudioManager.Instance.PlayOneShot(clip.Clip, clip.Options);
 
         public void PlayOneShot(AudioClip clip)
-            => AudioManager.Instance.PlaySFX(clip);
+            => AudioManager.Instance.PlayOneShot(clip);
 
         public void PlayOneShot(AudioClip clip, AudioOptions options)
-            => AudioManager.Instance.PlaySFX(clip, options);
+            => AudioManager.Instance.PlayOneShot(clip, options);
 
         public void PlaySFXAndDestroy()
         {

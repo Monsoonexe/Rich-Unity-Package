@@ -262,10 +262,10 @@ namespace RichPackage.Audio
 
         /// <summary>
         /// Different way to play a SFX if you don't want to
-        /// use <see cref="PlaySFX(AudioClip, AudioOptions)"/>.
+        /// use <see cref="PlayOneShot(AudioClip, AudioOptions)"/>.
         /// </summary>
         /// <param name="duration">If <paramref name="duration"/> &lt; 0, then it will be length of clip.</param>
-        public void PlaySFX(AudioClip clip,
+        public void PlayOneShot(AudioClip clip,
             bool loop = false,
             bool pitchShift = true,
             int priority = AudioOptions.Priority_Default,
@@ -289,7 +289,7 @@ namespace RichPackage.Audio
         /// <summary>
         /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
         /// </summary>
-        public void PlaySFX(AudioClip clip, AudioOptions options)
+        public void PlayOneShot(AudioClip clip, AudioOptions options)
         {
             // flag not an existing clip
             if (clip == null)

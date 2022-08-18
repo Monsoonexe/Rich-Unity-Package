@@ -17,11 +17,11 @@ namespace RichPackage.Audio
         public static void PlayOneShot(this AudioClip clip, bool loop = false,
                 bool pitchShift = true, int priority = 128,
                 float volume = 1.0f, float duration = 0.0f)
-            => AudioManager.Instance.PlaySFX(clip, loop, pitchShift, priority, volume, duration);
+            => AudioManager.Instance.PlayOneShot(clip, loop, pitchShift, priority, volume, duration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlayOneShot(this AudioClip clip, AudioOptions options)
-            => AudioManager.Instance.PlaySFX(clip, options);
+            => AudioManager.Instance.PlayOneShot(clip, options);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopSfx(this AudioID id, float fadeOutDuration = 0.0f)

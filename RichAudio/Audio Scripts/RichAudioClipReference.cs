@@ -63,7 +63,7 @@ namespace RichPackage.Audio
 		#endregion Constructors
 
 		public void PlaySFX()
-			=> AudioManager.Instance.PlaySFX(Clip, Options);
+			=> AudioManager.Instance.PlayOneShot(Clip, Options);
 
 		public AudioID PlayMusic()
 			=> AudioManager.Instance.PlayMusic(Clip, Options);
