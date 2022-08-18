@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 namespace RichPackage
@@ -23,10 +23,10 @@ namespace RichPackage
         /// Otherwise, returns <see langword="false"/>. Will not throw an exception if key does not exist.
         /// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool GetRemove<TKey, TValue>(this Dictionary<TKey, TValue> dic,
+        public static bool TryGetRemove<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, out TValue value)
         {
-            var found = dic.TryGetValue(key, out value);
+            bool found = dic.TryGetValue(key, out value);
             if (found) dic.Remove(key);
             return found;
         }
