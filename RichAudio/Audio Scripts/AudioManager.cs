@@ -1,14 +1,16 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
-using DG.Tweening;
 
 /* 
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()
  * TODO - reduce 'static' interface surface
  * TODO - support StopBGM (track BGM AudioIDs)
- */ 
+ */
 
 namespace RichPackage.Audio
 {
@@ -16,10 +18,25 @@ namespace RichPackage.Audio
     /// This class handles pooling AudioSources for static audio (audio not 
     /// affected by distance from Listener).
     /// </summary>
-    public class AudioManager : RichMonoBehaviour
+    public partial class AudioManager : RichMonoBehaviour
     {
+        #region Constants
+
+        public const int MAX_PRIORITY = byte.MaxValue;
+        public const int MIN_PRIORITY = byte.MinValue;
+
+        #endregion Constants
+
         //singleton
-        private static AudioManager Instance;
+        /// <summary>
+        /// Backing field for <see cref="Instance"/>.
+        /// </summary>
+        private static AudioManager _instance;
+        public static AudioManager Instance
+        {
+            get => _instance;
+            private set => _instance = value;
+        }
 
         private bool instanceIsInitialized = false;
 
@@ -29,45 +46,41 @@ namespace RichPackage.Audio
         /// </summary>
         public static bool IsInitialized { get => Instance != null && Instance.instanceIsInitialized; }
 
-        [Header("---Settings---")]
-        [SerializeField] private int sfxAudioSourceCount = 6;
+        [Title("---Settings---")]
+        [SerializeField, Min(0)] 
+        private int sfxAudioSourceCount = 6;
 
-        [SerializeField] private Ease fadeEase = Ease.Linear;
-        private static Ease FadeEase => Instance.fadeEase;
+        public Ease FadeEase = Ease.Linear;
 
-        [SerializeField] private Vector2 pitchShiftRange = new Vector2(0.8f, 1.2f);
-        private static Vector2 PitchShiftRange { get => Instance.pitchShiftRange; }
+        public Vector2 PitchShiftRange = new Vector2(0.8f, 1.2f);
 
-        [Header("---Resources---")]
-        [SerializeField] private AudioMixer audioMixer;
+        [Title("---Resources---")]
+        [SerializeField]
+        private AudioMixer audioMixer;
 
-        private AudioSource[] SFXAudioSources;
-        private static AudioSource[] SFXSources { get => Instance.SFXAudioSources; }
+        private AudioSource[] sfxAudioSources;
 
         //[Header("---Background Music Sources---")]
         private AudioSource backgroundMusicTrackA;
-        private static AudioSource BackgroundMusicTrackA
-        { get => Instance.backgroundMusicTrackA; }
-
         private AudioSource backgroundMusicTrackB;
-        private static AudioSource BackgroundMusicTrackB
-        { get => Instance.backgroundMusicTrackB; }
 
-        private static AudioSource ActiveMusicTrack;
-        private static float cachedPausedMusicVolume;
+        private AudioSource ActiveMusicTrack;
+        private float cachedPausedMusicVolume;
 
         /// <summary>
         /// This is so the caller can query the sound after the fact, like for interruping a spell.
         /// </summary>
-        private static Dictionary<AudioID, AudioSource> sourceDictionary
+        private Dictionary<AudioID, AudioSource> sourceDictionary
             = new Dictionary<AudioID, AudioSource>(6);
 
-		#region Unity Messages
+        public bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }
 
-		protected override void Awake()
+        #region Unity Messages
+
+        protected override void Awake()
         {
             base.Awake();
-            if (InitSingleton(this, ref Instance, dontDestroyOnLoad: true))
+            if (InitSingleton(this, ref _instance, dontDestroyOnLoad: true))
             {
                 UnityServiceLocator.Instance.RegisterService(this);
                 CreateAudioSources();
@@ -77,7 +90,7 @@ namespace RichPackage.Audio
             else
             {
                 Debug.LogWarning($"[{name}] Singleton: " +
-                    $"Too many AudioManagers in the Scene! Destroying: {name}.", this);
+                    $"Too many AudioManagers in the Scene! Destroying: {gameObject.name}.", this);
                 Destroy(gameObject); // there can only be one!
             }
         }
@@ -86,30 +99,52 @@ namespace RichPackage.Audio
         {
             if (instanceIsInitialized)
             {
+                instanceIsInitialized = false;
                 StopAllCoroutines();
-                foreach (var source in SFXAudioSources)
+                foreach (var source in sfxAudioSources)
                     DOTween.Kill(source);
                 sourceDictionary.Clear();
                 UnityServiceLocator.Instance.DeregisterService(this);
-                instanceIsInitialized = false;
             }
         }
 
-		#endregion Unity Messages
+        #endregion Unity Messages
 
-		/// <summary>
-		/// Create all the AudioSources needed for the whole game.
-		/// </summary>
-		/// <remarks>Create all at once on same GameObject to help with cache.</remarks>
-		private void CreateAudioSources()
+        #region Initialize
+
+        /// <summary>
+        /// Create an AudioManager in the Scene.
+        /// </summary>
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("RichUtilities/Audio/Create Instance in Scene")]
+#endif
+        public static AudioManager Init()
+        {
+            if (!Instance)
+            {
+                var prefab = Resources.Load<AudioManager>(nameof(AudioManager));
+#if UNITY_EDITOR
+                UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
+#else
+                Instantiate(prefab);
+#endif
+            }
+            return Instance;
+        }
+
+        /// <summary>
+        /// Create all the AudioSources needed for the whole game.
+        /// </summary>
+        /// <remarks>Create all at once on same GameObject to help with cache.</remarks>
+        private void CreateAudioSources()
         {
             //create SFX audio sources
-            SFXAudioSources = new AudioSource[sfxAudioSourceCount];
+            sfxAudioSources = new AudioSource[sfxAudioSourceCount];
 
             for (int i = 0; i < sfxAudioSourceCount; ++i)
             {
-                SFXAudioSources[i] = gameObject.AddComponent<AudioSource>(); // new AudioSource
-                SFXAudioSources[i].playOnAwake = false;
+                sfxAudioSources[i] = gameObject.AddComponent<AudioSource>(); // new AudioSource
+                sfxAudioSources[i].playOnAwake = false;
             }
 
             //create background track sources
@@ -120,15 +155,48 @@ namespace RichPackage.Audio
 
             if (audioMixer)
             {   //this section of code makes a lot of assumptions about the given audio mixer
-                var sfxGroup = audioMixer.FindMatchingGroups("SFX")[0];
+                var sfxGroup = audioMixer.FindMatchingGroups("SFX").First();
                 for (int i = 0; i < sfxAudioSourceCount; ++i)
                 {
-                    SFXAudioSources[i].outputAudioMixerGroup = sfxGroup;
+                    sfxAudioSources[i].outputAudioMixerGroup = sfxGroup;
                 }
-                var bgGroup = audioMixer.FindMatchingGroups("Music")[0];
+                var bgGroup = audioMixer.FindMatchingGroups("Music").First();
                 backgroundMusicTrackA.outputAudioMixerGroup = bgGroup;
                 backgroundMusicTrackB.outputAudioMixerGroup = bgGroup;
             }
+        }
+
+        #endregion Initialize
+
+        private static AudioSource DepoolAudioSource(AudioSource[] sources, int clipPriority)
+        {
+            // priority below this value are safe from overriding
+            const int Will_Not_Override = 1;
+            int size = sources.Length;
+            int lowestPriority = clipPriority.Clamp(Will_Not_Override, byte.MaxValue); 
+            int lowestIndex = 0;
+
+            for (int i = 0; i < size; ++i)
+            {
+                AudioSource source = sources[i]; // fetch once
+
+                // prefer source that isn't busy
+                if (!source.isPlaying)
+                {
+                    // use this one
+                    lowestIndex = i;
+                    break;
+                }
+
+                // try to override lowest priority (highest numeric value)
+                else if (source.priority >= lowestPriority)
+                {
+                    lowestPriority = source.priority;
+                    lowestIndex = i;
+                }
+            }
+
+            return sources[lowestIndex];
         }
 
         /// <summary>
@@ -136,7 +204,7 @@ namespace RichPackage.Audio
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        private static AudioID TrackAudio(AudioSource source)
+        private AudioID TrackAudioSource(AudioSource source)
         {
             //maybe use a List of custom structs
             var key = AudioID.GetNext();
@@ -146,30 +214,28 @@ namespace RichPackage.Audio
             return key;
         }
 
-        private static float RandomPitchShift()
-            => Random.Range(PitchShiftRange.x, PitchShiftRange.y);
-
         /// <summary>
         /// Load options and play clip from source.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="clip"></param>
-        /// <param name="options"></param>
-        private static void ConfigAudioSource(AudioSource source,
+        public void ConfigAudioSourceAndPlay(AudioSource source,
             AudioClip clip, in AudioOptions options)
         {
             //load options
-            source.loop = options.loop;
-            source.priority = options.priority;
-            if (options.crossfade > 0)
+            source.loop = options.Loop;
+            source.priority = options.Priority;
+            if (options.CrossFade > 0)
             {
                 source.volume = 0;
-                source.DOFade(options.volume, options.crossfade)
+                source.DOFade(options.Volume, options.CrossFade)
                     .SetEase(FadeEase); // fade in
             }
             else
-                source.volume = options.volume;
-            source.pitch = options.pitchShift ? RandomPitchShift() : 1.0f;
+            {
+                source.volume = options.Volume;
+            }
+            source.pitch = options.PitchShift 
+                ? PitchShiftRange.RandomRange()
+                : 1.0f; // don't shift
             source.clip = clip;
             source.Play();
         }
@@ -177,262 +243,231 @@ namespace RichPackage.Audio
         /// <summary>
         /// Free clip after time.
         /// </summary>
-        /// <param name="clipLength"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private static IEnumerator RemoveSourceAfterClip(float clipLength, 
+        private async UniTaskVoid StopSourceAfterTimeAsync(
+            AudioClip clip, float clipLength, 
             AudioID key, AudioSource source)
         {
-            //TODO - don't 'new' 
-            yield return new WaitForSeconds(clipLength); // wait until duration over
+            // wait until clip finishes playing
+            await UniTask.Delay(TimeSpan.FromSeconds(clipLength),
+                delayTiming: PlayerLoopTiming.EarlyUpdate, // so it is ready this frame
+                cancellationToken: this.GetCancellationTokenOnDestroy());
 
+            // clean up and ready
             sourceDictionary.Remove(key);
-            if (source.loop) // only need to stop if looping.
+            if (source.clip == clip) // only stop if it wasn't cancelled and reused
                 source.Stop();
         }
 
-        #region API
+        #region Play Sound Effects
 
         /// <summary>
-        /// Create an AudioManager in the Scene.
+        /// Different way to play a SFX if you don't want to
+        /// use <see cref="PlaySFX(AudioClip, AudioOptions)"/>.
         /// </summary>
-    #if UNITY_EDITOR
-        [UnityEditor.MenuItem("RichUtilities/Audio/Create Instance in Scene")]
-    #endif
-        public static AudioManager Init()
+        /// <param name="duration">If <paramref name="duration"/> &lt; 0, then it will be length of clip.</param>
+        public void PlaySFX(AudioClip clip,
+            bool loop = false,
+            bool pitchShift = true,
+            int priority = AudioOptions.Priority_Default,
+            float volume = AudioOptions.DefaultVolume,
+            float duration = AudioOptions.UseClipDuration)
         {
-            if (!Instance)
-            {
-                var prefab = Resources.Load<AudioManager>(nameof(AudioManager));
-    #if UNITY_EDITOR
-                UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
-    #else
-                Instantiate(prefab);
-    #endif
-            }
-            return Instance;
-        }
+            // flag not an existing clip
+            if (clip == null)
+                return;
 
-        public static bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }
-
-        public void PlaySFX(AudioClip clip)
-            => AudioManager.PlaySFX(clip);
-
-        public void PlaySFX(RichAudioClip clipVar)
-            => AudioManager.PlaySFX(clipVar.AudioClip, clipVar.Options);
-
-        /// <summary>
-        /// Different way to play a SFX if you don't want to use AudioOptions.
-        /// </summary>
-        /// <param name="duration">If 'duration' LT 0, then it will be length of clip.</param>
-        /// <returns></returns>
-        public static AudioID PlaySFX(AudioClip clip, bool loop = false,
-            bool pitchShift = true, float crossfade = 0.0f, int priority = 128,
-            float volume = 1.0f, float duration = 0.0f)
-        {
-            if (clip == null) return AudioID.Invalid;//for safety
             var audioOptions = new AudioOptions(
-                loop: loop, pitchShift: pitchShift, crossfade: crossfade,
-                priority: priority, volume: volume,
-                duration: duration //validate
-                );
+                loop: loop,
+                pitchShift: pitchShift,
+                priority: priority,
+                volume: volume,
+                duration: duration);
 
-            return PlaySFX(clip, audioOptions);
+            PlaySfxInternal(clip, audioOptions);
         }
 
         /// <summary>
         /// Play the given clip. If 'duration' LT 0, then it will be length of clip.
         /// </summary>
-        /// <param name="clip"></param>
-        /// <param name="options"></param>
-        public static AudioID PlaySFX(AudioClip clip, AudioOptions options)
+        public void PlaySFX(AudioClip clip, AudioOptions options)
         {
-            if (clip == null) return AudioID.Invalid;//for safety
+            // flag not an existing clip
+            if (clip == null)
+                return;
 
-            Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
-                "Please call AudioManager.Init() or instantiate prefab at root.");
+            options = options ?? AudioOptions.DefaultSfx;
 
-            //default values for options, iff none included.
-            if (options.priority <= 0) //clear sign this wasn't init'd
-                options = AudioOptions.DefaultSFX;
+            PlaySfxInternal(clip, options);
+        }
 
-            //find an audio source with the lowest volume, or that is not playing
-            var sources = SFXSources;
-            int size = sources.Length;
-            int lowestPriority = 255; //[0 - 255]
-            int lowestIndex = 0;
-            AudioSource source;
+        private void PlaySfxInternal(AudioClip clip, AudioOptions options)
+        {
+            ConfigAudioSourceAndPlay(DepoolAudioSource(sfxAudioSources, options.Priority), clip, in options);
+        }
 
-            for (int i = 0; i < size; ++i)
+        /// <summary>
+        /// Restart the clip associated with <paramref name="key"/> if it is playing.
+        /// </summary>
+        public AudioID RestartSfx(AudioID key)
+        {
+            AudioID newID = AudioID.Invalid; // return value
+
+            //TODO - take into account Coroutine
+            //check key is valid and source is active
+            if (key != AudioID.Invalid
+                && sourceDictionary.TryGetValue(key,
+                    out AudioSource source))
             {
-                source = sources[i];
-                if (!source.isPlaying) // if this one isn't busy
-                {
-                    // use this one
-                    lowestIndex = i;
-                    break;
-                }
-
-                //try to override lowest priority
-                else if (source.priority < lowestPriority)
-                {
-                    lowestPriority = source.priority;
-                    lowestIndex = i;
-                }
+                StopSFX(key);
+                newID = TrackAudioSource(source);
             }
 
-            source = sources[lowestIndex];
-            //set duration to clip length if <= 0
-            var _duration = options.duration <= 0 ? clip.length : options.duration;
+            return newID;
+        }
 
-            var key = TrackAudio(source); // return a key so audio can be interrupted later
-            ConfigAudioSource(source, clip, in options);
-            
-            //loop and duration <= 0 implies "play this track until I say stop"
-            if(!(options.loop && options.duration <= 0))
-                Instance.StartCoroutine(
-                    RemoveSourceAfterClip(_duration, key, source)); // free source after time
+        #endregion Play Sound Effects
+
+        #region Stop Sound Effects
+
+        /// <summary>
+        /// Stop clip from playing and free up AudioSource.
+        /// </summary>
+        public void StopSFX(AudioID key, float fadeOutDuration = 0.0f, Ease fadeEase = Ease.Linear)
+        {
+            // check for invalid key
+            if (key.Equals(AudioID.Invalid))
+                return;
+
+            // stop the clip if we were tracking it
+            if (sourceDictionary.TryGetRemove(key, out AudioSource source))
+            {
+                if (fadeOutDuration > 0.01f)
+                {
+                    source.DOFade(0, fadeOutDuration)
+                        .SetEase(fadeEase);
+                }
+                else
+                {
+                    source.Stop();
+                }
+            }
+        }
+
+        public void StopAllSFX()
+        {
+            for (int i = sfxAudioSources.Length - 1; i >= 0; --i)
+                sfxAudioSources[i].Stop();
+        }
+
+        public void StopAllSFX(float fadeOutDuration)
+        {
+            for (int i = sfxAudioSources.Length - 1; i >= 0; --i)
+            {
+                sfxAudioSources[i].DOFade(0, fadeOutDuration)
+                    .SetEase(FadeEase)
+                    .OnComplete(sfxAudioSources[i].Stop);
+            }
+        }
+
+        #endregion Stop Sound Effects
+
+        #region Play Ambient Sounds
+
+        public AudioID PlayAmbientSfx(AudioClip clip, AudioOptions options)
+        {
+            if (clip == null)
+                return AudioID.Invalid;
+
+            AudioSource source = DepoolAudioSource(sfxAudioSources, options.Priority);
+            AudioID key = TrackAudioSource(source);
+            ConfigAudioSourceAndPlay(source, clip, in options);
+
+            if (options.Duration > 0 && !options.Loop)
+                StopSourceAfterTimeAsync(clip, options.Duration, key, source).Forget();
+
             return key;
         }
 
-        public static void PauseBackgroundTrack()
+        #endregion Play Ambient Sounds
+
+        #region Play Background Music
+
+        public void PauseBackgroundTrack()
         {
             ActiveMusicTrack.Pause();
         }
 
-        public static void PauseBackgroundTrack(float fadeDuration)
+        public void PauseBackgroundTrack(float fadeDuration)
         {
-            Debug.Assert(fadeDuration > 0,
-                "Invalid fadeDuration: " + fadeDuration + ". Expected positive value.");
+            GuardClauses.GuardAgainst.IsZeroOrNegative(fadeDuration, nameof(fadeDuration));
 
             cachedPausedMusicVolume = ActiveMusicTrack.volume;
             ActiveMusicTrack.DOFade(0, fadeDuration)
                 .SetEase(FadeEase)
                 .OnComplete(ActiveMusicTrack.Pause);
         }
-
-        /// <summary>
-        /// Restart the clip with the given ID if it is playing.
-        /// </summary>
-        public static void RestartSFX(AudioID key)
-        {
-            //TODO - take into account Coroutine
-            //check key is valid and source is active
-            if (key != AudioID.Invalid 
-                && sourceDictionary.TryGetValue(key, 
-                    out AudioSource source))
-            {
-                source.Stop();
-                source.Play();
-            }
-        }
         
-        public static void RestartBGM()
+        /// <summary>
+        /// Restart clip from the beginning.
+        /// </summary>
+        public void RestartMusic()
         {
-            AudioSource source = ActiveMusicTrack;
-            if(source != null)
-            {
-                source.Stop();
-                source.Play();
-            }
+            ActiveMusicTrack?.Restart();
         }
 
-        public static void ResumeBackgroundTrack()
+        public void ResumeMusic()
         {
             ActiveMusicTrack.Play();
+            ActiveMusicTrack.volume = cachedPausedMusicVolume;
         }
 
-        public static void ResumeBackgroundTrack(float fadeDuration)
+        public void ResumeMusic(float fadeDuration)
         {
-            Debug.Assert(fadeDuration > 0,
-                "Invalid fadeDuration: " + fadeDuration + ". Expected positive value.");
+            // validate
+            GuardClauses.GuardAgainst.IsZeroOrNegative(fadeDuration, nameof(fadeDuration));
 
+            // fade
             ActiveMusicTrack.volume = 0;
             ActiveMusicTrack.Play();
             ActiveMusicTrack.DOFade(cachedPausedMusicVolume, fadeDuration)
                 .SetEase(FadeEase);
         }
 
-        public static AudioID PlayBackgroundTrack(AudioClip clip)
-            => PlayBackgroundTrack(clip, AudioOptions.DefaultBGM);
+        public AudioID PlayMusic(AudioClip clip)
+            => PlayMusic(clip, AudioOptions.DefaultBGM);
 
-        public static AudioID PlayBackgroundTrack(AudioClip clip,
+        public AudioID PlayMusic(AudioClip clip,
             in AudioOptions options)
         {
             if (!clip) return AudioID.Invalid;//for safety
 
-            Debug.Assert(Instance != null, "[AudioManager] Not initialized. " +
-                "Please call AudioManager.Init() or instantiate prefab at root.");
-
-            ActiveMusicTrack.DOFade(0, options.crossfade)
+            ActiveMusicTrack.DOFade(0, options.CrossFade)
                 .SetEase(FadeEase); // fade out current track
-            ActiveMusicTrack = ActiveMusicTrack == BackgroundMusicTrackA ? // switch active track
-                BackgroundMusicTrackB : BackgroundMusicTrackA; // just alternate tracks
+            ActiveMusicTrack = ActiveMusicTrack == backgroundMusicTrackA ? // switch active track
+                backgroundMusicTrackB : backgroundMusicTrackA; // just alternate tracks
 
-            var key = TrackAudio(ActiveMusicTrack);
-            if (!options.loop) // if it's looping, it's up to caller to stop the clip.
-                Instance.StartCoroutine(RemoveSourceAfterClip(
-                    clip.length, key, ActiveMusicTrack)); // free source after time
-            ConfigAudioSource(ActiveMusicTrack, clip, in options);
+            AudioID key = TrackAudioSource(ActiveMusicTrack);
+            ConfigAudioSourceAndPlay(ActiveMusicTrack, clip, in options);
             return key;
         }
 
-        /// <summary>
-        /// Stop clip from playing and free up AudioSource.
-        /// </summary>
-        /// <param name="key"></param>
-        public static void StopSFX(AudioID key, float fadeOutDuration = 0.0f)
+        public void StopAllMusic()
         {
-            if (key.Equals(AudioID.Invalid)) return;//check for invalid key
-
-            var found = sourceDictionary.TryGetValue(key, out AudioSource source);
-
-            if (found)
-            {
-                sourceDictionary.Remove(key);
-                if (fadeOutDuration > 0.01f)
-                    source.DOFade(0, fadeOutDuration)
-                    .SetEase(FadeEase);
-                else
-                    source.Stop();
-            }
+            backgroundMusicTrackA.Stop();
+            backgroundMusicTrackB.Stop();
         }
 
-        public static void StopAllSFX()
+        public void StopAllMusic(float fadeDuration, Ease fadeEase = Ease.Linear)
         {
-            var sources = SFXSources;
-            for (int i = sources.Length - 1; i >= 0; --i)
-                sources[i].Stop();
-        }
+            // validate
+            GuardClauses.GuardAgainst.IsZeroOrNegative(fadeDuration, nameof(fadeDuration));
 
-        public static void StopAllSFX(float fadeOutDuration)
-        {
-            var sources = SFXSources;
-            for (int i = sources.Length - 1; i >= 0; --i)
-            {
-                sources[i].DOFade(0, fadeOutDuration)
-                    .SetEase(FadeEase)
-                    .OnComplete(sources[i].Stop);
-            }
-        }
+            // animate
+            if (backgroundMusicTrackA.isPlaying)
+                backgroundMusicTrackA.DOFadeOut(fadeDuration, fadeEase);
 
-        public static void StopAllBackground()
-        {
-            BackgroundMusicTrackA.Stop();
-            BackgroundMusicTrackB.Stop();
-        }
-
-        public static void StopAllBackground(float fadeDuration)
-        {
-            if(BackgroundMusicTrackA.isPlaying)
-                BackgroundMusicTrackA.DOFade(0, fadeDuration)
-                    .SetEase(FadeEase)
-                    .OnComplete(BackgroundMusicTrackA.Stop);
-
-            if (BackgroundMusicTrackB.isPlaying)
-                BackgroundMusicTrackB.DOFade(0, fadeDuration)
-                    .SetEase(FadeEase)
-                    .OnComplete(BackgroundMusicTrackB.Stop);
+            if (backgroundMusicTrackB.isPlaying)
+                backgroundMusicTrackB.DOFadeOut(fadeDuration, fadeEase);
         }
 
         public void MuteBackgroundTrack(bool muted)
@@ -441,7 +476,7 @@ namespace RichPackage.Audio
         public void ToggleMuteBackgroundTrack()
             => ActiveMusicTrack.mute = !ActiveMusicTrack.mute;
 
-        #endregion
+        #endregion Play Background Music
     }
 
 }
