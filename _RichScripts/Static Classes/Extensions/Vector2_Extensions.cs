@@ -20,7 +20,7 @@ namespace RichPackage
         /// </Summmary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Range(this Vector2 a)
-            => RichMath.AbsoluteValue(a.x - a.y);
+            => System.Math.Abs(a.x - a.y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 WithX(this Vector2 a, float x)
