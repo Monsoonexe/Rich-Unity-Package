@@ -76,13 +76,13 @@ namespace RichPackage.PlayingCards
             //move card from deck to point
             var moveTween = cardXform.DOMove(
                 targetPoint.position, dealTileDuration)
-                .OnStart(dealCardAudio.DoPlaySFX)
+                .OnStart(dealCardAudio.PlaySFX)
                 .SetEase(moveEase);
 
             //flip to show face
             var flipTween = cardXform.DOLocalRotateBy(
                 new Vector3(0, 180, 0), flipDuration)
-                .OnStart(flipCardAudio.DoPlaySFX)
+                .OnStart(flipCardAudio.PlaySFX)
                 .SetEase(flipEase);
 
             //punch for added effect
