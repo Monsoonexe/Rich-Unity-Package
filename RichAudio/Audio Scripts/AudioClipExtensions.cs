@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
-using UnityEngine;
+using RichPackage.Audio;
 
-namespace RichPackage.Audio
+namespace UnityEngine
 {
     /// <summary>
     /// Handy class to do fancy things like `myAudioClip.PlayOneShot();`
