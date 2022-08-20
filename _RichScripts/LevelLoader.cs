@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using RichPackage.Audio;
 using RichPackage.UI;
 using RichPackage.Events.Signals;
 using RichPackage.YieldInstructions;
@@ -125,7 +126,7 @@ namespace RichPackage
             //fade out
             ScreenTransitionController.Instance
                 .TriggerTransition(outTransitionMessage);//hide scene
-            transitionOUTClip.Value.PlaySFX();
+            transitionOUTClip.Value.PlayOneShot();
 
             yield return null;
             RichAppController.EnsureInstance(); //just to be sure.
@@ -152,7 +153,7 @@ namespace RichPackage
             ScreenTransitionController.Instance.
                 TriggerTransition(inTransitionMessage);
 
-            transitionINClip.Value.PlaySFX();
+            transitionINClip.Value.PlayOneShot();
 
             //wait for scene to fully open, and just a bit longer
             yield return transitionWait;
