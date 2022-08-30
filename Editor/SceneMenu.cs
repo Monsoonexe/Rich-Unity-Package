@@ -20,7 +20,7 @@ using ScriptableObjectArchitecture;
 
 namespace RichPackage.Editor
 {
-    public static class SceneMenu
+    public static partial class SceneMenu
     {        
         private const string scriptFilePath = "Assets/RichUnityPackage/Editor/SceneMenu.cs";
 
