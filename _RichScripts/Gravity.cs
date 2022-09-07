@@ -1,39 +1,40 @@
 ﻿using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace RichPackage
-{  
+{
+    [RequireComponent(typeof(Rigidbody))]
     public class Gravity : RichMonoBehaviour
     {
         public static readonly Vector3 STANDARD_GRAVITY 
             = new Vector3(0, -9.81f, 0);
 
-        [Header("---Settings---")]
-        [SerializeField]
-        private Vector3 gravityVector = STANDARD_GRAVITY;
+        [Title("Settings")]
+        public Vector3 gravityVector = STANDARD_GRAVITY;
 
-        [Header("---Ground Detection Settings---")]
-        [SerializeField]
-        [Min(0.2f)]
-        private float groundDetectDistance = 0.5f;
+        [Min(0.1f)]
+        public float groundDetectDistance = 0.5f;
 
-        [SerializeField]
-        private QueryTriggerInteraction detectTriggersAsGround 
+        public QueryTriggerInteraction detectTriggersAsGround 
             = QueryTriggerInteraction.Ignore;
 
-        [SerializeField]
-        private LayerMask raycastLayerMask = 512;//9 = ground
+        public LayerMask raycastLayerMask = 512;//9 = ground
 
         public bool IsGrounded { get; private set; }
 
-        [Header("---Prefab Refs---")]
-        [SerializeField]
+        [Title("Prefab Refs")]
+        [SerializeField, Required]
         private Transform raycastOriginPoint;
+
+        [SerializeField, Required]
+        private Rigidbody myRigidbody;
 
         protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I act as gravity for objects with no non-kinematic rigidbody.");
             raycastOriginPoint = GetComponent<Transform>();
+            myRigidbody = GetComponent<Rigidbody>();
         }
 
         // Update is called once per frame
@@ -43,7 +44,7 @@ namespace RichPackage
             if(!IsGrounded)
             {
                 var step = gravityVector * RichAppController.FixedDeltaTime;
-                myTransform.position += step;
+                myRigidbody.Move(gravityVector);
             }
         }
 
