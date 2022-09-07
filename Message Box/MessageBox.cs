@@ -1,11 +1,9 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Sirenix.OdinInspector;
-using RichPackage.Assertions;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Events;
 
@@ -36,7 +34,7 @@ namespace RichPackage.UI
 	/// Standard message box.
 	/// </summary>
 	[SelectionBase]
-	public class MessageBox : RichUIElement
+	public sealed class MessageBox : RichUIElement, IMessageBox
 	{
 		private const string YES = "Yes";
 		private const string NO = "No";
@@ -119,24 +117,24 @@ namespace RichPackage.UI
 		/// Used in <see cref="ShowAsync"/> to avoid a closure.
 		/// </summary>
 		private bool asyncResultPending = false;
-		private CancellationTokenSource cancellationTokenSource;
 
 		#region Unity Messages
+
+		protected override void Awake()
+		{
+			base.Awake();
+			UnityServiceLocator.Instance.RegisterMessageBox(this);
+		}
 
 		private void Start()
 		{
 			if (hideOnStart)
-				Hide();			
+				Hide();
 		}
 
 		private void OnDestroy()
 		{
-			//clean up resources and prevent Tasks leaking into the Editor.
-			if (cancellationTokenSource != null)
-			{
-				cancellationTokenSource.Cancel();
-				cancellationTokenSource.Dispose();
-			}
+			UnityServiceLocator.Instance.DeregisterMessageBox(this);
 		}
 
 		#endregion Unity Messages
@@ -149,7 +147,6 @@ namespace RichPackage.UI
 		/// <param name="button2Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="animate">Should the window animate opened and closed?</param>
-		/// <exception cref="NotImplementedException"></exception>
 		[Button]
 		public void Show(string messageBoxText, string messageBoxTitle = ConstStrings.EMPTY,
 			EMessageBoxButton style = EMessageBoxButton.OK,
@@ -185,7 +182,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw ExceptionUtilities.GetEnumNotAccountedException(style);
+					throw ExceptionUtilities.BuildMissingEnumCaseException(style);
 			}
 
 			Show();//show visuals
@@ -208,18 +205,6 @@ namespace RichPackage.UI
 		public void Close(EMessageBoxResult result)
 		{
 			LastResult = result;
-			void Finalize()
-			{
-				Hide(); //hide window
-				if(OnResult != null)
-				{
-					//support chaining of windows, like "are you sure?". Prevent double-calling and lost callbacks
-					//MessageBoxResultCallback temp = OnResult.Clone() as MessageBoxResultCallback;
-					MessageBoxResultCallback temp = OnResult; //copy
-					OnResult = null; //remove so next window could subscribe
-					temp(LastResult); //can still call events without overlap
-				}
-			}
 
 			ToggleButtonInteractivity(false); //disable, but don't hide.
 
@@ -227,6 +212,18 @@ namespace RichPackage.UI
 				transitionOUTAnimator.Animate(windowTransform, Finalize);
 			else
 				Finalize();
+		}
+		
+		private void Finalize()
+		{
+			Hide(); //hide window
+			if (OnResult != null)
+			{
+				//support chaining of windows, like "are you sure?". Prevent double-calling and lost callbacks
+				MessageBoxResultCallback temp = OnResult; // save
+				OnResult = null; // remove so next window could subscribe
+				temp(LastResult); // can still call events without overlap
+			}
 		}
 
 		private void SetButton(RichUIButton _button, in Payload.ButtonPayload? _payload)
@@ -273,7 +270,6 @@ namespace RichPackage.UI
 
 		/// <summary>
 		/// Call like EMessageBoxResult result = await ShowAsync(...);
-		/// EXPIREMENTAL AND MAY NOT WORK OR BREAK SOMETHING.
 		/// </summary>
 		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
 		/// <param name="messageBoxTitle">Title of the window.</param>
@@ -282,7 +278,6 @@ namespace RichPackage.UI
 		/// <param name="button2Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="animate">Should the window animate opened and closed?</param>
-		/// <exception cref="NotImplementedException"></exception>
 		public async UniTask<EMessageBoxResult> ShowAsync(string messageBoxText,
 			string messageBoxTitle = ConstStrings.EMPTY,
 			EMessageBoxButton style = EMessageBoxButton.OK,
@@ -297,7 +292,6 @@ namespace RichPackage.UI
 			titleText.text = messageBoxTitle;
 
 			// async stuff
-			cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
 			asyncResultPending = true;
 			OnResult = AsyncResultComplete;
 
@@ -321,7 +315,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw ExceptionUtilities.GetEnumNotAccountedException(style);
+					throw ExceptionUtilities.BuildMissingEnumCaseException(style);
 			}
 
 			Show(); //show visuals
@@ -332,15 +326,13 @@ namespace RichPackage.UI
 					onCompleteCallback: ToggleButtonInteractivityTrue);
 			}
 
-			var cancelToken = cancellationTokenSource.Token;
-			while (asyncResultPending && !cancelToken.IsCancellationRequested)
+			while (asyncResultPending)
 				await UniTask.Yield(); //basically yield return null;
 
-			cancelToken.ThrowIfCancellationRequested(); // stop execution if cancelled.
 			return LastResult;
 		}
 
-		#endregion
+		#endregion Async
 
 		/// <param name="buttonText">Will be "OK" if null.</param>
 		private void SetupSingleButton(string buttonText = OKAY)
@@ -416,7 +408,7 @@ namespace RichPackage.UI
 
 		private void Cancel() => Close(EMessageBoxResult.Cancel);
 
-		#endregion
+		#endregion Responses
 	}
 
 	public enum EMessageBoxResult
