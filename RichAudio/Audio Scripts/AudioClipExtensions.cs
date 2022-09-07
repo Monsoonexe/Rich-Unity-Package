@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using RichPackage;
 using RichPackage.Audio;
 
 namespace UnityEngine
@@ -11,24 +12,24 @@ namespace UnityEngine
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AudioID PlayMusic(this AudioClip clip,
             AudioOptions options = default)
-            => AudioManager.Instance.PlayMusic(clip, options);
+            => UnityServiceLocator.AudioPlayer.PlayMusic(clip, options);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlayOneShot(this AudioClip clip, bool loop = false,
                 bool pitchShift = true, int priority = 128,
                 float volume = 1.0f, float duration = 0.0f)
-            => AudioManager.Instance.PlayOneShot(clip, loop, pitchShift, priority, volume, duration);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip, loop, pitchShift, priority, volume, duration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PlayOneShot(this AudioClip clip, AudioOptions options)
-            => AudioManager.Instance.PlayOneShot(clip, options);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip, options);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopSfx(this AudioID id, float fadeOutDuration = 0.0f)
-            => AudioManager.Instance.StopSFX(id, fadeOutDuration);
+            => UnityServiceLocator.AudioPlayer.StopSFX(id, fadeOutDuration);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AudioID RestartSFX(this AudioID id)
-            => AudioManager.Instance.RestartSfx(id);
+            => UnityServiceLocator.AudioPlayer.RestartSfx(id);
     }
 }

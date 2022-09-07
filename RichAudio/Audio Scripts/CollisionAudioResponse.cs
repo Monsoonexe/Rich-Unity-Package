@@ -29,7 +29,7 @@ namespace RichPackage.Audio
             var options = collisionClip.Options;
 
             // prefer library code so it can be more easily changed
-            AudioManager.Instance.PlayOneShot(collisionClip,
+            UnityServiceLocator.AudioPlayer.PlayOneShot(collisionClip,
                 options.Loop,
                 options.PitchShift,
                 options.Priority,

@@ -42,23 +42,23 @@ namespace RichPackage.Audio
 
         [Button, HorizontalGroup("butts"), DisableInEditorMode]
         public void PlayMusic()
-            => audioID = AudioManager.Instance.PlayMusic(clip);
+            => audioID = UnityServiceLocator.AudioPlayer.PlayMusic(clip);
 
         public void PlayMusic(AudioClip clip)
-            => audioID = AudioManager.Instance.PlayMusic(clip);
+            => audioID = UnityServiceLocator.AudioPlayer.PlayMusic(clip);
 
         public void PlayBGM(AudioClip clip, in AudioOptions options)
-            => audioID = AudioManager.Instance.PlayMusic(clip, options);
+            => audioID = UnityServiceLocator.AudioPlayer.PlayMusic(clip, options);
 
         [Button, HorizontalGroup("butts"), DisableInEditorMode]
         public void PlayOneShot()
-            => AudioManager.Instance.PlayOneShot(clip.Clip, clip.Options);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip.Clip, clip.Options);
 
         public void PlayOneShot(AudioClip clip)
-            => AudioManager.Instance.PlayOneShot(clip);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip);
 
         public void PlayOneShot(AudioClip clip, AudioOptions options)
-            => AudioManager.Instance.PlayOneShot(clip, options);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip, options);
 
         public void PlaySFXAndDestroy()
         {
@@ -69,6 +69,6 @@ namespace RichPackage.Audio
 
         [Button, HorizontalGroup("butts_off"), DisableInEditorMode]
         public void StopBGM()
-            => AudioManager.Instance.StopAllMusic();
+            => UnityServiceLocator.AudioPlayer.StopAllMusic();
     }
 }

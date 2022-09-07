@@ -61,7 +61,7 @@ namespace RichPackage.Audio
 		#endregion UnityMessages
 
 		private void PlayOneShot(AudioClip clip)
-            => AudioManager.Instance.PlayOneShot(clip);
+            => UnityServiceLocator.AudioPlayer.PlayOneShot(clip);
 
         [Button, DisableInEditorMode]
         public void Inititialize()
@@ -105,7 +105,7 @@ namespace RichPackage.Audio
                 "[AudioHub] Being used without being Init'd: " + this.name, this);
 
             if (audioClipTable.TryGetValue(clipTag, out RichAudioClip entry))
-                AudioManager.Instance.PlayOneShot(entry, options);//actually do the thing
+                UnityServiceLocator.AudioPlayer.PlayOneShot(entry, options);//actually do the thing
             else
                 Debug.LogWarning($"[{nameof(AudioHub)}] Requested clip '{clipTag}' not found on {name}.", this);
         }

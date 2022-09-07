@@ -63,10 +63,10 @@ namespace RichPackage.Audio
 		#endregion Constructors
 
 		public void PlaySFX()
-			=> AudioManager.Instance.PlayOneShot(Clip, Options);
+			=> UnityServiceLocator.AudioPlayer.PlayOneShot(Clip, Options);
 
 		public AudioID PlayMusic()
-			=> AudioManager.Instance.PlayMusic(Clip, Options);
+			=> UnityServiceLocator.AudioPlayer.PlayMusic(Clip, Options);
 
 		public static implicit operator AudioClip (RichAudioClipReference a)
 			=> a.Clip;
