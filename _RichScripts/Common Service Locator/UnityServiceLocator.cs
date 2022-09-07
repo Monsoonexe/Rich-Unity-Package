@@ -1,4 +1,4 @@
-﻿/* Consider supporting mutliple services.
+/* Consider supporting mutliple services.
  */
 
 using System;
@@ -15,7 +15,7 @@ namespace RichPackage
     /// <summary>
     /// A common method of finding services within the Unity Game Engine.
     /// </summary>
-    public sealed class UnityServiceLocator : ServiceLocatorImplBase
+    public sealed partial class UnityServiceLocator : ServiceLocatorImplBase
     {
         /// <summary>
         /// Default implementation of a service provider.
