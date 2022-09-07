@@ -18,7 +18,7 @@ namespace RichPackage.Audio
     /// This class handles pooling AudioSources for static audio (audio not 
     /// affected by distance from Listener).
     /// </summary>
-    public partial class AudioManager : RichMonoBehaviour
+    public partial class AudioManager : RichMonoBehaviour, IAudioPlayer
     {
         #region Constants
 
@@ -47,7 +47,7 @@ namespace RichPackage.Audio
         public static bool IsInitialized { get => Instance != null && Instance.instanceIsInitialized; }
 
         [Title("---Settings---")]
-        [SerializeField, Min(0)] 
+        [SerializeField, Min(0)]
         private int sfxAudioSourceCount = 6;
 
         public Ease FadeEase = Ease.Linear;
@@ -82,7 +82,7 @@ namespace RichPackage.Audio
             base.Awake();
             if (InitSingleton(this, ref _instance, dontDestroyOnLoad: true))
             {
-                UnityServiceLocator.Instance.RegisterService(this);
+                UnityServiceLocator.Instance.RegisterAudioPlayer(this);
                 CreateAudioSources();
                 ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
                 instanceIsInitialized = true;
@@ -104,7 +104,7 @@ namespace RichPackage.Audio
                 foreach (var source in sfxAudioSources)
                     DOTween.Kill(source);
                 sourceDictionary.Clear();
-                UnityServiceLocator.Instance.DeregisterService(this);
+                UnityServiceLocator.Instance.DeregisterAudioPlayer(this);
             }
         }
 
@@ -173,7 +173,7 @@ namespace RichPackage.Audio
             // priority below this value are safe from overriding
             const int Will_Not_Override = 1;
             int size = sources.Length;
-            int lowestPriority = clipPriority.Clamp(Will_Not_Override, byte.MaxValue); 
+            int lowestPriority = clipPriority.Clamp(Will_Not_Override, byte.MaxValue);
             int lowestIndex = 0;
 
             for (int i = 0; i < size; ++i)
@@ -233,7 +233,7 @@ namespace RichPackage.Audio
             {
                 source.volume = options.Volume;
             }
-            source.pitch = options.PitchShift 
+            source.pitch = options.PitchShift
                 ? PitchShiftRange.RandomRange()
                 : 1.0f; // don't shift
             source.clip = clip;
@@ -244,7 +244,7 @@ namespace RichPackage.Audio
         /// Free clip after time.
         /// </summary>
         private async UniTaskVoid StopSourceAfterTimeAsync(
-            AudioClip clip, float clipLength, 
+            AudioClip clip, float clipLength,
             AudioID key, AudioSource source)
         {
             // wait until clip finishes playing
@@ -406,7 +406,7 @@ namespace RichPackage.Audio
                 .SetEase(FadeEase)
                 .OnComplete(ActiveMusicTrack.Pause);
         }
-        
+
         /// <summary>
         /// Restart clip from the beginning.
         /// </summary>
@@ -439,7 +439,8 @@ namespace RichPackage.Audio
         public AudioID PlayMusic(AudioClip clip,
             in AudioOptions options)
         {
-            if (!clip) return AudioID.Invalid;//for safety
+            if (!clip)
+                return AudioID.Invalid;//for safety
 
             ActiveMusicTrack.DOFade(0, options.CrossFade)
                 .SetEase(FadeEase); // fade out current track
