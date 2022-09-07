@@ -10,10 +10,10 @@ namespace RichPackage
 			return $"{value} is not implemented. You should do so!";
 		}
 
-		public static Exception GetEnumNotAccountedException<TEnum>(TEnum value)
+		public static Exception BuildMissingEnumCaseException<TEnum>(TEnum value)
 			where TEnum : Enum
 		{
-			return new ArgumentOutOfRangeException(
+			return new NotImplementedException(
 				GetEnumMemberNotAccountedExceptionString(value));
 		}
 	}
