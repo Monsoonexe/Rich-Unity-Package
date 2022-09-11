@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.CompilerServices;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -74,6 +75,10 @@ namespace RichPackage.Audio
             = new Dictionary<AudioID, AudioSource>(6);
 
         public bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }
+
+        private bool audioEnqueued;
+        private readonly List<(AudioClip, AudioOptions)> audioQueue
+            = new List<(AudioClip, AudioOptions)>();
 
         #region Unity Messages
 
@@ -167,6 +172,23 @@ namespace RichPackage.Audio
         }
 
         #endregion Initialize
+
+        private async UniTaskVoid EnqueueAudioAsync(AudioClip clip, AudioOptions options)
+        {
+            // add clip if unique
+            if (!audioQueue.Any((e) => clip == e.Item1))
+                audioQueue.Add((clip, options));
+
+            // only trigger play logic once per frame
+            if (audioEnqueued)
+                return;
+
+            // play all clips
+            audioEnqueued = true;
+            await UniTask.WaitForEndOfFrame(this);
+            audioQueue.RemoveWhile((e) => PlaySfxInternal(e.Item1, e.Item2));
+            audioEnqueued = false;
+        }
 
         private static AudioSource DepoolAudioSource(AudioSource[] sources, int clipPriority)
         {
@@ -283,7 +305,7 @@ namespace RichPackage.Audio
                 volume: volume,
                 duration: duration);
 
-            PlaySfxInternal(clip, audioOptions);
+            EnqueueAudioAsync(clip, audioOptions).Forget();
         }
 
         /// <summary>
@@ -295,9 +317,7 @@ namespace RichPackage.Audio
             if (clip == null)
                 return;
 
-            options = options ?? AudioOptions.DefaultSfx;
-
-            PlaySfxInternal(clip, options);
+            EnqueueAudioAsync(clip, options ?? AudioOptions.DefaultSfx).Forget();
         }
 
         private void PlaySfxInternal(AudioClip clip, AudioOptions options)
