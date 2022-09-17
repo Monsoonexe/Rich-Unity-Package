@@ -15,6 +15,10 @@ namespace RichPackage.UnityMessages
 		private void Start()
         {
             lifetimeEvent.Invoke();
+
+#if !UNITY_EDITOR
+            Destroy(this);
+#endif
         }
     }
 }

@@ -14,8 +14,10 @@ namespace RichPackage.UnityMessages
 
         protected override void Awake()
         {
-            base.Awake();
             lifetimeEvent.Invoke();
+#if !UNITY_EDITOR
+            Destroy(this);
+#endif
         }
     }
 }
