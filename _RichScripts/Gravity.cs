@@ -44,7 +44,7 @@ namespace RichPackage
             if(!IsGrounded)
             {
                 var step = gravityVector * RichAppController.FixedDeltaTime;
-                myRigidbody.Move(gravityVector);
+                myRigidbody.MovePosition(gravityVector);
             }
         }
 
