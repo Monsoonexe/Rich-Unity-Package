@@ -61,7 +61,7 @@ namespace RichPackage.Logic
 					Result = InputA.Value / InputB.Value;
 					break;
 				default:
-					throw ExceptionUtilities.GetEnumNotAccountedException(Operation);
+					throw ExceptionUtilities.BuildMissingEnumCaseException(Operation);
 			}
 			ResultEvent.Invoke(Result);
 		}
