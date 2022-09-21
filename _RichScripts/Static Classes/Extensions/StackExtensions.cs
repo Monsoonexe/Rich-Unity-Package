@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Collections.Generic;
 
-namespace RichPackage
+namespace System.Collections.Generic
 {
     /// <seealso cref="QueueExtensions"/>
     internal static class StackExtensions
