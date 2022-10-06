@@ -3,38 +3,17 @@ using System.Collections.Generic;
 
 namespace RichPackage
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ListCountComparer<T> : IComparer<T> where T : IList
+	public sealed class IListCountComparer : IComparer<IList>
 	{
-		public int Compare(T x, T y) => x.Count.CompareTo(y.Count);
+		public int Compare(IList x, IList y) => x.Count.CompareTo(y.Count);
 
-		public static readonly ListCountComparer<T> Default = new ListCountComparer<T>();
-	}
+		public static readonly IListCountComparer Default = new IListCountComparer();
+    }
 
-	/// <summary>
-	/// 
-	/// </summary>
-	public class ListCountReverseComparer<T> : IComparer<T> where T : IList
-	{
-		public int Compare(T x, T y) => y.Count.CompareTo(x.Count);
+    public sealed class IListCountReverseComparer : IComparer<IList>
+    {
+        public int Compare(IList x, IList y) => y.Count.CompareTo(x.Count);
 
-		public static readonly ListCountReverseComparer<T> Default = new ListCountReverseComparer<T>();
-	}
-
-	public class ArrayLengthComparer<T> : IComparer<T[]>
-	{
-		public int Compare(T[] x, T[] y) => x.Length.CompareTo(y.Length);
-
-		public static readonly ArrayLengthComparer<T> Default = new ArrayLengthComparer<T>();
-	}
-
-	public class ArrayLengthReverseComparer<T> : IComparer<T[]>
-	{
-		public int Compare(T[] x, T[] y) => y.Length.CompareTo(x.Length);
-
-		public static readonly ArrayLengthReverseComparer<T> Default = new ArrayLengthReverseComparer<T>();
-	}
-
+        public static readonly IListCountComparer Default = new IListCountComparer();
+    }
 }
