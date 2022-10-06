@@ -2,15 +2,8 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-//clarifications between UnityEngine and System classes
-using Debug = UnityEngine.Debug;
-using Random = UnityEngine.Random;
-
 namespace RichPackage
 {
-    /// <summary>
-    /// 
-    /// </summary>
     /// <seealso cref="ConstStrings"/>
     public static class Utility
     {
@@ -21,36 +14,6 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RowColumnToIndex(int row, int column, int columnCount)
             => row * columnCount + column;
-
-        #region Random 
-
-        /// <summary>
-        /// Has an n probability of returning 'true'.
-        /// </summary>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Chance(float n) => Random.Range(0f, 1f) <= n;
-        
-        /// <param name="dice">[0, inf)</param>
-        /// <param name="sides">[1, inf)</param>
-        /// <param name="mod">(whatever, whatever)</param>
-        /// <returns>e.g. 2d6 + mod</returns>
-        public static int RollDice(int dice, int sides, int mod = 0)
-        {   //validate
-            Debug.Assert(dice >= 0 && sides > 0, "[Utility] Invalid RollDice input: " 
-                + dice.ToString() + " " + sides.ToString());
-
-            var result = mod;
-            var upperRandomLimit = sides + 1;//because upper bound of random is exclusive
-            for (; dice > 0; --dice)
-                result += Random.Range(1, upperRandomLimit);
-            return result;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int RollDie(int sides) => Random.Range(1, sides + 1);
-
-        #endregion
 
         #region Functional Iterating
 
