@@ -11,7 +11,7 @@ namespace RichPackage
     /// can improve performance in situations where arrays are created and destroyed frequently, <br/>
     /// resulting in significant memory pressure on the garbage collector.
     /// </summary>
-    /// <seealso cref="ClassPool{T}"/>
+    /// <seealso cref="Pooling.ObjectPool{T}{T}"/>
     public class ArrayPool<T>
     {
         public static ArrayPool<T> Shared { get; } = new ArrayPool<T>();
@@ -31,7 +31,7 @@ namespace RichPackage
                 throw new ArgumentException("maxBucketCapacity must be greater than 0 or -1 for no limit.");
 
             MaxBucketCapacity = maxBucketCapacity;
-            int size = MaxBucketCapacity > 0 ? MaxBucketCapacity : 16;
+            int size = maxBucketCapacity > 0 ? maxBucketCapacity : 16;
             _pool = new List<T[]>(size);
         }
 
@@ -53,8 +53,7 @@ namespace RichPackage
                 {
                     if (_pool[i].Length >= minSize)
                     {
-                        T[] item = _pool[i];
-                        _pool.RemoveAt(i);
+                        T[] item = _pool.GetRemoveAt(i);
                         if (clear)
                             Array.Clear(item, 0, item.Length);
                         return item;
