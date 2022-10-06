@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
 using RichPackage.Audio;
+using Sirenix.OdinInspector;
 
 namespace RichPackage
 {
@@ -30,6 +31,10 @@ namespace RichPackage
                 return instance;
             }
         }
+
+        [Title("App Settings")]
+        [SerializeField, MinValue(10), MaxValue(90)]
+        private int targetFrameRate = 60;
 
         /// <summary>
         /// <see cref="Time.deltaTime"/> that has been cached and un-marshalled.
@@ -62,6 +67,7 @@ namespace RichPackage
                 return;
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
             SceneManager.sceneLoaded += SceneLoadedHandler;
+            ApplyAppSettings();
             DG.Tweening.DOTween.Init();
             UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
         }
@@ -91,6 +97,10 @@ namespace RichPackage
 
 		#endregion Unity Messages
 
+        private void ApplyAppSettings()
+        {
+            Application.targetFrameRate = targetFrameRate;
+        }
 
 		public void QuitGame()
         {
