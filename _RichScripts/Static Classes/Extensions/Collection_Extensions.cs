@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using RichPackage.Collections;
 using RichPackage.Assertions;
+using UnityEngine.Rendering;
 
 //clarifications
 using Random = UnityEngine.Random;
@@ -420,7 +421,7 @@ namespace RichPackage
         public static int GetWrappedIndex<T>(this IList<T> list, int index)
         {
             int count = list.Count;
-            int indexWrapped = (int)(index - count * System.Math.Floor(
+            int indexWrapped = (int)(index - count * Math.Floor(
                 (double)index / count));
             return indexWrapped;
         }
@@ -444,7 +445,7 @@ namespace RichPackage
         public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null)
-                throw new System.ArgumentNullException(nameof(source));
+                throw new ArgumentNullException(nameof(source));
 
             if (source is IList<TSource> list)
             {
@@ -719,8 +720,8 @@ namespace RichPackage
         public static T GetRandomUnused<T>(this IList<T> totalCollection, 
             IList<T> usedCollection)
         {
-            //build a pool of indices that have not been used.  
-            var possibleIndices = CommunalLists.Rent<int>();
+            // build a pool of indices that have not been used.  
+            var possibleIndices = ListPool<int>.Get();
 
             int totalCount = totalCollection.Count;
             for (int i = 0; i < totalCount; ++i)
@@ -729,17 +730,17 @@ namespace RichPackage
 
             if (possibleIndices.Count == 0)
             {
-                Debug.Log("Every index has been used in collection of count: "
-                    + totalCollection.Count);
+                Debug.Log($"Every index used in collection. Count: {totalCollection.Count}");
                 return default;
             }
 
-            return totalCollection[possibleIndices[
-                Random.Range(0, possibleIndices.Count)]];
+            T t = totalCollection[possibleIndices.GetRandomElement()];
+            ListPool<int>.Release(possibleIndices);
+            return t;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TrueForAll<T>(this IList<T> list, Predicate<T> query)
+        public static bool All<T>(this IList<T> list, Predicate<T> query)
         {
             int count = list.Count;
             for (int i = 0; i < count; ++i)
@@ -749,7 +750,7 @@ namespace RichPackage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TrueForNone<T>(this IList<T> list, Predicate<T> query)
+        public static bool None<T>(this IList<T> list, Predicate<T> query)
         {
             int count = list.Count;
             for (int i = 0; i < count; ++i)
