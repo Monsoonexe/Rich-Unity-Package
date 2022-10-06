@@ -15,6 +15,7 @@ namespace RichPackage
     public class ArrayPool<T>
     {
         public static ArrayPool<T> Shared { get; } = new ArrayPool<T>();
+        public static readonly IComparer<T[]> comparer = IListCountReverseComparer.Default; //sort descending
 
         private readonly List<T[]> _pool;
 
@@ -88,7 +89,7 @@ namespace RichPackage
                 {
                     _pool.Remove(shortestItem);
                     _pool.Add(array);
-                    _pool.Sort(ArrayLengthReverseComparer<T>.Default); //sort descending
+                    _pool.Sort(comparer); //sort descending
                     if(clear)
                         Array.Clear(array, 0, array.Length);
                 }
