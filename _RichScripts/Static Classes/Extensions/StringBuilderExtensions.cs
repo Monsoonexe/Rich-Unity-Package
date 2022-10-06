@@ -1,7 +1,6 @@
-﻿using System.Text;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-namespace RichPackage
+namespace System.Text
 {
     internal static class StringBuilderExtensions
     {
