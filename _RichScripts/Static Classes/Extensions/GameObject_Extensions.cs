@@ -113,6 +113,7 @@ namespace RichPackage
             for (var i = childCount - 1; i >= 0; --i)
             {
                 var child = transform.GetChild(i);
+                action(child);
                 child.ForEachTransformRecursive(action);
             }
         }
