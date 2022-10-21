@@ -102,7 +102,7 @@ public static class RichText
     /// <summary> Paint it Yellow!</summary>
     public static string Yellow(this string obj) { return ColorProcessor(obj, "yellow"); }
 
-    private static string ColorProcessor(string obj, string color)
+    public static string ColorProcessor(string obj, string color)
     {
         // $"<color={color}>{obj}</color>";
         return StringBuilderCache.Rent()
