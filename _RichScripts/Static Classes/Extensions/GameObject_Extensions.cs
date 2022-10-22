@@ -10,7 +10,6 @@ namespace RichPackage
         /// <summary>
         /// Shortcut for a.enabled = true;
         /// </summary>
-        /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveTrue(this GameObject a)
             => SetActiveChecked(a, true);
@@ -18,7 +17,6 @@ namespace RichPackage
         /// <summary>
         /// Shortcut for a.enabled = false;
         /// </summary>
-        /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveFalse(this GameObject a)
             => SetActiveChecked(a, false);
@@ -102,21 +100,69 @@ namespace RichPackage
         public static string GetNameWithScene(this GameObject a)
             => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name + "/" + a.name;
 
+
         /// <summary>
-        /// Perform an action on every Transform on each of its children, etc, recursively.
+        /// Perform <paramref name="action"/> on every Transform on each of its children.
         /// </summary>
-        public static void ForEachChildRecursive(this GameObject obj, 
+        public static void ForEachChild(this GameObject obj,
             Action<Transform> action)
         {
             var transform = obj.GetComponent<Transform>();
-            var childCount = transform.childCount;
-            for (var i = childCount - 1; i >= 0; --i)
+            int childCount = transform.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
             {
-                var child = transform.GetChild(i);
+                Transform child = transform.GetChild(i);
                 action(child);
-                child.ForEachTransformRecursive(action);
             }
         }
+
+        /// <summary>
+        /// Perform <paramref name="action"/> on every Transform on each of its children, recursively.
+        /// </summary>
+        public static void ForEachChildRecursive(this GameObject obj,
+            Action<Transform> action)
+        {
+            var transform = obj.GetComponent<Transform>();
+            int childCount = transform.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
+            {
+                Transform child = transform.GetChild(i);
+                child.ForEachTransformRecursive(action);
+                action(child);
+            }
+        }
+
+        /// <summary>
+        /// Perform  <paramref name="action"/> on every GameObject on each of its children, recursively.
+        /// </summary>
+        public static void ForEachChild(this GameObject obj,
+            Action<GameObject> action)
+        {
+            var transform = obj.GetComponent<Transform>();
+            int childCount = transform.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
+            {
+                GameObject go = transform.GetChild(i).gameObject;
+                action(go);
+            }
+        }
+
+        /// <summary>
+        /// Perform  <paramref name="action"/> on every GameObject on each of its children, recursively.
+        /// </summary>
+        public static void ForEachChildRecursive(this GameObject obj,
+            Action<GameObject> action)
+        {
+            var transform = obj.GetComponent<Transform>();
+            int childCount = transform.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
+            {
+                GameObject go = transform.GetChild(i).gameObject;
+                ForEachChildRecursive(go, action);
+                action(go);
+            }
+        }
+
 
         /// <summary>
         /// Returns true if TComponent was found and not null.
@@ -150,5 +196,21 @@ namespace RichPackage
         /// </summary>
         public static void SetLayerRecursively(this GameObject gameObj, int newLayer)
             => gameObj.transform.SetLayerRecursively(newLayer);
+
+        /// <summary>
+        /// If false, set self inactive. If true, walk hierarchy upwards,
+        /// setting all parents active.
+        /// </summary>
+        public static void SetActiveInHierarchy(this GameObject gameObject, bool active)
+        {
+            if (active)
+            {
+                // walk parent upwards
+                var parent = gameObject.GetComponent<Transform>().parent;
+                if (parent)
+                    SetActiveInHierarchy(parent.gameObject, active);
+            }
+            gameObject.SetActiveChecked(active);
+        }
     }
 }
