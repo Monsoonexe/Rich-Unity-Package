@@ -111,7 +111,7 @@ public static class RichText
             .Append('>')
             .Append(obj)
             .Append("</color>")
-            .GetStringAndReturn();
+            .ToStringAndReturn();
     }
 
     #endregion Colors

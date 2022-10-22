@@ -2,6 +2,7 @@
 using TMPro;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using System.Text;
 using RichPackage.Pooling;
 
 namespace RichPackage.UI

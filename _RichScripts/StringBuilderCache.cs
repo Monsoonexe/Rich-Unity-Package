@@ -42,7 +42,7 @@
         /// <param name="sb">A <see cref="StringBuilder"/> instance
         /// <see cref="StringBuilderCache.Rent"/>ed from
         /// <see cref="StringBuilderCache"/>.</param>
-        public static string GetStringAndReturn(this StringBuilder sb)
+        public static string ToStringAndReturn(this StringBuilder sb)
         {
             string result = sb.ToString();
             Return(sb);
