@@ -93,7 +93,9 @@ namespace RichPackage
             else
                 return str.Substring(startingIndex);
         }
-        
+
+        #region Comparisons
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool EqualsOrdinal(this string strA, string strB)
             => string.CompareOrdinal(strA, strB) == 0;
@@ -101,6 +103,51 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool EqualsOrdinalIgnoreCase(this string strA, string strB)
             => string.Compare(strA, strB, StringComparison.OrdinalIgnoreCase) == 0;
+
+        /// <summary>
+        /// Quicker than <see cref="String.EndsWith(string)"/>. Prefer this for 
+        /// non-localized strings because it compares the byte value rather than 
+        /// the character represented by the value. 
+        /// </summary>
+        /// <remarks>https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity5.html#:~:text=Inefficient%20built%2Din%20string%20APIs</remarks>
+        public static bool QuickEndsWith(this string a, string b)
+        {
+            int ap = a.Length - 1;
+            int bp = b.Length - 1;
+
+            while (ap >= 0 && bp >= 0 && a[ap] == b[bp])
+            {
+                ap--;
+                bp--;
+            }
+
+            return (bp < 0);
+        }
+
+        /// <summary>
+        /// Quicker than <see cref="String.StartsWith(string)"/>. Prefer this for 
+        /// non-localized strings because it compares the byte value rather than 
+        /// the character represented by the value. 
+        /// </summary>
+        /// <remarks>https://docs.unity3d.com/Manual/BestPracticeUnderstandingPerformanceInUnity5.html#:~:text=Inefficient%20built%2Din%20string%20APIs</remarks>
+        public static bool QuickStartsWith(this string a, string b)
+        {
+            int aLen = a.Length;
+            int bLen = b.Length;
+
+            int ap = 0;
+            int bp = 0;
+
+            while (ap < aLen && bp < bLen && a[ap] == b[bp])
+            {
+                ap++;
+                bp++;
+            }
+
+            return (bp == bLen);
+        }
+
+        #endregion Comparisons
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SafeLength(this string value)
@@ -178,5 +225,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Remove(this string source, string query)
             => source.Replace(query, string.Empty);
+
+
     }
 }
