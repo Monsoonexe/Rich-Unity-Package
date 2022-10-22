@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using NaughtyAttributes;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Animation
 {
@@ -27,17 +27,15 @@ namespace RichPackage.Animation
             public string identifier;
             public ParameterType parameterType;
 
-            [ShowIf("parameterType", ParameterType.BOOL)]
-            [AllowNesting]
-            public bool boolParameter;
-
-            [ShowIf("parameterType", ParameterType.INT)]
-            [AllowNesting]
+            [Title("Parameter")]
+            [ShowIf(nameof(parameterType), ParameterType.INT)]
             public int integerParameter;
 
-            [ShowIf("parameterType", ParameterType.FLOAT)]
-            [AllowNesting]
+            [ShowIf(nameof(parameterType), ParameterType.FLOAT)]
             public float floatParameter;
+
+            [ShowIf(nameof(parameterType), ParameterType.BOOL)]
+            public bool boolParameter;
         }
 
         #endregion
@@ -85,7 +83,7 @@ namespace RichPackage.Animation
             return foundProperty;
         }
 
-        private void SetAnimationParameter(ref PropertyStruct property)
+        private void SetAnimationParameter(in PropertyStruct property)
         {
             //send corresponding animator message
             switch (property.parameterType)
@@ -109,10 +107,10 @@ namespace RichPackage.Animation
         /// Shortcut for SetAnimationParameter(0).
         /// </summary>
         public void SetAnimationParameter()
-            => SetAnimationParameter(ref properties[0]);
+            => SetAnimationParameter(properties[0]);
 
         public void SetAnimationParameter(int i)
-            => SetAnimationParameter(ref properties[i]);
+            => SetAnimationParameter(properties[i]);
 
         /// <summary>
         /// 
@@ -122,7 +120,7 @@ namespace RichPackage.Animation
         public void SetAnimationParameter(string targetIdentifier)
         {
             var p = GetProperty(targetIdentifier);
-            SetAnimationParameter(ref p);
+            SetAnimationParameter(p);
         }
 
         public void SetBool(bool value)
