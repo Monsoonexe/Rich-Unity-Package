@@ -8,11 +8,13 @@ namespace RichPackage
 {
 	public static class ArrayExtensions
 	{
-		/// <summary>
-		/// Sets first null item to 'newItem'. O(n) time b.c doesn't cache index.
-		/// </summary>
-		/// <typeparam name="T">Must be class.</typeparam>
-		public static void Add<T>(this T[] array, T newItem)
+        /// <summary>
+        /// Sets first <see langword="null"/> slot to 
+        /// <paramref name="newItem"/>.
+        /// </summary>
+        /// <typeparam name="T">Must be a reference type.</typeparam>
+        /// <remarks> O(n) time b.c doesn't cache index.</remarks>
+        public static void Add<T>(this T[] array, T newItem)
 			where T : class
 		{
 			var count = array.Length;
