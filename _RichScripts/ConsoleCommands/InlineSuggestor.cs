@@ -1,8 +1,7 @@
-﻿using QFSW.QC;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ApexOfficer.ConsoleCommands
+namespace QFSW.QC
 {
     /// <summary>
     /// Object that holds all the inlined suggestions provided to <see cref="SuggestionsAttribute"/>.
