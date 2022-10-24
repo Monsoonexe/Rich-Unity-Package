@@ -1,5 +1,6 @@
 ﻿using QFSW.QC;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ApexOfficer.ConsoleCommands
 {
@@ -8,9 +9,9 @@ namespace ApexOfficer.ConsoleCommands
     /// </summary>
     public struct InlineSuggestionTag : IQcSuggestorTag
     {
-        public readonly string[] Suggestions;
+        public readonly IEnumerable<string> Suggestions;
 
-        public InlineSuggestionTag(string[] suggestions)
+        public InlineSuggestionTag(IEnumerable<string> suggestions)
         {
             Suggestions = suggestions;
         }
@@ -20,18 +21,16 @@ namespace ApexOfficer.ConsoleCommands
     {
         private readonly IQcSuggestorTag[] _tags;
 
-        public SuggestionsAttribute(params string[] suggestions)
+        /// <param name="suggestions">String-convertible suggestions.</param>
+        public SuggestionsAttribute(params object[] suggestions)
         {
-            var tag = new InlineSuggestionTag(suggestions);
+            var tag = new InlineSuggestionTag(suggestions.Select(o => o.ToString()));
             _tags = new IQcSuggestorTag[] { tag };
         }
 
         public override IQcSuggestorTag[] GetSuggestorTags() => _tags;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public class InlineSuggestor : IQcSuggestor
     {
         public IEnumerable<IQcSuggestion> GetSuggestions(SuggestionContext context, SuggestorOptions options)
