@@ -490,6 +490,13 @@ namespace RichPackage
             for (int i = 0; i < count; ++i)
                 action(list[i]);
         }
+        
+        public static void ForEachWithIndex<T>(this IEnumerable<T> collection, Action<T, int> action)
+        {
+            int i = 0;
+            foreach (T item in collection)
+                action(item, i++);
+        }
 
         /// <summary>
         /// A 'foreach' with a 'for' backbone
