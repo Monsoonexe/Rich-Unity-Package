@@ -102,5 +102,22 @@ namespace RichPackage
                 SetLayerRecursively(child, newLayer);
             }
         }
+        
+        public static Transform[] GetChildren(this Transform parent)
+        {
+            int count = parent.childCount;
+            Transform[] result = new Transform[count];
+            for (int i = 0; i < count; i++)
+                result[i] = parent.GetChild(i);
+            return result;
+        }
+
+        public static List<Transform> GetChildren(this Transform parent, List<Transform> list)
+        {
+            int count = parent.childCount;
+            for (int i = 0; i < count; i++)
+                list.Add(parent.GetChild(i));
+            return list;
+        }
     }
 }
