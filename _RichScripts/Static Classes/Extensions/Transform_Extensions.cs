@@ -49,6 +49,27 @@ namespace RichPackage
             
             return Mathf.Atan2(targetsRelativePosition.x, targetsRelativePosition.y) * Mathf.Rad2Deg;//get arc tan, then convert to degrees
         }
+        
+        /// <param name="predicate">The condition you are looking for.</param>
+        /// <param name="recursive">Should children, grandchildren, etc be searched.</param>
+        /// <returns>The <see cref="Transform"/> that matched <paramref name="predicate"/>,
+        /// otherwise <see langword="null"/> if not found.</returns>
+        public static Transform Find(this Transform parent, Predicate<Transform> predicate, bool recursive)
+        {
+            foreach (Transform child in parent)
+            {
+                if (predicate(child))
+                    return child;
+
+                if (recursive)
+                {
+                    Transform found = Find(child, predicate, recursive);
+                    if (found)
+                        return found;
+                }
+            }
+            return null;
+        }
 
         /// <summary>
         /// Perform an action on every Transform on each of its children, etc, recursively.
