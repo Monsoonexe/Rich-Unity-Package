@@ -10,7 +10,7 @@ namespace RichPackage
     /// </summary>
     /// <seealso cref="RichScriptableObject"/>
     [SelectionBase]
-    public abstract class RichMonoBehaviour : MonoBehaviour
+    public abstract partial class RichMonoBehaviour : MonoBehaviour
     {
 #if UNITY_EDITOR
         [SerializeField, TextArea]
@@ -87,6 +87,9 @@ namespace RichPackage
 
 		#endregion Invokation Timing Helpers
 
+        /*  TODO - move to the singleton partial file
+         * 
+         */
 		#region Singleton Helpers
 
 		/// <summary>
@@ -104,7 +107,8 @@ namespace RichPackage
             if (singletonRef == null)
             {   //we are the singleton
                 singletonRef = instance;
-                if (dontDestroyOnLoad) instance.DontDestroyOnLoad();
+                if (dontDestroyOnLoad)
+                    instance.DontDestroyOnLoad();
             }
             else if (!instance.Equals(singletonRef))
             {   //there are two Singletons
