@@ -57,9 +57,6 @@ namespace RichPackage.Threading
             dispatcher.Invoke(action, delay);
         }
 
-        /// <summary>
-        /// Begin message pumping.
-        /// </summary>
         public void Run()
         {
             enabled = true;

@@ -85,9 +85,6 @@ using UnityEngine;
             }
         }
 
-        /// <summary>
-        /// Begin message pumping.
-        /// </summary>
         public void Run()
         {
             updateRoutine = coroutineRunner.StartCoroutine(Update());
