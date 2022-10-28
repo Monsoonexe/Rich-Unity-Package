@@ -26,7 +26,7 @@ namespace RichPackage.Threading
         public UniTask BeginInvoke(Action action)
         {
             var tcs = new UniTaskCompletionSource();
-            current.blockingCollection.Add(() =>
+            current.messageQueue.Add(() =>
             {
                 try
                 {
@@ -48,7 +48,7 @@ namespace RichPackage.Threading
         public UniTask<T> BeginInvoke<T>(Func<T> function)
         {
             var tcs = new UniTaskCompletionSource<T>();
-            current.blockingCollection.Add(() =>
+            current.messageQueue.Add(() =>
             {
                 try
                 {

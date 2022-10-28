@@ -14,7 +14,7 @@ using UnityEngine;
         public static Dispatcher Current { get => current ?? CreateStatic(); }
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
-        private readonly BlockingCollection<Action> blockingCollection;
+        private readonly BlockingCollection<Action> messageQueue;
 
         private Coroutine updateRoutine;
         private readonly MonoBehaviour coroutineRunner;
@@ -31,7 +31,7 @@ using UnityEngine;
 
         public Dispatcher() : this(RichAppController.Instance) // something static
         {
-            blockingCollection = new BlockingCollection<Action>();
+            messageQueue = new BlockingCollection<Action>();
         }
 
         public Dispatcher(MonoBehaviour coroutineRunner)
@@ -50,13 +50,13 @@ using UnityEngine;
         public void Dispose()
         {
             Stop();
-            blockingCollection.Dispose();
+            messageQueue.Dispose();
             GC.SuppressFinalize(this);
         }
 
         private bool IsWorkAvailable()
         {
-            return blockingCollection.Count > 0;
+            return messageQueue.Count > 0;
         }
 
         private void SafeInvoke(Action action)
@@ -80,7 +80,7 @@ using UnityEngine;
             {
                 yield return waitForWork;
                 yield return RunTiming;
-                while (blockingCollection.TryTake(out Action action))
+                while (messageQueue.TryTake(out Action action))
                     SafeInvoke(action);
             }
         }
@@ -105,7 +105,7 @@ using UnityEngine;
         /// </summary>
         public void Invoke(Action action)
         {
-            blockingCollection.Add(action);
+            messageQueue.Add(action);
         }
 
         public static Dispatcher CreateStatic()
