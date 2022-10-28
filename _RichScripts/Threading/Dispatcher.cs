@@ -1,38 +1,86 @@
+using RichPackage.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using UnityEngine;
  
  namespace RichPackage.Threading
  {
-    public class Dispatcher : RichMonoBehaviour
+    /// <summary>
+    /// Dispatcher to Unity's Main Thread.
+    /// </summary>
+    public class Dispatcher
     {
         private static Dispatcher current;
 
-        private BlockingCollection<Action> blockingCollection;
+        private readonly BlockingCollection<Action> blockingCollection;
 
-        protected override void Reset()
+        private bool active = false;
+
+        static Dispatcher()
         {
-            SetDevDescription("Thread-safe main thread dispatcher.");
+            Singleton.InitSingleton(new Dispatcher(), ref current);
+            RichTweens.Init();
+            current.Run();
         }
 
-        protected override void Awake()
+        public Dispatcher()
         {
-            InitSingleton(this, ref current)
             blockingCollection = new BlockingCollection<Action>();
         }
-        
-        private void Update()
-        {
-            Action action;
-            while (blockingCollection.TryTake(out action)) action();
-        }
 
-        private private void OnDestroy()
+        ~Dispatcher()
         {
-            ReleaseSingleton(this, ref current);
             blockingCollection.Dispose();
         }
+        
+        private bool IsWorkAvailable()
+        {
+            return blockingCollection.Count > 0;
+        }
+
+        private IEnumerator Update()
+        {
+            var waitForWork = new WaitUntil(IsWorkAvailable);
+
+            while (active)
+            {
+                yield return waitForWork;
+                while (blockingCollection.TryTake(out Action action))
+                {
+                    // exception safety wrapper
+                    try
+                    {
+                        action();
+                    }
+                    catch (Exception ex)
+                    {
+                        UnityEngine.Debug.LogException(ex);
+                    }
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Singleton.ReleaseSingleton(this, ref current);
+            blockingCollection.Dispose();
+        }
+
+        public void Run()
+        {
+            active = true;
+            RichTweens.StartCoroutine(Update());
+        }
+
+        public void Stop()
+        {
+            active = false;
+        }
     
+        /// <summary>
+        /// Thread-safe enqueue work. Will be called on the next coroutine update.
+        /// </summary>
         public static void Invoke(Action action)
         {
             current.blockingCollection.Add(action);
