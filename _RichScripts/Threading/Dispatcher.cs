@@ -1,4 +1,3 @@
-using RichPackage.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -9,84 +8,114 @@ using UnityEngine;
     /// <summary>
     /// Dispatcher to Unity's Main Thread.
     /// </summary>
-    public class Dispatcher
+    public partial class Dispatcher : IDispatcher, IDisposable
     {
         private static Dispatcher current;
+        public static Dispatcher Current { get => current ?? CreateStatic(); }
+        public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
         private readonly BlockingCollection<Action> blockingCollection;
 
-        private bool active = false;
+        private Coroutine updateRoutine;
+        private readonly MonoBehaviour coroutineRunner;
 
-        static Dispatcher()
-        {
-            Singleton.InitSingleton(new Dispatcher(), ref current);
-            RichTweens.Init();
-            current.Run();
-        }
+        /// <summary>
+        /// Describes the timing at which to run the queue. <br/>
+        /// Default is <see cref="DefaultRunTiming"/>.
+        /// </summary>
+        public YieldInstruction RunTiming;
 
-        public Dispatcher()
+        public bool Enabled { get => updateRoutine != null; }
+
+        #region Constructors
+
+        public Dispatcher() : this(RichAppController.Instance) // something static
         {
             blockingCollection = new BlockingCollection<Action>();
         }
 
+        public Dispatcher(MonoBehaviour coroutineRunner)
+        {
+            this.coroutineRunner = coroutineRunner;
+            RunTiming = DefaultRunTiming;
+        }
+
         ~Dispatcher()
         {
-            blockingCollection.Dispose();
+            Dispose();
         }
-        
+
+        #endregion Constructors
+
+        public void Dispose()
+        {
+            Stop();
+            blockingCollection.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
         private bool IsWorkAvailable()
         {
             return blockingCollection.Count > 0;
+        }
+
+        private void SafeInvoke(Action action)
+        {
+            // exception safety wrapper
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         private IEnumerator Update()
         {
             var waitForWork = new WaitUntil(IsWorkAvailable);
 
-            while (active)
+            while (true)
             {
                 yield return waitForWork;
+                yield return RunTiming;
                 while (blockingCollection.TryTake(out Action action))
-                {
-                    // exception safety wrapper
-                    try
-                    {
-                        action();
-                    }
-                    catch (Exception ex)
-                    {
-                        UnityEngine.Debug.LogException(ex);
-                    }
-                }
+                    SafeInvoke(action);
             }
         }
 
-        private void OnDestroy()
-        {
-            Singleton.ReleaseSingleton(this, ref current);
-            blockingCollection.Dispose();
-        }
-
+        /// <summary>
+        /// Begin message pumping.
+        /// </summary>
         public void Run()
         {
-            active = true;
-            RichTweens.StartCoroutine(Update());
+            updateRoutine = coroutineRunner.StartCoroutine(Update());
         }
 
         public void Stop()
         {
-            active = false;
+            if (updateRoutine != null)
+                coroutineRunner.StopCoroutine(updateRoutine);
+            updateRoutine = null;
         }
-    
+
         /// <summary>
         /// Thread-safe enqueue work. Will be called on the next coroutine update.
         /// </summary>
-        public static void Invoke(Action action)
+        public void Invoke(Action action)
         {
-            current.blockingCollection.Add(action);
+            blockingCollection.Add(action);
+        }
+
+        public static Dispatcher CreateStatic()
+        {
+            current = new Dispatcher();
+            current.Run();
+            return current;
         }
     }
- }
+}
 
     /*
     // Or, on main thread, during initialization:
