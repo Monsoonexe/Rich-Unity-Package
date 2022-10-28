@@ -63,11 +63,5 @@ namespace RichPackage.Threading
 
             return tcs.Task;
         }
-
-        #region Constructors
-
-
-
-        #endregion
     }
 }
