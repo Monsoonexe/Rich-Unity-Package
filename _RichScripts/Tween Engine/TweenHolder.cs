@@ -26,11 +26,11 @@ namespace RichPackage.Tweening
             SceneManager.sceneLoaded -= OnLevelLoadedHandler;
         }
 
-		[System.Obsolete("This always kills all routines. Maybe some need to persist.")]
         private void OnLevelLoadedHandler(
             Scene scene, LoadSceneMode mode)
         {
-            StopAllCoroutines();
+            // let coroutines persist between scenes
+            // StopAllCoroutines();
         }
 
         public static TweenHolder Construct()
