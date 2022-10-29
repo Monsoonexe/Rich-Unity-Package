@@ -6,7 +6,6 @@ namespace RichPackage.Tweening
     /// <summary>
     /// I am a utility class to hold tweens so you don't have to!
     /// </summary>
-    /// <seealso cref="ApexTweens"/>
     public class TweenHolder : RichMonoBehaviour
     {
         protected override void Reset()
