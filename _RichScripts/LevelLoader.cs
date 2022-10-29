@@ -19,8 +19,9 @@ namespace RichPackage
     /// </summary>
     public class LevelLoader : RichMonoBehaviour
     {
-        [Title("---Settings---")]
+        private delegate AsyncOperation LoadLevelAsyncOperation();
 
+        [Title("---Settings---")]
         [SerializeField]
         private string inTransitionMessage = "VerticalWipeIn";
 
@@ -35,8 +36,6 @@ namespace RichPackage
         [SerializeField]
         private AudioClipReference transitionINClip
             = new AudioClipReference();
-
-        //public static event Action<SceneVariable> OnSceneLoaded;
 
         public static SceneVariable CurrentScene { get; private set; }
 
@@ -97,7 +96,7 @@ namespace RichPackage
             if (!IsTransitioning)//prevent spamming
             {
                 StartCoroutine(LoadLevelRoutine(
-                    () => SceneManager.LoadScene(name))); //load scene by string
+                    () => SceneManager.LoadSceneAsync(name))); //load scene by string
             }
         }
 
@@ -107,58 +106,70 @@ namespace RichPackage
             if (!IsTransitioning)//prevent spamming
             {
                 StartCoroutine(LoadLevelRoutine(
-                    () => SceneManager.LoadScene(index))); //load scene by index
+                    () => SceneManager.LoadSceneAsync(index))); //load scene by index
             }
         }
 
-        private IEnumerator LoadLevelRoutine(Action LoadSceneAction)
+        private IEnumerator LoadLevelRoutine(LoadLevelAsyncOperation LoadSceneAction)
         {
-            //reset flags
+            // set flags
             IsTransitioning = true;
 
             var transitionWait = new WaitForSeconds(
                 ScreenTransitionController.TransitionDuration);
 
-            //preserve coroutine with immortality!
+            // preserve coroutine with immortality!
             myTransform.parent = null;// dontdestroyonload only works on objects at root
             DontDestroyOnLoad(gameObject); //don't destroy while we are loading the level
 
-            //fade out
+            // fade out
             ScreenTransitionController.Instance
                 .TriggerTransition(outTransitionMessage);//hide scene
             transitionOUTClip.Value.PlayOneShot();
 
             yield return null;
+            // make sure frame has been fully issued so state can be saved.
+            yield return CommonYieldInstructions.WaitForEndOfFrame; //for event call
             RichAppController.EnsureInstance(); //just to be sure.
 
-            //wait for the darkness to envelope you, and then a bit longer
+            // wait for the darkness to envelope you, and then a bit longer
             yield return transitionWait;
 
-            //last call before a scene is destroyed.
-            GlobalSignals.Get<ScenePreUnloadSignal>().Dispatch();
+            // if an error occurs in an event handler, the scene can't open 
+            // the curtains and blacks out.
+            try
+            {
+                //last call before a scene is destroyed.
+                GlobalSignals.Get<ScenePreUnloadSignal>().Dispatch();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex, this);
+            }
 
-            //perform scene load
-            LoadSceneAction(); //many ways to load a scene, but use this one.
+            // perform scene load SceneManager.LoadSceneAsync(index);
+            yield return LoadSceneAction(); //many ways to load a scene, but use this one.
 
-            //wait
+            // wait
             yield return new WaitUntilEvent(GlobalSignals.Get<SceneLoadedSignal>()); //levelHasLoaded = true
 
-            //clean up while screen still black
+            // clean up while screen still black
             GC.Collect(); //why not? screen is totally black now.
 
-            //wait until next frame
+            // wait until next frame
             yield return null;
 
-            //fade into new scene
+            // fade into new scene
             ScreenTransitionController.Instance.
                 TriggerTransition(inTransitionMessage);
 
             transitionINClip.Value.PlayOneShot();
 
-            //wait for scene to fully open, and just a bit longer
+            // wait for scene to fully open, and just a bit longer
             yield return transitionWait;
+            yield return CommonYieldInstructions.WaitForEndOfFrame;
 
-            //finalize
+            // finalize
             IsTransitioning = false;
             Destroy(gameObject);//left over from previous level
         }
@@ -170,20 +181,6 @@ namespace RichPackage
 		{
             SceneManager.LoadScene(levelIndex);
 		}
-
-        //[Button, DisableInEditorMode]
-        //public static void LoadNextLevel()
-        //{
-        //    var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        //    SceneManager.LoadScene(currentSceneIndex + 1);
-        //}
-
-        //[Button, DisableInEditorMode]
-        //public static void LoadPreviousLevel()
-        //{
-        //    var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        //    SceneManager.LoadScene(currentSceneIndex - 1);
-        //}
 
         [Button, DisableInEditorMode]
         public static void ReloadCurrentLevel()
