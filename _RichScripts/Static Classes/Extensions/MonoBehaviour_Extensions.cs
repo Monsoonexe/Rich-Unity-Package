@@ -29,6 +29,13 @@ namespace RichPackage
             Action action, YieldInstruction delay)
             => mono.StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay));
 
+        public static void StopCoroutineSafely(this MonoBehaviour mono,
+            Coroutine coroutine)
+        {
+            if (coroutine != null)
+                mono.StopCoroutine(coroutine);
+        }
+
         #endregion
 
     }
