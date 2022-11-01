@@ -149,9 +149,13 @@ namespace RichPackage
 
         #endregion Comparisons
 
+        /// <summary>
+        /// Returns <paramref name="str"/>'s <see cref="string.Length"/>
+        /// property or '0' if it is <see langword="null"/>.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int SafeLength(this string value)
-            => value?.Length ?? 0;
+        public static int SafeLength(this string str)
+            => str?.Length ?? 0;
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char First(this string str) => str[0];
