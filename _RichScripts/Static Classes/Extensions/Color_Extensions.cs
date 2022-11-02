@@ -8,12 +8,7 @@ namespace RichPackage
         /// <summary>
         /// Prefer WithR(float) instead.
         /// </summary>
-        /// <param name="a">Vector3 source to copy</param>
-        /// <param name="x">x value, if you want</param>
-        /// <param name="y">y value, if you want</param>
-        /// <param name="z">z value, if you want</param>
         /// <remarks>But seriously, 4 conditionals????</remarks>
-        /// <returns></returns>
         public static Color With(this Color c,
             float? r = null, float? g = null, float? b = null,
             float? a = null)
@@ -49,12 +44,36 @@ namespace RichPackage
         public static void MakeTransparent(ref this Color c)
             => c.a = 0;
 
-        //can be called as Vector3_Extensions.With(a, ....), but that's ugly, so the 'this'
-        //keyword allows you to call the method from an instance, like a.With(...);
+        /// <summary>
+        /// Converts <paramref name="c"/> to its hex representation. e.g. '#RRGGBBAA'.
+        /// </summary>
+        public static string ToHex(this in Color c)
+        {
+            return StringBuilderCache.Rent(16)
+                .Append('#')
+                .Append(ToByte(c.r).ToString("X2"))
+                .Append(ToByte(c.g).ToString("X2"))
+                .Append(ToByte(c.b).ToString("X2"))
+                .Append(ToByte(c.a).ToString("X2"))
+                .ToStringAndReturn();
 
-        //following two lines are equivalent.
-        //Vector3 myVec = new Vector3(myTransform.position.x, 150, myTransform.position.z);
+            //return $"#{ToByte(c.r):X}{ToByte(c.g):X}{ToByte(c.b):X}{ToByte(c.a):X}";
+        }
 
-        //Vector3 otherVec = myTransform.position.With(y: 150);
+        /// <summary>
+        /// Converts <paramref name="c"/> to its hex representation. e.g. '#RRGGBBAA'.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToHex(this in Color32 c)
+        {
+            return $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}";
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte ToByte(float f)
+        {
+            f = Mathf.Clamp01(f);
+            return (byte)(f * byte.MaxValue);
+        }
     }
 }
