@@ -3,7 +3,7 @@ using UnityEditor;
 using ApexCommon;
 using System;
 
-namespace ApexOfficer.Editor
+namespace RichPackage.Editor
 {
     /// <summary>
     /// Wrapper Unity's scripting symbols.
