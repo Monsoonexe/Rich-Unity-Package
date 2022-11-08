@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using ApexCommon;
 using System;
 
 namespace RichPackage.Editor
@@ -10,9 +9,6 @@ namespace RichPackage.Editor
     /// </summary>
     public static class ScriptingSymbols
     {
-        public const string ApexDebug = "ApexDebug";
-        public const string Experimental = "APEX_EXPERIMENTAL";
-
         public static void Define(string symbol)
         {
             // validate
@@ -68,7 +64,6 @@ namespace RichPackage.Editor
             PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, symbols);
         }
 
-        [MenuItem(ApexEditorUtility.EditorTools + "Print Scripting Symbols")]
         private static void PrintScriptingSymbols()
         {
             foreach (var s in GetSymbols().Split(';'))
