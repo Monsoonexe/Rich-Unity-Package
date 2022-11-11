@@ -1,4 +1,4 @@
-﻿//TODO - remove dependency on UnityEngine
+//TODO - remove dependency on UnityEngine
 
 using System;
 using System.Collections;
@@ -574,6 +574,14 @@ namespace RichPackage
             for (int i = 0; i < count; ++i)
                 result[i] = expression(array[i + offset]);
             return result;
+        }
+
+        public static IEnumerator<(T Item, int Index)> WithIndex<T>(this IEnumerable<T> e)
+        {
+            int index = 0;
+
+            foreach (var item in e)
+                yield return (item, index++);
         }
 
         #region Summation
