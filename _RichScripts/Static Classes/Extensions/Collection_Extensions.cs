@@ -1,17 +1,16 @@
-//TODO - remove dependency on UnityEngine
+﻿//TODO - remove dependency on UnityEngine
 
+using RichPackage.Assertions;
+using RichPackage.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using RichPackage.Collections;
-using RichPackage.Assertions;
+using System.Text;
 using UnityEngine.Rendering;
-
+using Debug = UnityEngine.Debug;
 //clarifications
 using Random = UnityEngine.Random;
-using Debug = UnityEngine.Debug;
-using System.Text;
 
 namespace RichPackage
 {
@@ -23,14 +22,14 @@ namespace RichPackage
         #region Collection Helpers
 
         #region Average
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Average<T>(this IList<T> col, Func<T, int> summer)
             => col.Sum(summer) / col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Average<T>(this IList<T> col, Func<T, uint> summer)
-            => col.Sum(summer) / (uint) col.Count;
+            => col.Sum(summer) / (uint)col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Average<T>(this IList<T> col, Func<T, long> summer)
@@ -38,7 +37,7 @@ namespace RichPackage
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Average<T>(this IList<T> col, Func<T, ulong> summer)
-            => col.Sum(summer) / (ulong) col.Count;
+            => col.Sum(summer) / (ulong)col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Average<T>(this IList<T> col, Func<T, float> summer)
@@ -51,7 +50,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Average(this IList<byte> col)
             => col.Sum() / col.Count;
-            
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Average(this IList<short> col)
             => col.Sum() / col.Count;
@@ -80,10 +79,10 @@ namespace RichPackage
         public static double Average(this IList<double> col)
             => col.Sum() / col.Count;
 
-        #endregion 
+        #endregion
 
         #region Contains
-        
+
         /// <summary>
         /// Returns 'true' if at least 1 item in array `elem.CompareTo(other) == 0`.
         /// </summary>
@@ -95,7 +94,7 @@ namespace RichPackage
                     return true;
             return false;
         }
-        
+
         /// <summary>
         /// Returns 'true' if at least 1 item in array `elem.CompareTo(other) == 0`.
         /// </summary>
@@ -115,7 +114,7 @@ namespace RichPackage
         {
             bool contains = false; //return value
             int count = list.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 if (query(list[i]))
                 {
@@ -143,7 +142,7 @@ namespace RichPackage
                 return false;
 
             for (int i = 0; i < count; ++i)
-                if (!a[i].Equals(b[i])) 
+                if (!a[i].Equals(b[i]))
                     return false;
 
             return true;
@@ -204,7 +203,7 @@ namespace RichPackage
         }
 
         #endregion IsSequentiallyEqualTo
-        
+
         /// <summary>
         /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
         /// </summary>
@@ -240,7 +239,7 @@ namespace RichPackage
                     listToFill.Add(list[i]);
             return listToFill;
         }
-        
+
         /// <summary>
         /// Fills <paramref name="list"/> with the results of <paramref name="query"/>.
         /// </summary>
@@ -251,13 +250,13 @@ namespace RichPackage
                 if (query(list[i]))
                     listToFill.Add(list[i]);
         }
-        
+
         /// <summary>
         /// Returns the last item in <paramref name="list"/> that <paramref name="query"/> returns true.
         /// </summary>
         public static T FindLast<T>(this IList<T> list, Predicate<T> query)
         {
-            for (var i = list.Count - 1; i >=0; --i)
+            for (var i = list.Count - 1; i >= 0; --i)
                 if (query(list[i]))
                     return list[i];
             return default;
@@ -310,7 +309,7 @@ namespace RichPackage
         /// <summary>
         /// Returns List with lowest <see cref="IList.Count"/> from List of Lists and its index.
         /// </summary>
-        public static T GetShortestList<T>(this IList<T> lists, 
+        public static T GetShortestList<T>(this IList<T> lists,
             out int shortestIndex) where T : IList
         {
             //first shortest path
@@ -344,7 +343,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty<T>(this IList<T> list)
             => list.Count == 0;
-            
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNotEmpty<T>(this IList<T> list)
             => list.Count != 0;
@@ -357,7 +356,8 @@ namespace RichPackage
         /// <returns>True if A and B are the same size and every element in A is in B</returns>
         public static bool IsEquivalentTo<T>(this IList<T> a, IList<T> b)
         {
-            if (a.Count != b.Count) return false;
+            if (a.Count != b.Count)
+                return false;
 
             foreach (T item in a)
             {
@@ -382,7 +382,7 @@ namespace RichPackage
             }
             return true;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<T> Sublist<T>(this IList<T> list, int startIndex)
             => Sublist(list, startIndex, list.Count - startIndex);
@@ -474,7 +474,7 @@ namespace RichPackage
 
             return default(TSource);
         }
-        
+
         /// <summary>
         /// Element at position Count - 1.
         /// </summary>
@@ -490,7 +490,7 @@ namespace RichPackage
             => col.IsNullOrEmpty()
             ? defaultValue
             : col[col.Count - 1];
-        
+
         /// <summary>
         /// A 'foreach' with a 'for' backbone
         /// </summary>
@@ -501,7 +501,7 @@ namespace RichPackage
             for (int i = 0; i < count; ++i)
                 action(list[i]);
         }
-        
+
         public static void ForEachWithIndex<T>(this IEnumerable<T> collection, Action<T, int> action)
         {
             int i = 0;
@@ -524,7 +524,7 @@ namespace RichPackage
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int LastIndex(this IList col) => col.Count - 1;
-        
+
         /// <summary>
         /// Compiler-driven cast to <see cref="IEnumerable{T}"/>.
         /// </summary>
@@ -543,12 +543,12 @@ namespace RichPackage
 
             return sb.ToString();
         }
-        
+
         //TODO - make this mirror Select from LINQ
         public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
             Func<TArray, TReturn> expression)
             => ToSubArray(array, expression, 0, array.Count);
-            
+
         public static TReturn[] ToSubArray<TArray, TReturn>(this IList<TArray> array,
             Func<TArray, TReturn> expression, int offset)
             => ToSubArray(array, expression, offset, array.Count - offset);
@@ -563,11 +563,11 @@ namespace RichPackage
                 throw new ArgumentNullException(nameof(expression));
 
             if (count < 0 || count > array.Count)
-                throw new ArgumentOutOfRangeException($"{nameof(count)} " + 
+                throw new ArgumentOutOfRangeException($"{nameof(count)} " +
                     $"is out of bounds: {count} : {array.Count}.");
 
             if (offset + count > array.Count || offset < 0)
-                throw new ArgumentOutOfRangeException($"{nameof(offset)} " + 
+                throw new ArgumentOutOfRangeException($"{nameof(offset)} " +
                     $"is out of bounds: {offset} : {array.Count}.");
 
             TReturn[] result = new TReturn[count];
@@ -585,7 +585,7 @@ namespace RichPackage
         }
 
         #region Summation
-        
+
         public static int Sum<T>(this IList<T> col, Func<T, int> summer)
         {
             int sum = 0;
@@ -647,7 +647,7 @@ namespace RichPackage
                 sum += col[i];
             return sum;
         }
-        
+
         public static int Sum(this IList<short> col)
         {
             int sum = 0;
@@ -703,7 +703,7 @@ namespace RichPackage
                 sum += col[i];
             return sum;
         }
-        
+
         public static long SumLong(this IList<int> col)
         {
             long sum = 0;
@@ -731,7 +731,7 @@ namespace RichPackage
         #endregion
 
         #region Random and Collections
-        
+
         /// <summary>
         /// Returns a random element from array, or default if collection is empty.
         /// </summary>
@@ -743,7 +743,7 @@ namespace RichPackage
         /// Get a random element from Collection that is not in usedCollection. 
         /// Up to caller to store this value in usedCollection
         /// </summary>
-        public static T GetRandomUnused<T>(this IList<T> totalCollection, 
+        public static T GetRandomUnused<T>(this IList<T> totalCollection,
             IList<T> usedCollection)
         {
             // build a pool of indices that have not been used.  
