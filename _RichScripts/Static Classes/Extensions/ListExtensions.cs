@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Random = UnityEngine.Random;
@@ -252,7 +252,7 @@ namespace RichPackage
             => list.Count == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IndexIsInRange<T>(this List<T> col, int index)
+        public static bool IsIndexInRange<T>(this List<T> col, int index)
             => index >= 0 && index < col.Count;
 
         /// <summary>
