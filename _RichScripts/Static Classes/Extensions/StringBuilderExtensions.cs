@@ -5,22 +5,32 @@ namespace System.Text
     internal static class StringBuilderExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string OutputAndClear(this StringBuilder sb)
+        public static string OutputAndClear(this StringBuilder source)
         {
-            string output = sb.ToString();
-            sb.Clear();
+            string output = source.ToString();
+            source.Clear();
             return output;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static StringBuilder ClearOrNew(this StringBuilder sb)
+        public static StringBuilder ClearOrNew(this StringBuilder source)
         {
-            if (sb == null)
-                sb = new StringBuilder(128);
+            if (source == null)
+                source = new StringBuilder(128);
             else
-                sb.Clear();
+                source.Clear();
 
-            return sb;
+            return source;
+        }
+
+        /// <summary>
+        /// Remove the last <paramref name="count"/> characters from the <paramref name="source"/>.
+        /// </summary>
+        /// <returns><paramref name="source"/></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static StringBuilder RemoveLast(this StringBuilder source, int count)
+        {
+            return source.Remove(source.Length - count, count);
         }
     }
 }
