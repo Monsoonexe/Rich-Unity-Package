@@ -38,11 +38,11 @@ namespace RichPackage
             => new Color(c.r, c.g, c.b, a);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MakeOpaque(ref this Color c)
+        public static void Opaque(ref this Color c)
             => c.a = 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MakeTransparent(ref this Color c)
+        public static void Transparent(ref this Color c)
             => c.a = 0;
 
         /// <summary>
