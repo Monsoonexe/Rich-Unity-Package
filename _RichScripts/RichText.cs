@@ -12,14 +12,14 @@ public static class RichText
     /// <summary>
     /// Renders the text in boldface.	
     /// </summary>
-    /// <param name="obj">Original object</param>
-    public static string Bold(this string obj) { return $"<b>{obj}</b>"; }
+    /// <param name="str">Original strect</param>
+    public static string Bold(this string str) { return $"<b>{str}</b>"; }
 
     /// <summary>
     /// Renders the text in italics.	
     /// </summary>
-    /// <param name="obj">Original object</param>
-    public static string Italic(this string obj) { return $"<i>{obj}</i>"; }
+    /// <param name="str">Original strect</param>
+    public static string Italic(this string str) { return $"<i>{str}</i>"; }
 
     #endregion Modifications
 
@@ -28,88 +28,88 @@ public static class RichText
     /// <summary>
     /// Sets the size of the text according to the parameter value, given in pixels.	
     /// </summary>
-    /// <param name="obj">Original object</param>
+    /// <param name="str">Original strect</param>
     /// <param name="size">Desired text size in pixels</param>
-    public static string Size(this string obj, int size) { return $"<size={size}>{obj}</size>"; }
+    public static string Size(this string str, int size) { return $"<size={size}>{str}</size>"; }
 
     #endregion Size
 
     #region Colors
 
     /// <summary> Paint it Aqua!</summary>
-    public static string Aqua(this string obj) { return ColorProcessor(obj, "aqua"); }
+    public static string Aqua(this string str) { return ColorProcessor(str, "aqua"); }
 
     /// <summary> Paint it Black!</summary>
-    public static string Black(this string obj) { return ColorProcessor(obj, "black"); }
+    public static string Black(this string str) { return ColorProcessor(str, "black"); }
 
     /// <summary> Paint it Blue!</summary>
-    public static string Blue(this string obj) { return ColorProcessor(obj, "blue"); }
+    public static string Blue(this string str) { return ColorProcessor(str, "blue"); }
 
     /// <summary> Paint it Brown!</summary>
-    public static string Brown(this string obj) { return ColorProcessor(obj, "brown"); }
+    public static string Brown(this string str) { return ColorProcessor(str, "brown"); }
 
     /// <summary> Paint it Cyan!</summary>
-    public static string Cyan(this string obj) { return ColorProcessor(obj, "cyan"); }
+    public static string Cyan(this string str) { return ColorProcessor(str, "cyan"); }
 
     /// <summary> Paint it Dark Blue!</summary>
-    public static string DarkBlue(this string obj) { return ColorProcessor(obj, "darkblue"); }
+    public static string DarkBlue(this string str) { return ColorProcessor(str, "darkblue"); }
 
     /// <summary> Paint it Fuchsia!</summary>
-    public static string Fuchsia(this string obj) { return ColorProcessor(obj, "fuchsia"); }
+    public static string Fuchsia(this string str) { return ColorProcessor(str, "fuchsia"); }
 
     /// <summary> Paint it Green!</summary>
-    public static string Green(this string obj) { return ColorProcessor(obj, "green"); }
+    public static string Green(this string str) { return ColorProcessor(str, "green"); }
 
     /// <summary> Paint it Grey!</summary>
-    public static string Grey(this string obj) { return ColorProcessor(obj, "grey"); }
+    public static string Grey(this string str) { return ColorProcessor(str, "grey"); }
 
     /// <summary> Paint it Light Blue!</summary>
-    public static string LightBlue(this string obj) { return ColorProcessor(obj, "lightblue"); }
+    public static string LightBlue(this string str) { return ColorProcessor(str, "lightblue"); }
 
     /// <summary> Paint it Lime!</summary>
-    public static string Lime(this string obj) { return ColorProcessor(obj, "lime"); }
+    public static string Lime(this string str) { return ColorProcessor(str, "lime"); }
 
     /// <summary> Paint it Magenta!</summary>
-    public static string Magenta(this string obj) { return ColorProcessor(obj, "magenta"); }
+    public static string Magenta(this string str) { return ColorProcessor(str, "magenta"); }
 
     /// <summary> Paint it Maroon!</summary>
-    public static string Maroon(this string obj) { return ColorProcessor(obj, "maroon"); }
+    public static string Maroon(this string str) { return ColorProcessor(str, "maroon"); }
 
     /// <summary> Paint it Navy!</summary>
-    public static string Navy(this string obj) { return ColorProcessor(obj, "navy"); }
+    public static string Navy(this string str) { return ColorProcessor(str, "navy"); }
 
     /// <summary> Paint it Olive!</summary>
-    public static string Olive(this string obj) { return ColorProcessor(obj, "olive"); }
+    public static string Olive(this string str) { return ColorProcessor(str, "olive"); }
 
     /// <summary> Paint it Orange!</summary>
-    public static string Orange(this string obj) { return ColorProcessor(obj, "orange"); }
+    public static string Orange(this string str) { return ColorProcessor(str, "orange"); }
 
     /// <summary> Paint it Purple!</summary>
-    public static string Purple(this string obj) { return ColorProcessor(obj, "purple"); }
+    public static string Purple(this string str) { return ColorProcessor(str, "purple"); }
 
     /// <summary> Paint it Red!</summary>
-    public static string Red(this string obj) { return ColorProcessor(obj, "red"); }
+    public static string Red(this string str) { return ColorProcessor(str, "red"); }
 
     /// <summary> Paint it Silver!</summary>
-    public static string Silver(this string obj) { return ColorProcessor(obj, "silver"); }
+    public static string Silver(this string str) { return ColorProcessor(str, "silver"); }
 
     /// <summary> Paint it Teal!</summary>
-    public static string Teal(this string obj) { return ColorProcessor(obj, "teal"); }
+    public static string Teal(this string str) { return ColorProcessor(str, "teal"); }
 
     /// <summary> Paint it White!</summary>
-    public static string White(this string obj) { return ColorProcessor(obj, "white"); }
+    public static string White(this string str) { return ColorProcessor(str, "white"); }
 
     /// <summary> Paint it Yellow!</summary>
-    public static string Yellow(this string obj) { return ColorProcessor(obj, "yellow"); }
+    public static string Yellow(this string str) { return ColorProcessor(str, "yellow"); }
 
-    public static string ColorProcessor(string obj, string color)
+    public static string ColorProcessor(string str, string color)
     {
-        // $"<color={color}>{obj}</color>";
+        // $"<color={color}>{str}</color>";
         return StringBuilderCache.Rent()
             .Append("<color=")
             .Append(color)
             .Append('>')
-            .Append(obj)
+            .Append(str)
             .Append("</color>")
             .ToStringAndReturn();
     }
