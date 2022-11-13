@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace RichPackage
@@ -30,14 +29,13 @@ namespace RichPackage
         #endregion
 
         /// <summary>
-        /// Times how long the action took to complete and returns that time in milliseconds.
+        /// Times how long the action took to complete and returns that time in seconds.
         /// </summary>
-        public static long SpeedTest(Action action)
+        public static float Time(this Action action)
         {
-            Stopwatch watch = Stopwatch.StartNew();
+            var watch = SimpleTimer.StartNew();
             action();
-            watch.Stop();
-            return watch.ElapsedMilliseconds;
+            return watch.Elapsed;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
