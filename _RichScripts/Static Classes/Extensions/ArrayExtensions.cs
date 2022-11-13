@@ -31,17 +31,17 @@ namespace RichPackage
 		/// <summary>
 		/// Returns a new array with elements of both.
 		/// </summary>
-		public static T[] ConcatArray<T>(this T[] a, T[] b)
+		public static T[] Concat<T>(this T[] a, T[] b)
 		{
 			int aLen = a.Length;
 			int bLen = b.Length;
 			T[] newArr = new T[aLen + bLen]; //return value
 
-			//copy first array
+			// copy first array
 			for (int i = 0; i < aLen; ++i)
 				newArr[i] = a[i];
 
-			//copy second array
+			// copy second array
 			for (int i = 0; i < bLen; ++i)
 				newArr[i + aLen] = b[i];
 
@@ -64,8 +64,8 @@ namespace RichPackage
 
 				return false;
 			}
-
-			EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+            
+			var comparer = EqualityComparer<T>.Default;
 			for (int j = 0; j < _size; j++)
 				if (comparer.Equals(array[j], item))
 					return true;
@@ -103,7 +103,7 @@ namespace RichPackage
 			=> Array.IndexOf(array, element);
 
 		/// <summary>Gets a sub array of an existing array.</summary>
-		/// <param name="index">Index to take the sub array from.</param>
+		/// <param name="index">Index to start taking the items from.</param>
 		/// <param name="length">The length of the sub array.</param>
 		public static T[] SubArray<T>(this T[] data, int index, int length)
 		{

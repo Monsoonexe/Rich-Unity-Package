@@ -387,7 +387,7 @@ public class UIFrame : RichMonoBehaviour
     public string[] GetRegisteredScreenIDs()
 	{
         return  windowLayer.GetRegisteredScreenIDs()
-            .ConcatArray(panelLayer.GetRegisteredScreenIDs());
+            .Concat(panelLayer.GetRegisteredScreenIDs());
 	}
 
     #endregion Queries
