@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Random = UnityEngine.Random;
@@ -192,6 +192,29 @@ namespace RichPackage
             {   //iterate backwards to avoid shifting each element as you remove.
                 var item = col.GetRemoveLast();
                 action(item);
+            }
+        }
+
+        /// <summary>
+        /// Remove the first instance of an item in <paramref name="list"/> that matches
+        /// <paramref name="predicate"/>.
+        /// </summary>
+        /// <seealso cref="TryFindAndRemove{T}(List{T}, Predicate{T}, out T)"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RemoveFirst<T>(this List<T> list, Predicate<T> predicate)
+        {
+            TryFindAndRemove(list, predicate, out _);
+        }
+
+        /// <summary>
+        /// Remove all items in <paramref name="list"/> that match <paramref name="predicate"/>.
+        /// </summary>
+        public static void RemoveAll<T>(this List<T> list, Predicate<T> predicate)
+        {
+            for (int i = list.Count - 1; i >= 0; --i)
+            {
+                if (predicate(list[i]))
+                    list.RemoveAt(i);
             }
         }
 
