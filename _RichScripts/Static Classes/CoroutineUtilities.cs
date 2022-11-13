@@ -25,11 +25,10 @@ namespace RichPackage
         public static IEnumerator InvokeAfterDelay(
             Action action, float delay)
         {
-            //TODO - used unmarshalled Time.
-            float endTime = Time.time + delay;
+            var timer = SimpleTimer.StartNew();
 
             do yield return null;
-            while (Time.time < endTime);
+            while (timer < delay);
             action();
         }
 
