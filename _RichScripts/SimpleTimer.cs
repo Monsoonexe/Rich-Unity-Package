@@ -4,15 +4,17 @@ namespace RichPackage
     /// <summary>
     /// Default timer that calculates the elapsed time based on <see cref="UnityEngine.Time.time"/>.
     /// </summary>
-    public class SimpleTimer
+    public struct SimpleTimer
     {
         public float startTime;
 
         public float Elapsed => RichAppController.Time - startTime;
 
-        public SimpleTimer()
+        public static SimpleTimer StartNew()
         {
-            startTime = RichAppController.Time;
+            var t = new SimpleTimer();
+            t.Reset();
+            return t;
         }
 
         public void Reset()
