@@ -29,7 +29,8 @@ namespace RichPackage.FunctionalProgramming
         public static int ToInt(this double value) => (int)value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ToInt(this System.Enum value) => value.GetHashCode();
+        public static int ToInt(this System.Enum value)
+            => value.GetHashCode();
     }
 
     /// <summary>
@@ -95,7 +96,8 @@ namespace RichPackage.FunctionalProgramming
         public static byte ToByte(this ulong value) => (byte)value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte ToByte(this System.Enum value) => (byte)value.GetHashCode();
+        public static byte ToByte(this System.Enum value)
+            => (byte)value.ToInt();
     }
 
     /// <summary>
