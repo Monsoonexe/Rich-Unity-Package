@@ -739,6 +739,10 @@ namespace RichPackage
         public static T GetRandomElement<T>(this IList<T> collection)
             => collection[Random.Range(0, collection.Count)];
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int GetRandomIndex(this IList list)
+            => Random.Range(0, list.Count);
+
         /// <summary>
         /// Get a random element from Collection that is not in usedCollection. 
         /// Up to caller to store this value in usedCollection
