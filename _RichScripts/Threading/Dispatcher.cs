@@ -31,12 +31,13 @@ using UnityEngine;
 
         public Dispatcher() : this(RichAppController.Instance) // something static
         {
-            messageQueue = new BlockingCollection<Action>();
+            // exists
         }
 
         public Dispatcher(MonoBehaviour coroutineRunner)
         {
             this.coroutineRunner = coroutineRunner;
+            messageQueue = new BlockingCollection<Action>();
             RunTiming = DefaultRunTiming;
         }
 
@@ -92,8 +93,7 @@ using UnityEngine;
 
         public void Stop()
         {
-            if (updateRoutine != null)
-                coroutineRunner.StopCoroutine(updateRoutine);
+            coroutineRunner.StopCoroutineSafely(updateRoutine);
             updateRoutine = null;
         }
 
