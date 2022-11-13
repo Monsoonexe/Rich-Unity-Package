@@ -17,11 +17,11 @@ namespace RichPackage
         }
 
         public static void AddRange<T>(this List<T> source, IList<T> other)
-		{
+        {
             int len = other.Count;
             for (int i = 0; i < len; i++)
-				source.Add(other[i]);
-		}
+                source.Add(other[i]);
+        }
 
         /// <summary>
         /// Pop <paramref name="count"/> items off of <paramref name="src"/>
@@ -108,6 +108,7 @@ namespace RichPackage
             return itemsAdded;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InsertWrapped<T>(this List<T> list,
             int index, T item)
             => list.Insert(list.GetWrappedIndex(index), item);
@@ -153,11 +154,11 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T GetRemoveAt<T>(this List<T> list, int i)
         {
-            //validate
-            if (!list.IndexIsInRange(i))
+            // validate
+            if (!list.IsIndexInRange(i))
                 throw new IndexOutOfRangeException($"{i} | {list.Count}");
 
-            //work
+            // work
             T el = list[i];
             list.RemoveAt(i);
             return el;
@@ -185,7 +186,6 @@ namespace RichPackage
         /// <summary>
         /// Remove each item and perform an action on it. O(n) time.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void RemoveWhile<T>(this List<T> col, Action<T> action)
         {
             while (col.Count > 0)
