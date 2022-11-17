@@ -111,7 +111,7 @@ namespace RichPackage
 
         /// <param name="str">Text to add color to.</param>
         /// <param name="color">Either the name of a color (e.g. 'orange') or 
-        /// its hex value (e.g. '#XXYYZZ).</param>
+        /// its hex value (e.g. '#RRGGBBAA).</param>
         public static string Color(string str, string color)
         {
             // $"<color={color}>{str}</color>";
