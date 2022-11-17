@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,22 +10,21 @@ using UnityEngine;
 /// <seealso cref="PanelUILayer"/>
 public class WindowUILayer : AUILayer<IWindowController>
 {
-    [SerializeField]
+    [SerializeField, Required]
     private WindowParaLayer priorityParaLayer;
 
     public IWindowController CurrentWindow { get; private set; } // readonly
-
-    [SerializeField]
-    private string currentWindowID = "none";
-
-    private Queue<WindowHistoryEntry> windowQueue;
-    private Stack<WindowHistoryEntry> windowHistory;
 
     public event Action RequestScreenBlock;
 
     public event Action RequestScreenUnblock;
 
     private List<IUIScreenController> screensTransitioning;
+    private Queue<WindowHistoryEntry> windowQueue;
+    private Stack<WindowHistoryEntry> windowHistory;
+
+    [ShowInInspector, ReadOnly]
+    public string CurrentWindowID => CurrentWindow?.ScreenID ?? "none";
 
     /// <summary>
     /// Is a Window currently Transitioning?
@@ -36,7 +36,7 @@ public class WindowUILayer : AUILayer<IWindowController>
 
     #region Process Screens
 
-    protected override void ProcessScreenRegister(string screenID, 
+    protected override void ProcessScreenRegister(string screenID,
         IWindowController controller)
     {
         base.ProcessScreenRegister(screenID, controller);
@@ -46,7 +46,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         controller.CloseRequest += OnCloseRequestedByWindow;
     }
 
-    protected override void ProcessScreenUnregister(string screenID, 
+    protected override void ProcessScreenUnregister(string screenID,
         IWindowController controller)
     {
         base.ProcessScreenUnregister(screenID, controller);
@@ -56,7 +56,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         controller.CloseRequest -= OnCloseRequestedByWindow;
     }
 
-    #endregion
+    #endregion Process Screens
 
     #region Show/Hide Screens
 
@@ -67,25 +67,27 @@ public class WindowUILayer : AUILayer<IWindowController>
 
     private void DoShow(WindowHistoryEntry entry)
     {
-        //validate
-        if(entry.screen == CurrentWindow)
+        // validate
+        if (entry.screen == CurrentWindow)
         {
-            Debug.LogErrorFormat("[WindowUILayer] Requested windowID ({0}) " + 
-                "is already open! This causes undefined behavior as duplicate entries " + 
-                "are created.", CurrentWindow.ScreenID);
+            Debug.LogError($"[{nameof(WindowUILayer)}] Requested windowID ({CurrentWindow.ScreenID}) " +
+                "is already open! This causes undefined behavior as duplicate entries " +
+                "are created.");
             return;
         }
-        else if(CurrentWindow != null // if there is already a Window
+
+        // hide current window?
+        if (CurrentWindow != null // if there is already a Window
             && CurrentWindow.HideOnForegroundLost // and it will relinquish the foreground
             && !entry.screen.IsPopup) //and not a pop-up, which are always on top
         {
             CurrentWindow.Hide(true);
         }
-        
+
         windowHistory.Push(entry);
         AddTransition(entry.screen);
 
-        //darken everything else if popup
+        // darken everything else if popup
         if (entry.screen.IsPopup)
         {
             priorityParaLayer.DarkenBackground();
@@ -93,49 +95,45 @@ public class WindowUILayer : AUILayer<IWindowController>
 
         entry.Show(); // show it!
 
-        CurrentWindow = entry.screen;//set as active window
-        currentWindowID = CurrentWindow.ScreenID;
+        CurrentWindow = entry.screen; //set as active window
     }
 
     public override void HideScreen(IWindowController screen, bool animate = true)
     {
-        //verify screen being closed is current window
-        if(screen == CurrentWindow)
+        // verify screen being closed is current window
+        if (screen != CurrentWindow)
         {
-            //remove from browser history
-            var _ = windowHistory.Pop();
-
-            //do transition
-            AddTransition(screen);
-
-            //hide and animate
-            screen.Hide(animate);
-
-            //no active window
-            CurrentWindow = null;
-            currentWindowID = null;
-
-            //show next in queue
-            if(windowQueue.Count > 0)
-            {
-                //Debug.LogFormat("if( windowQueue.Count ({0}) > 0", windowQueue.Count);
-                ShowNextInQueue();
-            }
-            //show next from history
-            else if(windowHistory.Count > 0)
-            {
-                //Debug.LogFormat("if( windowHistory.Count ({0}) > 0", windowHistory.Count);
-                ShowPreviousInHistory();
-            }
-            // else all closedHid
+            Debug.LogError($"{nameof(WindowUILayer)}] Hide requested on WindowId {screen.ScreenID} "
+                + $"but that's not the currently open one ({CurrentWindowID})! " +
+                "Ignoring request.");
+            return;
         }
-        else
+
+        // remove from browser history
+        _ = windowHistory.Pop();
+
+        // do transition
+        AddTransition(screen);
+
+        // hide and animate
+        screen.Hide(animate);
+
+        // no active window
+        CurrentWindow = null;
+
+        // show next in queue
+        if (windowQueue.Count > 0)
         {
-            Debug.LogErrorFormat("[WindowUILayer] Hide requested on WindowId {0} "
-                + "but that's not the currently open one ({1})! Ignoring request.",
-                screen.ScreenID, CurrentWindow != null ? CurrentWindow.ScreenID 
-                : "current is null.");
+            //Debug.LogFormat("if( windowQueue.Count ({0}) > 0", windowQueue.Count);
+            ShowNextInQueue();
         }
+        // show next from history
+        else if (windowHistory.Count > 0)
+        {
+            //Debug.LogFormat("if( windowHistory.Count ({0}) > 0", windowHistory.Count);
+            ShowPreviousInHistory();
+        }
+        // else all closed/hid
     }
 
     /// <summary>
@@ -145,12 +143,8 @@ public class WindowUILayer : AUILayer<IWindowController>
     public override void HideAll(bool animate = true)
     {
         base.HideAll(animate);
-
         CurrentWindow = null; // no active window
-        currentWindowID = null;
-
         priorityParaLayer.RefreshDarken();
-
         windowHistory.Clear();
     }
 
@@ -175,7 +169,7 @@ public class WindowUILayer : AUILayer<IWindowController>
 
         if (ShouldEnqueue(screen, windowProperties))
         {
-            EnqueueWindow(screen, properties);
+            EnqueueWindow(screen, windowProperties);
         }
         else
         {
@@ -183,32 +177,31 @@ public class WindowUILayer : AUILayer<IWindowController>
         }
     }
 
-    #endregion
+    #endregion Show/Hide Screens
 
     #region Screen History
 
-    private void EnqueueWindow<TProp>(IWindowController screen, TProp properties)
-        where TProp : IScreenProperties
+    private void EnqueueWindow(IWindowController screen, IWindowProperties properties)
     {
-        windowQueue.Enqueue(new WindowHistoryEntry(screen, (IWindowProperties)properties));
+        windowQueue.Enqueue(new WindowHistoryEntry(screen, properties));
     }
 
     private bool ShouldEnqueue(IWindowController controller, IWindowProperties windowProperties)
     {
-        //Don't enqueue if the Window is empty
-        if(CurrentWindow == null && windowQueue.Count == 0)
+        // Don't enqueue if the Window is empty
+        if (CurrentWindow == null && windowQueue.Count == 0)
         {
             return false;
         }
 
-        //if the property intends to override default properties
-        if(windowProperties != null && windowProperties.SuppressPrefabProperties)
+        // if the property intends to override default properties
+        if (windowProperties != null && windowProperties.SuppressPrefabProperties)
         {
             return windowProperties.WindowQueuePriority != WindowPriorityENUM.ForceForeground;
         }
 
-        //enqueu if it doesn't HAVE to be at the foreground
-        if(controller.WindowPriority != WindowPriorityENUM.ForceForeground)
+        // enqueu if it doesn't HAVE to be at the foreground
+        if (controller.WindowPriority != WindowPriorityENUM.ForceForeground)
         {
             Debug.Log("Enqueueing screenID: " + controller.ScreenID);
             return true;
@@ -222,12 +215,12 @@ public class WindowUILayer : AUILayer<IWindowController>
     /// </summary>
     private void ShowPreviousInHistory()
     {
-        //validate stack not empty
-        if(windowHistory.Count > 0)
+        // validate stack not empty
+        if (windowHistory.Count > 0)
         {
             DoShow(windowHistory.Pop());
         }
-        //maybe count is 0 sometimes.
+        // maybe count is 0 sometimes.
     }
 
     /// <summary>
@@ -235,13 +228,13 @@ public class WindowUILayer : AUILayer<IWindowController>
     /// </summary>
     private void ShowNextInQueue()
     {
-        if(windowQueue.Count > 0)
+        if (windowQueue.Count > 0)
         {
             DoShow(windowQueue.Dequeue());
         }
     }
 
-    #endregion
+    #endregion Screen History
 
     #region Event Responses
 
@@ -269,7 +262,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         }
     }
 
-    #endregion
+    #endregion Event Responses
 
     #region Add/Remove Transitions
 
@@ -288,7 +281,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         }
     }
 
-    #endregion
+    #endregion Add/Remove Transitions
 
     public override void Initialize()
     {
@@ -298,12 +291,10 @@ public class WindowUILayer : AUILayer<IWindowController>
         screensTransitioning = new List<IUIScreenController>();
     }
 
-    public override void ReparentScreen(IUIScreenController controller, 
+    public override void ReparentScreen(IUIScreenController controller,
         Transform screenTransform)
     {
-        IWindowController window = controller as IWindowController;
-
-        if (window != null) // if window exists
+        if (controller is IWindowController window)
         {
             if (window.IsPopup)
             {
@@ -313,11 +304,9 @@ public class WindowUILayer : AUILayer<IWindowController>
         }
         else
         {
-            Debug.LogErrorFormat("ERROR! Screen {0} is not a Window!", screenTransform.name);
-
+            Debug.LogError($"Screen {screenTransform.name} is not a Window!");
         }
 
         base.ReparentScreen(controller, screenTransform);
     }
-
 }
