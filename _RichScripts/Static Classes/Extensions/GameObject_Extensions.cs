@@ -54,7 +54,7 @@ namespace RichPackage
         public static T GetOrAddComponent<T>(this GameObject gameObject, T comp = null)
             where T : Component
         {
-            if (comp != null || (comp = gameObject.GetComponent<T>()) != null)
+            if (comp != null || gameObject.TryGetComponent(out comp))
                 return comp;
 
             return gameObject.AddComponent<T>();
