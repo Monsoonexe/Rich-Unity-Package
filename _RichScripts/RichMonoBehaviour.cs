@@ -48,12 +48,13 @@ namespace RichPackage
 
         protected virtual void Reset()
         {
-            myTransform = gameObject.GetComponent<Transform>();
+            myTransform = gameObject.transform;
         }
 
         protected virtual void Awake()
         {
-            myTransform = gameObject.GetComponentIfNull(myTransform);
+            if (!myTransform)
+                myTransform = gameObject.transform;
         }
 
         #endregion Unity Messages
