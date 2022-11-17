@@ -34,7 +34,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// <summary>
     /// Unique Identifier for this ID. Maybe it's prefab name?
     /// </summary>
-    [field: SerializeField, LabelText(nameof(ScreenID)),
+    [field: SerializeField, LabelText(nameof(ScreenID), NicifyText = true),
         PropertyTooltip("[Optional]. If this is null/empty, it'll be set to its prefab name.")]
     public virtual string ScreenID { get; set; }
 
@@ -80,16 +80,6 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         gameObject.GetOrAddComponent<Canvas>();
         gameObject.GetOrAddComponent<GraphicRaycaster>();
     }
-
-    protected virtual void OnEnable()
-    {
-        SubscribeToEvents();
-    }
-
-    protected virtual void OnDisable()
-	{
-        UnsubscribeFromEvents();
-	}
 
     protected virtual void OnDestroy()
     {
@@ -145,22 +135,6 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
 	#region AUIScreenController
 
-	/// <summary>
-	/// Nada.
-	/// </summary>
-	protected virtual void SubscribeToEvents()
-    {
-        //nada
-    }
-
-    /// <summary>
-    /// Nada.
-    /// </summary>
-    protected virtual void UnsubscribeFromEvents()
-    {
-        //nada
-    }
-
     /// <summary>
     /// Use this to set load data from properties. Called when Screen is Shown.
     /// </summary>
@@ -213,11 +187,11 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         OnHide(); 
     }
 
-    public void Show() => Show(payload: null);
+    public void Show() => Show(properties);
 
     public void Show(IScreenProperties payload)
     {
-        //validate 
+        // set screen properties
         if (payload != null)
         {
             if(payload is TProps props)
@@ -231,7 +205,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
                 // default to Inspector values
             }
-        }//end validate
+        }
 
         OnHierarchyFix(); // react to change in hierarchy
 
