@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using RichPackage.FunctionalProgramming;
 
 namespace RichPackage
 {
@@ -33,9 +34,9 @@ namespace RichPackage
         /// </summary>
         public static float Time(this Action action)
         {
-            var watch = SimpleTimer.StartNew();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             action();
-            return watch.Elapsed;
+            return watch.Elapsed.TotalSeconds.ToFloat();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
