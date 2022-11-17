@@ -209,12 +209,12 @@ namespace RichPackage.UI
 			ToggleButtonInteractivity(false); //disable, but don't hide.
 
 			if (animate && transitionOUTAnimator != null)
-				transitionOUTAnimator.Animate(windowTransform, Finalize);
+				transitionOUTAnimator.Animate(windowTransform, Finally);
 			else
-				Finalize();
+				Finally();
 		}
 		
-		private void Finalize()
+		private void Finally()
 		{
 			Hide(); //hide window
 			if (OnResult != null)
