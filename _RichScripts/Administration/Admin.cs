@@ -67,7 +67,7 @@ namespace RichPackage.Administration
         private static void LoginInternal()
 		{
             IsAdmin = true;
-            Debug.Log("Admin logged in.");
+            Debug.Log(RichText.Green("Admin logged in."));
             OnLogin?.Invoke();
         }
 
