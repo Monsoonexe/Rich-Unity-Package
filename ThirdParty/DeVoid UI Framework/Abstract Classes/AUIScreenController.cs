@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
@@ -235,14 +235,14 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
         OnHierarchyFix(); // react to change in hierarchy
 
-        //catch exception but don't let it interrupt the opening of the window.
+        //catch exception, but don't let it interrupt the opening of the window.
 		try
 		{
             OnPropertiesSet(); // validate and load data
 		}
 		catch (Exception ex)
 		{
-            Debug.LogError($"An exception occurred in {nameof(OnPropertiesSet)}:\n {ex}");
+            Debug.LogException(ex);
 		}
 
         if (!gameObject.activeSelf) // if currently hidden
