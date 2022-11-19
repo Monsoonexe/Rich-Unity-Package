@@ -2,7 +2,8 @@
 using UnityEngine;
 
 /// <summary>
-/// 
+/// The payload that gets passed to a <see cref="AWindowController"/> with 
+/// all the data required to populate its fields.
 /// </summary>
 /// <seealso cref="PanelProperties"/>
 [Serializable]
