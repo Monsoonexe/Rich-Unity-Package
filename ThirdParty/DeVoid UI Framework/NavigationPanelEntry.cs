@@ -6,7 +6,7 @@ namespace ProjectEmpiresEdge.UI
     /// <summary>
     /// Holds icon, text, and target screen data.
     /// </summary>
-    [Serializable]
+    [Serializable, Obsolete]
     public struct NavigationPanelEntry
     {
         //data is readonly set in Inspector

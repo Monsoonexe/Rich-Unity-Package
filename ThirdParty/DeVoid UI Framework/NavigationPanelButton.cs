@@ -7,7 +7,7 @@ using Sirenix.OdinInspector;
 
 namespace ProjectEmpiresEdge.UI
 {
-    [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(Button)), Obsolete]
     public class NavigationPanelButton : RichMonoBehaviour
     {
         [Title("References")]
