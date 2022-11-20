@@ -35,10 +35,11 @@ public class FontSetterWindow : OdinEditorWindow
             sceneTexts = new List<TextMeshProUGUI>();
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         //release dynamic memory to prevent Editor bloat
         sceneTexts = null;
+        base.OnDisable();
     }
 
     [PropertySpace(22)]
