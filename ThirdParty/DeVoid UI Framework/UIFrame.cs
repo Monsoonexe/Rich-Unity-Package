@@ -37,9 +37,15 @@ public class UIFrame : RichMonoBehaviour
 
     public Camera UICamera { get => mainCanvas.worldCamera; }
 
-	#region Unity Messages
+    #region Events
 
-	protected override void Reset()
+    public event Action OnAllWindowsClosed;
+    
+    #endregion Events
+
+    #region Unity Messages
+
+    protected override void Reset()
 	{
 		base.Reset();
         SetDevDescription("This is the central hub for all things UI. All your calls should be directed at this.");
@@ -88,10 +94,10 @@ public class UIFrame : RichMonoBehaviour
 
     public virtual void Initialize()
     {
-        //init panel
+        // init panel
         panelLayer.Initialize();
 
-        //init window
+        // init window
         windowLayer.Initialize();
         windowLayer.RequestScreenBlock += OnRequestScreenBlock; // subscribe to events
         windowLayer.RequestScreenUnblock += OnRequestScreenUnblock; // subscribe to events
@@ -107,6 +113,7 @@ public class UIFrame : RichMonoBehaviour
     public void CloseAllWindows(bool animate = true)
     {
         windowLayer.HideAll(animate); // relay
+        OnAllWindowsClosed?.Invoke();
     }
 
     /// <summary>
@@ -117,6 +124,8 @@ public class UIFrame : RichMonoBehaviour
     public void CloseWindow(string screenID, bool animate = true)
     {
         windowLayer.HideScreenByID(screenID, animate); // relay
+        if (windowLayer.CurrentWindow == null)
+            OnAllWindowsClosed?.Invoke();
     }
 
     [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
@@ -127,10 +136,6 @@ public class UIFrame : RichMonoBehaviour
             //Debug.Log("Closing window: " + windowLayer.CurrentWindow.ScreenID);
             CloseWindow(windowLayer.CurrentWindow.ScreenID, animate); // relay
         }
-        //else
-        //{
-        //    Debug.Log("No current window!");
-        //}
     }
 
     /// <summary>
