@@ -243,12 +243,12 @@ public class UIFrame : RichMonoBehaviour
             }
             else
             {
-                Debug.LogError($"ERROR! ScreenID is registered, but it is neither an IWindowController or IPanelController: {screenID}", this);
+                Debug.LogError($"ScreenID is registered, but it is neither an IWindowController or IPanelController: {screenID}", this);
             }
         }
         else
         {
-            Debug.LogError($"ERROR! Tried to {nameof(ShowScreen)}, but ID {screenID} is not registered.", this);
+            Debug.LogError($"Tried to {nameof(ShowScreen)}, but ID {screenID} is not registered.", this);
         }
     }
 
