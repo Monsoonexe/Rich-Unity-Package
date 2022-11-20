@@ -24,10 +24,12 @@ namespace RichPackage.UI
 		[Title("Refs")]
         [SerializeField, Required]
         protected Button myButton;
+        
         public Button Button { get => myButton; }
 
         [SerializeField]
         protected TextMeshProUGUI myText;
+
         public TextMeshProUGUI Label { get => myText; }
 
 		[Tooltip("Optional value that can be stored and retrieved later.")]
@@ -48,7 +50,8 @@ namespace RichPackage.UI
 
         [ShowInInspector, ReadOnly, BoxGroup(Properties_Group),
             LabelText(nameof(ObjectProperty)), LabelWidth(100),
-            PropertyTooltip("Optional value that can be stored and retrieved later.")]
+            PropertyTooltip("Optional value that can be stored and retrieved later " +
+            "(can only be modified programmatically.")]
         public string Editor_ObjectPayloadString
         {
             get => ObjectProperty?.ToString() ?? Default_String_Property;
