@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using RichPackage;
+using RichPackage.UI;
+using Sirenix.OdinInspector;
+using System;
 using UnityEngine;
 
 namespace ProjectEmpiresEdge.UI
@@ -7,30 +9,32 @@ namespace ProjectEmpiresEdge.UI
     [Serializable]
     public class NavigationPanelController : APanelController
     {
-        [Header("---Navigation Data---")]
-        [SerializeField]
-        protected string owningWindow;
-
+        [Title("Settings")]
         [SerializeField]
         protected bool navigateOnShow = false;
 
+        [Title("Resources")]
         [SerializeField]
-        protected NavigationPanelButton navButtonPrefab;
+        private Transform buttonHolder;
 
-        [SerializeField]
-        protected NavigationPanelEntry[] navTargets;
+        // runtime data
+        [SerializeField,
+            CustomContextMenu(nameof(GatherNavButtons), nameof(GatherNavButtons))]
+        protected RichUIButton[] navButtons;
 
-        protected readonly List<NavigationPanelButton> currentButtons = new List<NavigationPanelButton>(8);
+        // runtime data
+        private RichUIButton previousButton;
+
+        #region Unity Messages
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if (buttonHolder == null)
+                buttonHolder = this.transform;
+        }
         
-        //protected override void AddListeners()
-        //{
-        //    - hook into a global event or signal
-        //}
-
-        //protected override void RemoveListeners()
-        //{
-        //    - hook into a global event or signal
-        //}
+        #endregion Unity Messages
 
         protected override void OnHide()
         {
@@ -40,58 +44,37 @@ namespace ProjectEmpiresEdge.UI
         protected override void OnPropertiesSet()
         {
             ClearButtons(); // remove existing buttons
-            var buttonCount = navTargets.Length;
+            int buttonCount = navButtons.Length;
 
-            //create buttons
-            for(var i = 0; i < buttonCount; ++i)
+            // create buttons
+            for(int i = 0; i < buttonCount; ++i)
             {
-                var target = navTargets[i];
-                var newButton = Instantiate(navButtonPrefab); // give birth
-
-                newButton.transform.SetParent(this.transform, false); // reparent to this object
-                newButton.SetData(target); // set nav target and visuals
-
-                if(!newButton.isActiveAndEnabled)//make sure it's enabled
-                    newButton.gameObject.SetActive(true);
-
-                newButton.OnButtonClicked += OnNavigationButtonClicked; // hook to event
-                currentButtons.Add(newButton);
+                var button = navButtons[i];
+                button.gameObject.SetActiveChecked(true);
+                button.OnPressedEvent += OnNavigationButtonClicked; // hook to event
             }
 
-            //default to showing first button
+            // default to showing first button
             if (navigateOnShow)
             {
-                //GalaxyMapUI.UIFrame.OpenWindow(currentButtons[0].TargetScreen); // navigate
-                currentButtons[0].SetCurrentNavigationTarget(currentButtons[0].TargetScreen); // set button inactive
+                OnNavigationButtonClicked(navButtons[0]);
             }
         }
 
-        protected virtual void OnNavigationButtonClicked(NavigationPanelButton clickedButton)
+        protected virtual void OnNavigationButtonClicked(RichUIButton clickedButton)
         {
-            //GalaxyMapUI.UIFrame.CloseCurrentWindow();
-            //GalaxyMapUI.UIFrame.OpenWindow(clickedButton.TargetScreen);
-
-            //dis/enable button interactability
-            var buttonCount = currentButtons.Count;
-            for (var i = 0; i < buttonCount; ++i)
+            // track button state
+            if (previousButton != null)
             {
-                currentButtons[i].SetCurrentNavigationTarget(clickedButton);
+                previousButton.Interactable = true;
             }
-        }
+            previousButton = clickedButton;
+            clickedButton.Interactable = false;
+            clickedButton.Button.Select();
 
-        /// <summary>
-        /// Used if navigation happens outside of this Controller
-        /// </summary>
-        /// <param name="screenID"></param>
-        protected virtual void OnExternalNavigation(string screenID)
-        {
-            //TODO - hook into a global event or signal
-            //dis/enable button interactability
-            var buttonCount = currentButtons.Count;
-            for(var i = 0; i < buttonCount; ++i)
-            {
-                currentButtons[i].SetCurrentNavigationTarget(screenID);
-            }
+            // open window
+            GalaxyMapUI.UIFrame.CloseCurrentWindow();
+            GalaxyMapUI.UIFrame.OpenWindow(clickedButton.StringProperty);
         }
 
         /// <summary>
@@ -99,25 +82,26 @@ namespace ProjectEmpiresEdge.UI
         /// </summary>
         protected virtual void ClearButtons()
         {
-            var buttonCount = currentButtons.Count;
+            var buttonCount = navButtons.Length;
 
             for(var i = 0; i < buttonCount; ++i)
             {
-                var button = currentButtons[i];
+                var button = navButtons[i];
 
-                button.OnButtonClicked -= OnNavigationButtonClicked;
-                Destroy(button.gameObject);
-                //TODO - pool
+                button.OnPressedEvent -= OnNavigationButtonClicked;
+                Destroy(button.gameObject); //TODO - pool
             }
-
-            currentButtons.Clear();
         }
 
         public virtual void UI_CloseWindow()
         {
             Hide(); // don't need to go through the frame to hide a panel
-            //GalaxyMapUI.UIFrame.CloseCurrentWindow();
-            //GalaxyMapUI.UIFrame.CloseWindow(owningWindow);
+            GalaxyMapUI.UIFrame.CloseCurrentWindow();
+        }
+
+        private void GatherNavButtons()
+        {
+            navButtons = buttonHolder.GetComponentsInChildren<RichUIButton>();
         }
     }
 }
