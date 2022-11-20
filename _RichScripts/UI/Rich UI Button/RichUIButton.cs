@@ -255,5 +255,17 @@ namespace RichPackage.UI
         #endregion
 
         public static implicit operator Button (RichUIButton a) => a.Button;
+
+        public static RichUIButton operator +(RichUIButton button, UnityAction action)
+        {
+            button.AddListener(action);
+            return button;
+        }
+
+        public static RichUIButton operator -(RichUIButton button, UnityAction action)
+        {
+            button.RemoveListener(action);
+            return button;
+        }
     }
 }
