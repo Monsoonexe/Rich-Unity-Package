@@ -88,10 +88,11 @@ namespace RichPackage.Editor
 			_instance._repaintSheduled = true;
 		}
 
-		private void OnDisable()
+		protected override void OnDisable()
 		{
 			string json = EditorJsonUtility.ToJson(this);
 			EditorPrefs.SetString("OWW_props", json);
+			base.OnDisable();
 		}
 
 		protected override void OnEnable()
