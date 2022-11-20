@@ -43,7 +43,7 @@ public class WindowUILayer : AUILayer<IWindowController>
 
         controller.OnTransitionInFinishedCallback += OnInAnimationFinished;
         controller.OnTransitionOutFinishedCallback += OnOutAnimationFinished;
-        controller.CloseRequest += OnCloseRequestedByWindow;
+        controller.CloseRequest += HideScreen;
     }
 
     protected override void ProcessScreenUnregister(string screenID,
@@ -53,7 +53,7 @@ public class WindowUILayer : AUILayer<IWindowController>
 
         controller.OnTransitionInFinishedCallback -= OnInAnimationFinished;
         controller.OnTransitionOutFinishedCallback -= OnOutAnimationFinished;
-        controller.CloseRequest -= OnCloseRequestedByWindow;
+        controller.CloseRequest -= HideScreen;
     }
 
     #endregion Process Screens
@@ -237,13 +237,7 @@ public class WindowUILayer : AUILayer<IWindowController>
     #endregion Screen History
 
     #region Event Responses
-
-    private void OnCloseRequestedByWindow(IUIScreenController screen,
-        bool animate = true)
-    {
-        HideScreen(screen as IWindowController, animate);
-    }
-
+    
     private void OnInAnimationFinished(IUIScreenController screen)
     {
         RemoveTransition(screen);
