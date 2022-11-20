@@ -23,12 +23,17 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     { get => transitionOUTAnimator; set => transitionOUTAnimator = value; } // wrap serialized field
 
     /// <summary>
-    /// This is the data payload and settings for this screen. You can rig this directly in a prefab and/or pass it when you show this screen.
+    /// This is the data payload and settings for this screen. 
+    /// You can rig this directly in a prefab and-or pass it when you show this screen.
     /// </summary>
-    [Header("---Properties Payload---")]
     [Tooltip( "This is the data payload and settings for this screen. You can rig this directly in a prefab and/or pass it when you show this screen.")]
     [SerializeField]
     private TProps properties;
+
+    /// <summary>
+    /// This is the data payload and settings for this screen. 
+    /// You can rig this directly in a prefab and-or pass it when you show this screen.
+    /// </summary>
     protected TProps Properties { get => properties; set => properties = value; }
     
     /// <summary>
