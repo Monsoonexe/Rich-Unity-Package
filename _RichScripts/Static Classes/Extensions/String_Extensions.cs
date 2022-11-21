@@ -105,7 +105,8 @@ namespace RichPackage
             => string.Compare(strA, strB, StringComparison.OrdinalIgnoreCase) == 0;
 
         /// <summary>
-        /// Quicker than <see cref="String.EndsWith(string)"/>. Prefer this for 
+        /// 
+        er than <see cref="String.EndsWith(string)"/>. Prefer this for 
         /// non-localized strings because it compares the byte value rather than 
         /// the character represented by the value. 
         /// </summary>
@@ -148,6 +149,28 @@ namespace RichPackage
         }
 
         #endregion Comparisons
+            
+        /// <summary>
+        /// Splits <paramref name="source"/> into chunks of size <paramref name="chunkLength"/>.
+        /// </summary>
+        /// <returns>An iterator over each chunk</returns>
+        /// <remarks>https://stackoverflow.com/questions/1450774/splitting-a-string-into-chunks-of-a-certain-size</remarks>
+        public static IEnumerable<string> SplitBy(this string source, int chunkLength)
+        {
+            GuardClauses.GuardAgainst.IsNullOrWhiteSpace(source, nameof(source));
+            GuardClauses.GuardAgainst.IsZeroOrNegative(chunkLength, nameof(chunkLength));
+
+            int len = source.Length;
+            for (int i = 0; i < len; i += chunkLength)
+            {
+                // handle remainder
+                if (chunkLength + i > len)
+                    chunkLength = len - i;
+
+                // yield chunk
+                yield return source.Substring(i, chunkLength);
+            }
+        }
 
         /// <summary>
         /// Returns <paramref name="str"/>'s <see cref="string.Length"/>
