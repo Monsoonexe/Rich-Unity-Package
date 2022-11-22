@@ -3,6 +3,7 @@ using UnityEngine;
 using RichPackage;
 using Sirenix.OdinInspector;
 using System.Linq;
+using System;
 
 /// <summary>
 /// Base class for UI Layers. Layers implement custom logic for Screens when opening, closing, etc.
@@ -136,8 +137,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
-				"is not registered to this Layer!", this);
+            throw GetScreenNotRegisteredException(screenID);
         }
     }
 
@@ -152,8 +152,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
-                "is not registered to this Layer!", this);
+            throw GetScreenNotRegisteredException(screenID);
         }
     }
 
@@ -168,8 +167,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
         else
         {
-            Debug.LogError($"[{nameof(AUILayer<TScreen>)}] screenID: <{screenID}> " +
-                "is not registered to this Layer!", this);
+            throw GetScreenNotRegisteredException(screenID);
         }
     }
 
@@ -183,6 +181,12 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     }
 
     #endregion Show/Hide Screens
+
+    private System.Exception GetScreenNotRegisteredException(string screenID)
+    {
+        return new System.Exception($"[{nameof(AUILayer<TScreen>)}] screenID: " +
+            $"<{screenID}> is not registered to this Layer.");
+    }
 
     private void OnScreenDestroyed(IUIScreenController screen)//why not just take a TScreen?
     {
@@ -208,6 +212,5 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
                 Debug.Log(screenEntry.Value.ScreenID);
             }
         }
-
     }
 }
