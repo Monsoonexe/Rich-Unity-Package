@@ -25,7 +25,35 @@ using UnityEngine;
         /// </summary>
         public YieldInstruction RunTiming;
 
-        public bool Enabled { get => updateRoutine != null; }
+        private int _jobsPerFrame = 1;
+
+        /// <summary>
+        /// Currently has no effect and is locked at 1.
+        /// </summary>
+        public int JobsPerFrame
+        {
+            get => _jobsPerFrame;
+            set
+            {
+                if (value < 0)
+                    value = int.MaxValue;
+                else if (value == 0)
+                    throw new ArgumentException($"0 is not a valid value for {nameof(JobsPerFrame)}.");
+                _jobsPerFrame = value;
+            }
+        }
+        
+        public bool Enabled
+        {
+            get => updateRoutine != null;
+            set
+            {
+                if (value && !Enabled)
+                    Run();
+                else if (!value && Enabled)
+                    Stop();
+            }
+        }
 
         #region Constructors
 
@@ -79,10 +107,12 @@ using UnityEngine;
 
             while (true)
             {
-                yield return waitForWork;
+                // TODO - add options for how many jobs can be processed in single frame
                 yield return RunTiming;
-                while (messageQueue.TryTake(out Action action))
+                if (messageQueue.TryTake(out Action action))
                     SafeInvoke(action);
+                else
+                    yield return waitForWork;
             }
         }
 
