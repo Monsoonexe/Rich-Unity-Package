@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 /// <seealso cref="PanelProperties"/>
 [Serializable]
-public class WindowProperties : IWindowProperties
+public partial class WindowProperties : IWindowProperties
 {
     [Tooltip("Should this Window be hidden when another Window takes its foreground?")]
     [SerializeField]
