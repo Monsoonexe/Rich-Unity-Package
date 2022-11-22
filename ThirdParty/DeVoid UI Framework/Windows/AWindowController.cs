@@ -66,7 +66,7 @@ public abstract class AWindowController<TProps>
     /// UI_Prefix for ease-of-use, even though it breaks naming convention.
     /// </summary>
     /// <seealso cref="IWindowController.OnHide"/>
-    public virtual void UI_Close()
+    public void UI_Close()
     {
         CloseRequest(this, true);
     }
