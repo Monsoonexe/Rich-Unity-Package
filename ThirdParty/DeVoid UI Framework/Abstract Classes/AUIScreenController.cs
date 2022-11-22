@@ -63,7 +63,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     public event Action<IUIScreenController> OnTransitionOutFinishedCallback;
 
     /// <summary>
-    /// 
+    /// Called from <see cref="MonoBehaviour.OnDestroy"/> event.
     /// </summary>
     /// <value>The destruction action.</value>
     public event Action<IUIScreenController> OnScreenDestroyed;
@@ -88,10 +88,10 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
     protected virtual void OnDestroy()
     {
-        //death rattle
+        // death rattle
         OnScreenDestroyed?.Invoke(this);
 
-        //release refs
+        // release refs
         OnTransitionInFinishedCallback = null; // release ref
         OnTransitionOutFinishedCallback = null; // release ref
         OnScreenDestroyed = null; // release ref
@@ -181,10 +181,10 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
     public void Hide(bool animate)
     {
-        //cancel in animation
+        // cancel in animation
         transitionINAnimator?.Stop(); // 
 
-        //do animation
+        // do animation
         Animate(animate ? transitionOUTAnimator : null, 
             OnTransitionOUTFinished, false);
 
@@ -206,7 +206,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
             else
             {
                 Debug.LogError($"[{nameof(AUIScreenController<TProps>)}] Properties passed have wrong type! " +
-					$"({payload.GetType()} instead of {typeof(TProps)}).");
+					$"({payload.GetType()} instead of {typeof(TProps)}).", this);
 
                 // default to Inspector values
             }
@@ -221,7 +221,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 		}
 		catch (Exception ex)
 		{
-            Debug.LogException(ex);
+            Debug.LogException(ex, this);
 		}
 
         if (!gameObject.activeSelf) // if currently hidden
