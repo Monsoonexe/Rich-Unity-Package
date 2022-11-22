@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
@@ -110,8 +111,7 @@ namespace RichPackage
             => source.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 
         /// <summary>
-        /// 
-        er than <see cref="String.EndsWith(string)"/>. Prefer this for 
+        /// Quicker than <see cref="String.EndsWith(string)"/>. Prefer this for 
         /// non-localized strings because it compares the byte value rather than 
         /// the character represented by the value. 
         /// </summary>
