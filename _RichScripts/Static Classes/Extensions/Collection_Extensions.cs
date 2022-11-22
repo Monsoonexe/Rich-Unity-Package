@@ -508,6 +508,13 @@ namespace RichPackage
             foreach (T item in collection)
                 action(item, i++);
         }
+        
+        public static IEnumerable<(T Item, int Index)> ForeachWithIndex<T>(this IEnumerable<T> source)
+        {
+            int i = 0;
+            foreach (var item in source)
+                yield return (item, i++);
+        }
 
         /// <summary>
         /// A 'foreach' with a 'for' backbone
