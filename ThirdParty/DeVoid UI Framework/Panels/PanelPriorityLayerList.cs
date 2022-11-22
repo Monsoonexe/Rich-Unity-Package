@@ -10,10 +10,10 @@ public class PanelPriorityLayerList
     private List<PanelPriorityLayerListEntry> paraLayers = 
         new List<PanelPriorityLayerListEntry>();
 
-    private Dictionary<PanelPriorityENUM, Transform> lookup = 
-        new Dictionary<PanelPriorityENUM, Transform>();
+    private Dictionary<EPanelPriority, Transform> lookup = 
+        new Dictionary<EPanelPriority, Transform>();
 
-    public Dictionary<PanelPriorityENUM, Transform> ParaLayerLookup
+    public Dictionary<EPanelPriority, Transform> ParaLayerLookup
     {
         get
         {
@@ -31,7 +31,7 @@ public class PanelPriorityLayerList
     /// </summary>
     private void CacheLookup()
     {
-        lookup = new Dictionary<PanelPriorityENUM, Transform>();
+        lookup = new Dictionary<EPanelPriority, Transform>();
 
         for(var i = 0; i < paraLayers.Count; ++i)
         {

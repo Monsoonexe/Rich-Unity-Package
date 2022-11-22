@@ -15,19 +15,9 @@ public abstract class APanelController : APanelController<PanelProperties>
 public abstract class APanelController<TProps> : AUIScreenController<TProps>,
     IPanelController where TProps : IPanelProperties
 {
-    public PanelPriorityENUM Priority
+    public EPanelPriority Priority
     {
-        get
-        {
-            if (Properties != null)
-            {
-                return Properties.Priority;
-            }
-            else
-            {
-                return PanelPriorityENUM.None;
-            }
-        }
+        get => Properties?.Priority ?? EPanelPriority.None;
     }
 
     /// <summary>

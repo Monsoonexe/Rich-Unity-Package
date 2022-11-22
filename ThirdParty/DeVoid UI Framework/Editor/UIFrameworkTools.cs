@@ -92,9 +92,9 @@ namespace deVoid.UIFramework.Editor
 
             // Rigging all the Panel Para-Layers on the Panel Layer
             var prioList = new List<PanelPriorityLayerListEntry>();
-            prioList.Add(new PanelPriorityLayerListEntry(PanelPriorityENUM.None, panelLayer.transform));
-            prioList.Add(new PanelPriorityLayerListEntry(PanelPriorityENUM.Prioritary, prioPanelLayer.transform));
-            prioList.Add(new PanelPriorityLayerListEntry(PanelPriorityENUM.Tutorial, tutorialPanelLayer.transform));
+            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.None, panelLayer.transform));
+            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Prioritary, prioPanelLayer.transform));
+            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Tutorial, tutorialPanelLayer.transform));
             var panelPrios = new PanelPriorityLayerList(prioList);
 
             SetPrivateField(panelLayer, panelPrios, "priorityLayers");

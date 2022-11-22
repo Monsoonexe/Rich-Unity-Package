@@ -11,7 +11,7 @@ public class PanelUILayer : AUILayer<IPanelController>
     private PanelPriorityLayerList priorityLayers = 
         new PanelPriorityLayerList();
 
-    private void ReparentToParaLayer(PanelPriorityENUM priority,
+    private void ReparentToParaLayer(EPanelPriority priority,
         Transform screenTransform)
     {
         Transform targetTransform;

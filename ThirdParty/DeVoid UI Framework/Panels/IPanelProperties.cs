@@ -3,5 +3,5 @@
 /// </summary>
 public interface IPanelProperties : IScreenProperties
 {
-    PanelPriorityENUM Priority { get; set; }
+    EPanelPriority Priority { get; set; }
 }

@@ -4,5 +4,5 @@
 /// </summary>
 public interface IPanelController : IUIScreenController
 {
-    PanelPriorityENUM Priority { get; }
+    EPanelPriority Priority { get; }
 }

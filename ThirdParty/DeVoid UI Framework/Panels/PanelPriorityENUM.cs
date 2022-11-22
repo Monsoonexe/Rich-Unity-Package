@@ -1,5 +1,5 @@
 ﻿
-public enum PanelPriorityENUM
+public enum EPanelPriority
 {
     None = 0,
     Prioritary = 1,

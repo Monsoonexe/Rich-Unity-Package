@@ -7,22 +7,22 @@ using UnityEngine;
 /// </summary>
 /// <seealso cref="WindowProperties"/>
 [Serializable]
-public class PanelProperties : IPanelProperties
+public partial class PanelProperties : IPanelProperties
 {
     [Tooltip("Panels go to different para-layers depending on their priority. You can set up para-layers in the Panel Layer.")]
     [SerializeField]
-    private PanelPriorityENUM priority;
+    private EPanelPriority priority;
 
-    public PanelPriorityENUM Priority { get => priority; set => priority = value; }
+    public EPanelPriority Priority { get => priority; set => priority = value; }
 
     #region Constructors
 
     public PanelProperties()
     {
-        priority = PanelPriorityENUM.Prioritary;
+        priority = EPanelPriority.Prioritary;
     }
 
-    public PanelProperties(PanelPriorityENUM priority)
+    public PanelProperties(EPanelPriority priority)
     {
         this.priority = priority;
     }

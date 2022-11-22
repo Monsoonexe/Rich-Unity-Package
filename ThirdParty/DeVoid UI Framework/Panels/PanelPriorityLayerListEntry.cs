@@ -6,9 +6,9 @@ public class PanelPriorityLayerListEntry
 {
     [Tooltip("")]
     [SerializeField]
-    private PanelPriorityENUM priority;
+    private EPanelPriority priority;
 
-    public PanelPriorityENUM Priority { get => priority; set => priority = value; } // wrap serialized field
+    public EPanelPriority Priority { get => priority; set => priority = value; } // wrap serialized field
 
     [Tooltip("The Transform that should hold all Panels tagged with this priority.")]
     [SerializeField]
@@ -21,7 +21,7 @@ public class PanelPriorityLayerListEntry
 
     #region Constructor
 
-    public PanelPriorityLayerListEntry(PanelPriorityENUM priority, Transform parent)
+    public PanelPriorityLayerListEntry(EPanelPriority priority, Transform parent)
     {
         this.priority = priority;
         this.targetParent = parent;
