@@ -71,6 +71,22 @@ namespace RichPackage.TagSystem
             return Tag.None;
         }
 
+        public static IEnumerable<Tag> GetAllTags(this GameObject obj)
+        {
+            var components = UnityEngine.Rendering.ListPool<Component>.Get();
+            obj.GetComponents(components);
+
+            foreach (Component tagged in components)
+            {
+                if (tagged is ITagged t)
+                {
+                    foreach (Tag tag in t.GetTags())
+                        yield return tag;
+                }
+            }
+            UnityEngine.Rendering.ListPool<Component>.Release(components);
+        }
+
         public static bool HasTag(this GameObject obj, Tag tag)
         {
             if (obj.TryGetComponent(out ITagged tagged))
