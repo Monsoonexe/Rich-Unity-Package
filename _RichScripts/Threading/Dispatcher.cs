@@ -10,11 +10,11 @@ using UnityEngine;
     /// </summary>
     public partial class Dispatcher : IDispatcher, IDisposable
     {
-        private static Dispatcher current;
-        public static Dispatcher Current { get => current ?? CreateStatic(); }
+        private static IDispatcher current;
+        public static IDispatcher Current { get => current ?? StartNew(); }
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
-        private readonly BlockingCollection<Action> messageQueue;
+        private readonly BlockingCollection<Action> jobQueue;
 
         private Coroutine updateRoutine;
         private readonly MonoBehaviour coroutineRunner;
@@ -25,10 +25,15 @@ using UnityEngine;
         /// </summary>
         public YieldInstruction RunTiming;
 
+        /// <summary>
+        /// The backing value for <see cref="JobsPerFrame"/>.
+        /// </summary>
         private int _jobsPerFrame = 1;
 
         /// <summary>
-        /// Currently has no effect and is locked at 1.
+        /// How many jobs the dispatcher will run per frame before yielding the thread. <br/>
+        /// A negative value indicates that the dispatcher will run all jobs
+        /// in the queue before yielding the thread. <br/>
         /// </summary>
         public int JobsPerFrame
         {
@@ -65,7 +70,7 @@ using UnityEngine;
         public Dispatcher(MonoBehaviour coroutineRunner)
         {
             this.coroutineRunner = coroutineRunner;
-            messageQueue = new BlockingCollection<Action>();
+            jobQueue = new BlockingCollection<Action>();
             RunTiming = DefaultRunTiming;
         }
 
@@ -79,18 +84,17 @@ using UnityEngine;
         public void Dispose()
         {
             Stop();
-            messageQueue.Dispose();
+            jobQueue.Dispose();
             GC.SuppressFinalize(this);
         }
 
         private bool IsWorkAvailable()
         {
-            return messageQueue.Count > 0;
+            return jobQueue.Count > 0;
         }
 
         private void SafeInvoke(Action action)
         {
-            // exception safety wrapper
             try
             {
                 action();
@@ -107,24 +111,32 @@ using UnityEngine;
 
             while (true)
             {
-                // TODO - add options for how many jobs can be processed in single frame
-                yield return RunTiming;
-                if (messageQueue.TryTake(out Action action))
+                if (RunTiming != null)
+                    yield return RunTiming;
+                
+                int jobs = 0;
+                while ((jobs++ < JobsPerFrame) && jobQueue.TryTake(out Action action))
                     SafeInvoke(action);
-                else
-                    yield return waitForWork;
+                
+                yield return waitForWork;
             }
         }
 
         public void Run()
         {
-            updateRoutine = coroutineRunner.StartCoroutine(Update());
+            if (!Enabled)
+            {
+                updateRoutine = coroutineRunner.StartCoroutine(Update());
+            }
         }
 
         public void Stop()
         {
-            coroutineRunner.StopCoroutineSafely(updateRoutine);
-            updateRoutine = null;
+            if (Enabled)
+            {
+                coroutineRunner.StopCoroutineSafely(updateRoutine);
+                updateRoutine = null;
+            }
         }
 
         /// <summary>
@@ -132,10 +144,10 @@ using UnityEngine;
         /// </summary>
         public void Invoke(Action action)
         {
-            messageQueue.Add(action);
+            jobQueue.Add(action);
         }
 
-        public static Dispatcher CreateStatic()
+        public static IDispatcher StartNew()
         {
             current = new Dispatcher();
             current.Run();

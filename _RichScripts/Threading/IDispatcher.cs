@@ -2,7 +2,7 @@
 
 namespace RichPackage.Threading
 {
-    public interface IDispatcher
+    public partial interface IDispatcher
     {
         bool Enabled { get; }
 

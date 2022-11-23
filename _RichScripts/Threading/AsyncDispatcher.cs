@@ -3,18 +3,25 @@ using System;
 
 namespace RichPackage.Threading
 {
+    public partial interface IDispatcher
+    {
+        UniTask BeginInvoke(Action action);
+        
+        UniTask<T> BeginInvoke<T>(Func<T> function);
+    }
+
     public partial class Dispatcher : IDispatcher, IDisposable
     {
         /// <summary>
         /// Thread-safe enqueue work. Will be called on the next coroutine update.
         /// </summary>
         /// <param name="delay">Milliseconds.</param>
-        public void Invoke(Action action, int delay)
+        public UniTask Invoke(Action action, int delay)
         {
-            InvokeDelayedInternal(action, delay).Forget();
+            return InvokeDelayedInternal(action, delay);
         }
 
-        private async UniTaskVoid InvokeDelayedInternal(Action action, int delay)
+        private async UniTask InvokeDelayedInternal(Action action, int delay)
         {
             await UniTask.Delay(delay);
             SafeInvoke(action);
@@ -26,7 +33,7 @@ namespace RichPackage.Threading
         public UniTask BeginInvoke(Action action)
         {
             var tcs = new UniTaskCompletionSource();
-            current.messageQueue.Add(() =>
+            jobQueue.Add(() =>
             {
                 try
                 {
@@ -48,7 +55,7 @@ namespace RichPackage.Threading
         public UniTask<T> BeginInvoke<T>(Func<T> function)
         {
             var tcs = new UniTaskCompletionSource<T>();
-            current.messageQueue.Add(() =>
+            jobQueue.Add(() =>
             {
                 try
                 {
