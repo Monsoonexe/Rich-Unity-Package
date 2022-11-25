@@ -15,6 +15,7 @@ using UnityEngine;
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
         private readonly ConcurrentQueue<Action> jobQueue;
+        // TODO - consider AtomicCounter if blocking is too slow
 
         private Coroutine updateRoutine;
         private readonly MonoBehaviour coroutineRunner;

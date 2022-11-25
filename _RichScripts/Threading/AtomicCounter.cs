@@ -6,11 +6,9 @@ namespace RichPackage.Threading
     /// <summary>
     /// Thread-safe counter.
     /// </summary>
-    internal class AtomicCounter
+    internal struct AtomicCounter
     {
         private int counter;
-
-        public AtomicCounter() : this(0) { }
 
         public AtomicCounter(int value)
         {
