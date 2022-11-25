@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 using UnityEngine;
  
  namespace RichPackage.Threading
@@ -15,7 +14,7 @@ using UnityEngine;
         public static IDispatcher Current { get => current ?? StartNew(); }
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
-        private readonly BlockingCollection<Action> jobQueue;
+        private readonly ConcurrentQueue<Action> jobQueue;
 
         private Coroutine updateRoutine;
         private readonly MonoBehaviour coroutineRunner;
@@ -71,7 +70,7 @@ using UnityEngine;
         public Dispatcher(MonoBehaviour coroutineRunner)
         {
             this.coroutineRunner = coroutineRunner;
-            jobQueue = new BlockingCollection<Action>();
+            jobQueue = new ConcurrentQueue<Action>();
             RunTiming = DefaultRunTiming;
         }
 
@@ -85,13 +84,12 @@ using UnityEngine;
         public void Dispose()
         {
             Stop();
-            jobQueue.Dispose();
             GC.SuppressFinalize(this);
         }
 
         private bool IsWorkAvailable()
         {
-            return jobQueue.Count > 0;
+            return !jobQueue.IsEmpty;
         }
 
         private void SafeInvoke(Action action)
@@ -112,14 +110,17 @@ using UnityEngine;
 
             while (true)
             {
+                if (!IsWorkAvailable())
+                    yield return waitForWork;
+                
                 if (RunTiming != null)
                     yield return RunTiming;
                 
                 int jobs = 0;
-                while ((jobs++ < JobsPerFrame) && jobQueue.TryTake(out Action action))
+                while ((jobs++ < JobsPerFrame) && jobQueue.TryDequeue(out Action action))
                     SafeInvoke(action);
-                
-                yield return waitForWork;
+
+                yield return null;
             }
         }
 
@@ -145,7 +146,7 @@ using UnityEngine;
         /// </summary>
         public void Invoke(Action action)
         {
-            jobQueue.Add(action);
+            jobQueue.Enqueue(action);
         }
 
         public static IDispatcher StartNew()
@@ -153,77 +154,6 @@ using UnityEngine;
             current = new Dispatcher();
             current.Run();
             return current;
-        }
-    }
-    
-    /// <summary>
-    /// Thread-safe counter.
-    /// </summary>
-    internal class AtomicCounter
-    {
-        private int counter;
-
-        public AtomicCounter() : this(0) { }
-
-        public AtomicCounter(int value)
-        {
-            counter = value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Set(int x)
-        {
-            Interlocked.Exchange(ref counter, x);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Add(int x)
-        {
-            return Interlocked.Add(ref counter, x);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Sub(int x)
-        {
-            return Interlocked.Add(ref counter, -x);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Increment()
-        {
-            return Interlocked.Increment(ref counter);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int Decrement()
-        {
-            return Interlocked.Decrement(ref counter);
-        }
-
-        public int Value
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Interlocked.Add(ref counter, 0);
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => Interlocked.Exchange(ref counter, value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator int(AtomicCounter a) => a.Value;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static AtomicCounter operator --(AtomicCounter a)
-        {
-            Interlocked.Decrement(ref a.counter);
-            return a;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static AtomicCounter operator ++(AtomicCounter a)
-        {
-            Interlocked.Increment(ref a.counter);
-            return a;
         }
     }
 }
