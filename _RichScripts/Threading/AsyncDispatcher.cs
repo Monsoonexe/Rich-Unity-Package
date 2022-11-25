@@ -33,7 +33,7 @@ namespace RichPackage.Threading
         public UniTask BeginInvoke(Action action)
         {
             var tcs = new UniTaskCompletionSource();
-            jobQueue.Add(() =>
+            jobQueue.Enqueue(() =>
             {
                 try
                 {
@@ -55,7 +55,7 @@ namespace RichPackage.Threading
         public UniTask<T> BeginInvoke<T>(Func<T> function)
         {
             var tcs = new UniTaskCompletionSource<T>();
-            jobQueue.Add(() =>
+            jobQueue.Enqueue(() =>
             {
                 try
                 {
