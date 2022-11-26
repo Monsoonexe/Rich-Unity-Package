@@ -182,7 +182,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw ExceptionUtilities.BuildMissingEnumCaseException(style);
+					throw ExceptionUtilities.GetInvalidEnumCaseException(style);
 			}
 
 			Show();//show visuals
@@ -315,7 +315,7 @@ namespace RichPackage.UI
 					SetupTripleButton(button1Text, button2Text, button3Text);
 					break;
 				default:
-					throw ExceptionUtilities.BuildMissingEnumCaseException(style);
+					throw ExceptionUtilities.GetInvalidEnumCaseException(style);
 			}
 
 			Show(); //show visuals
