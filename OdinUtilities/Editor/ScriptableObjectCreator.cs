@@ -53,7 +53,8 @@ namespace RichPackage.Editor
             scriptableObjectTypes = GatherTypes();
         }
 
-        [MenuItem("Assets/Create Scriptable Object", priority = -1000)]
+        [MenuItem("Assets/Create Scriptable Object", priority = -1000),
+            MenuItem("Tools/Odin Inspector/Create Scriptable Object")]
         private static void OpenWindow()
         {
 			//handle generation
