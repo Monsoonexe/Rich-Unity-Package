@@ -34,12 +34,6 @@ public class NavigationPanelController : APanelController
             buttonHolder = this.transform;
     }
 
-    protected override void OnDestroy()
-    {
-        base.OnDestroy();
-        ResetButtons();
-    }
-
     #endregion Unity Messages
 
     protected override void OnHide()
