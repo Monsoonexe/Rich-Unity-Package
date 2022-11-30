@@ -40,11 +40,13 @@ namespace RichPackage
 		private void OnEnable()
 		{
             QFSW.QC.QuantumConsole.Instance.OnActivate += OnConsoleActivate;
-		}
+            QFSW.QC.QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
+        }
 
 		private void OnDisable()
         {
             QFSW.QC.QuantumConsole.Instance.OnActivate -= OnConsoleActivate;
+            QFSW.QC.QuantumConsole.Instance.OnDeactivate -= OnConsoleDeactivate;
         }
 
 		protected void Update()
@@ -57,14 +59,11 @@ namespace RichPackage
 		private void OnConsoleDeactivate()
 		{
             enabled = true;
-            QFSW.QC.QuantumConsole.Instance.OnDeactivate -= OnConsoleDeactivate;
         }
 
         private void OnConsoleActivate()
         {
             enabled = false;
-            QFSW.QC.QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
-
         }
 
         [Button("Force()"), DisableInEditorMode]
