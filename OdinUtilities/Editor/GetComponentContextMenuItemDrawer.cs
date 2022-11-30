@@ -16,9 +16,15 @@ namespace RichPackage.Editor
 
         public void PopulateGenericMenu(InspectorProperty property, GenericMenu genericMenu)
         {
+            // add GetComponent<T>()
             genericMenu.AddItem(new GUIContent(
                 $"{nameof(Component.GetComponent)}<{typeof(T).Name}>()"),
                 on: false, () => GetComponentAndSetReference(property));
+            
+            // add FindObjectOfType<T>()
+            genericMenu.AddItem(new GUIContent(
+                $"{nameof(Object.FindObjectOfType)}<{typeof(T).Name}>()"),
+                on: false, () => FindObjectOfTypeAndSetReference(property));
         }
 
         private void GetComponentAndSetReference(InspectorProperty property)
@@ -28,5 +34,16 @@ namespace RichPackage.Editor
             property.ValueEntry.WeakValues[0] = comp;
         }
 
+        private void FindObjectOfTypeAndSetReference(InspectorProperty property)
+        {
+            Component comp = Object.FindObjectOfType<T>();
+
+            if (comp == null)
+            {
+                Debug.LogError("Could not find object of type " + typeof(T).Name);
+            }
+
+            property.ValueEntry.WeakValues[0] = comp;
+        }
     }
 }
