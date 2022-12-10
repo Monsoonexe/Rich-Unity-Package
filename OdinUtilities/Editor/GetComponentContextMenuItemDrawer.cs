@@ -21,6 +21,11 @@ namespace RichPackage.Editor
                 $"{nameof(Component.GetComponent)}<{typeof(T).Name}>()"),
                 on: false, () => GetComponentAndSetReference(property));
             
+            // add GetComponentInChildren<T>()
+            genericMenu.AddItem(new GUIContent(
+                $"{nameof(Component.GetComponentInChildren)}<{typeof(T).Name}>()"),
+                on: false, () => GetComponentAndSetReference(property));
+
             // add FindObjectOfType<T>()
             genericMenu.AddItem(new GUIContent(
                 $"{nameof(Object.FindObjectOfType)}<{typeof(T).Name}>()"),
@@ -31,6 +36,13 @@ namespace RichPackage.Editor
         {
             Component comp = property.Parent.BaseValueEntry.WeakSmartValue
                 .CastTo<Component>().GetComponent<T>();
+            property.ValueEntry.WeakValues[0] = comp;
+        }
+
+        private void GetComponentInChildrenAndSetReference(InspectorProperty property)
+        {
+            Component comp = property.Parent.BaseValueEntry.WeakSmartValue
+                .CastTo<Component>().GetComponentInChildren<T>();
             property.ValueEntry.WeakValues[0] = comp;
         }
 
