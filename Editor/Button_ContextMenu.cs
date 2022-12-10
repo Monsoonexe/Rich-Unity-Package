@@ -8,11 +8,10 @@ namespace RichPackage.Editor
 	/// </summary>
 	public static class Button_ContextMenu
 	{
-		[MenuItem("CONTEXT/Button/Force Invoke")]
-		private static void ForceInvokeEvent(MenuCommand command)
+		[MenuItem("CONTEXT/Button/Invoke")]
+		private static void InvokeEvent(MenuCommand command)
 		{
-			Button button = command.context as Button;
-			button.onClick.Invoke();
+			command.context.CastTo<Button>().onClick.Invoke();
 		}
 	}
 }
