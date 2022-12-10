@@ -1,4 +1,4 @@
-﻿using RichPackage.Assertions;
+using RichPackage.Assertions;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,11 +68,12 @@ namespace RichPackage.Decks
 
         public override T Draw()
         {
-            if (unusedCards.Count == 0) return default;//index out of range failsafe.
+            // index out of range failsafe.
+            if (unusedCards.Count == 0)
+                return default;
 
-            //draw from highest slot to avoid shifting all elements
-            var removeIndex = unusedCards.LastIndex();
-            var card = unusedCards.GetRemoveAt(removeIndex);
+            // draw from highest slot to avoid shifting all elements
+            T card = unusedCards.GetRemoveLast();
             usedCards.Add(card);
             return card;
         }
