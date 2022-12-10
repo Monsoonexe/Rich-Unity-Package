@@ -291,16 +291,15 @@ namespace RichPackage
             list.Clear();
             return array;
         }
-    }
-    
-    /// <summary>
-    /// Sets all elements in <paramref name="list"/> to <paramref name="value"/>.
-    /// </summary>
-    public static void SetAll<T>(this IList<T> list, T value)
-    {
-        int count = list.Count;
-        for (int i = 0; i < count; ++i)
-            list[i] = value;
-    }
 
+        /// <summary>
+        /// Sets all elements in <paramref name="list"/> to <paramref name="value"/>.
+        /// </summary>
+        public static void SetAll<T>(this IList<T> list, T value)
+        {
+            int count = list.Count;
+            for (int i = 0; i < count; ++i)
+                list[i] = value;
+        }
+    }
 }
