@@ -1,17 +1,17 @@
-using RichPackage.Assertions;
+﻿using RichPackage.Assertions;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.Decks
 {
-	/// <summary>
-	/// A deck of something (cards).
-	/// </summary>
-	/// <seealso cref="SequentialDeck{T}"/>
-	/// <seealso cref="StackedDeck{TContainer, TValue}"/>
-	/// <seealso cref="CardGenerator{TContainer, TValue}"/>
-	[InfoBox("Standard Deck: A standard deck of cards with no replacement.")]
+    /// <summary>
+    /// A deck of something (cards).
+    /// </summary>
+    /// <seealso cref="SequentialDeck{T}"/>
+    /// <seealso cref="StackedDeck{TContainer, TValue}"/>
+    /// <seealso cref="CardGenerator{TContainer, TValue}"/>
+    [InfoBox("Standard Deck: A standard deck of cards with no replacement.")]
     public class Deck<T> : ADeck<T>
     {
         public readonly List<T> unusedCards = new List<T>(16); //face-down deck
@@ -19,15 +19,15 @@ namespace RichPackage.Decks
 
         public override int CardsRemaining { get => unusedCards.Count; }
 
-		protected virtual void Reset()
-		{
+        protected virtual void Reset()
+        {
             SetDevDescription("Standard Deck: A standard deck of cards with no replacement.");
-		}
+        }
 
-		/// <summary>
-		/// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
-		/// </summary>
-		public void AddToManifest(T newItem)
+        /// <summary>
+        /// Adds an item to the deck manifest, but it won't be included in deck until shuffled.
+        /// </summary>
+        public void AddToManifest(T newItem)
             => manifest.Add(newItem);
 
         /// <summary>
@@ -103,14 +103,14 @@ namespace RichPackage.Decks
         {
             usedCards.Clear();
             unusedCards.Clear();
-            var deckSize = TotalDeckSize;
+            int deckSize = TotalDeckSize;
 
             //temporarily use used cards array (stage)
-            for (var i = 0; i < deckSize; ++i)
+            for (int i = 0; i < deckSize; ++i)
                 usedCards.Add(manifest[i]);
 
             //randomly fill deck (shuffle)
-            for (var i = 0; i < deckSize; ++i)
+            for (int i = 0; i < deckSize; ++i)
                 unusedCards.Add(usedCards.GetRemoveRandomElement());
         }
 
@@ -119,8 +119,8 @@ namespace RichPackage.Decks
         /// </summary>
         public override void ShuffleRemaining()
         {
-            var startingIndex = usedCards.Count;
-            var count = unusedCards.Count; //cache cards remaining
+            int startingIndex = usedCards.Count;
+            int count = unusedCards.Count; //cache cards remaining
             //add to "temp array"
             while (unusedCards.Count > 0)
                 usedCards.Add(unusedCards.GetRemoveLast());
@@ -128,7 +128,7 @@ namespace RichPackage.Decks
             //randomly add back to unused list
             while (unusedCards.Count < count)
             {
-                var randIndex = Random.Range(startingIndex, usedCards.Count);
+                int randIndex = Random.Range(startingIndex, usedCards.Count);
                 unusedCards.Add(usedCards.GetRemoveAt(randIndex));//get a random element within temp array bounds
             }
         }
@@ -142,7 +142,7 @@ namespace RichPackage.Decks
         {
             unusedCards.IndexShouldBeInRange(i);
             return unusedCards[unusedCards.LastIndex() - i];
-        } 
+        }
 
         /// <summary>
         /// Look at next item without moving it.
