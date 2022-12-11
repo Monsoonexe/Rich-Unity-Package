@@ -73,12 +73,12 @@ namespace RichPackage
 
         protected Coroutine InvokeAfterDelay(Action action, float delay_s)
         {
-            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
+            return StartCoroutine(CoroutineUtilities.InvokeAfter(action, delay_s));
         }
 
         protected Coroutine InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
         {
-            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
+            return StartCoroutine(CoroutineUtilities.InvokeAfter(action, yieldInstruction));
         }
 
         protected Coroutine InvokeAfterFrameDelay(Action action, int frameDelay)

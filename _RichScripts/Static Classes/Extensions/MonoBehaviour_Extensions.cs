@@ -23,11 +23,11 @@ namespace RichPackage
 
         public static void InvokeAfterDelay(this MonoBehaviour mono,
             Action action, float delay)
-            => mono.StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay));
+            => mono.StartCoroutine(CoroutineUtilities.InvokeAfter(action, delay));
 
         public static void InvokeAfterDelay(this MonoBehaviour mono,
             Action action, YieldInstruction delay)
-            => mono.StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay));
+            => mono.StartCoroutine(CoroutineUtilities.InvokeAfter(action, delay));
 
         public static void StopCoroutineSafely(this MonoBehaviour mono,
             Coroutine coroutine)

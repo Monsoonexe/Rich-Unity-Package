@@ -21,29 +21,16 @@ namespace RichPackage
 #pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-        private string _name = null;
-
-        /// <summary>
-        /// Caches the 'name' property on use. Prefer this because
-        /// 'name' allocates on every call and is slower due to marshalling.
-        /// </summary>
-        /// <remarks>'name' allocates on every call.</remarks>
-        public string Name
-        {
-            get => _name ?? (_name = this.name);
-            set => _name = value;
-        }
-
 		#region Coroutines
 
 		protected Coroutine StartCoroutine(IEnumerator routine)
 		{
-            return RichTweens.StartCoroutine(routine);
+            return CoroutineUtilities.StartCoroutine(routine);
 		}
 
         protected void StopCoroutine(Coroutine routine)
 		{
-            RichTweens.StopCoroutine(routine);
+            CoroutineUtilities.StopCoroutine(routine);
 		}
 
         protected Coroutine InvokeAtEndOfFrame(Action action)
@@ -58,12 +45,12 @@ namespace RichPackage
 
         protected Coroutine InvokeAfterDelay(Action action, float delay_s)
         {
-            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, delay_s));
+            return StartCoroutine(CoroutineUtilities.InvokeAfter(action, delay_s));
         }
 
         protected Coroutine InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
         {
-            return StartCoroutine(CoroutineUtilities.InvokeAfterDelay(action, yieldInstruction));
+            return StartCoroutine(CoroutineUtilities.InvokeAfter(action, yieldInstruction));
         }
 
         protected Coroutine InvokeAfterFrameDelay(Action action, int frameDelay)

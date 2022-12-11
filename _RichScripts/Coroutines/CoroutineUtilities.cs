@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using RichPackage.YieldInstructions;
+using RichPackage.Coroutines;
 
 namespace RichPackage
 {
@@ -10,6 +11,23 @@ namespace RichPackage
     /// </summary>
     public static class CoroutineUtilities
     {
+        private static MonoBehaviour _runner;
+        
+        public static MonoBehaviour Runner
+        {
+            get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(true));
+        }
+
+        public static Coroutine StartCoroutine(IEnumerator coroutine)
+        {
+            return Runner.StartCoroutine(coroutine);
+        }
+
+        public static void StopCoroutine(Coroutine coroutine)
+        {
+            Runner.StopCoroutine(coroutine);
+        }
+
         public static IEnumerator InvokeAtEndOfFrame(Action action)
         {
             yield return CommonYieldInstructions.WaitForEndOfFrame;
@@ -22,7 +40,7 @@ namespace RichPackage
             action();
         }
 
-        public static IEnumerator InvokeAfterDelay(
+        public static IEnumerator InvokeAfter(
             Action action, float delay)
         {
             var timer = SimpleTimer.StartNew();
@@ -32,7 +50,7 @@ namespace RichPackage
             action();
         }
 
-        public static IEnumerator InvokeAfterDelay(Action action,
+        public static IEnumerator InvokeAfter(Action action,
             YieldInstruction yieldInstruction)
         {
             yield return yieldInstruction;
