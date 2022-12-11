@@ -15,7 +15,7 @@ namespace RichPackage
         
         public static MonoBehaviour Runner
         {
-            get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(true));
+            get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
         }
 
         public static Coroutine StartCoroutine(IEnumerator coroutine)
