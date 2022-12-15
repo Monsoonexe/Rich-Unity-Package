@@ -28,12 +28,8 @@ namespace RichPackage.Editor
 
         private static HashSet<Type> GatherTypes()
         {
-            return AssemblyUtilities.GetTypes(AssemblyTypeFlags.CustomTypes)
-                .Where(t =>
-                t.IsClass &&
-                typeof(ScriptableObject).IsAssignableFrom(t) &&
-                !typeof(EditorWindow).IsAssignableFrom(t) &&
-                !typeof(UnityEditor.Editor).IsAssignableFrom(t))
+            return AssemblyUtilities.GetTypes(AssemblyTypeFlags.UserTypes | AssemblyTypeFlags.PluginTypes)
+                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t))
                 .ToHashSet();
         }
 
