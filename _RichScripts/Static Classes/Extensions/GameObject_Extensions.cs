@@ -5,8 +5,15 @@ using System.Runtime.CompilerServices;
 
 namespace RichPackage
 {
-    public static class GameObject_Extensions
-    {
+	public static class GameObject_Extensions
+	{
+		/// <summary>
+		/// A faster reference comparison check if you know that neither object is dead.
+		/// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool QuickEquals(this GameObject a, GameObject b)
+			=> a.GetInstanceID() == b.GetInstanceID();
+	    
         /// <summary>
         /// Shortcut for a.enabled = true;
         /// </summary>
