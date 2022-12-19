@@ -3,25 +3,24 @@
 namespace RichPackage
 {
 	/// <summary>
-	/// 
+	/// Contains helper methods for implementing the Singleton Pattern.
 	/// </summary>
 	public static class Singleton
     {
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+        /// <param name="singleton">Reference to the Singleton object, typically a static class variable.</param>
         /// <returns>False if a SingletonError occured.</returns>
-        public static bool InitSingleton<T>(T instance, ref T singletonRef)
+        public static bool Take<T>(T instance, ref T singleton)
+            where T : class
         {
             var valid = true; //return value
-            if (singletonRef == null)
+            if (singleton == null)
             {   //we are the singleton
-                singletonRef = instance;
+                singleton = instance;
             }
-            else if (!ReferenceEquals(instance, singletonRef))
+            else if (!ReferenceEquals(instance, singleton))
             {   //there are two Singletons
                 //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
                 //instance.ToString(), singletonRef.ToString()));
@@ -33,22 +32,20 @@ namespace RichPackage
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+        /// <param name="singleton">Reference to the Singleton object, typically a static class variable.</param>
         /// <returns>False if a SingletonError occured.</returns>
-        public static bool InitSingleton<T>(T instance, ref T singletonRef,
+        public static bool Take<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : RichMonoBehaviour
+            where T : MonoBehaviour
         {
             var valid = true; //return value
-            if (singletonRef == null)
+            if (singleton == null)
             {   //we are the singleton
-                singletonRef = instance;
+                singleton = instance;
                 if (dontDestroyOnLoad)
                     instance.DontDestroyOnLoad();
             }
-            else if (!instance.Equals(singletonRef))
+            else if (instance.GetInstanceID() != singleton.GetInstanceID())
             {   //there are two Singletons
                 //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
                 //instance.ToString(), singletonRef.ToString()));
@@ -57,40 +54,55 @@ namespace RichPackage
             return valid;
         }
 
-        public static bool InitSingletonOrDestroyGameObject<T>(T instance, ref T singletonRef,
+        public static bool TakeOrDestroy<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : RichMonoBehaviour
+            where T : MonoBehaviour
         {
             bool valid;
-            if (!(valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad)))
+            if (!(valid = Take(instance, ref singleton, dontDestroyOnLoad)))
+                UnityEngine.Object.Destroy(instance);
+            return valid;
+        }
+
+        public static bool TakeOrDestroyGameObject<T>(T instance, ref T singleton,
+            bool dontDestroyOnLoad = true)
+            where T : MonoBehaviour
+        {
+            bool valid;
+            if (!(valid = Take(instance, ref singleton, dontDestroyOnLoad)))
                 UnityEngine.Object.Destroy(instance.gameObject);
 
             return valid;
         }
 
         /// <exception cref="SingletonException"></exception>
-        public static void InitSingletonOrThrow<T>(T instance, ref T singletonRef,
-            bool dontDestroyOnLoad = true)
+        public static void TakeOrThrow<T>(T instance, ref T singleton)
             where T : class
         {
-            if (!InitSingleton(instance, ref singletonRef))
+            if (!Take(instance, ref singleton))
                 throw new SingletonException(typeof(T).Name);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef"></param>
+        /// <exception cref="SingletonException"></exception>
+        public static void TakeOrThrowObject<T>(T instance, ref T singleton)
+            where T : Object
+        {
+            if (!Take(instance, ref singleton))
+            {
+                Debug.LogError($"{instance.name} cannot take the singleton...", instance);
+                Debug.Log($"{singleton.name} already holds it.", singleton);
+                throw new SingletonException(typeof(T).Name);
+            }
+        }
+
         /// <returns>true if the <paramref name="instance"/> is the singleton 
-        /// referred to by <paramref name="singletonRef"/>.</returns>
-        public static bool ReleaseSingleton<T>(T instance, ref T singletonRef)
+        /// referred to by <paramref name="singleton"/>.</returns>
+        public static bool Release<T>(T instance, ref T singleton)
             where T : class
         {
-            bool isSingleton = ReferenceEquals(instance, singletonRef); // reference equals
+            bool isSingleton = ReferenceEquals(instance, singleton);
             if (isSingleton)
-                singletonRef = null;
+                singleton = null;
             return isSingleton; // was released
         }
 
