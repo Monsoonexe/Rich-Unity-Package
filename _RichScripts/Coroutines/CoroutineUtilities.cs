@@ -28,6 +28,22 @@ namespace RichPackage
             Runner.StopCoroutine(coroutine);
         }
 
+        public static Coroutine StartProcessLoop(Action process,
+            YieldInstruction yieldInstruction = null)
+        {
+            return Runner.StartCoroutine(ProcessLoop(process, yieldInstruction));
+        }
+
+        public static IEnumerator ProcessLoop(Action process,
+            YieldInstruction yieldInstruction = null)
+        {
+            while (true)
+            {
+                process();
+                yield return yieldInstruction;
+            }
+        }
+
         public static IEnumerator InvokeAtEndOfFrame(Action action)
         {
             yield return CommonYieldInstructions.WaitForEndOfFrame;
