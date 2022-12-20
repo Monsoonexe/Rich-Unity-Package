@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using UnityEngine;
-using RichPackage.Tweening;
 using Sirenix.OdinInspector;
 using System.Collections;
 
@@ -21,9 +20,19 @@ namespace RichPackage
 #pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-		#region Coroutines
+        #region Coroutines
+        
+        protected void StopCoroutineSafely(Coroutine coroutine)
+        {
+            CoroutineUtilities.StopCoroutineSafely(coroutine);
+        }
 
-		protected Coroutine StartCoroutine(IEnumerator routine)
+        protected void StopCoroutineSafely(ref Coroutine coroutine)
+        {
+            CoroutineUtilities.StopCoroutineSafely(ref coroutine);
+        }
+
+        protected Coroutine StartCoroutine(IEnumerator routine)
 		{
             return CoroutineUtilities.StartCoroutine(routine);
 		}

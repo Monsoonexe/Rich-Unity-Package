@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using RichPackage.YieldInstructions;
 using RichPackage.Coroutines;
+using System.Runtime.CompilerServices;
 
 namespace RichPackage
 {
@@ -15,19 +16,23 @@ namespace RichPackage
         
         public static MonoBehaviour Runner
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Coroutine StartCoroutine(IEnumerator coroutine)
         {
             return Runner.StartCoroutine(coroutine);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopCoroutine(Coroutine coroutine)
         {
             Runner.StopCoroutine(coroutine);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Coroutine StartProcessLoop(Action process,
             YieldInstruction yieldInstruction = null)
         {
@@ -56,6 +61,9 @@ namespace RichPackage
             action();
         }
 
+        /// <summary>
+        /// Non-allocating.
+        /// </summary>
         public static IEnumerator InvokeAfter(
             Action action, float delay)
         {
@@ -78,6 +86,23 @@ namespace RichPackage
             while (frameDelay-- > 0)
                 yield return null;
             action();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StopCoroutineSafely(Coroutine coroutine)
+        {
+            if (coroutine != null)
+                StopCoroutine(coroutine);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void StopCoroutineSafely(ref Coroutine coroutine)
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
         }
     }
 }

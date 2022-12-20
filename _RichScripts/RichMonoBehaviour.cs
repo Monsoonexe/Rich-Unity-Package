@@ -205,17 +205,12 @@ namespace RichPackage
 
         protected void StopCoroutineSafely(Coroutine coroutine)
         {
-            if (coroutine != null)
-                StopCoroutine(coroutine);
+            CoroutineUtilities.StopCoroutineSafely(coroutine);
         }
-        
+
         protected void StopCoroutineSafely(ref Coroutine coroutine)
         {
-            if (coroutine != null)
-            {
-                StopCoroutine(coroutine);
-                coroutine = null;
-            }
+            CoroutineUtilities.StopCoroutineSafely(ref coroutine);
         }
 
         #endregion Coroutine Helpers
