@@ -201,6 +201,25 @@ namespace RichPackage
 
         #endregion Service Locator
 
+        #region Coroutine Helpers
+
+        protected void StopCoroutineSafely(Coroutine coroutine)
+        {
+            if (coroutine != null)
+                StopCoroutine(coroutine);
+        }
+        
+        protected void StopCoroutineSafely(ref Coroutine coroutine)
+        {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
+        }
+
+        #endregion Coroutine Helpers
+
         /// <summary>
         /// Creates a new <see cref="GameObject"/> with the given 
         /// <typeparamref name="T"/> component attached.
