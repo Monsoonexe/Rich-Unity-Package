@@ -304,10 +304,11 @@ namespace RichPackage.Interaction
             if (!allowRaycastInteractions) return; //check if raycasting is disabled.
 
             IInteractable newInteractable = GetInteractable();
+            
             if (raycastInteractable != null)
                 ReleaseInteractable();
 
-            if (newInteractable != null)
+            if (newInteractable != null && newInteractable.IsEnabled)
                 TakeInteractable(newInteractable);
         }
 
