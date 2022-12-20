@@ -37,5 +37,12 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActive(this Component a, bool active) 
             => a.gameObject.SetActive(active);
+        
+        /// <summary>
+        /// A faster reference comparison check if you know that neither object is dead.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool QuickEquals(this Component a, Component b)
+            => a.GetInstanceID() == b.GetInstanceID();
     }
 }
