@@ -175,29 +175,7 @@ namespace RichPackage.Interaction
             // if Input indicates we are to cause an Interact to occur
             if (interactRequested || GetInteractRequested())
             {
-                IInteractable targetIInteractable = null;
-
-                // prioritize raycast interactable since Player is pointing to it.
-                if (allowRaycastInteractions && raycastInteractable != null)
-                    targetIInteractable = raycastInteractable;
-                else if (allowProximityInteractions && proximityIInteractable != null)
-                    targetIInteractable = proximityIInteractable;
-
-                if (actor == null)
-                {
-                    Debug.LogError("No actor has been set.");
-                    return;
-                }
-
-                if (targetIInteractable == null)
-                {
-                    Debug.LogError("No interactable has been set.");
-                    return;
-                }
-
-                // interact is requested and possible 
-                interactEvent.Invoke();
-                actor.Interact(targetIInteractable);
+                DoInteraction();
                 interactRequested = false; //clear flag
             }
         }
@@ -237,6 +215,33 @@ namespace RichPackage.Interaction
         }
 
         #endregion Unity Messages
+        
+        public void DoInteraction()
+        {
+            IInteractable targetIInteractable = null;
+
+            // prioritize raycast interactable since Player is pointing to it.
+            if (allowRaycastInteractions && raycastInteractable != null)
+                targetIInteractable = raycastInteractable;
+            else if (allowProximityInteractions && proximityIInteractable != null)
+                targetIInteractable = proximityIInteractable;
+
+            if (actor == null)
+            {
+                Debug.LogError("No actor has been set.");
+                return;
+            }
+
+            if (targetIInteractable == null)
+            {
+                Debug.LogError("No interactable has been set.");
+                return;
+            }
+
+            // interact is requested and possible 
+            interactEvent.Invoke();
+            actor.Interact(targetIInteractable);
+        }
 
         /// <summary>
         /// Determine if an Interact, through Input or other means, was requested.
