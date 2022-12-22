@@ -30,6 +30,21 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNot<T>(this object obj)
             where T : class => !(obj is T);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryCast<T>(this object source, out T result)
+        {
+            if (source is T cast)
+            {
+                result = cast;
+                return true;
+            }
+            else
+            {
+                result = default;
+                return false;
+            }
+        }
 
         /// <summary>
         /// Throws an <see cref="ArgumentNullException"/> if <paramref name="obj"/> is null.
