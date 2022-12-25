@@ -1,17 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using UnityEngine;
 
 namespace RichPackage.TagSystem
 {
     /// <summary>
-    /// 
+    /// Contains methods to help make querying <see cref="Tag"/>s easier.
     /// </summary>
     public static class TagUtilities
     {
-        // TODO - support multiple tagged components
-        // TODO - HasAnyXTags
-
         public static IEnumerable<string> GetValues(this IEnumerable<Tag> tags)
         {
             foreach (Tag tag in tags)
@@ -43,18 +40,7 @@ namespace RichPackage.TagSystem
             => ToString(tags, ", ");
 
         public static string ToString(this IEnumerable<Tag> tags, string separator)
-        {
-            var sb = StringBuilderCache.Rent();
-            foreach (Tag t in tags)
-            {
-                sb.Append(t.ToString());
-                sb.Append(separator);
-            }
-
-            // remove last separator
-            sb.Remove(sb.Length - separator.Length, separator.Length);
-            return sb.ToStringAndReturn();
-        }
+            => string.Join(separator, tags.Select((t) => t.ToString()));
 
         public static bool Contains(this IEnumerable<Tag> tags, Tag tag)
         {
