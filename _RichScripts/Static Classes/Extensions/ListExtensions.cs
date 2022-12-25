@@ -190,7 +190,7 @@ namespace RichPackage
         {
             while (col.Count > 0)
             {   //iterate backwards to avoid shifting each element as you remove.
-                var item = col.GetRemoveLast();
+                T item = col.GetRemoveLast();
                 action(item);
             }
         }
@@ -223,7 +223,7 @@ namespace RichPackage
         /// </summary>
         public static T GetRemoveRandomElement<T>(this List<T> list)
         {
-            var randomIndex = Random.Range(0, list.Count);
+            int randomIndex = Random.Range(0, list.Count);
             T randomElement = list[randomIndex];
             list.RemoveAt(randomIndex);
             return randomElement;
@@ -235,13 +235,13 @@ namespace RichPackage
         public static T GetRemoveRandomElement<T>(this List<T> list,
             int start, int end)
         {
-            var count = list.Count;
+            int count = list.Count;
             //validate
             start = (start < 0 || start >= count) ? 0 : start; //start [0, count - 1]
             end = (end < 1 || end > count) ? count : end;//end [1, count]
 
             //compute
-            var randomIndex = Random.Range(start, end);
+            int randomIndex = Random.Range(start, end);
             T randomElement = list[randomIndex];
             list.RemoveAt(randomIndex);
             return randomElement;
