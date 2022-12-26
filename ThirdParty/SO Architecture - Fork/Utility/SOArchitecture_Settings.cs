@@ -2,7 +2,7 @@
 
 namespace ScriptableObjectArchitecture
 {
-    public class SOArchitecture_Settings : ScriptableObject
+    public class SOArchitecture_Settings : SOArchitectureBaseObject
     {
         #region Singleton
         public static SOArchitecture_Settings Instance
