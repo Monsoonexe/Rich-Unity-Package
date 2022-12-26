@@ -3,7 +3,6 @@
  */
 
 #if ODIN_INSPECTOR
-using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
@@ -11,16 +10,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using System.Reflection;
 
 namespace RichPackage.Editor
 {
     public class ScriptableObjectCreator : OdinMenuEditorWindow
     {
         private static HashSet<Type> scriptableObjectTypes;
-        private static Task<HashSet<Type>> gatherTypesTask;
 
         private ScriptableObject previewObject;
         private string targetFolder;
@@ -28,40 +26,25 @@ namespace RichPackage.Editor
 
         private static HashSet<Type> GatherTypes()
         {
-            return AssemblyUtilities.GetTypes(AssemblyTypeFlags.UserTypes | AssemblyTypeFlags.PluginTypes)
+            const AssemblyTypeFlags flags
+                = AssemblyTypeFlags.UserTypes
+                | AssemblyTypeFlags.PluginTypes;
+
+            HashSet<Type> types = AssemblyUtilities.GetTypes(flags)
                 .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t))
                 .ToHashSet();
-        }
-
-        private static Task<HashSet<Type>> GatherTypesAsync()
-		{
-            return Task.Run(GatherTypes).ContinueWith((t) => scriptableObjectTypes = t.Result);
-		}
-
-		private async void DoGatherTypesAsync()
-		{
-            scriptableObjectTypes = await GatherTypesAsync();
-        }
-
-        [Button]
-        private static void DoGatherTypes()
-        {
-            scriptableObjectTypes = GatherTypes();
+            types.AddRange(Assembly.GetAssembly(typeof(ScriptableObjectArchitecture.SOArchitectureBaseObject)).GetTypes()
+                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t)));
+            return types;
         }
 
         [MenuItem("Assets/Create Scriptable Object", priority = -1000),
             MenuItem("Tools/Odin Inspector/Create Scriptable Object")]
         private static void OpenWindow()
         {
-			//handle generation
+			// handle generation
 			if (scriptableObjectTypes == null)
-			{
-				if (gatherTypesTask == null)
-				{
-					Debug.Log("Generating types...");
-					gatherTypesTask = GatherTypesAsync();
-				}
-			}
+                scriptableObjectTypes = GatherTypes();
 
             var path = "Assets";
             var obj = Selection.activeObject;
@@ -128,9 +111,10 @@ namespace RichPackage.Editor
 
         private string GetMenuPathForType(Type t)
         {
-            if (t != null && scriptableObjectTypes.Contains(t))
+            if (t != null && t != typeof(System.Object) && t != typeof(UnityEngine.Object)
+                && t != typeof(ScriptableObject))
             {
-                var name = t.Name.Split('`').First().SplitPascalCase();
+                string name = t.Name.Split('`').First().SplitPascalCase();
                 return GetMenuPathForType(t.BaseType) + "/" + name;
             }
 
@@ -144,12 +128,6 @@ namespace RichPackage.Editor
 
         protected override void DrawEditor(int index)
         {
-            if (!gatherTypesTask.IsCompleted)
-			{
-                GUILayout.Label(new GUIContent("Gathering types. Please wait..."));
-                return;
-			}
-
             this.scroll = GUILayout.BeginScrollView(this.scroll);
             {
                 base.DrawEditor(index);
