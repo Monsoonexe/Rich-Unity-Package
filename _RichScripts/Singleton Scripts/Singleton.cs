@@ -2,10 +2,10 @@
 
 namespace RichPackage
 {
-	/// <summary>
-	/// Contains helper methods for implementing the Singleton Pattern.
-	/// </summary>
-	public static class Singleton
+    /// <summary>
+    /// Contains helper methods for implementing the Singleton Pattern.
+    /// </summary>
+    public static class Singleton
     {
         /// <summary>
         /// Set a reference to a singleton to the given instance if valid.
@@ -15,16 +15,14 @@ namespace RichPackage
         public static bool Take<T>(T instance, ref T singleton)
             where T : class
         {
-            var valid = true; //return value
+            bool valid = true; // return value
             if (singleton == null)
-            {   //we are the singleton
-                singleton = instance;
+            {
+                singleton = instance; // we are the singleton
             }
             else if (!ReferenceEquals(instance, singleton))
-            {   //there are two Singletons
-                //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
-                //instance.ToString(), singletonRef.ToString()));
-                valid = false;
+            {
+                valid = false; // violation
             }
             return valid;
         }
@@ -36,19 +34,17 @@ namespace RichPackage
         /// <returns>False if a SingletonError occured.</returns>
         public static bool Take<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : MonoBehaviour
+            where T : Object
         {
-            var valid = true; //return value
+            bool valid = true; // return value
             if (singleton == null)
             {   //we are the singleton
                 singleton = instance;
                 if (dontDestroyOnLoad)
-                    instance.DontDestroyOnLoad();
+                    Object.DontDestroyOnLoad(instance);
             }
             else if (instance.GetInstanceID() != singleton.GetInstanceID())
-            {   //there are two Singletons
-                //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
-                //instance.ToString(), singletonRef.ToString()));
+            {   // violation
                 valid = false;
             }
             return valid;
@@ -56,11 +52,11 @@ namespace RichPackage
 
         public static bool TakeOrDestroy<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : MonoBehaviour
+            where T : Object
         {
             bool valid;
             if (!(valid = Take(instance, ref singleton, dontDestroyOnLoad)))
-                UnityEngine.Object.Destroy(instance);
+                Object.Destroy(instance);
             return valid;
         }
 
@@ -105,6 +101,5 @@ namespace RichPackage
                 singleton = null;
             return isSingleton; // was released
         }
-
     }
 }
