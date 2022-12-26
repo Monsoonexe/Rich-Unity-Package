@@ -86,20 +86,21 @@ namespace RichPackage
             return StartCoroutine(CoroutineUtilities.InvokeAfterFrameDelay(action, frameDelay));
         }
 
-		#endregion Invokation Timing Helpers
+        #endregion Invokation Timing Helpers
 
         /*  TODO - move to the singleton partial file
          * 
          */
-		#region Singleton Helpers
+        #region Singleton Helpers
 
-		/// <summary>
-		/// Set a reference to a singleton to the given instance if valid.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="instance"></param>
-		/// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
-		/// <returns>False if a SingletonError occured.</returns>
+        /// <summary>
+        /// Set a reference to a singleton to the given instance if valid.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="instance"></param>
+        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
+        /// <returns>False if a SingletonError occured.</returns>
+        [Obsolete("Use Singleton class instead.")]
 		protected static bool InitSingleton<T>(T instance, ref T singletonRef,
             bool dontDestroyOnLoad = true)
             where T : RichMonoBehaviour
@@ -119,34 +120,6 @@ namespace RichPackage
             }
             return valid;
         }
-
-        protected static bool InitSingletonOrDestroyGameObject<T>(T instance, ref T singletonRef,
-            bool dontDestroyOnLoad = true)
-            where T : RichMonoBehaviour
-        {
-            bool valid;
-            if (!(valid = InitSingleton(instance, ref singletonRef, dontDestroyOnLoad)))
-                Destroy(instance.gameObject);
-
-            return valid;
-        }
-
-        public static void InitSingletonOrThrow<T>(T instance, ref T singletonRef,
-            bool dontDestroyOnLoad = true)
-            where T : RichMonoBehaviour
-        {
-            if (!InitSingleton(instance, ref singletonRef, dontDestroyOnLoad))
-                throw new SingletonException(typeof(T).Name);
-		}
-
-        protected static bool ReleaseSingleton<T>(T instance, ref T singletonRef)
-            where T : RichMonoBehaviour
-        {
-            bool released = instance == singletonRef;
-            if (released)
-                singletonRef = null;
-            return released;
-		}
 
         #endregion Singleton Helpers
 
