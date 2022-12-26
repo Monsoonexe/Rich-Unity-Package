@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using RichPackage.Assertions;
+using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using Sirenix.OdinInspector;
 //clarifications
 using Debug = UnityEngine.Debug;
-using RichPackage.Assertions;
 
 /*  developer notes:
  *  consider Dictionary if lots of remove/add (slow iteration!).
@@ -91,36 +91,27 @@ namespace RichPackage.Managed
         {
             base.Reset();
             SetDevDescription("Managed UnityMessages reduce their overhead signifigantly.");
-		}
+        }
 
-		protected override void Awake()
+        protected override void Awake()
         {
             //do my inits
             base.Awake();
+            Singleton.TakeOrThrow(this, ref instance);
 
-            //singleton
-            if (!InitSingleton(this, ref instance, false))
-            {
-                Debug.LogWarning($"[{nameof(ManagedBehaviourEngine)}] Singleton violation. " +
-                    "Disabling this duplicate.", this);
+            int i;
 
-                this.enabled = false;
-                return;
-            }
-
-            var i = 0;//cache
-
-            //init static listeners
-            var count = staticBehaviours.Count;
+            // init static listeners
+            int count = staticBehaviours.Count;
             for (i = 0; i < count; ++i)
                 RegisterManagedBehavior(staticBehaviours[i]);
 
-            //PreAwake()
+            // PreAwake()
             count = preAwakeListeners.Count;
             for (i = 0; i < count; ++i)
                 preAwakeListeners[i].ManagedPreAwake();
 
-            //Awake()
+            // Awake()
             count = awakeListeners.Count;
             for (i = 0; i < count; ++i)
                 awakeListeners[i].ManagedAwake();
@@ -128,12 +119,12 @@ namespace RichPackage.Managed
 
         private void Start()
         {
-            //Start()
-            var count = startListeners.Count;
-            for (var i = 0; i < count; ++i)
+            // Start()
+            int count = startListeners.Count;
+            for (int i = 0; i < count; ++i)
                 startListeners[i].ManagedStart();
 
-            //clear initializer lists because they'll never be fired again
+            // clear initializer lists because they'll never be fired again
             preAwakeListeners.Clear();
             preAwakeListeners = null;
             awakeListeners.Clear();
@@ -144,6 +135,7 @@ namespace RichPackage.Managed
 
         private void OnDestroy()
         {
+            Singleton.Release(this, ref instance);
             RemoveAllManagedListeners();
         }
 
@@ -153,15 +145,15 @@ namespace RichPackage.Managed
             DeltaTime = Time.deltaTime; //update time step
 
             //EarlyUpdate()
-            var count = earlyUpdateListeners.Count;
-            for (var i = 0; i < count; ++i)
+            int count = earlyUpdateListeners.Count;
+            for (int i = 0; i < count; ++i)
                 earlyUpdateListeners[i].ManagedEarlyUpdate();
 
             //Update()
             count = updateListeners.Count;
-            for (var i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
                 updateListeners[i].ManagedUpdate();
-            
+
             //late update here?
             LateUpdate();
         }
@@ -172,8 +164,8 @@ namespace RichPackage.Managed
             FixedDeltaTime = Time.fixedDeltaTime; //update time step
 
             //FixedUpdate()
-            var count = fixedUpdateListeners.Count;
-            for (var i = 0; i < count; ++i)
+            int count = fixedUpdateListeners.Count;
+            for (int i = 0; i < count; ++i)
                 fixedUpdateListeners[i].ManagedFixedUpdate();
         }
 
@@ -181,8 +173,8 @@ namespace RichPackage.Managed
         private void LateUpdate()
         {
             //LateUpdate()
-            var count = lateUpdateListeners.Count;
-            for (var i = 0; i < count; ++i)
+            int count = lateUpdateListeners.Count;
+            for (int i = 0; i < count; ++i)
                 lateUpdateListeners[i].ManagedLateUpdate();
         }
 
@@ -190,8 +182,8 @@ namespace RichPackage.Managed
         private void OnApplicationPause(bool pause)
         {
             //OnApplicationPause()
-            var count = pauseListeners.Count;
-            for (var i = 0; i < count; ++i)
+            int count = pauseListeners.Count;
+            for (int i = 0; i < count; ++i)
                 pauseListeners[i].ManagedOnApplicationPause(pause);
         }
 
@@ -200,8 +192,8 @@ namespace RichPackage.Managed
         {
             isQuitting = true;
             //OnApplicationQuit()
-            var count = quitListeners.Count;
-            for (var i = 0; i < count; ++i)
+            int count = quitListeners.Count;
+            for (int i = 0; i < count; ++i)
                 quitListeners[i].ManagedOnApplicationQuit();
         }
 
@@ -397,7 +389,8 @@ namespace RichPackage.Managed
         [Conditional(ConstStrings.UNITY_EDITOR)]
         private static void AssertSingletonExists()
         {
-            if (isQuitting) return;
+            if (isQuitting)
+                return;
             Debug.Assert(instance,
                 "[ManagedBehaviourEngine] No instance in scene! " +
                 "One is being created for you now, but it won't be done during build.");
@@ -409,9 +402,9 @@ namespace RichPackage.Managed
         /// Creates a new instance in the scene if one doesn't already exist.
         /// </summary>
         /// <returns></returns>
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         [UnityEditor.MenuItem("Tools/ManagedBehaviourEngine/Create Instance")]
-        #endif
+#endif
         public static void Construct()
         {
             //early exit
@@ -419,12 +412,12 @@ namespace RichPackage.Managed
                 return;
 
             if (!instance)
-			{
+            {
                 instance = new GameObject(nameof(ManagedBehaviourEngine))
                     .AddComponent<ManagedBehaviourEngine>();
-			}
+            }
         }
 
-		#endregion Editor
-	}
+        #endregion Editor
+    }
 }
