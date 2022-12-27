@@ -23,6 +23,7 @@ namespace RichPackage.Editor
         private ScriptableObject previewObject;
         private string targetFolder;
         private Vector2 scroll;
+        private string assetName;
 
         private static HashSet<Type> GatherTypes()
         {
@@ -102,6 +103,7 @@ namespace RichPackage.Editor
                 var t = this.SelectedType;
                 if (t != null && !t.IsAbstract)
                 {
+                    assetName = "new " + this.MenuTree.Selection.First().Name;
                     this.previewObject = CreateInstance(t);
                 }
             };
@@ -137,7 +139,10 @@ namespace RichPackage.Editor
             if (this.previewObject)
             {
                 GUILayout.FlexibleSpace();
-                SirenixEditorGUI.HorizontalLineSeparator(1);
+                SirenixEditorGUI.HorizontalLineSeparator(3);
+
+                GUILayout.Label("Create Asset", new GUIStyle(SirenixGUIStyles.SectionHeader));
+                DrawNewAssetNamePreviewField();
                 if (GUILayout.Button("Create Asset", GUILayoutOptions.Height(30)))
                 {
                     this.CreateAsset();
@@ -145,13 +150,21 @@ namespace RichPackage.Editor
             }
         }
 
+        private void DrawNewAssetNamePreviewField()
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Asset Name: ", GUILayoutOptions.Width(80));
+            assetName = GUILayout.TextField(assetName);
+            GUILayout.EndHorizontal();
+        }
+
         private void CreateAsset()
         {
             if (this.previewObject)
             {
-                var dest = this.targetFolder + "/new " + this.MenuTree.Selection.First().Name.ToLower() + ".asset";
-                dest = AssetDatabase.GenerateUniqueAssetPath(dest);
-                AssetDatabase.CreateAsset(this.previewObject, dest);
+                string path = $"{targetFolder}/{assetName}.asset";
+                path = AssetDatabase.GenerateUniqueAssetPath(path);
+                AssetDatabase.CreateAsset(this.previewObject, path);
                 AssetDatabase.Refresh();
                 Selection.activeObject = this.previewObject;
                 EditorApplication.delayCall += this.Close;
