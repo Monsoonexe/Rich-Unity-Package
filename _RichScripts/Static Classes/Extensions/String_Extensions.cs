@@ -109,6 +109,14 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ContainsIgnoreCase(this string source, string query)
             => source.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+        
+        /// <summary>
+        /// Quicker than <see cref="string.Equals"/>. Only works correctly if both strings are <see cref="System.Text.Encoding.UTF8"/>.
+        /// </summary>
+        /// <exception cref="NullReferenceException"/>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool QuickEquals(this string source, string query)
+            => source.Length == query.Length && source.QuickStartsWith(query);
 
         /// <summary>
         /// Quicker than <see cref="String.EndsWith(string)"/>. Prefer this for 
