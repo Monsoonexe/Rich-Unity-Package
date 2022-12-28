@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace RichPackage
 {
-	public static class GameObject_Extensions
-	{
-		/// <summary>
-		/// A faster reference comparison check if you know that neither object is dead.
-		/// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool QuickEquals(this GameObject a, GameObject b)
-			=> a.GetInstanceID() == b.GetInstanceID();
-	    
+    public static class GameObject_Extensions
+    {
         /// <summary>
         /// Shortcut for a.enabled = true;
         /// </summary>
@@ -40,7 +33,6 @@ namespace RichPackage
         /// <summary>
         /// Shortcut for `gameObject.SetActive(!gameObject.activeSelf);`
         /// </summary>
-        /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActiveToggle(this GameObject a)
             => a.SetActive(!a.activeSelf);
@@ -48,7 +40,6 @@ namespace RichPackage
         /// <summary>
         /// Shortcut for Destroy(gameObject);
         /// </summary>
-        /// <param name="a"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Destroy(this GameObject a)
             => UnityEngine.Object.Destroy(a);
@@ -58,20 +49,20 @@ namespace RichPackage
         /// otherwise <see cref="GameObject.AddComponent"/>.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T GetOrAddComponent<T>(this GameObject gameObject, T comp = null)
+        public static T GetOrAddComponent<T>(this GameObject gameObject,
+            T comp = null)
             where T : Component
         {
-            if (comp != null || gameObject.TryGetComponent(out comp))
-                return comp;
-
-            return gameObject.AddComponent<T>();
+            return comp != null || gameObject.TryGetComponent(out comp) ? comp : gameObject.AddComponent<T>();
         }
 
         /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
-        /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
+        /// a <see cref="Component"/> fetched with 
+        /// <see cref="GameObject.GetComponent"/>.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T GetComponentIfNull<T>(this GameObject gameObject, T comp = null)
+        public static T GetComponentIfNull<T>(this GameObject gameObject,
+            T comp = null)
             where T : Component
         {
             return (comp != null) ? comp : gameObject.GetComponent<T>();
@@ -81,17 +72,20 @@ namespace RichPackage
         /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GetComponentIfNull<T>(this GameObject gameObject, ref T comp)
+        public static void GetComponentIfNull<T>(this GameObject gameObject,
+            ref T comp)
             where T : Component
-		{
+        {
             if (comp == null)
                 comp = gameObject.GetComponent<T>();
-		}
+        }
 
         /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
-        /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
+        /// a <see cref="Component"/> fetched with 
+        /// <see cref="GameObject.GetComponent"/>.
         /// </returns>
-        public static T GetComponentIfNull<T>(this GameObject gameObject, Maybe<T> maybeComponent)
+        public static T GetComponentIfNull<T>(this GameObject gameObject,
+            Maybe<T> maybeComponent)
             where T : Component
         {
             T comp;
@@ -101,12 +95,14 @@ namespace RichPackage
 
         /// <summary>
         /// Get name of the <see cref="GameObject"/> prefixed 
-        /// with the current <see cref="UnityEngine.SceneManagement.Scene"/> name. <br/>
+        /// with the current <see cref="UnityEngine.SceneManagement.Scene"/> name.<br/>
         /// e.g. "MainMenuScene/MainMenu".
         /// </summary>
         public static string GetNameWithScene(this GameObject a)
-            => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name + "/" + a.name;
-
+        {
+            return UnityEngine.SceneManagement.SceneManager
+                .GetActiveScene().name + "/" + a.name;
+        }
 
         /// <summary>
         /// Perform <paramref name="action"/> on every Transform on each of its children.
@@ -114,7 +110,7 @@ namespace RichPackage
         public static void ForEachChild(this GameObject obj,
             Action<Transform> action)
         {
-            var transform = obj.GetComponent<Transform>();
+            Transform transform = obj.transform;
             int childCount = transform.childCount;
             for (int i = childCount - 1; i >= 0; --i)
             {
@@ -129,7 +125,7 @@ namespace RichPackage
         public static void ForEachChildRecursive(this GameObject obj,
             Action<Transform> action)
         {
-            var transform = obj.GetComponent<Transform>();
+            Transform transform = obj.transform;
             int childCount = transform.childCount;
             for (int i = childCount - 1; i >= 0; --i)
             {
@@ -145,7 +141,7 @@ namespace RichPackage
         public static void ForEachChild(this GameObject obj,
             Action<GameObject> action)
         {
-            var transform = obj.GetComponent<Transform>();
+            Transform transform = obj.transform;
             int childCount = transform.childCount;
             for (int i = childCount - 1; i >= 0; --i)
             {
@@ -160,7 +156,7 @@ namespace RichPackage
         public static void ForEachChildRecursive(this GameObject obj,
             Action<GameObject> action)
         {
-            var transform = obj.GetComponent<Transform>();
+            Transform transform = obj.transform;
             int childCount = transform.childCount;
             for (int i = childCount - 1; i >= 0; --i)
             {
@@ -169,7 +165,6 @@ namespace RichPackage
                 action(go);
             }
         }
-
 
         /// <summary>
         /// Returns true if TComponent was found and not null.
@@ -186,14 +181,14 @@ namespace RichPackage
         /// Get a new List each TComponent that is on each the root of each GameObject.
         /// </summary>
         /// <returns>A list of non-null component references.</returns>
-        public static List<TComponent> GetComponents<TComponent>
-            (this IList<GameObject> gameObjects)
+        public static List<TComponent> GetComponents<TComponent>(
+            this IList<GameObject> gameObjects)
             where TComponent : Component
         {
             int count = gameObjects.Count;
-            List<TComponent> components = new List<TComponent>(count);
-            for(int i = 0; i < count; ++i)
-                if(gameObjects[i].TryGetComponent(out TComponent comp))
+            var components = new List<TComponent>(count);
+            for (int i = 0; i < count; ++i)
+                if (gameObjects[i].TryGetComponent(out TComponent comp))
                     components.Add(comp);
             return components;
         }
@@ -213,7 +208,7 @@ namespace RichPackage
             if (active)
             {
                 // walk parent upwards
-                var parent = gameObject.GetComponent<Transform>().parent;
+                Transform parent = gameObject.transform.parent;
                 if (parent)
                     SetActiveInHierarchy(parent.gameObject, active);
             }
