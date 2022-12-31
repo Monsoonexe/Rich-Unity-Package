@@ -1,9 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using UnityEngine;
-using Sirenix.OdinInspector;
 using RichPackage.Pooling;
+using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
 
 namespace RichPackage.DiceSystem
 {
@@ -11,7 +11,7 @@ namespace RichPackage.DiceSystem
     * TODO: reroll die
     * Does this even need to exist along with DieRoller3DEngine?
     * I feel like the Engine does everything this does anyways.
-    */ 
+    */
 
     /// <summary>
     /// An n-sided die pool.
@@ -28,8 +28,7 @@ namespace RichPackage.DiceSystem
         [Tooltip("Parent object of all dice elements (except this).")]
         private GameObject objectsHandle;
 
-        [SerializeField]
-        [Required]
+        [SerializeField, Required]
         private GameObjectPool diePool;
 
         [Tooltip("Point where each dice will spawn when thrown.")]
@@ -56,15 +55,29 @@ namespace RichPackage.DiceSystem
         private void Start()
         {
             //subscribe to 'read result' event
-            diePool.OnDepoolMethod =
-                (die) => die.GetComponent<DieBehaviour>()
-                .OnResultReadyEvent += DieResultIsIn;
+            diePool.OnDepoolMethod = OnDepool;
 
             //unsubscribe from 'read result' event
-            diePool.OnEnpoolMethod =
-                (die) => die.GetComponent<DieBehaviour>()
-                .OnResultReadyEvent -= DieResultIsIn;
+            diePool.OnEnpoolMethod = OnEnpool;
         }
+
+        #region Pooling Methods
+
+        private void OnDepool(GameObject die)
+        {
+            die.GetComponent<DieBehaviour>()
+                .OnResultReadyEvent += DieResultIsIn;
+            die.SetActive(true);
+        }
+
+        private void OnEnpool(GameObject die)
+        {
+            die.GetComponent<DieBehaviour>()
+                .OnResultReadyEvent -= DieResultIsIn;
+            die.SetActive(false);
+        }
+
+        #endregion Pooling Methods
 
         [Button, DisableInEditorMode]
         public void TestDiceRoll() => RollDice(3);
@@ -76,7 +89,7 @@ namespace RichPackage.DiceSystem
         /// <returns>int[] of results.</returns>
         public IList<int> RollDice(int diceCount = 1)
         {
-            var resultsArray = (IList<int>)new int[diceCount];//one result per die
+            IList<int> resultsArray = new int[diceCount];//one result per die
             RollDice(diceCount, resultsArray);
             return resultsArray;
         }
@@ -93,7 +106,7 @@ namespace RichPackage.DiceSystem
 
             Debug.Assert(results != null,
                 "[DieRoller3D] results IList is null! " +
-                "Expected not null.", 
+                "Expected not null.",
                 this);
 
             //validate
@@ -108,15 +121,15 @@ namespace RichPackage.DiceSystem
             if (randomizeDieSpawnPoints)
                 spawnPoints.Shuffle();
 
-            //mark list as invalid until results are ready
-            for (var i = 0; i < diceCount; ++i)
+            // mark list as invalid until results are ready
+            for (int i = 0; i < diceCount; ++i)
                 results[i] = -1;//mark invalid result b.c. not ready until dice finish animating.
-                
-            //init and roll dice pool
-            for(var i = 0; i < diceCount; ++i)
+
+            // init and roll dice pool
+            for (int i = 0; i < diceCount; ++i)
             {   //get di from pool
-                var workingDie = diePool.Depool<DieBehaviour>();
-                var spawnPoint = spawnPoints[i];
+                DieBehaviour workingDie = diePool.Depool<DieBehaviour>();
+                Transform spawnPoint = spawnPoints[i];
 
                 //move dice to throw points and randomize starting rotation
                 workingDie.MoveDie(spawnPoint); //move
@@ -152,7 +165,7 @@ namespace RichPackage.DiceSystem
         /// <returns>The same list as was given.</returns>
         public IList<int> RollDiceOdds(int diceCount)
         {
-            var results = (IList<int>) new int[diceCount];
+            IList<int> results = new int[diceCount];
             RollDiceOdds(diceCount, results);
             return results;
         }
@@ -172,12 +185,12 @@ namespace RichPackage.DiceSystem
                 "`IList<int> RollDiceOdds(int)`.",
                 this);
 
-            var sampleDie = diePool.Depool<DieBehaviour>();
+            DieBehaviour sampleDie = diePool.Depool<DieBehaviour>();
             sampleDie.gameObject.SetActive(false);//just need the data off a die
 
-            for (var i = 0; i < diceCount; ++i)
+            for (int i = 0; i < diceCount; ++i)
             {
-                var result = sampleDie.GetResultRandom();//random odds result
+                int result = sampleDie.GetResultRandom();//random odds result
                 results[i] = result;
             }
             diePool.Enpool(sampleDie);//job's done.
@@ -195,13 +208,13 @@ namespace RichPackage.DiceSystem
 
         private void PrintPendingResults()
         {
-            var count = workingDice.Count;
-            var outLog = StringBuilderCache.Rent();
+            int count = workingDice.Count;
+            StringBuilder outLog = StringBuilderCache.Rent();
 
             outLog.Append("Roll results: | ");
 
             //copy over only numbers we need
-            for(var i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
                 outLog.Append(Results[i].ToString() + " | ");
 
             Debug.Log(StringBuilderCache.ToStringAndReturn(outLog));
@@ -213,19 +226,19 @@ namespace RichPackage.DiceSystem
         [Button, DisableInEditorMode]
         private void ExamineRollResults()
         {
-            var dieCount = workingDice.Count;
+            int dieCount = workingDice.Count;
 
             //possibly need to do all these raycasts in a Coroutine (one a frame)
             //get the result of each die
-            for(var i = 0; i < dieCount; ++i)
+            for (int i = 0; i < dieCount; ++i)
             {
-                var die = workingDice[i];
-                var result = die.GetResult();
+                DieBehaviour die = workingDice[i];
+                int result = die.GetResult();
                 Results[i] = result; //load output
             }
             PrintPendingResults(); //debug.
             //onDiceResultsReady.Invoke();//do this in OnComplete event to get back into Unity runtime
         }
-            
+
     }
 }

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using UnityEngine;
-using NaughtyAttributes;
-
 using Random = UnityEngine.Random;
 
 namespace RichPackage.DiceSystem
@@ -17,7 +16,7 @@ namespace RichPackage.DiceSystem
         /* This should be hard-wired to an n-sided die. 
         * Should dynamically load a new die with this behaviour, rather than 
         * 'hot swap' dice between Behaviours.
-        */ 
+        */
 
         [Header("---Settings---")]
         [ReadOnly]
@@ -28,7 +27,8 @@ namespace RichPackage.DiceSystem
         /// Die data: sides, face-up value.
         /// </summary>
         public Die Die { get => myDie; }
-        [ShowNativeProperty]
+
+        [ReadOnly, ShowInInspector]
         public int Result
         {
             get => myDie.faceUpValue;
@@ -77,7 +77,7 @@ namespace RichPackage.DiceSystem
 
         public bool IsRolling { get => rollReadyCheckRoutine != null; }
 
-        //events
+        // events
         public event Action<int> OnResultReadyEvent;
 
         private Coroutine rollReadyCheckRoutine;
@@ -113,13 +113,13 @@ namespace RichPackage.DiceSystem
 
         private IEnumerator CheckDieStable()
         {
-            //wait until stopped moving
+            // wait until stopped moving
             do
             {
                 yield return resultCheckPollInterval; //wait...
             } while (dieRigidbody.velocity != Vector3.zero);
 
-            var result = GetResult(); //cehck which side is up
+            int result = GetResult(); //cehck which side is up
             OnResultReadyEvent?.Invoke(result);
             rollReadyCheckRoutine = null;
         }
@@ -129,17 +129,17 @@ namespace RichPackage.DiceSystem
         /// </summary>
         private void UpdateDieFaces()
         {
-            var len = faces.Length;
+            int len = faces.Length;
 
-            //create a new array only if null or wrong size.
-            if(myDie.faceValues == null
+            // create a new array only if null or wrong size.
+            if (myDie.faceValues == null
                 || myDie.faceValues.Length != len)
             {
                 myDie.faceValues = new int[len];
             }
 
             //add die values from face values
-            for (var i = 0; i < len; ++i)
+            for (int i = 0; i < len; ++i)
             {
                 myDie.faceValues[i] = faces[i].faceValue;
             }
@@ -150,7 +150,7 @@ namespace RichPackage.DiceSystem
         /// Apply Physics forces onto the die to cast it and get a result.
         /// Uses default throw/torque directions.
         /// </summary>
-        [Button(null, EButtonEnableMode.Playmode)]
+        [Button, DisableInEditorMode]
         public void RollDie()
             => RollDie(defaultRollDirection, defaultTorqueDirection);
 
@@ -173,22 +173,22 @@ namespace RichPackage.DiceSystem
             RandomizeRotation();
             rollReadyCheckRoutine = StartCoroutine(CheckDieStable());
 
-            //enable physics
+            // enable physics
             dieRigidbody.useGravity = true;
             dieRigidbody.isKinematic = false;
 
-            //calculate throw force
+            // calculate throw force
             float rollForceScaler = randomForceBounds.RandomRange();
             Vector3 rollForce = throwDirection * rollForceScaler;
             dieRigidbody.AddForce(rollForce, forceMode);
 
-            //handle random rotation
+            // handle random rotation
             float torqueForceScaler = randomTorqueBounds.RandomRange();
             Vector3 torqueForce = spinDirection * torqueForceScaler;
             dieRigidbody.AddTorque(torqueForce, forceMode);
         }
 
-        [Button(null, EButtonEnableMode.Editor)]
+        [Button, DisableInPlayMode]
         private void GatherChildrenFaceReferences()
         {
             faces = dieRigidbody.transform.GetComponentsInChildren<DieFaceData>();
@@ -204,7 +204,7 @@ namespace RichPackage.DiceSystem
         /// <returns></returns>
         public int GetResult()
         {
-            //determine distance of raycast
+            // determine distance of raycast
             Vector3 endPoint = dieRigidbody.position;
             Vector3 originPoint = endPoint.WithY(raycastHeight);
             Vector3 direction = endPoint - originPoint;
@@ -228,7 +228,7 @@ namespace RichPackage.DiceSystem
             Debug.AssertFormat(diceFace != null,
                 "[{0}] Raycast hit a collider {1}," +
                 "but no DieFaceData mono found. " +
-                "Check layer and dieCheckLayerMask.", 
+                "Check layer and dieCheckLayerMask.",
             name, hitInfo.collider.name);
 
             return Result = diceFace.faceValue; //store for later querry.faceUpValue;
@@ -242,17 +242,11 @@ namespace RichPackage.DiceSystem
             => Result = faces.GetRandomElement();
 
         public void MoveDie(Transform here)
-        {   //don't forward to avoid passing structs on the stack.
-            //effectively disable physics to allow teleport
-            dieRigidbody.useGravity = false;
-            dieRigidbody.isKinematic = true;
-            dieTransform.position = here.position;
-        // dieRigidbody.MovePosition(here.position);
-        }
+            => MoveDie(here.position);
 
         public void MoveDie(Vector3 destination)
         {
-            //effectively disable physics to allow teleport
+            // effectively disable physics to allow teleport
             dieRigidbody.useGravity = false;
             dieRigidbody.isKinematic = true;
             dieTransform.position = destination;
@@ -261,7 +255,7 @@ namespace RichPackage.DiceSystem
 
         public void MoveDieLocal(Vector3 destination)
         {
-            //effectively disable physics to allow teleport
+            // effectively disable physics to allow teleport
             dieRigidbody.useGravity = false;
             dieRigidbody.isKinematic = true;
             dieTransform.localPosition = destination;
@@ -274,7 +268,7 @@ namespace RichPackage.DiceSystem
         [Button]
         public void RandomizeRotation()
         {
-            //disable physics
+            // disable physics
             dieRigidbody.useGravity = false;
             dieRigidbody.isKinematic = true;
             dieTransform.rotation = Random.rotation;
@@ -288,17 +282,17 @@ namespace RichPackage.DiceSystem
         [Button]
         public void RandomizeDieSideUp()
         {
-            //disable physics
+            // disable physics
             dieRigidbody.useGravity = false;
             dieRigidbody.isKinematic = true;
 
-            //pick a random side
-            var randomSide = faces.GetRandomElement();
+            // pick a random side
+            DieFaceData randomSide = faces.GetRandomElement();
 
-            //orient that side up
+            // orient that side up
             dieTransform.eulerAngles = randomSide.UpRotation;
 
-            //update face up value
+            // update face up value
             Result = randomSide.faceValue;
         }
 
@@ -316,24 +310,24 @@ namespace RichPackage.DiceSystem
         /// <param name="targetFaceValue"></param>
         public void RotateTo(int targetFaceValue)
         {
-            //disable physics
+            // disable physics
             dieRigidbody.useGravity = false;
             dieRigidbody.isKinematic = true;
 
-            //rotate
+            // rotate
             DieFaceData face = null;
 
-            //find target
-            for (var i = 0; i < faces.Length; ++i)
+            // find target
+            for (int i = 0; i < faces.Length; ++i)
             {
-                if(faces[i].faceValue == targetFaceValue)
+                if (faces[i].faceValue == targetFaceValue)
                 {
                     face = faces[i];
                     break;
                 }
             }
 
-            //validate
+            // validate
             Debug.Assert(face != null,
                 "[DieBehaviour] Die could not find face value of: "
                 + targetFaceValue,
@@ -344,9 +338,8 @@ namespace RichPackage.DiceSystem
             Result = face.faceValue; //match result
         }
 
-        public static implicit operator Die (DieBehaviour a)
-            => a.myDie;
-        public static implicit operator int (DieBehaviour a)
-            => a.Result;
+        public static implicit operator Die(DieBehaviour a) => a.myDie;
+        
+        public static implicit operator int(DieBehaviour a) => a.Result;
     }
 }
