@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using RichPackage.Assertions;
 using Sirenix.OdinInspector;
-using RichPackage.Assertions;
 using Sirenix.Serialization;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
 
@@ -13,7 +14,6 @@ namespace RichPackage.Pooling
     /// <summary>
     /// Pools a GameObject Prefab. Depool() replaces Instantiate(), and Enpool() replaces Destroy().
     /// </summary>
-    /// <seealso cref="PoolablePool"/>
     public sealed class GameObjectPool : RichMonoBehaviour
     {
         [Title("Resources")]
@@ -21,10 +21,10 @@ namespace RichPackage.Pooling
         public GameObject objectPrefab;
 
         [Header("---Settings---")]
-		[PreviouslySerializedAs("initOnAwake")]
+        [PreviouslySerializedAs("initOnAwake")]
         public bool initOnStart = true;
         public bool createWhenEmpty = true;
-		[Tooltip("Should this pool enpool any existing children when init'g?")]
+        [Tooltip("Should this pool enpool any existing children when init'g?")]
         public bool enpoolChildrenOnInit = false;
 
         [Min(0)]
@@ -54,7 +54,7 @@ namespace RichPackage.Pooling
         /// </summary>
         public GameObjectMethod OnEnpoolMethod = (p) => p.SetActive(false);
 
-        //runtime data
+        // runtime data
         private Stack<GameObject> pool = new Stack<GameObject>(); //stack has better locality than queue
         private List<GameObject> manifest;
 
@@ -85,43 +85,43 @@ namespace RichPackage.Pooling
         /// <remarks>Enables idempotency of <see cref="InitPool"/>.</remarks>
         private bool isInitialized;
 
-		#region Unity Messages
+        #region Unity Messages
 
-		protected override void Reset()
+        protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I replace Instantiate with a pool of objects. " +
                 "I'm doing my part to reduce garbage generation.");
-            poolParent = GetComponent<Transform>();
+            poolParent = transform;
         }
 
-		private void Start()
-		{
+        private void Start()
+        {
             if (initOnStart)
                 InitPool();
         }
 
-		#endregion Unity Messages
+        #endregion Unity Messages
 
-		public void AddItems(int amount = 1)
+        public void AddItems(int amount = 1)
         {
-            for (var i = amount - 1; i >= 0; --i)
+            for (int i = amount - 1; i >= 0; --i)
             {
-                var obj = CreatePoolable();
+                GameObject obj = CreatePoolable();
                 if (obj != null)
                     Enpool(obj);
             }
         }
 
-		#region En/Depool
+        #region En/Depool
 
-		/// <summary>
-		/// Take an item out of the pool.
-		/// </summary>
-		/// <returns>Newly de-pool object.</returns>
-		public GameObject Depool()
+        /// <summary>
+        /// Take an item out of the pool.
+        /// </summary>
+        /// <returns>Newly de-pool object.</returns>
+        public GameObject Depool()
         {
-            GameObject depooledItem = null;
+            GameObject depooledItem;
 
             if (pool.Count > 0)
                 depooledItem = pool.Pop();
@@ -140,18 +140,14 @@ namespace RichPackage.Pooling
         /// <returns>Newly de-pool object.</returns>
         public GameObject Depool(Transform handle)
         {
-            var obj = Depool();
+            GameObject obj = Depool();
             if (obj != null)
             {
-                var trans = obj.GetComponent<Transform>();
-                trans.position = handle.position;
-                trans.rotation = handle.rotation;
+                Transform trans = obj.transform;
+                trans.SetPositionAndRotation(handle.position, handle.rotation);
                 trans.parent = handle;
-
-                //maybe this is faster?
-                //trans.parent = handle;
-                //trans.localPosition = Vector3.zero;
-                //trans.localRotation = Quaternion.identity;
+                
+                // what about: set parent, zero locals?
             }
             return obj;
         }
@@ -162,11 +158,7 @@ namespace RichPackage.Pooling
         /// <returns>Newly de-pool object.</returns>
         public GameObject Depool(Transform handle, bool setParent)
         {
-            GameObject obj = null;
-            if (setParent)
-                obj = Depool(handle);
-            else
-                obj = Depool(handle.position, handle.rotation);
+            GameObject obj = setParent ? Depool(handle) : Depool(handle.position, handle.rotation);
             return obj;
         }
 
@@ -176,11 +168,10 @@ namespace RichPackage.Pooling
         /// <returns>Newly de-pool object.</returns>
         public GameObject Depool(in Vector3 position)
         {
-            var obj = Depool();
+            GameObject obj = Depool();
             if (obj != null)
             {
-                var trans = obj.GetComponent<Transform>();
-                trans.position = position;
+                obj.transform.position = position;
             }
             return obj;
         }
@@ -191,12 +182,10 @@ namespace RichPackage.Pooling
         /// <returns>Newly de-pool object.</returns>
         public GameObject Depool(in Vector3 position, in Quaternion rotation)
         {
-            var obj = Depool();
+            GameObject obj = Depool();
             if (obj != null)
             {
-                var trans = obj.GetComponent<Transform>();
-                trans.position = position;
-                trans.rotation = rotation;
+                obj.transform.SetPositionAndRotation(position, rotation);
             }
             return obj;
         }
@@ -208,7 +197,7 @@ namespace RichPackage.Pooling
         public T Depool<T>() where T : Component
         {
             T component = null;
-            var obj = Depool();
+            GameObject obj = Depool();
             if (obj)
                 component = obj.GetComponent<T>();
             return component;
@@ -238,11 +227,10 @@ namespace RichPackage.Pooling
         /// <summary>
         /// Add an item back into the pool. This replaces Destroy().
         /// </summary>
-        /// <param name="poolable"></param>
         public void Enpool(GameObject poolable)
         {
-            Debug.Assert(poolable != null,
-                "[GameObjectPool] Trying to Enpool null!", this);
+            if (poolable == null)
+                throw new Exception("[GameObjectPool] Trying to Enpool null!");
 
             Debug.AssertFormat(manifest.Contains(poolable),
                 "[GameObjectPool] This item is not included on this Pool's manifest. " +
@@ -298,14 +286,14 @@ namespace RichPackage.Pooling
             pool = new Stack<GameObject>(poolSize);
 
             //load children?
-			if (enpoolChildrenOnInit && poolParent != null)
-			{
+            if (enpoolChildrenOnInit && poolParent != null)
+            {
                 foreach (Transform child in poolParent)
                     InitPoolable(child.gameObject);
-			}
+            }
 
             //preload pool
-            for (var i = startingAmount - pool.Count; i > 0; --i)
+            for (int i = startingAmount - pool.Count; i > 0; --i)
                 InitPoolable(CreatePoolable());
 
             //state
@@ -327,20 +315,20 @@ namespace RichPackage.Pooling
             OnEnpoolMethod?.Invoke(obj);//SetActive(false) by default
         }
 
-		#endregion Initialization
+        #endregion Initialization
 
-		/// <summary>
-		/// Resize the pool.
-		/// </summary>
-		/// <param name="newCapacity"></param>
-		public void Resize(int newCapacity)
+        /// <summary>
+        /// Resize the pool.
+        /// </summary>
+        /// <param name="newCapacity"></param>
+        public void Resize(int newCapacity)
         {
             maxAmount = RichMath.Min(newCapacity, ReadyCount);
             while (pool.Count > maxAmount) //shrink
             {
-                var poolable = pool.Pop();//trim excess
+                GameObject poolable = pool.Pop();//trim excess
                 manifest.Remove(poolable);
-                Destroy(poolable.gameObject);
+                Destroy(poolable);
             }
 
             manifest.TrimExcess();
@@ -349,8 +337,8 @@ namespace RichPackage.Pooling
 
         public void ReturnAllToPool()
         {
-            //iterate backwards to preserve stack order
-            for (var i = manifest.Count - 1; i >= 0; --i)
+            // iterate backwards to preserve stack order
+            for (int i = manifest.Count - 1; i >= 0; --i)
                 Enpool(manifest[i]);
         }
     }
