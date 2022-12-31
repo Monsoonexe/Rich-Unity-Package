@@ -5,10 +5,11 @@ using Sirenix.OdinInspector;
 //clarifications
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
+using UnityEditor.PackageManager.Requests;
 
 /* Callback system for OnTransitionEnd (UnityEvent)
  * 
- */ 
+ */
 
 namespace RichPackage.UI
 {
@@ -45,52 +46,52 @@ namespace RichPackage.UI
 
         //parameters
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int FADE_IN;
         public int FadeInMessage { get => FADE_IN; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int FADE_OUT;
         public int FadeOutMessage { get => FADE_OUT; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int HIDE;
         public int HideMessage { get => HIDE; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int HORIZONTAL_WIPE_IN;
         public int HorizontalWipeInMessage { get => HORIZONTAL_WIPE_IN; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int HORIZONTAL_WIPE_OUT;
         public int HorizontalWipeOutMessage { get => HORIZONTAL_WIPE_OUT; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int SHOW;
         public int ShowMessage { get => SHOW; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int SPIN_LOCK_IN;
         public int SpinLockInMessage { get => SPIN_LOCK_IN; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int SPIN_LOCK_OUT;
         public int SpinLockOutMessage { get => SPIN_LOCK_OUT; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int VERTICAL_WIPE_IN;
         public int VerticalWipeInMessage { get => VERTICAL_WIPE_IN; }
 
         [FoldoutGroup("---Parameters---")]
-        [SerializeField, AnimatorParam("myAnimator")]
+        [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int VERTICAL_WIPE_OUT;
         public int VerticalWipeOutMessage { get => VERTICAL_WIPE_OUT; }
 
@@ -98,7 +99,6 @@ namespace RichPackage.UI
 
 		#region Unity Messages
 
-		//public static event Action TransitionEndEvent;
 		protected override void Reset()
         {
             base.Reset();
@@ -110,22 +110,26 @@ namespace RichPackage.UI
         {
             base.Awake();
 
-            //gather refs
+            // gather refs
             if(!myAnimator)
                 myAnimator = GetComponent<Animator>();
 
-            //singleton
-            InitSingleton(this, ref instance, 
+            // singleton
+            Singleton.Take(this, ref instance, 
                 dontDestroyOnLoad: false);
         }
 
-		#endregion Unity Messages
+        private void OnDestroy()
+        {
+            Singleton.Release(this, ref instance);
+        }
 
-		/// <summary>
-		/// Safely set animation speed based on desired duration.
-		/// </summary>
-		/// <param name="duration"></param>
-		public static void SetAnimationSpeed(float duration)
+        #endregion Unity Messages
+
+        /// <summary>
+        /// Safely set animation speed based on desired duration.
+        /// </summary>
+        public static void SetAnimationSpeed(float duration)
         {
             //guard against division by zero
             if (duration <= 0)

@@ -9,11 +9,13 @@ namespace RichPackage.Audio
         protected override void Awake()
         {
             base.Awake();
-            if (!InitSingleton(this, ref instance, dontDestroyOnLoad: isPersistentThroughScenes))
-            {
-                Destroy(this);
-                return;
-            }
+            Singleton.TakeOrDestroy(this, ref instance,
+                dontDestroyOnLoad: isPersistentThroughScenes);
+        }
+
+        private void OnDestroy()
+        {
+            Singleton.Release(this, ref instance);
         }
 
         public static void PlayGlobalSFX(string clipTag)
