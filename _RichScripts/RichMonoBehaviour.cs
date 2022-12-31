@@ -88,41 +88,6 @@ namespace RichPackage
 
         #endregion Invokation Timing Helpers
 
-        /*  TODO - move to the singleton partial file
-         * 
-         */
-        #region Singleton Helpers
-
-        /// <summary>
-        /// Set a reference to a singleton to the given instance if valid.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="instance"></param>
-        /// <param name="singletonRef">Reference to the Singleton object, typically a static class variable.</param>
-        /// <returns>False if a SingletonError occured.</returns>
-        [Obsolete("Use Singleton class instead.")]
-		protected static bool InitSingleton<T>(T instance, ref T singletonRef,
-            bool dontDestroyOnLoad = true)
-            where T : RichMonoBehaviour
-        {
-            var valid = true; //return value
-            if (singletonRef == null)
-            {   //we are the singleton
-                singletonRef = instance;
-                if (dontDestroyOnLoad)
-                    instance.DontDestroyOnLoad();
-            }
-            else if (!instance.Equals(singletonRef))
-            {   //there are two Singletons
-                //throw new SingletonException(string.Format("[SingletonError] Two instances of a singleton exist: {0} and {1}.",
-                //instance.ToString(), singletonRef.ToString()));
-                valid = false;
-            }
-            return valid;
-        }
-
-        #endregion Singleton Helpers
-
         #region GetComponent Helpers
 
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)

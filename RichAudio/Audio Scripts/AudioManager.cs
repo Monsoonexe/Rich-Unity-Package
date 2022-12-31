@@ -85,23 +85,18 @@ namespace RichPackage.Audio
         protected override void Awake()
         {
             base.Awake();
-            if (InitSingleton(this, ref _instance, dontDestroyOnLoad: true))
+            if (Singleton.TakeOrDestroy(this, ref _instance, dontDestroyOnLoad: true))
             {
                 UnityServiceLocator.Instance.RegisterAudioPlayer(this);
                 CreateAudioSources();
                 ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
                 instanceIsInitialized = true;
             }
-            else
-            {
-                Debug.LogWarning($"[{name}] Singleton: " +
-                    $"Too many AudioManagers in the Scene! Destroying: {gameObject.name}.", this);
-                Destroy(gameObject); // there can only be one!
-            }
         }
 
         private void OnDestroy()
         {
+            Singleton.Release(this, ref _instance);
             if (instanceIsInitialized)
             {
                 instanceIsInitialized = false;
