@@ -121,14 +121,12 @@ namespace RichPackage.SaveSystem
 		protected override void Awake()
 		{
 			base.Awake();
-			//singleton pattern
-			var singletonWorked = InitSingleton(this, ref instance, 
-				dontDestroyOnLoad: true); //ensure only one of these exists
 
-			if (!singletonWorked)
+			if (!Singleton.TakeOrDestroy(this, ref instance,
+                dontDestroyOnLoad: true))
 			{
-				Destroy(this);
-				return; //quit here if this was the duplicate that should be destroyed
+                // quit here if this was the duplicate that should be destroyed
+                return;
 			}
 
 			if (deleteOnPlay)
@@ -140,10 +138,7 @@ namespace RichPackage.SaveSystem
 		private void OnDestroy()
 		{
 			SaveMetaInformation(); //just to be safe
-
-			// release singleton
-			if (Instance == this)
-				Instance = null;
+			Singleton.Release(this, ref instance);
 		}
 
 		private void Start()
