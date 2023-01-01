@@ -38,7 +38,7 @@ namespace RichPackage.Spawning
 
 		private void Start()
         {
-            objectPool.InitPool();
+            objectPool.Init();
         }
 
 		private void OnEnable()

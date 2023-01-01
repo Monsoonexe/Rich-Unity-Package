@@ -19,7 +19,7 @@ namespace RichPackage.ProjectileSystem
 
         protected virtual void Start()
         {
-            projectilePool.InitPool();
+            projectilePool.Init();
         }
 
         public virtual void Launch(Transform spawnPoint)
