@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
-using RichPackage.Audio;
 using RichPackage.UI;
 using RichPackage.Events.Signals;
 using RichPackage.YieldInstructions;
+using RichPackage.Audio;
 
 //TODO - handle additive scenes.
 
@@ -28,18 +28,21 @@ namespace RichPackage
         [SerializeField]
         private string outTransitionMessage = "VerticalWipeOut";
 
+        [SerializeField, Required]
+        private ScreenTransitionController transitioner;
+
         [Header("---Audio---")]
         [SerializeField]
-        private AudioClipReference transitionOUTClip 
-            = new AudioClipReference();
+        private RichAudioClipReference transitionOUTClip 
+            = new RichAudioClipReference();
 
         [SerializeField]
-        private AudioClipReference transitionINClip
-            = new AudioClipReference();
+        private RichAudioClipReference transitionINClip
+            = new RichAudioClipReference();
 
         public static SceneVariable CurrentScene { get; private set; }
 
-        //runtime data
+        // runtime data
         [ShowInInspector, ReadOnly]
         public static bool IsTransitioning { get; private set; } = false;
 
@@ -120,17 +123,15 @@ namespace RichPackage
             // set flags
             IsTransitioning = true;
 
-            var transitionWait = new WaitForSeconds(
-                ScreenTransitionController.TransitionDuration);
+            YieldInstruction transitionWait = transitioner.TransitionWaitInstruction;
 
             // preserve coroutine with immortality!
             myTransform.parent = null;// dontdestroyonload only works on objects at root
             DontDestroyOnLoad(gameObject); //don't destroy while we are loading the level
 
             // fade out
-            ScreenTransitionController.Instance
-                .TriggerTransition(outTransitionMessage);//hide scene
-            transitionOUTClip.Value.PlayOneShot();
+            transitioner.TriggerTransition(outTransitionMessage);//hide scene
+            transitionOUTClip.Clip.PlayOneShot();
 
             yield return null;
             // make sure frame has been fully issued so state can be saved.
@@ -161,14 +162,11 @@ namespace RichPackage
             // clean up while screen still black
             GC.Collect(); //why not? screen is totally black now.
 
-            // wait until next frame
             yield return null;
 
             // fade into new scene
-            ScreenTransitionController.Instance.
-                TriggerTransition(inTransitionMessage);
-
-            transitionINClip.Value.PlayOneShot();
+            transitioner.TriggerTransition(inTransitionMessage);
+            transitionINClip.Clip.PlayOneShot();
 
             // wait for scene to fully open, and just a bit longer
             yield return transitionWait;
