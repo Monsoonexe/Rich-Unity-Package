@@ -88,8 +88,8 @@ namespace RichPackage
         /// </summary>
         public static bool Contains<T>(this IList<T> array, IComparable<T> elem)
         {
-            var length = array.Count;
-            for (var i = 0; i < length; ++i)
+            int length = array.Count;
+            for (int i = 0; i < length; ++i)
                 if (elem.CompareTo(array[i]) == 0)
                     return true;
             return false;
@@ -100,8 +100,8 @@ namespace RichPackage
         /// </summary>
         public static bool Contains<T>(this IList<T> array, Searcher<T> searcher)
         {
-            var length = array.Count;
-            for (var i = 0; i < length; ++i)
+            int length = array.Count;
+            for (int i = 0; i < length; ++i)
                 if (searcher(array[i]) == 0)
                     return true;
             return false;
@@ -209,8 +209,8 @@ namespace RichPackage
         /// </summary>
         public static T Find<T>(this IList<T> list, Predicate<T> query)
         {
-            var count = list.Count;
-            for (var i = 0; i < count; ++i)
+            int count = list.Count;
+            for (int i = 0; i < count; ++i)
                 if (query(list[i]))
                     return list[i];
             return default;
@@ -232,9 +232,9 @@ namespace RichPackage
         /// </summary>
         public static List<T> FindAll<T>(this IList<T> list, Predicate<T> query)
         {
-            var count = list.Count;
-            List<T> listToFill = new List<T>(count);
-            for (var i = 0; i < count; ++i)
+            int count = list.Count;
+            var listToFill = new List<T>(count);
+            for (int i = 0; i < count; ++i)
                 if (query(list[i]))
                     listToFill.Add(list[i]);
             return listToFill;
@@ -245,8 +245,8 @@ namespace RichPackage
         /// </summary>
         public static void FindAll<T>(this IList<T> list, Predicate<T> query, List<T> listToFill)
         {
-            var count = list.Count;
-            for (var i = 0; i < count; ++i)
+            int count = list.Count;
+            for (int i = 0; i < count; ++i)
                 if (query(list[i]))
                     listToFill.Add(list[i]);
         }
@@ -256,7 +256,7 @@ namespace RichPackage
         /// </summary>
         public static T FindLast<T>(this IList<T> list, Predicate<T> query)
         {
-            for (var i = list.Count - 1; i >= 0; --i)
+            for (int i = list.Count - 1; i >= 0; --i)
                 if (query(list[i]))
                     return list[i];
             return default;
@@ -271,7 +271,7 @@ namespace RichPackage
             foundItem = default;
             bool found = false;
             int count = list.Count;
-            for (var i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 if (query(list[i]))
                 {
@@ -290,13 +290,13 @@ namespace RichPackage
             where T : IList
         {
             //first shortest path
-            var shortestLength = int.MaxValue;
-            var shortestIndex = 0;
+            int shortestLength = int.MaxValue;
+            int shortestIndex = 0;
 
-            var count = lists.Count;
-            for (var i = 0; i < count; ++i)
+            int count = lists.Count;
+            for (int i = 0; i < count; ++i)
             {
-                var workingCount = lists[i].Count;
+                int workingCount = lists[i].Count;
                 if (workingCount < shortestLength)
                 {
                     shortestIndex = i;
@@ -375,7 +375,7 @@ namespace RichPackage
         /// <returns></returns>
         public static bool IsSubsetOf<T>(this IList<T> a, IList<T> b)
         {
-            foreach (var item in a)
+            foreach (T item in a)
             {
                 if (!b.Contains(item))
                     return false;
@@ -432,8 +432,8 @@ namespace RichPackage
         public static int GetWrappedIndex<T>(this IList<T> list, int index)
         {
             int count = list.Count;
-            int indexWrapped = (int)(index - count * Math.Floor(
-                (double)index / count));
+            int indexWrapped = (int)(index - (count * Math.Floor(
+                (double)index / count)));
             return indexWrapped;
         }
 
@@ -508,11 +508,11 @@ namespace RichPackage
             foreach (T item in collection)
                 action(item, i++);
         }
-        
+
         public static IEnumerable<(T Item, int Index)> ForeachWithIndex<T>(this IEnumerable<T> source)
         {
             int i = 0;
-            foreach (var item in source)
+            foreach (T item in source)
                 yield return (item, i++);
         }
 
@@ -541,7 +541,7 @@ namespace RichPackage
         public static string ToSeparatedString<T>(this IList<T> source, string separator = ",")
         {
             var sb = new StringBuilder();
-            foreach (var item in source)
+            foreach (T item in source)
                 sb.Append(item.ToString())
                     .Append(separator);
 
@@ -577,7 +577,7 @@ namespace RichPackage
                 throw new ArgumentOutOfRangeException($"{nameof(offset)} " +
                     $"is out of bounds: {offset} : {array.Count}.");
 
-            TReturn[] result = new TReturn[count];
+            var result = new TReturn[count];
             for (int i = 0; i < count; ++i)
                 result[i] = expression(array[i + offset]);
             return result;
@@ -587,7 +587,7 @@ namespace RichPackage
         {
             int index = 0;
 
-            foreach (var item in e)
+            foreach (T item in e)
                 yield return (item, index++);
         }
 
@@ -758,7 +758,7 @@ namespace RichPackage
             IList<T> usedCollection)
         {
             // build a pool of indices that have not been used.  
-            var possibleIndices = ListPool<int>.Get();
+            List<int> possibleIndices = ListPool<int>.Get();
 
             int totalCount = totalCollection.Count;
             for (int i = 0; i < totalCount; ++i)
@@ -801,10 +801,10 @@ namespace RichPackage
         /// </summary>
         public static void Shuffle<T>(this IList<T> list)
         {
-            var count = list.Count; //cache for less function overhead on every iteration
-            for (var i = 0; i < count; ++i)
+            int count = list.Count; //cache for less function overhead on every iteration
+            for (int i = 0; i < count; ++i)
             {
-                var randomIndex = Random.Range(0, count);
+                int randomIndex = Random.Range(0, count);
                 list.Swap(i, randomIndex);
             }
         }
@@ -815,7 +815,7 @@ namespace RichPackage
         /// </summary>
         public static void Shuffle<T>(this IList<T> list, int repeat)
         {
-            for (var i = 0; i < repeat; ++i)
+            for (int i = 0; i < repeat; ++i)
                 list.Shuffle();
         }
 
