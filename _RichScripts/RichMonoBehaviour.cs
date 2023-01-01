@@ -119,23 +119,15 @@ namespace RichPackage
 
         #region Service Locator
 
-        protected static void TryRegisterServiceOrDestroyAndThrow<T>(T instance)
+        public static readonly UnityServiceLocator Services = UnityServiceLocator.Instance;
+
+        protected static void RegisterService<T>(T instance)
             where T : RichMonoBehaviour
-        {
-            try
-            {
-                UnityServiceLocator.Instance.RegisterService(typeof(T), instance);
-            }
-            catch
-            {
-                Destroy(instance);
-                throw;
-            }
-        }
+            => Services.RegisterService(typeof(T), instance);
 
         protected static void ReleaseService<T>(T _)
             where T : RichMonoBehaviour
-            => UnityServiceLocator.Instance.DeregisterService<T>();
+            => Services.DeregisterService<T>();
 
         #endregion Service Locator
 
