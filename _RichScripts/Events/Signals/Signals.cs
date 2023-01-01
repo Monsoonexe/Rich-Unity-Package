@@ -87,17 +87,28 @@ namespace RichPackage.Events.Signals
         /// <returns>The proper signal binding</returns>
         public SType Get<SType>()
             where SType : ISignal, new()
-            => (SType)GetInternal(typeof(SType));
+        {
+            Type signalType = typeof(SType);
+            if (signals.TryGetValue(signalType, out ISignal signal))
+            {
+                return (SType)signal;
+            }
+            else
+            {
+                // bind
+                var sig = new SType();
+                signals.Add(signalType, sig);
+                return sig;
+            }
+        }
 
         /// <summary>
         /// Getter for a <see cref="ISignal"/> where <paramref name="signalHash"/> 
         /// is an object that implements <see cref="ISignal"/>.
         /// </summary>
         public ISignal Get(string signalHash)
-            => GetInternal(Type.GetType(signalHash));
-
-        private ISignal GetInternal(Type signalType)
         {
+            Type signalType = Type.GetType(signalHash);
             if (!signals.TryGetValue(signalType, out ISignal signal))
 			{   // bind
                 signal = Activator.CreateInstance(signalType) as ISignal; // new SignalType()
