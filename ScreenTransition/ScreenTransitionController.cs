@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 using NaughtyAttributes;
 using Sirenix.OdinInspector;
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
+using RichPackage.YieldInstructions;
+using RichPackage.FunctionalProgramming;
 
 /* Callback system for OnTransitionEnd (UnityEvent)
  * 
@@ -28,16 +31,18 @@ namespace RichPackage.UI
         /// <summary>
         /// If you reeaaallly need it, here it is. But prefer to use API.
         /// </summary>
-        public static Animator MyAnimator { get => instance.myAnimator; }
+        public Animator MyAnimator { get => myAnimator; }
 
         /// <summary>
         /// Duration in seconds.
         /// </summary>
-        public static float TransitionDuration
+        public float TransitionDuration
         {
             get => DEFAULT_DURATION / MyAnimator.speed; //speed is inverse of duration
             set => SetAnimationSpeed(value);
         }
+
+        public YieldInstruction TransitionWaitInstruction { get; private set; }
 
         #region Animator Params
 
@@ -109,6 +114,8 @@ namespace RichPackage.UI
             // gather refs
             if(!myAnimator)
                 myAnimator = GetComponent<Animator>();
+            
+            CreateWaiter(TransitionDuration);
 
             // singleton
             Singleton.Take(this, ref instance, 
@@ -122,16 +129,24 @@ namespace RichPackage.UI
 
         #endregion Unity Messages
 
+        private void CreateWaiter(float duration)
+        {
+            TransitionWaitInstruction = duration == 1
+                ? CommonYieldInstructions.WaitForOneSecond
+                : new WaitForSeconds(duration);
+        }
+
         /// <summary>
         /// Safely set animation speed based on desired duration.
         /// </summary>
-        public static void SetAnimationSpeed(float duration)
+        public void SetAnimationSpeed(float duration)
         {
             //guard against division by zero
             if (duration <= 0)
                 MyAnimator.speed = 999999; // instant
             else
                 MyAnimator.speed = DEFAULT_DURATION / duration;
+            CreateWaiter(duration);
         }
 
         public void ResetAnimationSpeed() => myAnimator.speed = DEFAULT_DURATION;
@@ -226,6 +241,16 @@ namespace RichPackage.UI
 
         //public void RandomTransitionIn()
         //public void RandomTransitionOut()
+
+        #region Async API
+
+        public UniTask FadeInAsync()
+        {
+            FadeIn();
+            return UniTask.Delay((TransitionDuration * 1000).ToInt());
+        }
+
+        #endregion Async API
 
         #endregion Transition API
     }
