@@ -21,20 +21,22 @@ namespace RichPackage.Pooling
         public GameObject objectPrefab;
 
         [Header("---Settings---")]
-        [PreviouslySerializedAs("initOnAwake")]
+        [Tooltip("If true, this pool will initialize itself on Start(). " +
+            "If false, you must call " + nameof(Init) + "() manually.")]
         public bool initOnStart = true;
         public bool createWhenEmpty = true;
+        
         [Tooltip("Should this pool enpool any existing children when init'g?")]
         public bool enpoolChildrenOnInit = false;
 
         [Min(0)]
         public int startingAmount = 6;
 
-        [Tooltip("less than 0 means 'no limit'.")]
+        [Tooltip("Less than 0 means 'no limit'.")]
         [Min(-1)]
         public int maxAmount = 10;
 
-        [Tooltip("[Optional]")]
+        [Tooltip("[Optional] The parent of all pooled objects.")]
         public Transform poolParent = null;
 
         /// <summary>
@@ -79,10 +81,10 @@ namespace RichPackage.Pooling
         public int InUseCount { get => manifest.Count - pool.Count; }
 
         /// <summary>
-        /// <see langword="true"/> after <see cref="InitPool"/> has been completed,
+        /// <see langword="true"/> after <see cref="Init"/> has been completed,
         /// otherwise <see langword="false"/>.
         /// </summary>
-        /// <remarks>Enables idempotency of <see cref="InitPool"/>.</remarks>
+        /// <remarks>Enables idempotency of <see cref="Init"/>.</remarks>
         private bool isInitialized;
 
         #region Unity Messages
@@ -98,7 +100,7 @@ namespace RichPackage.Pooling
         private void Start()
         {
             if (initOnStart)
-                InitPool();
+                Init();
         }
 
         #endregion Unity Messages
@@ -271,7 +273,7 @@ namespace RichPackage.Pooling
         /// <summary>
         /// Create entire pool
         /// </summary>
-        public void InitPool()
+        public void Init()
         {
             // prevent double-init'g
             if (isInitialized)
@@ -304,7 +306,7 @@ namespace RichPackage.Pooling
         {
             this.startingAmount = startingAmount;
             this.maxAmount = maxAmount;
-            InitPool();
+            Init();
         }
 
         private void InitPoolable(GameObject obj)
