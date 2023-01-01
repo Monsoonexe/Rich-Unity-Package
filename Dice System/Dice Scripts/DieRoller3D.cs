@@ -50,14 +50,11 @@ namespace RichPackage.DiceSystem
         {
             base.Awake();
             workingDice = new List<DieBehaviour>(diePool.maxAmount);
-        }
 
-        private void Start()
-        {
-            //subscribe to 'read result' event
+            // subscribe to 'read result' event
             diePool.OnDepoolMethod = OnDepool;
 
-            //unsubscribe from 'read result' event
+            // unsubscribe from 'read result' event
             diePool.OnEnpoolMethod = OnEnpool;
         }
 
