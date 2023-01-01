@@ -22,7 +22,7 @@ namespace RichPackage.Editor
 {
     public static partial class SceneMenu
     {        
-        private const string scriptFilePath = "Assets/RichUnityPackage/Editor/SceneMenu.cs";
+        private const string scriptFilePath = "Assets/RichPackage/Editor/SceneMenu.cs";
 
         #region Menu Items
 
@@ -35,7 +35,7 @@ namespace RichPackage.Editor
             if(scriptFile == null)
             {
                 //complain
-                Debug.Log($"SceneMenu.cs not found! Check path at {scriptFilePath}." +
+                Debug.LogWarning($"SceneMenu.cs not found! Check path at {scriptFilePath}." +
 					$"You can also double-click this log message to open the file.");
             }
             else
