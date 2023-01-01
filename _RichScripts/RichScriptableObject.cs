@@ -20,8 +20,6 @@ namespace RichPackage
 #pragma warning restore IDE0052 // Remove unread private members
 #endif
 
-        public static readonly UnityServiceLocator Services = UnityServiceLocator.Instance;
-
         #region Coroutines
 
         protected void StopCoroutineSafely(Coroutine coroutine)
