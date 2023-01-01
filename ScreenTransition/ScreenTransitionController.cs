@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 using NaughtyAttributes;
 using Sirenix.OdinInspector;
-
-//clarifications
 using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
-using UnityEditor.PackageManager.Requests;
 
 /* Callback system for OnTransitionEnd (UnityEvent)
  * 
@@ -44,7 +41,6 @@ namespace RichPackage.UI
 
         #region Animator Params
 
-        //parameters
         [FoldoutGroup("---Parameters---")]
         [SerializeField, AnimatorParam(nameof(myAnimator))]
         private int FADE_IN;
