@@ -51,7 +51,7 @@ namespace RichPackage.PlayingCards
 
         private void Start()
         {
-            gameObjectPool.InitPool();
+            gameObjectPool.Init();
         }
 
         private CardSO DrawCardInternal()
