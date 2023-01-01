@@ -90,6 +90,11 @@ namespace RichPackage
             LoadLevel(CurrentScene.Value.SceneIndex); //load
         }
 
+        public void ClearLevelHistory()
+        {
+            levelHistory.Clear();
+        }
+
         [Button, DisableInEditorMode]
         private void LoadLevel(string name)
         {
