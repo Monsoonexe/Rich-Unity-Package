@@ -162,6 +162,16 @@ namespace RichPackage
         public static T Construct<T>(string name) where T : RichMonoBehaviour
             => new GameObject(name).AddComponent<T>();
 
+        #region Logging
+
+        [Conditional(ConstStrings.UNITY_EDITOR)]
+        protected void LogNotSerializedWarning(string property)
+        {
+            UnityEngine.Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
+        }
+
+        #endregion Logging
+
         #region Editor
 
         [Conditional(ConstStrings.UNITY_EDITOR)]
