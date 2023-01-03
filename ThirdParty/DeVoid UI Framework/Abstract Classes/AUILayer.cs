@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using RichPackage;
+﻿using RichPackage;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using System.Linq;
-using System;
+using UnityEngine;
 
 /// <summary>
 /// Base class for UI Layers. Layers implement custom logic for Screens when opening, closing, etc.
 /// </summary>
 /// <seealso cref="PanelUILayer"/>
 /// <seealso cref="WindowUILayer"/>
-public abstract class AUILayer<TScreen> : RichMonoBehaviour 
+public abstract class AUILayer<TScreen> : RichMonoBehaviour
     where TScreen : IUIScreenController
 {
     private const string FunctionBoxGroup = "Functions";
@@ -33,7 +32,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     /// </summary>
     /// <typeparam name="TProps">Type of data payload</typeparam>
     /// <param name="properties">the data payload</param>
-    public abstract void ShowScreen<TProps>(TScreen screen, TProps properties) 
+    public abstract void ShowScreen<TProps>(TScreen screen, TProps properties)
         where TProps : IScreenProperties;
 
     /// <summary>
@@ -55,7 +54,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     /// </summary>
     /// <param name="controller"></param>
     /// <param name="screenTransform"></param>
-    public virtual void ReparentScreen(IUIScreenController controller, 
+    public virtual void ReparentScreen(IUIScreenController controller,
         Transform screenTransform)
     {   //it's okay to have parameters that don't get used this go around.
         screenTransform.SetParent(transform, false);
@@ -87,7 +86,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         else
         {
             Debug.LogError($"[{nameof(AUILayer<TScreen>)}] ID <{screenID}> is " +
-				"already registered to this Layer.", this);
+                "already registered to this Layer.", this);
         }
     }
 
@@ -129,9 +128,9 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
     public void ShowScreenByID(string screenID)
     {
-        TScreen controller; 
+        TScreen controller;
 
-        if(registeredScreens.TryGetValue(screenID, out controller))
+        if (registeredScreens.TryGetValue(screenID, out controller))
         {
             ShowScreen(controller);
         }
@@ -141,7 +140,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
         }
     }
 
-    public void ShowScreenByID<TProps>(string screenID, TProps properties) 
+    public void ShowScreenByID<TProps>(string screenID, TProps properties)
         where TProps : IScreenProperties
     {
         TScreen controller;
@@ -174,7 +173,7 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     [Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
     public virtual void HideAll(bool animateWhenHiding = true)
     {
-        foreach(var screenEntry in registeredScreens)
+        foreach (KeyValuePair<string, TScreen> screenEntry in registeredScreens)
         {
             screenEntry.Value.Hide(animateWhenHiding);
         }
@@ -201,13 +200,13 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     public void PrintRegisteredScreenIDs()
     {
         if (registeredScreens.Count == 0)
-		{
+        {
             Debug.Log("No screens are registered to " + this.name);
-		}
-		else
-		{
+        }
+        else
+        {
             Debug.Log($"{name} has {ScreenCount.ToStringCached()} registered screens:");
-            foreach (var screenEntry in registeredScreens)
+            foreach (KeyValuePair<string, TScreen> screenEntry in registeredScreens)
             {
                 Debug.Log(screenEntry.Value.ScreenID);
             }
