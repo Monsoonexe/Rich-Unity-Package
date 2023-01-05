@@ -32,7 +32,7 @@ public class ScreenIDSuggestor : BasicCachedQcSuggestor<string>
 {
     protected override bool CanProvideSuggestions(SuggestionContext context, SuggestorOptions options)
     {
-        return context.HasTag<IQcSuggestorTag>();
+        return context.HasTag<ScreenIDTag>();
     }
 
     protected override IQcSuggestion ItemToSuggestion(string screenID)
