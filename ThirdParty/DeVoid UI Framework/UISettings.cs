@@ -7,7 +7,6 @@ using Sirenix.OdinInspector;
 /// Template for an UI. You can rig the prefab for the UI Frame itself and all the screens that should
 /// be instanced and registered upon instantiating a new UI Frame.
 /// </summary>
-/// <seealso cref="ScreenIDs"/>
 [CreateAssetMenu(fileName = "UISettings", 
     menuName = "ScriptableObjects/UI/UI Settings")]
 public class UISettings : RichScriptableObject
@@ -55,20 +54,18 @@ public class UISettings : RichScriptableObject
 
         if (instanceAndRegisterScreens)
         {
-            foreach (var screenPrefab in screensToRegister)
+            foreach (GameObject screenPrefab in screensToRegister)
             {
-                var screenInstance = Instantiate(screenPrefab);
-
-                var screenController = screenInstance
-                    .GetComponent<IUIScreenController>();
-
-                if (screenController != null)
+                GameObject screenInstance = Instantiate(screenPrefab);
+                
+                if (screenInstance.TryGetComponent<IUIScreenController>(
+                    out var screenController))
                 {
                     bool usePrefabName = string.IsNullOrEmpty(screenController.ScreenID);
                     string screenID = usePrefabName ? screenPrefab.name : screenController.ScreenID;
 
                     Instance.RegisterScreen(screenID, screenController,
-                        screenInstance.GetComponent<Transform>());
+                        screenInstance.transform);
 
                     if (deactivateScreenGOs && screenInstance.activeSelf)
                     {
