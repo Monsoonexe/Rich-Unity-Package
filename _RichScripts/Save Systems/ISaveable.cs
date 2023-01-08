@@ -7,7 +7,7 @@ namespace RichPackage.SaveSystem
 	/// <seealso cref="ASaveableMonoBehaviour"/>
 	public interface ISaveable
 	{
-		string SaveID { get; }
+		UniqueID SaveID { get; }
 
 		void SaveState(ES3File saveFile);
 

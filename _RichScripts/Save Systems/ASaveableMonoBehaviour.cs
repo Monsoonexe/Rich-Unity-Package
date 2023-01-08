@@ -75,7 +75,7 @@ namespace RichPackage.SaveSystem
 		[CustomContextMenu("Set to GUID", "SetSaveIDToGUID")]
 		[CustomContextMenu("Complain if not unique", "Editor_PrintIDIsNotUnique")]
 		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
-		public override string SaveID 
+		public override UniqueID SaveID 
 		{ 
 			get => saveData.saveID; 
 			protected set => saveData.saveID = value;
@@ -118,14 +118,14 @@ namespace RichPackage.SaveSystem
 		{
 			public AState()
 			{
-				saveID = string.Empty;
+				saveID = UniqueID.New;
 				IsDirty = false;
 			}
 
 			[HideInInspector]
 			[ES3NonSerializable] //don't save it to file
 			[Tooltip("Must be unique to all other saveables!")]
-			public string saveID = string.Empty;
+			public UniqueID saveID;
 
 			//more fields....
 
@@ -171,7 +171,7 @@ namespace RichPackage.SaveSystem
 
 		#region ISaveable Implementation
 
-		public abstract string SaveID { get; protected set; }
+		public abstract UniqueID SaveID { get; protected set; }
 
 		/// <summary>
 		/// Saves <see cref="AState"/> to saveFile.
@@ -236,19 +236,19 @@ namespace RichPackage.SaveSystem
 
 		public virtual void SetDefaultSaveID()
 		{
-			SaveID = gameObject.name;
+			SaveID = UniqueID.FromString(gameObject.name);
 			Editor_PrintIDIsNotUnique();
 		}
 
-		public void SetSaveIDToGUID()
+		public void SetRandomSaveID()
 		{
-			SaveID = Guid.NewGuid().ToString();
+			SaveID = UniqueID.New;
 			Editor_PrintIDIsNotUnique();
 		}
 
 		public void SetSaveIDToScene_Name()
 		{
-			SaveID =  gameObject.GetNameWithScene();
+			SaveID = UniqueID.FromString(gameObject.GetNameWithScene());
 			Editor_PrintIDIsNotUnique();
 		}
 
