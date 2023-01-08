@@ -12,7 +12,7 @@ public class NavigationPanelController : APanelController
     protected bool navigateOnShow = false;
 
     [Title("Resources")]
-    [SerializeField]
+    [SerializeField, Required]
     private Transform buttonHolder;
 
     [SerializeField, Required]
@@ -27,6 +27,13 @@ public class NavigationPanelController : APanelController
 
     #region Unity Messages
 
+    protected override void Reset()
+    {
+        base.Reset();
+        if (buttonHolder == null)
+            buttonHolder = this.transform;
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -36,10 +43,10 @@ public class NavigationPanelController : APanelController
 
     #endregion Unity Messages
 
-    protected override void OnHide()
-    {
-        ResetButtons(); // free up some memory by destroying button
-    }
+    //protected override void OnHide()
+    //{
+    //    ResetButtons(); // free up some memory by destroying button
+    //}
 
     protected override void OnPropertiesSet()
     {
@@ -82,7 +89,7 @@ public class NavigationPanelController : APanelController
         int buttonCount = navButtons.Length;
         for (int i = 0; i < buttonCount; ++i)
         {
-            var button = navButtons[i];
+            RichUIButton button = navButtons[i];
             button.OnPressedEvent += OnNavigationButtonClicked;
             button.gameObject.SetActiveChecked(true);
         }
@@ -93,14 +100,14 @@ public class NavigationPanelController : APanelController
     /// </summary>
     protected virtual void ResetButtons()
     {
-        var buttonCount = navButtons.Length;
-        for (var i = 0; i < buttonCount; ++i)
+        int buttonCount = navButtons.Length;
+        for (int i = 0; i < buttonCount; ++i)
         {
-            var button = navButtons[i];
+            RichUIButton button = navButtons[i];
             button.OnPressedEvent -= OnNavigationButtonClicked;
             Destroy(button.gameObject);
         }
     }
-        
+
     #endregion Button Management
 }
