@@ -1,11 +1,8 @@
-﻿//credit to Jason Weimann and Unity College
+﻿// credit to Jason Weimann and Unity College
 using UnityEngine;
 
 namespace RichPackage
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static class Vector3_Extensions
     {
         /// <summary>
@@ -19,15 +16,10 @@ namespace RichPackage
         /// <returns></returns>
         public static Vector3 With(this Vector3 a,
             float? x = null, float? y = null, float? z = null)
-        {
-            return new Vector3(
-                x.HasValue ? x.Value : a.x,
-                y.HasValue ? y.Value : a.y,
-                z.HasValue ? z.Value : a.z);
-        }
+            => new Vector3(x ?? a.x, y ?? a.y, z ?? a.z);
 
         public static Vector3 WithX(this Vector3 a, float x)
-            => new Vector3(x, a.y, a.z );
+            => new Vector3(x, a.y, a.z);
 
         public static Vector3 WithY(this Vector3 a, float y)
             => new Vector3(a.x, y, a.z);
@@ -46,13 +38,8 @@ namespace RichPackage
         /// <returns></returns>
         public static Vector3Int With(this Vector3Int a,
             int? x = null, int? y = null, int? z = null)
-        {
-            return new Vector3Int(
-                x.HasValue ? x.Value : a.x,
-                y.HasValue ? y.Value : a.y,
-                z.HasValue ? z.Value : a.z);
-        }
-
+            => new Vector3Int(x ?? a.x, y ?? a.y,z ?? a.z);
+        
         public static Vector3Int WithX(this Vector3Int a, int x)
             => new Vector3Int(x, a.y, a.z);
 
