@@ -12,11 +12,13 @@ namespace RichPackage.Animation
         public Vector3 rotateVector;
         public Space space = Space.Self;
 
-        [Title("References")]
+        [Title("References"), Required]
         public Transform xform;
 
         [ShowInInspector, ReadOnly]
         public bool IsAnimating => enabled;
+
+        #region Unity Messages
 
         protected override void Reset()
         {
@@ -34,9 +36,10 @@ namespace RichPackage.Animation
 
         private void Update()
         {
-            xform.Rotate(rotateVector * Time.deltaTime,
-                space);
+            xform.Rotate(rotateVector * Time.deltaTime, space);
         }
+
+        #endregion Unity Messages
 
         public void Play() => enabled = true;
 
