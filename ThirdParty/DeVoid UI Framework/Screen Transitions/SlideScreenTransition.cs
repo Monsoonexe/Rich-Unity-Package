@@ -29,7 +29,7 @@ public class SlideScreenTransition : ATransitionComponent
     [SerializeField] 
     protected bool doFade;
 
-    [SerializeField, EnableIf(nameof(doFade))]
+    [SerializeField, ShowIf(nameof(doFade))]
     protected float fadeDurationPercent = 0.5f;
 
     [SerializeField] 
@@ -38,7 +38,7 @@ public class SlideScreenTransition : ATransitionComponent
     [SerializeField, Title("References")]
     private CanvasGroup canvasGroup = null;
 
-    //cache variables to avoid Closure
+    // cache variables to avoid Closure
     private Action callback;
     private RectTransform rTransform;
 
