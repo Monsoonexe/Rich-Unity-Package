@@ -3,7 +3,7 @@
     /// <summary>
     /// Dispatched by SceneManager.sceneLoaded when such.
     /// </summary>
-    public class SceneLoadedSignal : ASignal
+    public sealed class SceneLoadedSignal : ASignal
     {
         //exists
     }

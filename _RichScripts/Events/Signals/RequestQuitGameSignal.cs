@@ -3,7 +3,7 @@
     /// <summary>
     /// Request that the app be closed gracefully.
     /// </summary>
-    public class RequestQuitGameSignal : ASignal
+    public sealed class RequestQuitGameSignal : ASignal
     {
         //exists
     }
