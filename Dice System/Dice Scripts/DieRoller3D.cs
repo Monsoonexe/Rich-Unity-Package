@@ -58,6 +58,11 @@ namespace RichPackage.DiceSystem
             diePool.OnEnpoolMethod = OnEnpool;
         }
 
+        private void Start()
+        {
+            diePool.Init();
+        }
+
         #region Pooling Methods
 
         private void OnDepool(GameObject die)
