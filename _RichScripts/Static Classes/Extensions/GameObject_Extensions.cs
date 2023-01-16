@@ -103,6 +103,25 @@ namespace RichPackage
             return UnityEngine.SceneManagement.SceneManager
                 .GetActiveScene().name + "/" + a.name;
         }
+        
+        /// <summary>
+        /// Builds a string that represents the <see cref="GameObject"/>'s hierarchy, like a folder path.
+        /// </summary>
+        /// <remarks>Not optimized.</remarks>
+        public static string GetFullyQualifiedName(this GameObject a)
+        {
+            string name = a.name; // return value
+            Transform parent = a.transform.parent;
+
+            // walk hierarchy upwards towards scene root
+            while (parent != null)
+            {
+                name = parent.name + "/" + name;
+                parent = parent.parent;
+            }
+
+            return name;
+        }
 
         /// <summary>
         /// Perform <paramref name="action"/> on every Transform on each of its children.
