@@ -7,6 +7,11 @@ namespace RichPackage
 {
     public static class GameObject_Extensions
     {
+        public static bool IsPrefab(this GameObject gameObject)
+        {
+            return gameObject.scene.rootCount == 0;
+        }
+
         /// <summary>
         /// Shortcut for a.enabled = true;
         /// </summary>
