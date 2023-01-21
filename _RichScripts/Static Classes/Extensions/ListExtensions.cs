@@ -219,7 +219,7 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Removes and returns a random element of list. [0, Count)
+        /// Removes and returns a random element from <paramref name="list"/>.
         /// </summary>
         public static T GetRemoveRandomElement<T>(this List<T> list)
         {
