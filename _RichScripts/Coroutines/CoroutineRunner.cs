@@ -12,6 +12,8 @@ namespace RichPackage.Coroutines
             SetDevDescription("My only job is to run coroutines for those that cannot!");
         }
 
+        public bool ScenePersistent { get; private set; }
+
         /// <summary>
         /// Creates a new instance of a <see cref="CoroutineRunner"/>.
         /// </summary>
@@ -20,9 +22,15 @@ namespace RichPackage.Coroutines
         public static CoroutineRunner CreateNew(bool scenePersistent)
         {
             var go = new GameObject(nameof(CoroutineRunner));
+            
             if (scenePersistent)
                 DontDestroyOnLoad(go);
-            return go.AddComponent<CoroutineRunner>();
+
+            // create and initialize
+            var instance = go.AddComponent<CoroutineRunner>();
+            instance.ScenePersistent = scenePersistent;
+
+            return instance;
         }
     }
 }
