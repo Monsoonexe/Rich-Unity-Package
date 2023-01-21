@@ -12,7 +12,7 @@ namespace RichPackage
     /// </summary>
     public static class CoroutineUtilities
     {
-        private static MonoBehaviour _runner;
+        private static CoroutineRunner _runner;
         
         public static MonoBehaviour Runner
         {
