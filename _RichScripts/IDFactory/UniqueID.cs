@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
@@ -26,7 +26,8 @@ namespace RichPackage
             get => FromString(NewIDProvider());
         }
 
-        [field: SerializeField, LabelText(nameof(ID))]
+        [field: SerializeField, LabelText(nameof(ID)), LabelWidth(13),
+            CustomContextMenu(nameof(Editor_New), nameof(Editor_New))]
         public string ID { get; private set; }
 
         #region Constructors
@@ -38,13 +39,15 @@ namespace RichPackage
 
         #endregion Constructors
 
+        public void Editor_New() => ID = New;
+        
         public override string ToString() => ID;
 
         public override int GetHashCode() => ID.GetHashCode();
 
-        public static UniqueID FromString(string src) => new UniqueID(src);
-
         public bool Equals(UniqueID other) => ID.QuickEquals(other.ID);
+
+        public static UniqueID FromString(string src) => new UniqueID(src);
 
         public override bool Equals(object obj)
             => obj is UniqueID other && Equals(other);
