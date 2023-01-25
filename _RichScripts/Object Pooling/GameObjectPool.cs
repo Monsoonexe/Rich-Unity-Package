@@ -24,7 +24,6 @@ namespace RichPackage.Pooling
         [Tooltip("If true, this pool will initialize itself on Start(). " +
             "If false, you must call " + nameof(Init) + "() manually.")]
         public bool initOnStart = true;
-        public bool createWhenEmpty = true;
         
         [Tooltip("Should this pool enpool any existing children when init'g?")]
         public bool enpoolChildrenOnInit = false;
