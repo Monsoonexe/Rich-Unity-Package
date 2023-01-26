@@ -16,20 +16,27 @@ namespace RichPackage.Editor
 
         public void PopulateGenericMenu(InspectorProperty property, GenericMenu genericMenu)
         {
+            string componentName = typeof(T).Name;
+
             // add GetComponent<T>()
             genericMenu.AddItem(new GUIContent(
-                $"{nameof(Component.GetComponent)}<{typeof(T).Name}>()"),
+                $"{nameof(Component.GetComponent)}<{componentName}>()"),
                 on: false, () => GetComponentAndSetReference(property));
-            
+
             // add GetComponentInChildren<T>()
             genericMenu.AddItem(new GUIContent(
-                $"{nameof(Component.GetComponentInChildren)}<{typeof(T).Name}>()"),
-                on: false, () => GetComponentAndSetReference(property));
+                $"{nameof(Component.GetComponentInChildren)}<{componentName}>()"),
+                on: false, () => GetComponentInChildrenAndSetReference(property));
 
             // add FindObjectOfType<T>()
             genericMenu.AddItem(new GUIContent(
-                $"{nameof(Object.FindObjectOfType)}<{typeof(T).Name}>()"),
+                $"{nameof(Object.FindObjectOfType)}<{componentName}>()"),
                 on: false, () => FindObjectOfTypeAndSetReference(property));
+
+            // add AddComponent<T>()
+            genericMenu.AddItem(new GUIContent(
+                $"{nameof(GameObject.AddComponent)}<{componentName}>()"),
+                on: false, () => AddComponentAndSetReference(property));
         }
 
         private void GetComponentAndSetReference(InspectorProperty property)
@@ -56,6 +63,15 @@ namespace RichPackage.Editor
             }
 
             property.ValueEntry.WeakValues[0] = comp;
+        }
+        
+        private void AddComponentAndSetReference(InspectorProperty property)
+        {
+            Component newComponent = property.Parent.BaseValueEntry.WeakSmartValue
+                .CastTo<Component>().gameObject
+                .AddComponent<T>();
+
+            property.ValueEntry.WeakValues[0] = newComponent;
         }
     }
 }
