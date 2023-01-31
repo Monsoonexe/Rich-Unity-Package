@@ -89,6 +89,8 @@ namespace RichPackage.Events.Signals
             where SType : ISignal, new()
         {
             Type signalType = typeof(SType);
+
+            // fetch existing or bind new
             if (signals.TryGetValue(signalType, out ISignal signal))
             {
                 return (SType)signal;
@@ -111,9 +113,10 @@ namespace RichPackage.Events.Signals
             Type signalType = Type.GetType(signalHash);
             if (!signals.TryGetValue(signalType, out ISignal signal))
 			{   // bind
-                signal = Activator.CreateInstance(signalType) as ISignal; // new SignalType()
+                signal = (ISignal)Activator.CreateInstance(signalType); // new SignalType()
                 signals.Add(signalType, signal);
             }
+            
             return signal;
         }
 
@@ -136,9 +139,9 @@ namespace RichPackage.Events.Signals
         protected string _hash;
 
         /// <summary>
-        /// Unique id for this signal
+        /// Unique id for this signal.
         /// </summary>
-        public string Hash{ get => _hash; }
+        public string Hash { get => _hash; }
 
         public ABaseSignal()
         {
@@ -156,7 +159,7 @@ namespace RichPackage.Events.Signals
         private Action callback;
 
         /// <summary>
-        /// Adds a listener to this Signal
+        /// Adds a listener to this Signal.
         /// </summary>
         /// <param name="handler">Method to be called when signal is fired</param>
         public void AddListener(Action handler)
