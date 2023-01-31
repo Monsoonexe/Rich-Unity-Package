@@ -21,17 +21,17 @@ namespace RichPackage.SaveSystem
 	{
 		#region Constants
 
-		private static readonly string HAS_SAVE_DATA_KEY = "HasData";
-		private static readonly string DEFAULT_SAVE_FILE_NAME = "Save.es3";
+		private const string HAS_SAVE_DATA_KEY = "HasData";
+		private const string DEFAULT_SAVE_FILE_NAME = "Save.es3";
 
 		#endregion	
 
 		//singleton
-		private static SaveSystem instance;
+		private static SaveSystem s_instance;
 		public static SaveSystem Instance 
 		{
-			get => instance;
-			private set => instance = value;
+			get => s_instance;
+			private set => s_instance = value;
 		}
 
 		[Serializable]
@@ -89,7 +89,7 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		public static bool HasSaveData
 		{
-			get => instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY, false);
+			get => s_instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY, false);
 		}
 
 		/// <summary>
@@ -122,7 +122,7 @@ namespace RichPackage.SaveSystem
 		{
 			base.Awake();
 
-			if (!Singleton.TakeOrDestroy(this, ref instance,
+			if (!Singleton.TakeOrDestroy(this, ref s_instance,
                 dontDestroyOnLoad: true))
 			{
                 // quit here if this was the duplicate that should be destroyed
@@ -138,7 +138,7 @@ namespace RichPackage.SaveSystem
 		private void OnDestroy()
 		{
 			SaveMetaInformation(); //just to be safe
-			Singleton.Release(this, ref instance);
+			Singleton.Release(this, ref s_instance);
 		}
 
 		private void Start()

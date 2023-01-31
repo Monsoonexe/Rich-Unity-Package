@@ -32,11 +32,11 @@ namespace RichPackage.Audio
         /// <summary>
         /// Backing field for <see cref="Instance"/>.
         /// </summary>
-        private static AudioManager _instance;
+        private static AudioManager s_instance;
         public static AudioManager Instance
         {
-            get => _instance;
-            private set => _instance = value;
+            get => s_instance;
+            private set => s_instance = value;
         }
 
         private bool instanceIsInitialized = false;
@@ -85,7 +85,7 @@ namespace RichPackage.Audio
         protected override void Awake()
         {
             base.Awake();
-            if (Singleton.TakeOrDestroy(this, ref _instance, dontDestroyOnLoad: true))
+            if (Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: true))
             {
                 UnityServiceLocator.Instance.RegisterAudioPlayer(this);
                 CreateAudioSources();
@@ -96,7 +96,7 @@ namespace RichPackage.Audio
 
         private void OnDestroy()
         {
-            Singleton.Release(this, ref _instance);
+            Singleton.Release(this, ref s_instance);
             if (instanceIsInitialized)
             {
                 instanceIsInitialized = false;

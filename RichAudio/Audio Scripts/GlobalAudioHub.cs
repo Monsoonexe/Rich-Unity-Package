@@ -4,25 +4,25 @@ namespace RichPackage.Audio
 {
     public class GlobalAudioHub : AudioHub
     {
-        private static GlobalAudioHub instance;
+        private static GlobalAudioHub s_instance;
 
         protected override void Awake()
         {
             base.Awake();
-            Singleton.TakeOrDestroy(this, ref instance,
+            Singleton.TakeOrDestroy(this, ref s_instance,
                 dontDestroyOnLoad: isPersistentThroughScenes);
         }
 
         private void OnDestroy()
         {
-            Singleton.Release(this, ref instance);
+            Singleton.Release(this, ref s_instance);
         }
 
         public static void PlayGlobalSFX(string clipTag)
         {
-            Debug.Assert(instance != null,
+            Debug.Assert(s_instance != null,
                 "[GlobalAudioHub] No instance in Scene.");
-            instance.PlayAudioClipSFX(clipTag);
+            s_instance.PlayAudioClipSFX(clipTag);
         }
 
 #if UNITY_EDITOR
@@ -30,10 +30,10 @@ namespace RichPackage.Audio
 #endif
         public static void ConstructGlobal()
         {
-            if (instance != null)
+            if (s_instance != null)
             {
                 Debug.Log($"[{nameof(GlobalAudioHub)}] GlobalAudioHub already Scene.",
-                    instance);
+                    s_instance);
                 return;
             }
             //set name
@@ -42,7 +42,7 @@ namespace RichPackage.Audio
 #if UNITY_EDITOR
             newName = "Global AudioHub";
 #endif
-            instance = Construct<GlobalAudioHub>(newName);
+            s_instance = Construct<GlobalAudioHub>(newName);
         }
 
     }
