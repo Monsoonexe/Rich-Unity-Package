@@ -37,7 +37,15 @@ public class UIFrame : RichMonoBehaviour
 
     public Camera UICamera { get => mainCanvas.worldCamera; }
 
+    public int OpenWindowCount { get => windowLayer.ScreenCount; }
+
+    public int OpenPanelCount { get => panelLayer.ScreenCount; }
+
+    public int OpenScreenCount { get => OpenWindowCount + OpenPanelCount; }
+
     #region Events
+
+    public event Action OnFirstWindowOpened;
 
     public event Action OnAllWindowsClosed;
     
@@ -119,7 +127,6 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Why use this? It causes an error if it's not the current window.
     /// </summary>
-    /// <param name="screenID"></param>
     /// <seealso cref="CloseCurrentWindow"/>
     public void CloseWindow(string screenID, bool animate = true)
     {
@@ -141,24 +148,32 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Opens the Window with the given ID, with no Properties
     /// </summary>
-    /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void OpenWindow(string screenID)
     {
         windowLayer.ShowScreenByID(screenID); // relay
-        windowLayer.CurrentWindow.OnWindowOpen();
+        OpenCurrentWindow();
     }
 
     /// <summary>
     /// Opens the Window and gives it Properties.
     /// </summary>
-    /// <typeparam name="TProps"></typeparam>
-    /// <param name="screenID"></param>
-    /// <param name="properties"></param>
     public void OpenWindow<TProps>(string screenID, TProps properties)
         where TProps : IWindowProperties
     {
         windowLayer.ShowScreenByID(screenID, properties);
+        OpenCurrentWindow();
+    }
+
+    private void OpenCurrentWindow()
+    {
+        bool firstWindow = OpenWindowCount == 0;
+        
         windowLayer.CurrentWindow.OnWindowOpen();
+
+        // raise event if was closed but now open
+        if (firstWindow && OnFirstWindowOpened != null)
+            OnFirstWindowOpened();
     }
 
     #endregion Window Interface
@@ -174,7 +189,6 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Hide panel with given ID
     /// </summary>
-    /// <param name="screenID"></param>
     public void HidePanel(string screenID, bool animate)
     {
         panelLayer.HideScreenByID(screenID, animate); // relay
@@ -183,7 +197,7 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Hide panel with given ID
     /// </summary>
-    /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void HidePanel(string screenID)
     {
         panelLayer.HideScreenByID(screenID); // relay
@@ -192,7 +206,7 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Shows a panel by its ID, with no Properties.
     /// </summary>
-    /// <param name="screenID"></param>
+    [Button, DisableInEditorMode]
     public void ShowPanel(string screenID)
     {
         panelLayer.ShowScreenByID(screenID); // relay
@@ -229,7 +243,6 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Searches for a Window or Panel with given ID and opens it if found.
     /// </summary>
-    /// <param name="screenID"></param>
     [Button, DisableInEditorMode, FoldoutGroup(ButtonGroup)]
 	[Command("show", MonoTargetType.Registry)]
     public void ShowScreen([ScreenID] string screenID)
