@@ -110,7 +110,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         }
 
         // remove from browser history
-        _ = windowHistory.Pop();
+        windowHistory.Pop();
 
         // do transition
         AddTransition(screen);
@@ -125,13 +125,13 @@ public class WindowUILayer : AUILayer<IWindowController>
         if (windowQueue.Count > 0)
         {
             //Debug.LogFormat("if( windowQueue.Count ({0}) > 0", windowQueue.Count);
-            ShowNextInQueue();
+            Next();
         }
         // show next from history
         else if (windowHistory.Count > 0)
         {
             //Debug.LogFormat("if( windowHistory.Count ({0}) > 0", windowHistory.Count);
-            ShowPreviousInHistory();
+            Previous();
         }
         // else all closed/hid
     }
@@ -213,7 +213,7 @@ public class WindowUILayer : AUILayer<IWindowController>
     /// <summary>
     /// Pop history.
     /// </summary>
-    private void ShowPreviousInHistory()
+    public void Previous()
     {
         // validate stack not empty
         if (windowHistory.Count > 0)
@@ -226,7 +226,7 @@ public class WindowUILayer : AUILayer<IWindowController>
     /// <summary>
     /// Dequeue Window.
     /// </summary>
-    private void ShowNextInQueue()
+    public void Next()
     {
         if (windowQueue.Count > 0)
         {
