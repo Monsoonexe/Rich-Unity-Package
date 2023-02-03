@@ -146,7 +146,7 @@ namespace RichPackage
         /// Zeroes the postion and rotation of <paramref name="transform"/>.
         /// </summary>
         /// <returns><paramref name="transform"/> to allow chaining.</returns>
-        public static Transform Reset(this Transform transform, Space space = Space.Self)
+        public static Transform Reset(this Transform transform, Space space = Space.World)
         {
             if (space == Space.Self)
             {
