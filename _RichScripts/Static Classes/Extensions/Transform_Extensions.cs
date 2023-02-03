@@ -141,5 +141,24 @@ namespace RichPackage
                 list.Add(parent.GetChild(i));
             return list;
         }
+        
+        /// <summary>
+        /// Zeroes the postion and rotation of <paramref name="transform"/>.
+        /// </summary>
+        /// <returns><paramref name="transform"/> to allow chaining.</returns>
+        public static Transform Reset(this Transform transform, Space space = Space.Self)
+        {
+            if (space == Space.Self)
+            {
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
+            }
+            else // world
+            {
+                transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            }
+
+            return transform; // allow chaining
+        }
     }
 }
