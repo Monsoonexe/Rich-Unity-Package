@@ -20,25 +20,6 @@ namespace RichPackage
             get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Coroutine StartCoroutine(IEnumerator coroutine)
-        {
-            return Runner.StartCoroutine(coroutine);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void StopCoroutine(Coroutine coroutine)
-        {
-            Runner.StopCoroutine(coroutine);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Coroutine StartProcessLoop(Action process,
-            YieldInstruction yieldInstruction = null)
-        {
-            return Runner.StartCoroutine(ProcessLoop(process, yieldInstruction));
-        }
-
         public static IEnumerator ProcessLoop(Action process,
             YieldInstruction yieldInstruction = null)
         {
@@ -86,6 +67,25 @@ namespace RichPackage
             while (frameDelay-- > 0)
                 yield return null;
             action();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Coroutine StartCoroutine(IEnumerator coroutine)
+        {
+            return Runner.StartCoroutine(coroutine);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Coroutine StartProcessLoop(Action process,
+            YieldInstruction yieldInstruction = null)
+        {
+            return Runner.StartCoroutine(ProcessLoop(process, yieldInstruction));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void StopCoroutine(Coroutine coroutine)
+        {
+            Runner.StopCoroutine(coroutine);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
