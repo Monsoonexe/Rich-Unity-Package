@@ -14,7 +14,7 @@ namespace RichPackage
     /// <summary>
     /// The main point of entry for player input and mouse input.
     /// </summary>
-    public sealed partial class PlayerInput : RichMonoBehaviour
+    public partial class PlayerInput : RichMonoBehaviour
     {
         #region Static Fields
 
@@ -30,8 +30,11 @@ namespace RichPackage
 
         #endregion Static Fields
 
+        /// <summary>
+        /// Handles <see cref="Input"/> for a given state of the game.
+        /// </summary>
         [Serializable]
-        public class InputProfile : StateBase
+        public partial class InputProfile : StateBase
         {
             [ShowInInspector, ReadOnly]
             public bool IsActive { get; private set; }
@@ -64,7 +67,8 @@ namespace RichPackage
                 IsActive = true;
                 OnActivated?.Invoke();
             }
-
+            
+            /// <remarks>Do <see cref="Input"/> logic here.</remarks>
             public override void OnLogic()
             {
                 if (IsAnyShiftDown() && Input.GetKeyDown(KeyCode.Escape))

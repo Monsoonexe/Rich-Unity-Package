@@ -5,10 +5,11 @@ namespace RichPackage.InputSystem
     /// <summary>
     /// Standard input.
     /// </summary>
-    public sealed class StandardAppInputProfile : AInputProfileAsset<StandardAppInputProfile.InputProfile>
+    public sealed class StandardAppInputProfile
+        : AInputProfileAsset<StandardAppInputProfile.InputProfile>
     {
         [Serializable]
-        public sealed class InputProfile : PlayerInput.InputProfile
+        public sealed class InputProfile : PlayerInputProfile
         {
             // exists
         }
