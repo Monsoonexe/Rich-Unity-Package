@@ -141,13 +141,13 @@ namespace RichPackage
         {
             if (!Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: false))
                 return;
-
-            QuantumConsole.Instance.OnActivate += OnConsoleActivate;
-            QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
         }
 
         private void Start()
         {
+            QuantumConsole.Instance.OnActivate += OnConsoleActivate;
+            QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
+
             InitStateMachine();
         }
 
