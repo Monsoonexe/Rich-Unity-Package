@@ -45,6 +45,9 @@ namespace RichPackage.Threading
             return Interlocked.Decrement(ref counter);
         }
 
+        /// <summary>
+        /// Thread-safe read.
+        /// </summary>
         public int Value
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -53,6 +56,11 @@ namespace RichPackage.Threading
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set => Interlocked.Exchange(ref counter, value);
         }
+
+        /// <summary>
+        /// Non-thread-safe read.
+        /// </summary>
+        public int UnsafeValue => counter;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator int(AtomicCounter a) => a.Value;
