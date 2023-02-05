@@ -15,7 +15,12 @@ using UnityEngine;
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
         private readonly ConcurrentQueue<Action> jobQueue;
-        // TODO - consider AtomicCounter if blocking is too slow
+        private AtomicCounter jobCounter;
+
+        /// <summary>
+        /// Jobs that are pending.
+        /// </summary>
+        public int PendingJobCount => jobCounter.UnsafeValue; // if we miss a job, we'll get it next loop
 
         private Coroutine updateRoutine;
         private readonly MonoBehaviour coroutineRunner;
@@ -45,6 +50,7 @@ using UnityEngine;
                     value = int.MaxValue;
                 else if (value == 0)
                     throw new ArgumentException($"0 is not a valid value for {nameof(JobsPerFrame)}.");
+
                 _jobsPerFrame = value;
             }
         }
@@ -90,7 +96,7 @@ using UnityEngine;
 
         private bool IsWorkAvailable()
         {
-            return !jobQueue.IsEmpty;
+            return PendingJobCount > 0;
         }
 
         private void SafeInvoke(Action action)
@@ -148,6 +154,7 @@ using UnityEngine;
         public void Invoke(Action action)
         {
             jobQueue.Enqueue(action);
+            ++jobCounter;
         }
 
         public static IDispatcher StartNew()
