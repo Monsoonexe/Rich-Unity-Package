@@ -98,10 +98,10 @@ namespace RichPackage.Application
         }
 
 		#endregion Unity Messages
-
+        
         private void ApplyAppSettings()
         {
-            Application.targetFrameRate = targetFrameRate;
+            UnityEngine.Application.targetFrameRate = targetFrameRate;
         }
 
 		public void QuitGame()
@@ -110,7 +110,7 @@ namespace RichPackage.Application
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
-            Application.Quit();
+            UnityEngine.Application.Quit();
         }
 
 		#region Static Interface
