@@ -4,7 +4,7 @@ using RichPackage.Events.Signals;
 using RichPackage.Audio;
 using Sirenix.OdinInspector;
 
-namespace RichPackage
+namespace RichPackage.Application
 {
     /// <summary>
     /// I control the application-level behaviour.
