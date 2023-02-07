@@ -38,9 +38,15 @@ namespace RichPackage.Decks
         [Button]
         public abstract void Reload();
 
+        /// <summary>
+        /// Randomize the order of the cards in the deck.
+        /// </summary>
         [Button]
         public abstract void Shuffle();
 
+        /// <summary>
+        /// Randomize the order of the cards in the deck that have not been dealt.
+        /// </summary>
         [Button]
         public abstract void ShuffleRemaining();
     }
