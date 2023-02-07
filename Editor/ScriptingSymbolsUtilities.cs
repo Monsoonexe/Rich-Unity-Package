@@ -7,7 +7,7 @@ namespace RichPackage.Editor
     /// <summary>
     /// Wrapper Unity's scripting symbols.
     /// </summary>
-    public static class ScriptingSymbols
+    public static class ScriptingSymbolsUtilities
     {
         public static void Define(string symbol)
         {
