@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
-namespace RichPackage.Application
+namespace RichPackage.TheApplication
 {
 	/// <summary>
 	/// Contains utilites for scripting symbols that exist in this project.

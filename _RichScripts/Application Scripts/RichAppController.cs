@@ -4,7 +4,7 @@ using RichPackage.Events.Signals;
 using RichPackage.Audio;
 using Sirenix.OdinInspector;
 
-namespace RichPackage.Application
+namespace RichPackage
 {
     /// <summary>
     /// I control the application-level behaviour.
@@ -101,7 +101,7 @@ namespace RichPackage.Application
         
         private void ApplyAppSettings()
         {
-            UnityEngine.Application.targetFrameRate = targetFrameRate;
+            Application.targetFrameRate = targetFrameRate;
         }
 
 		public void QuitGame()
@@ -110,7 +110,7 @@ namespace RichPackage.Application
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
-            UnityEngine.Application.Quit();
+            Application.Quit();
         }
 
 		#region Static Interface
