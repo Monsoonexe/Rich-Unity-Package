@@ -61,6 +61,11 @@ namespace RichPackage.Collections
         private IComparer<T> dataComparer = Comparer<T>.Default;
 
         /// <summary>
+        /// Lazily-init'd stack used for enumerating the tree.
+        /// </summary>
+        private WeakReference<Stack<AVLNode<T>>> enumerationStack;
+
+        /// <summary>
         /// Determines how items in the tree are ordered. <br/>
         /// Default value is <see cref="Comparer{T}.Default"/>.
         /// </summary>
@@ -156,7 +161,7 @@ namespace RichPackage.Collections
         /// <exception cref="InvalidOperationException"> if tree is empty.</exception>
         public T MinValue => GetMinValue();
 
-        #endregion
+        #endregion Properties
 
         #region Constructors
 
@@ -171,7 +176,7 @@ namespace RichPackage.Collections
                 Add(item);
         }
         
-        #endregion
+        #endregion Constructors
         
         #region Insert
 
@@ -248,7 +253,6 @@ namespace RichPackage.Collections
 
         #region Removal
 
-        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear() => RemoveAll(); //alias
 
@@ -701,7 +705,29 @@ namespace RichPackage.Collections
             return false;
         }
 
-        #endregion
+        public IEnumerable<T> EnumerateInOrder()
+        {
+            if (root == null)
+                yield break;
+
+            Stack<AVLNode<T>> stack = GetEnumerationStack();
+            AVLNode<T> current = root;
+
+            while (current != null || stack.Count > 0)
+            {
+                while (current != null)
+                {
+                    stack.Push(current);
+                    current = current.left;
+                }
+
+                current = stack.Pop();
+                yield return current.data;
+                current = current.right;
+            }
+        }
+
+        #endregion In-Order Processing
 
         #region Post-Order Processing
 
@@ -775,7 +801,39 @@ namespace RichPackage.Collections
             return false;
         }
 
-        #endregion
+        public IEnumerable<T> EnumeratePostOrder()
+        {
+            if (root == null)
+                yield break;
+
+            Stack<AVLNode<T>> stack = GetEnumerationStack();
+            AVLNode<T> current = root;
+            AVLNode<T> lastVisited = null;
+
+            while (current != null || stack.Count > 0)
+            {
+                while (current != null)
+                {
+                    stack.Push(current);
+                    current = current.left;
+                }
+
+                current = stack.Peek();
+                if (current.right == null || current.right == lastVisited)
+                {
+                    yield return current.data;
+                    lastVisited = current;
+                    stack.Pop();
+                    current = null;
+                }
+                else
+                {
+                    current = current.right;
+                }
+            }
+        }
+
+        #endregion Post-Order Processing
 
         #region Pre-Order Processing
 
@@ -838,7 +896,28 @@ namespace RichPackage.Collections
             return false;
         }
 
-        #endregion
+        public IEnumerable<T> EnumeratePreOrder()
+        {
+            if (root == null)
+                yield break;
+
+            Stack<AVLNode<T>> stack = GetEnumerationStack();
+            stack.Push(root);
+
+            while (stack.Count > 0)
+            {
+                AVLNode<T> current = stack.Pop();
+                yield return current.data;
+
+                if (current.right != null)
+                    stack.Push(current.right);
+
+                if (current.left != null)
+                    stack.Push(current.left);
+            }
+        }
+
+        #endregion Pre-Order Processing
 
         #region Utility
 
@@ -892,13 +971,34 @@ namespace RichPackage.Collections
                 Add(items[--index]);
         }
 
+        /// <summary>
+        /// Gets a pooled stack for enumerating the tree.
+        /// </summary>
+        private Stack<AVLNode<T>> GetEnumerationStack()
+        {
+            // lazy init the weak reference
+            enumerationStack = enumerationStack ?? new WeakReference<Stack<AVLNode<T>>>(null);
+
+            // use an existing stack or get a new one
+            Stack<AVLNode<T>> stack; // return value
+
+            // if need a new one, create it and set the weak reference
+            if (!enumerationStack.TryGetTarget(out stack))
+            {
+                stack = new Stack<AVLNode<T>>(Count);
+                enumerationStack.SetTarget(stack);
+            }
+            
+            return stack;
+        }
+
         public void TrimExcessPool()
         {
             if (PoolInternalNodes)
                 nodePool.Stack.TrimExcess();
         }
 
-        #endregion
+        #endregion Utility
 
         #region Rotations
 
