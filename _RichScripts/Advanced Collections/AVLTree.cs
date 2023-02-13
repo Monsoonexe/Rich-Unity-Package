@@ -14,7 +14,7 @@ namespace RichPackage.Collections
     /// <param name="other">The RHS value of the comparison.</param>
     /// <returns>-1 if this precedes <paramref name="other"/>, 0 if this is in the same position as <paramref name="other"/>, 
     /// and 1 if follows <paramref name="other"/>.</returns>
-    public delegate int Searcher<in T> (T other);
+    public delegate int Searcher<in T>(T other);
 
     /// <summary>
     /// Self-balancing AVL tree. Search is Log2(n). Pools nodes.
@@ -54,7 +54,7 @@ namespace RichPackage.Collections
         }
 
         #region Properties
-        
+
         private StackPool<AVLNode<T>> nodePool;
 
         private AVLNode<T> root = null;
@@ -71,10 +71,10 @@ namespace RichPackage.Collections
         /// Default value is <see cref="Comparer{T}.Default"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="searcher"/> is null.</exception>
-        public IComparer<T> DataComparer 
-        { 
-            get => dataComparer; 
-            set 
+        public IComparer<T> DataComparer
+        {
+            get => dataComparer;
+            set
             {
                 if (value == null)
                     throw new ArgumentNullException(nameof(value));
@@ -92,9 +92,9 @@ namespace RichPackage.Collections
         /// Consider setting this to true if you have lots of trees adding/removing frequently. <br/>
         /// If you are using a pool, you can also set the <see cref="NodePoolSize"/> property.
         /// </summary>
-        public bool PoolInternalNodes 
+        public bool PoolInternalNodes
         {
-            get => nodePool != null; 
+            get => nodePool != null;
             set
             {
                 if (value)
@@ -115,7 +115,7 @@ namespace RichPackage.Collections
             }
         }
 
-        public int NodePoolSize 
+        public int NodePoolSize
         {
             get
             {
@@ -148,7 +148,7 @@ namespace RichPackage.Collections
         /// <summary>
         /// Quick calculation of the height. Upper bound: Height &lt;= 1.441 * Log2(Count)
         /// </summary>
-        public int HeightEstimate => (int)(Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.AwayFromZero));
+        public int HeightEstimate => (int)Math.Round(Math.Log(Count, 2) * 1.441f, MidpointRounding.AwayFromZero);
 
         /// <summary>
         /// Get maximum value in tree. O(1) because height is cached.
@@ -173,12 +173,12 @@ namespace RichPackage.Collections
 
         public AVLTree(in IEnumerable<T> source) : this()
         {
-            foreach (var item in source)
+            foreach (T item in source)
                 Add(item);
         }
-        
+
         #endregion Constructors
-        
+
         #region Insert
 
         /// <summary>
@@ -187,7 +187,10 @@ namespace RichPackage.Collections
         /// <param name="data">Data to add.</param>
         public void Add(T data)
         {
-            var newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            AVLNode<T> newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
             newNode.data = data;
             RecursiveInsert(ref root, newNode);
         }
@@ -221,7 +224,7 @@ namespace RichPackage.Collections
         {
             if (currentNode == null)
             {
-                var newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
+                AVLNode<T> newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
                 newNode.data = data;
                 RecursiveInsert(ref currentNode, newNode);
                 return true;
@@ -238,7 +241,7 @@ namespace RichPackage.Collections
             }
         }
 
-        #endregion
+        #endregion Insert
 
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
@@ -262,6 +265,9 @@ namespace RichPackage.Collections
         /// </summary>
         public void Remove(in T target)
         {
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
             --Count;//assume it was found, and backtrack if not
             Remove(ref root, target);
         }
@@ -278,6 +284,9 @@ namespace RichPackage.Collections
         ///<returns>True if the node was found and removed, otherwise false.</returns>
         public bool TryRemove(in T target)
         {
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
             int preCount = Count;
             Remove(target);
             return Count < preCount;
@@ -296,7 +305,8 @@ namespace RichPackage.Collections
         public void RemoveAll()
         {
             if (PoolInternalNodes)
-                PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); //clears nodes
+                PostOrderProcessNodes(root, (n) => nodePool.Enpool(n)); // clears nodes
+
             root = null;
             Count = 0;
         }
@@ -312,7 +322,7 @@ namespace RichPackage.Collections
         public bool TryGetRemove(Predicate<T> predicate,
             out T value)
         {   //arbitrarily use this method
-            var found = TryInOrderSearch(predicate, out value);
+            bool found = TryInOrderSearch(predicate, out value);
             if (found)
                 Remove(value);//requires another shorter search to remove and balance
             return found;
@@ -320,7 +330,7 @@ namespace RichPackage.Collections
 
         public bool TryGetRemove(Searcher<T> searcher, out T value)
         {   //TODO - do in one walk instead of 2
-            var node = FindNode(searcher); //find target node
+            AVLNode<T> node = FindNode(searcher); //find target node
             bool found = node != null;
 
             if (found)
@@ -437,56 +447,56 @@ namespace RichPackage.Collections
 
         private void RemoveNode(ref AVLNode<T> current, AVLNode<T> targetNode)
         {
-                int compareResult = dataComparer.Compare(targetNode.data, current.data);
+            int compareResult = dataComparer.Compare(targetNode.data, current.data);
 
-                //left subtree
-                if (compareResult < 0 || (compareResult == 0 && current != targetNode)) //get and stash compare result for next else if
-                    RemoveNode(ref current.left, targetNode);
-                //right subtree
-                else if (compareResult > 0)
-                    RemoveNode(ref current.right, targetNode);
-                else  //target is found!
-                {   
-                    // delete this node and replace with a child?
-                    //case 1: one or no children
-                    if (current.left == null
-                    || current.right == null)
-                    {
-                        AVLNode<T> temp = current; //del current
-                        if (current.left != null)
-                            current = current.left; //replace with left
-                        else if (current.right != null)
-                            current = current.right; //replace with right
-                        else //has no children
-                            current = null; //del self
+            //left subtree
+            if (compareResult < 0 || (compareResult == 0 && current != targetNode)) //get and stash compare result for next else if
+                RemoveNode(ref current.left, targetNode);
+            //right subtree
+            else if (compareResult > 0)
+                RemoveNode(ref current.right, targetNode);
+            else  //target is found!
+            {
+                // delete this node and replace with a child?
+                //case 1: one or no children
+                if (current.left == null
+                || current.right == null)
+                {
+                    AVLNode<T> temp = current; //del current
+                    if (current.left != null)
+                        current = current.left; //replace with left
+                    else if (current.right != null)
+                        current = current.right; //replace with right
+                    else //has no children
+                        current = null; //del self
 
-                        //free node
-                        if (PoolInternalNodes)
-                            nodePool.Enpool(temp);
-                        else
-                            temp = null;
-                    }
-                    else //2 children
-                    {
-                        //find the inorder successor
-                        //(the smallest item in the right subtree)
-                        AVLNode<T> successor = current.right;
-                        while (successor.left != null)
-                            successor = successor.left;
-
-                        //copy the inorder successor's data to the current node
-                        current.data = successor.data;
-
-                        //delete the inorder successor
-                        Remove(ref current.right, (other) => dataComparer.Compare(successor.data, other)); //find node to replace using internal comparison method.
-                    }
-
-                    //had no children
-                    if (current == null)
-                        return; //deleted self
-
-                    BalanceTree(ref current);
+                    //free node
+                    if (PoolInternalNodes)
+                        nodePool.Enpool(temp);
+                    else
+                        temp = null;
                 }
+                else //2 children
+                {
+                    //find the inorder successor
+                    //(the smallest item in the right subtree)
+                    AVLNode<T> successor = current.right;
+                    while (successor.left != null)
+                        successor = successor.left;
+
+                    //copy the inorder successor's data to the current node
+                    current.data = successor.data;
+
+                    //delete the inorder successor
+                    Remove(ref current.right, (other) => dataComparer.Compare(successor.data, other)); //find node to replace using internal comparison method.
+                }
+
+                //had no children
+                if (current == null)
+                    return; //deleted self
+
+                BalanceTree(ref current);
+            }
         }
 
         #endregion
@@ -499,8 +509,8 @@ namespace RichPackage.Collections
             if (root == null)
                 throw new InvalidOperationException("Can't get max value from empty tree.");
 
-            var maxNode = root;
-            while(maxNode.right != null)
+            AVLNode<T> maxNode = root;
+            while (maxNode.right != null)
                 maxNode = maxNode.right;
             return maxNode.data;
         }
@@ -519,8 +529,8 @@ namespace RichPackage.Collections
             if (root == null)
                 throw new InvalidOperationException("Can't get min value from empty tree.");
 
-            var minNode = root;
-            while(minNode.left != null)
+            AVLNode<T> minNode = root;
+            while (minNode.left != null)
                 minNode = minNode.left;
             return minNode.data;
         }
@@ -555,12 +565,12 @@ namespace RichPackage.Collections
         /// <returns>True if item was found and returned.</returns>
         public bool TryFind(Searcher<T> searcher, out T foundItem)
         {
-            var foundNode = FindNode(searcher);
-            var searchSuccessful = foundNode != null;
+            AVLNode<T> foundNode = FindNode(searcher);
+            bool searchSuccessful = foundNode != null;
             foundItem = searchSuccessful ? foundNode.data : default;//return value
             return searchSuccessful;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private AVLNode<T> FindNode(T key)
             => FindNode((other) => dataComparer.Compare(key, other), root); //default comparer
@@ -582,7 +592,8 @@ namespace RichPackage.Collections
         private static AVLNode<T> FindNode(Searcher<T> searcher,
             AVLNode<T> current)
         {
-            if (current == null) return null;
+            if (current == null)
+                return null;
 
             int compareResult = searcher(current.data);
             if (compareResult > 0)
@@ -610,7 +621,7 @@ namespace RichPackage.Collections
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
-            if(found)
+            if (found)
                 processor(foundNode.data);
             return found;
         }
@@ -635,7 +646,7 @@ namespace RichPackage.Collections
         {
             AVLNode<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
-            if(found)
+            if (found)
                 processor(ref foundNode.data);
             return found;
         }
@@ -686,22 +697,26 @@ namespace RichPackage.Collections
         {
             if (current != null)
             {
-                //check left
+                // check left
                 if (TryInOrderSearch(current.left,
                     predicate, ref value))
+                {
                     return true;
+                }
 
-                //check this
+                // check this
                 if (predicate(current.data))
                 {
                     value = current.data;
                     return true;
                 }
 
-                //check right
+                // check right
                 if (TryInOrderSearch(current.right,
                     predicate, ref value))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -738,7 +753,7 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PostOrderProcessTree(Action<T> process)
             => PostOrderProcessTree(root, process);
-            
+
         /// <summary>
         /// LRP. For internal use only.
         /// </summary>
@@ -923,7 +938,7 @@ namespace RichPackage.Collections
         #region Utility
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetHeight(AVLNode<T> current) 
+        private static int GetHeight(AVLNode<T> current)
             => current == null ? 0 : current.height;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -931,7 +946,7 @@ namespace RichPackage.Collections
         {
             int leftHeight = GetHeight(current.left);
             int rightHeight = GetHeight(current.right);
-            current.height = ((leftHeight > rightHeight) ? 
+            current.height = ((leftHeight > rightHeight) ?
                 leftHeight : rightHeight) + 1; //+1 for self
         }
 
@@ -989,7 +1004,7 @@ namespace RichPackage.Collections
                 stack = new Stack<AVLNode<T>>(Count);
                 enumerationStack.SetTarget(stack);
             }
-            
+
             return stack;
         }
 
@@ -1006,28 +1021,28 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateRight(AVLNode<T> parent)
         {
-            var pivot = parent.right;
+            AVLNode<T> pivot = parent.right;
 
             //rotate
             parent.right = pivot.left;
             pivot.left = parent;
-            
+
             //update heights
             RecalculateHeight(parent);
             RecalculateHeight(pivot);
-            
+
             return pivot;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateLeft(AVLNode<T> parent)
         {
-            var pivot = parent.left;
+            AVLNode<T> pivot = parent.left;
 
             //rotate
             parent.left = pivot.right;
             pivot.right = parent;
-            
+
             //update heights
             RecalculateHeight(parent);
             RecalculateHeight(pivot);
@@ -1038,7 +1053,7 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateRL(AVLNode<T> parent)
         {
-            var pivot = parent.left;
+            AVLNode<T> pivot = parent.left;
             parent.left = RotateRight(pivot);
             return RotateLeft(parent);
         }
@@ -1046,7 +1061,7 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static AVLNode<T> RotateLR(AVLNode<T> parent)
         {
-            var pivot = parent.right;
+            AVLNode<T> pivot = parent.right;
             parent.right = RotateLeft(pivot);
             return RotateRight(parent);
         }
