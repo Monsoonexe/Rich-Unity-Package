@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
 using RichPackage.Pooling;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace RichPackage.Collections
@@ -21,7 +22,7 @@ namespace RichPackage.Collections
     /// <typeparam name="T">Class or Struct that impements the <see name="IComparable"></see> interface.</typeparam>
     /// <remarks>Don't modify the IComparable pivot value while
     /// the item is in a tree. Will break BST aspect.</remarks>
-    public class AVLTree<T>// where T : IComparable<T>
+    public class AVLTree<T> : ICollection<T>
     {
         private class AVLNode<TNode>
         {
@@ -184,7 +185,7 @@ namespace RichPackage.Collections
         /// Insert an item into the data set. O(Log2(n))
         /// </summary>
         /// <param name="data">Data to add.</param>
-        public void Add(in T data)
+        public void Add(T data)
         {
             var newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
             newNode.data = data;
@@ -243,7 +244,7 @@ namespace RichPackage.Collections
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(in T key) => FindNode(key) != null;
+        public bool Contains(T key) => FindNode(key) != null;
 
         /// <summary>
         /// Returns true if a node in the tree is equal to the data using the IComparable interface. O(Log2(n))
@@ -1051,5 +1052,37 @@ namespace RichPackage.Collections
         }
 
         #endregion
+
+        #region ICollection
+
+        bool ICollection<T>.IsReadOnly { get => false; }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+
+            if (array.Length - arrayIndex < Count)
+                throw new ArgumentException("The number of elements in the source AVLTree<T> is greater than the available space from " + nameof(arrayIndex) + " to the end of the destination array.");
+
+            // add items in order
+            foreach (T item in this)
+                array[arrayIndex++] = item;
+        }
+
+        public bool Remove(T item) => TryRemove(item);
+
+        #region IEnumerable
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => EnumerateInOrder().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => EnumerateInOrder().GetEnumerator();
+
+        #endregion IEnumerable
+
+        #endregion ICollection
     }
 }
