@@ -2,8 +2,8 @@
  * Classes to help suggest ScreenIDs in Quantum Console when working with UIFrame commands.
  */
 
-using System;
 using QFSW.QC;
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 /// </summary>
 public struct ScreenIDTag : IQcSuggestorTag
 {
-    //exists
+    // exists
 }
 
 /// <summary>
