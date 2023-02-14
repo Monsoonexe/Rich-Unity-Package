@@ -16,7 +16,8 @@ namespace RichPackage
             where T : class
         {
             bool valid = true; // return value
-            if (singleton == null)
+            
+            if (singleton is null)
             {
                 singleton = instance; // we are the singleton
             }
@@ -24,6 +25,7 @@ namespace RichPackage
             {
                 valid = false; // violation
             }
+            
             return valid;
         }
 
@@ -37,16 +39,18 @@ namespace RichPackage
             where T : Object
         {
             bool valid = true; // return value
-            if (singleton == null)
+            
+            if (singleton is null)
             {   //we are the singleton
                 singleton = instance;
                 if (dontDestroyOnLoad)
                     Object.DontDestroyOnLoad(instance);
             }
             else if (instance.GetInstanceID() != singleton.GetInstanceID())
-            {   // violation
-                valid = false;
+            {
+                valid = false; // violation
             }
+            
             return valid;
         }
 
@@ -66,7 +70,7 @@ namespace RichPackage
         {
             bool valid;
             if (!(valid = Take(instance, ref singleton, dontDestroyOnLoad)))
-                UnityEngine.Object.Destroy(instance.gameObject);
+                Object.Destroy(instance.gameObject);
 
             return valid;
         }
