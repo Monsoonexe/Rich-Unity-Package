@@ -8,9 +8,9 @@ namespace RichPackage.ConsoleCommands.Administration
 	/// only if has admin privileges (<see cref="RichPackage.Administration.Admin.IsAdmin"/>).
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method,
-		AllowMultiple = false, Inherited = true)]
-	public class AdminCommandAttribute : Attribute
+		AllowMultiple = false)]
+	public sealed class AdminCommandAttribute : Attribute
 	{
-		//exists
+		// exists
 	}
 }
