@@ -5,9 +5,6 @@ using UnityEngine.Events;
 
 namespace RichPackage.Animation
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public abstract class ADoer : RichMonoBehaviour, IAnimate
 	{
 		[FoldoutGroup("Events")]
@@ -50,10 +47,12 @@ namespace RichPackage.Animation
 				Tween.Kill(complete: false);
 		}
 
-		protected void CallOnAnimationStartEvent()
-			=> onAnimationStart.Invoke();
+        protected void CallOnAnimationStartEvent()
+        {
+            onAnimationStart.Invoke();
+        }
 
-		protected void CallOnAnimationEndEvent()
+        protected void CallOnAnimationEndEvent()
 		{
 			onAnimationEnd.Invoke();
 			Tween = null;
@@ -61,6 +60,7 @@ namespace RichPackage.Animation
 
 		protected Tween SubscribeTweenEvents(Tween tween)
 		{
+			// TODO - cache delegates
 			tween.OnStart(CallOnAnimationStartEvent);
 			tween.OnComplete(CallOnAnimationEndEvent);
 
