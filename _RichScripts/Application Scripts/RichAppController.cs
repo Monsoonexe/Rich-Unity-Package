@@ -13,6 +13,7 @@ namespace RichPackage
     public class RichAppController : RichMonoBehaviour
     {
         private static RichAppController instance;
+        
         public static RichAppController Instance
         {
             get
@@ -35,6 +36,9 @@ namespace RichPackage
         [Title("App Settings")]
         [SerializeField, MinValue(10), MaxValue(90)]
         private int targetFrameRate = 60;
+
+        [SerializeField]
+        private bool alwaysAdminInEditor = true;
 
         /// <summary>
         /// <see cref="Time.deltaTime"/> that has been cached and un-marshalled.
@@ -102,6 +106,10 @@ namespace RichPackage
         private void ApplyAppSettings()
         {
             Application.targetFrameRate = targetFrameRate;
+
+            // this also forces Admin to be JITed
+            if (!Administration.Admin.IsAdmin && alwaysAdminInEditor && Application.isEditor)
+                Administration.Admin.Login("whatever");
         }
 
 		public void QuitGame()
