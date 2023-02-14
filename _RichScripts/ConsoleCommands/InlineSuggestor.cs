@@ -6,7 +6,7 @@ namespace QFSW.QC
     /// <summary>
     /// Object that holds all the inlined suggestions provided to <see cref="SuggestionsAttribute"/>.
     /// </summary>
-    public struct InlineSuggestionTag : IQcSuggestorTag
+    public readonly struct InlineSuggestionTag : IQcSuggestorTag
     {
         public readonly IEnumerable<string> Suggestions;
 
