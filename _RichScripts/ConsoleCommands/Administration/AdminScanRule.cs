@@ -12,32 +12,44 @@ namespace RichPackage.ConsoleCommands.Administration
     /// <seealso cref="Admin"/>
     public class AdminScanRule : IQcScanRule
     {
+        #region Constructors
+
         static AdminScanRule()
-		{
+        {
             Admin.OnLogout += RegenerateCommandTable;
             Admin.OnLogin += RegenerateCommandTable;
-		}
+        }
+
+        #endregion Constructors
 
         private static void RegenerateCommandTable()
-            => QuantumConsoleProcessor.GenerateCommandTable(
-                deployThread: true, forceReload: true);
+        {
+            QuantumConsoleProcessor.GenerateCommandTable(
+                        deployThread: true, forceReload: true);
+        }
 
         public ScanRuleResult ShouldScan<T>(T entity) where T : ICustomAttributeProvider
         {
-            //if admin, suggest to scan everything
-            if (!Admin.IsAdmin)
-			{
-                //filter
+            // if admin, suggest to scan everything
+            if (Admin.IsAdmin)
+            {
+                // everything
+                return ScanRuleResult.Accept;
+            }
+            else
+            {
+                // filter
                 return HasAdminAttribute(entity)
                     ? ScanRuleResult.Reject
                     : ScanRuleResult.Accept;
             }
-            
-            return ScanRuleResult.Accept;
         }
 
         private bool HasAdminAttribute(ICustomAttributeProvider provider)
-            => provider.GetCustomAttributes(inherit: true)
-                .Any((att) => att is AdminCommandAttribute);
+        {
+            // an admin command has the admin command attribute
+            return provider.GetCustomAttributes(inherit: true)
+                        .Any((att) => att is AdminCommandAttribute);
+        }
     }
 }
