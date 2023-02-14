@@ -8,9 +8,6 @@ namespace RichPackage.Administration
     /// </summary>
     public static class Admin
     {
-        private const bool StartInAdminMode = true;
-        private const bool AlwaysAdminInUnityEditor = true;
-
         /// <summary>
         /// If true, any attempt to login will be successful.
         /// </summary>
@@ -25,24 +22,21 @@ namespace RichPackage.Administration
 
         public static bool Login(string password)
         {
-            //quick exit
+            // quick exit
             if (IsAdmin)
             {
                 Debug.Log("Already logged in as admin.");
             }
-            else
-			{
-                if (EasyEditorLogin() || ValidatePassword(password))
-                {
-                    LoginInternal();
-                }
-                else
-                {
-                    Debug.Log($"Login failed: incorrect password <{password}>.");
-                    LoginFailInternal();
-                }
+            else if (EasyEditorLogin() || ValidatePassword(password))
+            {
+                LoginInternal();
             }
-
+            else
+            {
+                Debug.Log($"Login failed: incorrect password <{password}>.");
+                LoginFailInternal();
+            }
+            
             return IsAdmin;
         }
 
@@ -80,8 +74,8 @@ namespace RichPackage.Administration
 
         private static bool ValidatePassword(string maybePassword)
         {
-            //super complex password table lookup here
-            return maybePassword == Admin_Password;
+            // super complex password table lookup here
+            return maybePassword.QuickEquals(Admin_Password);
         }
     }
 
