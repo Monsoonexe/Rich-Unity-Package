@@ -10,18 +10,18 @@ namespace RichPackage
     /// I control the application-level behaviour.
     /// </summary>
     /// <seealso cref="GameController"/>
-    public class RichAppController : RichMonoBehaviour
+    public sealed partial class App : RichMonoBehaviour
     {
-        private static RichAppController instance;
+        private static App instance;
         
-        public static RichAppController Instance
+        public static App Instance
         {
             get
             {
 #if UNITY_EDITOR
                 if (!instance)
                 {
-                    Debug.LogWarning($"[{nameof(RichAppController)}] " +
+                    Debug.LogWarning($"[{nameof(App)}] " +
                         "Instance is being created. In a build, this would be a " +
                         $"{nameof(System.NullReferenceException)}, " +
                         "but in the editor you are protected.");
@@ -55,9 +55,29 @@ namespace RichPackage
         /// </summary>
         public static float FixedDeltaTime { get; private set; }
 
-		#region Unity Messages
+        /// <summary>
+        /// The thread id of Unity's main thread.
+        /// </summary>
+        public static int MainThreadId { get; private set; } // probably '1'
 
-		protected override void Reset()
+        /// <summary>
+        /// Is this code running on Unity's main thread?
+        /// </summary>
+        public static bool IsMainThread => System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadId;
+
+        #region Constructors
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void GetMainThreadId()
+        {
+            MainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+        }
+
+        #endregion Constructors
+
+        #region Unity Messages
+
+        protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I control the application-level behaviour.");
@@ -71,9 +91,8 @@ namespace RichPackage
             {
                 return;
             }
-
-            GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitGame);
-            SceneManager.sceneLoaded += SceneLoadedHandler;
+            
+            GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitApplication);
             ApplyAppSettings();
             DG.Tweening.DOTween.Init();
             UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
@@ -83,36 +102,42 @@ namespace RichPackage
         {
             if (Singleton.Release(this, ref instance))
             {
-                GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitGame);
-                SceneManager.sceneLoaded -= SceneLoadedHandler;
+                GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitApplication);
             }
         }
 
-        public void Update()
+        private void Update()
         {
-            //cache time values to de-marshal them once
+            // cache time values to de-marshal them once
             DeltaTime = UnityEngine.Time.deltaTime;
             Time = UnityEngine.Time.time;
         }
         
         private void FixedUpdate()
         {
-            //cache time values to de-marshal them once
+            // cache time values to de-marshal them once
             FixedDeltaTime = UnityEngine.Time.fixedDeltaTime;
         }
 
 		#endregion Unity Messages
-        
-        private void ApplyAppSettings()
-        {
-            Application.targetFrameRate = targetFrameRate;
 
+        private void AttemptAutoAdminLogin()
+        {
             // this also forces Admin to be JITed
             if (!Administration.Admin.IsAdmin && alwaysAdminInEditor && Application.isEditor)
                 Administration.Admin.Login("whatever");
         }
+        
+        private void ApplyAppSettings()
+        {
+            Application.targetFrameRate = targetFrameRate;
+            AttemptAutoAdminLogin();
+        }
 
-		public void QuitGame()
+        /// <summary>
+        /// Quits the entire Unity application.
+        /// </summary>
+		public void QuitApplication()
         {
             GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
 #if UNITY_EDITOR
@@ -123,19 +148,17 @@ namespace RichPackage
 
 		#region Static Interface
 
-		private static void SceneLoadedHandler(Scene scene, LoadSceneMode mode)
-            => GlobalSignals.Get<SceneLoadedSignal>().Dispatch();
-
         public static void ReloadCurrentLevel()
             => SceneManager.LoadScene(
                 SceneManager.GetActiveScene().buildIndex);
 
-        public static RichAppController Construct()
-            => Construct<RichAppController>(nameof(RichAppController));
+        public static App Construct()
+            => Construct<App>(nameof(App));
 
-        public static void EnsureInstance()
+        public static App EnsureInstance()
 		{
             if (!instance) Construct();
+            return instance;
 		}
 
 		#endregion Static Interface
