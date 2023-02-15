@@ -43,7 +43,7 @@ namespace RichPackage
             HandleGroundDetection();
             if(!IsGrounded)
             {
-                var step = gravityVector * RichAppController.FixedDeltaTime;
+                var step = gravityVector * App.FixedDeltaTime;
                 myRigidbody.MovePosition(gravityVector);
             }
         }

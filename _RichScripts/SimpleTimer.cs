@@ -8,7 +8,7 @@ namespace RichPackage
     {
         public float startTime;
 
-        public float Elapsed => RichAppController.Time - startTime;
+        public float Elapsed => App.Time - startTime;
 
         public static SimpleTimer StartNew()
         {
@@ -19,7 +19,7 @@ namespace RichPackage
 
         public void Reset()
         {
-            startTime = RichAppController.Time;
+            startTime = App.Time;
         }
 
         public static bool operator >(SimpleTimer timer, float duration)

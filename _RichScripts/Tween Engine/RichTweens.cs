@@ -28,7 +28,7 @@ namespace RichPackage.Tweening
             this Transform transform, Vector3 targetPoint,
             float duration, Action onComplete = null)
         {
-            var startTime = RichAppController.Time;
+            var startTime = App.Time;
             var endTime = startTime + duration;
             var runtime = 0.0f;
 
@@ -38,7 +38,7 @@ namespace RichPackage.Tweening
             {
                 yield return null; //wait for next frame.
 
-                runtime += RichAppController.DeltaTime;//frame rate independent
+                runtime += App.DeltaTime;//frame rate independent
                 var percentComplete = runtime / duration;
 
                 transform.position = Vector3.Lerp(
@@ -80,10 +80,10 @@ namespace RichPackage.Tweening
 
         private static IEnumerator InvokeAfterDelayRoutine(Action callback, float delay)
         {
-            var callTime = RichAppController.Time + delay;
+            var callTime = App.Time + delay;
 
             do yield return null;
-            while (RichAppController.Time < callTime);
+            while (App.Time < callTime);
 
             callback();
         }

@@ -15,23 +15,6 @@ namespace RichPackage.Tweening
                 " so you don't have to!");
         }
 
-        private void Start()
-        {
-            SceneManager.sceneLoaded += OnLevelLoadedHandler;
-        }
-
-        private void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= OnLevelLoadedHandler;
-        }
-
-        private void OnLevelLoadedHandler(
-            Scene scene, LoadSceneMode mode)
-        {
-            // let coroutines persist between scenes
-            // StopAllCoroutines();
-        }
-
         public static TweenHolder Construct()
         {
             var tweenObj = new GameObject("RichTween TweenHolder");

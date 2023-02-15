@@ -78,10 +78,7 @@ namespace RichPackage
 
 		private void Start()
 		{
-			//validate dependencies exist
-			if (RichAppController.Instance == null)
-				throw new MissingReferenceException($"{nameof(Timer)} relies on there being a " +
-					$"{nameof(RichAppController)} in the scene, but there is none. Please add one.");
+			App.EnsureInstance();
 		}
 
 		private void OnDisable()
@@ -164,7 +161,7 @@ namespace RichPackage
 				while (TimeRemaining > 0)
 				{
 					yield return null;//wait for next frame
-					var scaledDeltaTime = RichAppController.DeltaTime * TimeScale;
+					var scaledDeltaTime = App.DeltaTime * TimeScale;
 					TimeElapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
 					TimeRemaining.Value -= scaledDeltaTime;//tick... tick... tick...
 				}
