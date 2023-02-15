@@ -1,20 +1,39 @@
 ﻿using UnityEngine.SceneManagement;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using UnityEngine;
+using RichPackage.Events.Signals;
 
-namespace RichPackage
+namespace RichPackage.LevelManagement
 {
     /// <summary>
     /// I control the events and behaviour of this specifc level.
     /// </summary>
     public class LevelController : RichMonoBehaviour
     {
-        //member functions for events to hook onto.
+        [SerializeField, Required, Tooltip("The scene data that describes this scene.")]
+        private SceneVariable sceneVariable;
+        #region Unity Messages
 
         protected override void Reset()
         {
             base.Reset();
             SetDevDescription("I control the events and behaviour of this specifc level.");
+        }
+        
+        /// <remarks>Inheritors must call base.Start().</remarks>
+        protected virtual void Start()
+        {
+            GlobalSignals.Get<OnLevelLoadedSignal>().Dispatch(sceneVariable);
+            InvokeAfterDelay(DispatchLateSceneLoadedSignal,
+                YieldInstructions.CommonYieldInstructions.WaitForEndOfFrame);
+        }
+
+        #endregion Unity Messages
+
+        private void DispatchLateSceneLoadedSignal()
+        {
+            GlobalSignals.Get<OnLateLevelLoadedSignal>().Dispatch(sceneVariable);
         }
 
         [Button, DisableInEditorMode]

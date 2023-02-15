@@ -5,7 +5,7 @@
     /// NOTE: If multiple scenes exist, it may not be 'your' scene that is being unloaded. <br/>
     /// See also: <seealso cref="UnityEngine.SceneManagement.SceneManager.sceneUnloaded"/>
     /// </summary>
-    public sealed class ScenePreUnloadSignal : ASignal
+    public sealed class OnPreLevelUnloadSignal : ASignal
     {
         //exists
     }

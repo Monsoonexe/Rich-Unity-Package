@@ -12,7 +12,7 @@ using RichPackage.Audio;
 
 //TODO - handle additive scenes.
 
-namespace RichPackage
+namespace RichPackage.LevelManagement
 {
     /// <summary>
     /// I help control the flow of changing between Levels.
@@ -136,7 +136,7 @@ namespace RichPackage
             yield return null;
             // make sure frame has been fully issued so state can be saved.
             yield return CommonYieldInstructions.WaitForEndOfFrame; //for event call
-            RichAppController.EnsureInstance(); //just to be sure.
+            App.EnsureInstance(); //just to be sure.
 
             // wait for the darkness to envelope you, and then a bit longer
             yield return transitionWait;
@@ -146,7 +146,7 @@ namespace RichPackage
             try
             {
                 //last call before a scene is destroyed.
-                GlobalSignals.Get<ScenePreUnloadSignal>().Dispatch();
+                GlobalSignals.Get<OnPreLevelUnloadSignal>().Dispatch();
             }
             catch (Exception ex)
             {
@@ -157,12 +157,12 @@ namespace RichPackage
             yield return LoadSceneAction(); //many ways to load a scene, but use this one.
 
             // wait
-            yield return new WaitUntilEvent(GlobalSignals.Get<SceneLoadedSignal>()); //levelHasLoaded = true
+            yield return new WaitUntilEvent(GlobalSignals.Get<OnLevelLoadedSignal>()); //levelHasLoaded = true
 
             // clean up while screen still black
             GC.Collect(); //why not? screen is totally black now.
 
-            yield return null;
+            yield return null; // wait one
 
             // fade into new scene
             transitioner.TriggerTransition(inTransitionMessage);
