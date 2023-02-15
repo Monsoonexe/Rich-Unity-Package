@@ -24,8 +24,8 @@ namespace RichPackage.YieldInstructions
         /// then is set <see langword="true"/>.
         /// </summary>
         public bool EventRaised { get; private set; } = false;
+        
         public override bool keepWaiting { get => !EventRaised; }
-        private readonly Action response;
 
         #region Constructors
 
@@ -34,13 +34,13 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(Action _event)
         {
-            response = () =>
+            void Response()
             {
                 EventRaised = true;
-                _event -= response;
-            };
+                _event -= Response;
+            }
 
-            _event += response;
+            _event += Response;
         }
 
         /// <summary>
@@ -48,27 +48,27 @@ namespace RichPackage.YieldInstructions
         /// </summary>
         public WaitUntilEvent(GameEvent _event)
         {
-            response = () =>
+            void Response()
             {
                 EventRaised = true;
-                _event.RemoveListener(response);
-            };
+                _event.RemoveListener(Response);
+            }
 
-            _event.AddListener(response);
+            _event.AddListener(Response);
         }
 
         /// <summary>
         /// <see langword="yield"/>s until the <paramref name="_event"/> is fired.
         /// </summary>
-        public WaitUntilEvent(ASignal _event)
+        public WaitUntilEvent(ISignalListener _event)
         {
-            response = () =>
+            void Response()
             {
                 EventRaised = true;
-                _event.RemoveListener(response);
-            };
+                _event.RemoveListener(Response);
+            }
 
-            _event.AddListener(response);
+            _event.AddListener(Response);
         }
 
         /// <summary>
@@ -81,20 +81,11 @@ namespace RichPackage.YieldInstructions
                 EventRaised = true;
                 _event.RemoveListener(Response);
             }
+            
             _event.AddListener(Response);
-            response = Response; // because Action != UnityAction
         }
 
 		#endregion Constructors
 
-        public void Cancel()
-		{
-            // guard against cancelling after already expired.
-            if (!EventRaised)
-            {
-                response();
-                EventRaised = false; // was cancelled, not raised.
-            }
-		}
     }
 }
