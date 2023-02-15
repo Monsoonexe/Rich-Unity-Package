@@ -149,19 +149,19 @@ namespace RichPackage.SaveSystem
 
 		protected override void OnEnable()
 		{
-			//subscribe to events
+			// subscribe to events
 			GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
-			GlobalSignals.Get<ScenePreUnloadSignal>().AddListener(Save);
-			GlobalSignals.Get<SceneLoadedSignal>().AddListener(Load);
+			GlobalSignals.Get<OnPreLevelUnloadSignal>().AddListener(Save);
+			GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(SaveMe);
 		}
 
 		protected override void OnDisable()
 		{
-			//unsubscribe from events
+			// unsubscribe from events
 			GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
-			GlobalSignals.Get<ScenePreUnloadSignal>().RemoveListener(Save);
-			GlobalSignals.Get<SceneLoadedSignal>().RemoveListener(Load);
+			GlobalSignals.Get<OnPreLevelUnloadSignal>().RemoveListener(Save);
+			GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(SaveMe);
 		}
 
