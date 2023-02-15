@@ -453,26 +453,24 @@ namespace RichPackage
         /// <summary>
         /// First element in a sequence or a default value if it is empty.
         /// </summary>
-        public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
+        public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source,
+            TSource @default = default)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
             if (source is IList<TSource> list)
             {
-                if (list.Count > 0)
-                    return list[0];
-            }
-            else
-            {
-                using (IEnumerator<TSource> enumerator = source.GetEnumerator())
-                {
-                    if (enumerator.MoveNext())
-                        return enumerator.Current;
-                }
+                return FirstOrDefault(list, @default);
             }
 
-            return default(TSource);
+            using (IEnumerator<TSource> enumerator = source.GetEnumerator())
+            {
+                if (enumerator.MoveNext())
+                    return enumerator.Current;
+            }
+
+            return @default;
         }
 
         /// <summary>
