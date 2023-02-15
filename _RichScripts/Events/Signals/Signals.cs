@@ -154,7 +154,7 @@ namespace RichPackage.Events.Signals
     /// <summary>
     /// Strongly typed messages with no parameters
     /// </summary>
-    public abstract class ASignal : ABaseSignal
+    public abstract class ASignal : ABaseSignal, ISignalListener
     {
         private Action callback;
 
@@ -189,7 +189,7 @@ namespace RichPackage.Events.Signals
     /// Strongly typed messages with 1 parameter
     /// </summary>
     /// <typeparam name="T">Parameter type</typeparam>
-    public abstract class ASignal<T> : ABaseSignal
+    public abstract class ASignal<T> : ABaseSignal, ISignalListener<T>
     {
         private Action<T> callback;
 
@@ -225,7 +225,7 @@ namespace RichPackage.Events.Signals
     /// </summary>
     /// <typeparam name="T">First parameter type</typeparam>
     /// <typeparam name="U">Second parameter type</typeparam>
-    public abstract class ASignal<T, U> : ABaseSignal
+    public abstract class ASignal<T, U> : ABaseSignal, ISignalListener<T, U>
     {
         private Action<T, U> callback;
 
@@ -262,7 +262,7 @@ namespace RichPackage.Events.Signals
     /// <typeparam name="T">First parameter type</typeparam>
     /// <typeparam name="U">Second parameter type</typeparam>
     /// <typeparam name="V">Third parameter type</typeparam>
-    public abstract class ASignal<T, U, V> : ABaseSignal
+    public abstract class ASignal<T, U, V> : ABaseSignal, ISignalListener<T, U, V>
     {
         private Action<T, U, V> callback;
 
@@ -300,7 +300,7 @@ namespace RichPackage.Events.Signals
     /// <typeparam name="U">Second parameter type</typeparam>
     /// <typeparam name="V">Third parameter type</typeparam>
     /// <typeparam name="W">Fourth parameter type</typeparam>
-    public abstract class ASignal<T, U, V, W> : ABaseSignal
+    public abstract class ASignal<T, U, V, W> : ABaseSignal, ISignalListener<T, U, V, W>
     {
         private Action<T, U, V, W> callback;
 
@@ -339,7 +339,7 @@ namespace RichPackage.Events.Signals
     /// <typeparam name="V">Third parameter type</typeparam>
     /// <typeparam name="W">Fourth parameter type</typeparam>
     /// <typeparam name="X">Fifth parameter type</typeparam>
-    public abstract class ASignal<T, U, V, W, X> : ABaseSignal
+    public abstract class ASignal<T, U, V, W, X> : ABaseSignal, ISignalListener<T, U, V, W, X>
     {
         private Action<T, U, V, W, X> callback;
 
