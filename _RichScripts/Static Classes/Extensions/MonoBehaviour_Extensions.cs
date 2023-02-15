@@ -36,6 +36,14 @@ namespace RichPackage
                 mono.StopCoroutine(coroutine);
         }
 
+        public static void StopCoroutineSafely(this MonoBehaviour mono,
+            ref Coroutine coroutine)
+        {
+            if (coroutine != null)
+                mono.StopCoroutine(coroutine);
+            coroutine = null;
+        }
+
         #endregion
 
     }
