@@ -11,7 +11,7 @@ using UnityEngine;
     public partial class Dispatcher : IDispatcher, IDisposable
     {
         private static IDispatcher current;
-        public static IDispatcher Current { get => current ?? StartNew(); }
+        public static IDispatcher Current { get => current ?? (current = StartNew()); }
         public static readonly YieldInstruction DefaultRunTiming = new WaitForEndOfFrame();
 
         private readonly ConcurrentQueue<Action> jobQueue;
@@ -60,23 +60,27 @@ using UnityEngine;
             get => updateRoutine != null;
             set
             {
-                if (value && !Enabled)
+                if (value)
                     Run();
-                else if (!value && Enabled)
+                else
                     Stop();
             }
         }
 
         #region Constructors
 
-        public Dispatcher() : this(RichAppController.Instance) // something static
+        public Dispatcher() : this(App.Instance) // something static
         {
             // exists
         }
 
         public Dispatcher(MonoBehaviour coroutineRunner)
         {
+            if (coroutineRunner == null)
+                throw new ArgumentNullException(nameof(coroutineRunner));
+
             this.coroutineRunner = coroutineRunner;
+            jobCounter = new AtomicCounter(0);
             jobQueue = new ConcurrentQueue<Action>();
             RunTiming = DefaultRunTiming;
         }
@@ -143,7 +147,7 @@ using UnityEngine;
         {
             if (Enabled)
             {
-                coroutineRunner.StopCoroutineSafely(updateRoutine);
+                coroutineRunner.StopCoroutine(updateRoutine);
                 updateRoutine = null;
             }
         }
@@ -159,9 +163,15 @@ using UnityEngine;
 
         public static IDispatcher StartNew()
         {
-            current = new Dispatcher();
-            current.Run();
-            return current;
+            if (!App.IsMainThread)
+            {
+                throw new InvalidOperationException("Dispatcher must be started on the main thread." +
+                    "Use 'Dispatcher.Current.Run()' first on Unity's main thread.");
+            }
+
+            var dispatcher = new Dispatcher();
+            dispatcher.Run();
+            return dispatcher;
         }
     }
 }
