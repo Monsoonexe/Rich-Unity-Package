@@ -1,8 +1,8 @@
-﻿using UnityEngine.SceneManagement;
+﻿using RichPackage.Events.Signals;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using RichPackage.Events.Signals;
+using UnityEngine.SceneManagement;
 
 namespace RichPackage.LevelManagement
 {
@@ -12,7 +12,9 @@ namespace RichPackage.LevelManagement
     public class LevelController : RichMonoBehaviour
     {
         [SerializeField, Required, Tooltip("The scene data that describes this scene.")]
-        private SceneVariable sceneVariable;
+        private SceneVariable sceneData;
+        public SceneVariable SceneData => sceneData;
+
         #region Unity Messages
 
         protected override void Reset()
@@ -20,11 +22,23 @@ namespace RichPackage.LevelManagement
             base.Reset();
             SetDevDescription("I control the events and behaviour of this specifc level.");
         }
-        
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            // verify dependencies exist
+            if (sceneData == null)
+            {
+                Debug.LogError($"{nameof(sceneData)} cannot be null!", this);
+                enabled = false;
+            }
+        }
+
         /// <remarks>Inheritors must call base.Start().</remarks>
         protected virtual void Start()
         {
-            GlobalSignals.Get<OnLevelLoadedSignal>().Dispatch(sceneVariable);
+            GlobalSignals.Get<OnLevelLoadedSignal>().Dispatch(sceneData);
             InvokeAfterDelay(DispatchLateSceneLoadedSignal,
                 YieldInstructions.CommonYieldInstructions.WaitForEndOfFrame);
         }
@@ -33,7 +47,7 @@ namespace RichPackage.LevelManagement
 
         private void DispatchLateSceneLoadedSignal()
         {
-            GlobalSignals.Get<OnLateLevelLoadedSignal>().Dispatch(sceneVariable);
+            GlobalSignals.Get<OnLateLevelLoadedSignal>().Dispatch(sceneData);
         }
 
         [Button, DisableInEditorMode]
@@ -59,14 +73,14 @@ namespace RichPackage.LevelManagement
         [Button, DisableInEditorMode]//, ConsoleCommand("loadNextLevel")]
         public static void LoadNextLevel()
         {
-            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene(currentSceneIndex + 1);
         }
 
         [Button, DisableInEditorMode]//, ConsoleCommand("loadPreviousLevel")]
         public static void LoadPreviousLevel()
         {
-            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             SceneManager.LoadScene(currentSceneIndex - 1);
         }
 
