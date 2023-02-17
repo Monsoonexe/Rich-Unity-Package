@@ -10,7 +10,7 @@ namespace RichPackage
 		/// Useful because reflection is expensive and this operation caches the results.
 		/// </summary>
 		public static Dictionary<int, string> EnumNamedValues<TEnum>()
-            where TEnum : Enum
+            where TEnum : struct, Enum
         {
             var values = Enum.GetValues(typeof(TEnum));
             var result = new Dictionary<int, string>(values.Length); //return value
