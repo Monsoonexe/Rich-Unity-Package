@@ -1,10 +1,11 @@
-using System;
+// https://en.wikipedia.org/wiki/Binary_heap
+
 using System.Collections.Generic;
 
 namespace RichPackage.Collections
 {
     /// <summary>
-    /// 
+    /// Binary heap data structure.
     /// </summary>
     /// <seealso cref="MinHeap{T}"/>
     public class MaxHeap<T> : AHeap<T>
