@@ -1,19 +1,19 @@
-using System.Collections.Generic;
-using UnityEngine;
 using RichPackage.WeightedProbabilities;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace RichPackage.Decks
 {
-	/// <summary>
-	/// A <see cref="ADeck{TValue}"/> where not every card has the same probability of being drawn.
-	/// </summary>
-	[InfoBox("StackedDeck: A deck where not every card has the same " +
-		"probability of being drawn and is not replaced.")]
+    /// <summary>
+    /// A <see cref="ADeck{TValue}"/> where not every card has the same probability of being drawn.
+    /// </summary>
+    [InfoBox("StackedDeck: A deck where not every card has the same " +
+        "probability of being drawn and is not replaced.")]
     public class StackedDeck<TContainer, TValue> : ADeck<TValue>
         where TContainer : AWeightedProbability<TValue>
     {
-        [SerializeField]
+        [SerializeField, Tooltip("All cards that are included in the deck.")]
         protected List<TContainer> weightedManifest = new List<TContainer>(16);
 
         /// <summary>
@@ -28,19 +28,23 @@ namespace RichPackage.Decks
 
         public override int CardsRemaining { get => unusedCards.Count; }
 
-		private void Reset()
-		{
-            SetDevDescription("StackedDeck: A deck where not every card " +
-				"has the same probability of being drawn and is not replaced");
-		}
+        #region Unity Messages
 
-		private void OnValidate()
+        private void Reset()
+        {
+            SetDevDescription("StackedDeck: A deck where not every card " +
+                "has the same probability of being drawn and is not replaced");
+        }
+
+        private void OnValidate()
         {
             manifest.Clear();// reload card values
-            var len = weightedManifest.Count;
-            for (var i = 0; i < len; ++i)
+            int len = weightedManifest.Count;
+            for (int i = 0; i < len; ++i)
                 manifest.Add(weightedManifest[i].Value); //add card to manifest
         }
+
+        #endregion Unity Messages
 
         public override TValue Draw()
         {
@@ -48,8 +52,8 @@ namespace RichPackage.Decks
             if (deck.Count == 0)
                 return default;
 
-            var iCard = deck.GetWeightedIndex();
-            var cardAt = deck[iCard];
+            int iCard = deck.GetWeightedIndex();
+            TContainer cardAt = deck[iCard];
             MoveCardToDiscard(iCard);
             return cardAt.Value;
         }
