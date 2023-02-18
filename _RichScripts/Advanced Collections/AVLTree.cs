@@ -24,7 +24,7 @@ namespace RichPackage.Collections
     /// the item is in a tree. Will break BST aspect.</remarks>
     public class AVLTree<T> : ICollection<T>
     {
-        private class AVLNode<TNode>
+        private class Node<TNode>
         {
             #region Properties
 
@@ -32,13 +32,13 @@ namespace RichPackage.Collections
 
             public TNode data;
 
-            public AVLNode<TNode> left = null;
+            public Node<TNode> left = null;
 
-            public AVLNode<TNode> right = null;
+            public Node<TNode> right = null;
 
-            #endregion
+            #endregion Properties
 
-            public AVLNode(TNode data)
+            public Node(TNode data)
             {
                 Reset();
                 this.data = data;
@@ -55,16 +55,16 @@ namespace RichPackage.Collections
 
         #region Properties
 
-        private StackPool<AVLNode<T>> nodePool;
+        private StackPool<Node<T>> nodePool;
 
-        private AVLNode<T> root = null;
+        private Node<T> root = null;
 
         private IComparer<T> dataComparer = Comparer<T>.Default;
 
         /// <summary>
         /// Lazily-init'd stack used for enumerating the tree.
         /// </summary>
-        private WeakReference<Stack<AVLNode<T>>> enumerationStack;
+        private WeakReference<Stack<Node<T>>> enumerationStack;
 
         /// <summary>
         /// Determines how items in the tree are ordered. <br/>
@@ -101,9 +101,9 @@ namespace RichPackage.Collections
                 {
                     if (nodePool == null)
                     {
-                        nodePool = new StackPool<AVLNode<T>>()
+                        nodePool = new StackPool<Node<T>>()
                         {
-                            FactoryMethod = () => new AVLNode<T>(default), //default constructor
+                            FactoryMethod = () => new Node<T>(default), //default constructor
                             OnEnpoolMethod = (n) => n.Reset(),// AVLNode<T>.ResetNode //de-init nodes
                         };
                     }
@@ -190,13 +190,13 @@ namespace RichPackage.Collections
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-            AVLNode<T> newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
+            Node<T> newNode = PoolInternalNodes ? nodePool.Depool() : new Node<T>(data);
             newNode.data = data;
             RecursiveInsert(ref root, newNode);
         }
 
         private void RecursiveInsert(
-            ref AVLNode<T> current, AVLNode<T> newNode)
+            ref Node<T> current, Node<T> newNode)
         {
             if (current == null)
             {
@@ -220,11 +220,11 @@ namespace RichPackage.Collections
         public bool TryAddIfNew(in T data)
             => TryAddIfNew(ref root, data);
 
-        private bool TryAddIfNew(ref AVLNode<T> currentNode, in T data)
+        private bool TryAddIfNew(ref Node<T> currentNode, in T data)
         {
             if (currentNode == null)
             {
-                AVLNode<T> newNode = PoolInternalNodes ? nodePool.Depool() : new AVLNode<T>(data);
+                Node<T> newNode = PoolInternalNodes ? nodePool.Depool() : new Node<T>(data);
                 newNode.data = data;
                 RecursiveInsert(ref currentNode, newNode);
                 return true;
@@ -330,7 +330,7 @@ namespace RichPackage.Collections
 
         public bool TryGetRemove(Searcher<T> searcher, out T value)
         {   //TODO - do in one walk instead of 2
-            AVLNode<T> node = FindNode(searcher); //find target node
+            Node<T> node = FindNode(searcher); //find target node
             bool found = node != null;
 
             if (found)
@@ -381,10 +381,10 @@ namespace RichPackage.Collections
             throw new KeyNotFoundException();
         }
 
-        private void Remove(ref AVLNode<T> current, T key)
+        private void Remove(ref Node<T> current, T key)
             => Remove(ref current, (other) => DataComparer.Compare(key, other));
 
-        private void Remove(ref AVLNode<T> current, Searcher<T> searcher)
+        private void Remove(ref Node<T> current, Searcher<T> searcher)
         {
             if (current == null)
             {
@@ -407,7 +407,7 @@ namespace RichPackage.Collections
                     if (current.left == null
                     || current.right == null)
                     {
-                        AVLNode<T> temp = current; //del current
+                        Node<T> temp = current; //del current
                         if (current.left != null)
                             current = current.left; //replace with left
                         else if (current.right != null)
@@ -425,7 +425,7 @@ namespace RichPackage.Collections
                     {
                         //find the inorder successor
                         //(the smallest item in the right subtree)
-                        AVLNode<T> successor = current.right;
+                        Node<T> successor = current.right;
                         while (successor.left != null)
                             successor = successor.left;
 
@@ -445,7 +445,7 @@ namespace RichPackage.Collections
             }
         }
 
-        private void RemoveNode(ref AVLNode<T> current, AVLNode<T> targetNode)
+        private void RemoveNode(ref Node<T> current, Node<T> targetNode)
         {
             int compareResult = dataComparer.Compare(targetNode.data, current.data);
 
@@ -462,7 +462,7 @@ namespace RichPackage.Collections
                 if (current.left == null
                 || current.right == null)
                 {
-                    AVLNode<T> temp = current; //del current
+                    Node<T> temp = current; //del current
                     if (current.left != null)
                         current = current.left; //replace with left
                     else if (current.right != null)
@@ -480,7 +480,7 @@ namespace RichPackage.Collections
                 {
                     //find the inorder successor
                     //(the smallest item in the right subtree)
-                    AVLNode<T> successor = current.right;
+                    Node<T> successor = current.right;
                     while (successor.left != null)
                         successor = successor.left;
 
@@ -509,7 +509,7 @@ namespace RichPackage.Collections
             if (root == null)
                 throw new InvalidOperationException("Can't get max value from empty tree.");
 
-            AVLNode<T> maxNode = root;
+            Node<T> maxNode = root;
             while (maxNode.right != null)
                 maxNode = maxNode.right;
             return maxNode.data;
@@ -529,7 +529,7 @@ namespace RichPackage.Collections
             if (root == null)
                 throw new InvalidOperationException("Can't get min value from empty tree.");
 
-            AVLNode<T> minNode = root;
+            Node<T> minNode = root;
             while (minNode.left != null)
                 minNode = minNode.left;
             return minNode.data;
@@ -565,14 +565,14 @@ namespace RichPackage.Collections
         /// <returns>True if item was found and returned.</returns>
         public bool TryFind(Searcher<T> searcher, out T foundItem)
         {
-            AVLNode<T> foundNode = FindNode(searcher);
+            Node<T> foundNode = FindNode(searcher);
             bool searchSuccessful = foundNode != null;
             foundItem = searchSuccessful ? foundNode.data : default;//return value
             return searchSuccessful;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AVLNode<T> FindNode(T key)
+        private Node<T> FindNode(T key)
             => FindNode((other) => dataComparer.Compare(key, other), root); //default comparer
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace RichPackage.Collections
         /// </summary>
         /// <param name="searcher">Comparison method. Will select Node whose comparison == 0.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private AVLNode<T> FindNode(Searcher<T> searcher)
+        private Node<T> FindNode(Searcher<T> searcher)
             => FindNode(searcher, root); //explicit searcher
 
         /// <summary>
@@ -589,8 +589,8 @@ namespace RichPackage.Collections
         /// <param name="target">Partially-filled record.</param>
         /// <param name="searcher">Comparison method. Will select Node whose comparison == 0.</param>
         /// <returns>Null if not found.</returns>
-        private static AVLNode<T> FindNode(Searcher<T> searcher,
-            AVLNode<T> current)
+        private static Node<T> FindNode(Searcher<T> searcher,
+            Node<T> current)
         {
             if (current == null)
                 return null;
@@ -609,7 +609,7 @@ namespace RichPackage.Collections
         /// </summary>
         public void ProcessItem(Searcher<T> searcher, Action<T> processor)
         {
-            AVLNode<T> foundNode = FindNode(searcher, root);
+            Node<T> foundNode = FindNode(searcher, root);
             if (foundNode != null)
                 processor(foundNode.data);
         }
@@ -619,13 +619,12 @@ namespace RichPackage.Collections
         /// </summary>
         public bool TryProcessItem(Searcher<T> searcher, Action<T> processor)
         {
-            AVLNode<T> foundNode = FindNode(searcher, root);
+            Node<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
             if (found)
                 processor(foundNode.data);
             return found;
         }
-
 
         /// <summary>
         /// Processes the first node that compares equal. <br/>
@@ -634,7 +633,7 @@ namespace RichPackage.Collections
         /// </summary>
         public void ProcessItemRef(Searcher<T> searcher, ActionRef<T> processor)
         {
-            AVLNode<T> foundNode = FindNode(searcher, root);
+            Node<T> foundNode = FindNode(searcher, root);
             if (foundNode != null)
                 processor(ref foundNode.data);
         }
@@ -644,15 +643,14 @@ namespace RichPackage.Collections
         /// </summary>
         public bool TryProcessItemRef(Searcher<T> searcher, ActionRef<T> processor)
         {
-            AVLNode<T> foundNode = FindNode(searcher, root);
+            Node<T> foundNode = FindNode(searcher, root);
             bool found = foundNode != null; //return value
             if (found)
                 processor(ref foundNode.data);
             return found;
         }
 
-
-        #endregion
+        #endregion Searching
 
         #region In-Order Processing
 
@@ -669,7 +667,7 @@ namespace RichPackage.Collections
         /// <param name="current"></param>
         /// <param name="process"></param>
         private static void InOrderProcessTree(
-            AVLNode<T> current, Action<T> process)
+            Node<T> current, Action<T> process)
         {
             if (current != null)
             {
@@ -692,7 +690,7 @@ namespace RichPackage.Collections
         }
 
         private static bool TryInOrderSearch(
-            AVLNode<T> current, Predicate<T> predicate,
+            Node<T> current, Predicate<T> predicate,
             ref T value)
         {
             if (current != null)
@@ -726,8 +724,8 @@ namespace RichPackage.Collections
             if (root == null)
                 yield break;
 
-            Stack<AVLNode<T>> stack = GetEnumerationStack();
-            AVLNode<T> current = root;
+            Stack<Node<T>> stack = GetEnumerationStack();
+            Node<T> current = root;
 
             while (current != null || stack.Count > 0)
             {
@@ -758,7 +756,7 @@ namespace RichPackage.Collections
         /// LRP. For internal use only.
         /// </summary>
         private static void PostOrderProcessNodes(
-            AVLNode<T> current, Action<AVLNode<T>> process)
+            Node<T> current, Action<Node<T>> process)
         {
             if (current != null)
             {
@@ -769,7 +767,7 @@ namespace RichPackage.Collections
         }
 
         private static void PostOrderProcessTree(
-            AVLNode<T> current, Action<T> process)
+            Node<T> current, Action<T> process)
         {
             if (current != null)
             {
@@ -792,7 +790,7 @@ namespace RichPackage.Collections
         }
 
         private static bool TryPostOrderSearch(
-            AVLNode<T> current, Predicate<T> predicate,
+            Node<T> current, Predicate<T> predicate,
             ref T value)
         {
             if (current != null)
@@ -822,9 +820,9 @@ namespace RichPackage.Collections
             if (root == null)
                 yield break;
 
-            Stack<AVLNode<T>> stack = GetEnumerationStack();
-            AVLNode<T> current = root;
-            AVLNode<T> lastVisited = null;
+            Stack<Node<T>> stack = GetEnumerationStack();
+            Node<T> current = root;
+            Node<T> lastVisited = null;
 
             while (current != null || stack.Count > 0)
             {
@@ -864,7 +862,7 @@ namespace RichPackage.Collections
         /// PLR
         /// </summary>
         private static void PreOrderProcessTree(
-            AVLNode<T> current, Action<T> process)
+            Node<T> current, Action<T> process)
         {
             if (current != null)
             {
@@ -887,7 +885,7 @@ namespace RichPackage.Collections
         }
 
         private static bool TryPreOrderSearch(
-            AVLNode<T> current, Predicate<T> predicate,
+            Node<T> current, Predicate<T> predicate,
             ref T value)
         {
             if (current != null)
@@ -917,12 +915,12 @@ namespace RichPackage.Collections
             if (root == null)
                 yield break;
 
-            Stack<AVLNode<T>> stack = GetEnumerationStack();
+            Stack<Node<T>> stack = GetEnumerationStack();
             stack.Push(root);
 
             while (stack.Count > 0)
             {
-                AVLNode<T> current = stack.Pop();
+                Node<T> current = stack.Pop();
                 yield return current.data;
 
                 if (current.right != null)
@@ -938,11 +936,11 @@ namespace RichPackage.Collections
         #region Utility
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int GetHeight(AVLNode<T> current)
+        private static int GetHeight(Node<T> current)
             => current == null ? 0 : current.height;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void RecalculateHeight(AVLNode<T> current)
+        private static void RecalculateHeight(Node<T> current)
         {
             int leftHeight = GetHeight(current.left);
             int rightHeight = GetHeight(current.right);
@@ -951,10 +949,10 @@ namespace RichPackage.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int BalanceFactor(AVLNode<T> current)
+        private static int BalanceFactor(Node<T> current)
             => GetHeight(current.left) - GetHeight(current.right);
 
-        private static void BalanceTree(ref AVLNode<T> current)
+        private static void BalanceTree(ref Node<T> current)
         {
             int balanceFactor = BalanceFactor(current);
 
@@ -990,18 +988,18 @@ namespace RichPackage.Collections
         /// <summary>
         /// Gets a pooled stack for enumerating the tree.
         /// </summary>
-        private Stack<AVLNode<T>> GetEnumerationStack()
+        private Stack<Node<T>> GetEnumerationStack()
         {
             // lazy init the weak reference
-            enumerationStack = enumerationStack ?? new WeakReference<Stack<AVLNode<T>>>(null);
+            enumerationStack = enumerationStack ?? new WeakReference<Stack<Node<T>>>(null);
 
             // use an existing stack or get a new one
-            Stack<AVLNode<T>> stack; // return value
+            Stack<Node<T>> stack; // return value
 
             // if need a new one, create it and set the weak reference
             if (!enumerationStack.TryGetTarget(out stack))
             {
-                stack = new Stack<AVLNode<T>>(Count);
+                stack = new Stack<Node<T>>(Count);
                 enumerationStack.SetTarget(stack);
             }
 
@@ -1019,9 +1017,9 @@ namespace RichPackage.Collections
         #region Rotations
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static AVLNode<T> RotateRight(AVLNode<T> parent)
+        private static Node<T> RotateRight(Node<T> parent)
         {
-            AVLNode<T> pivot = parent.right;
+            Node<T> pivot = parent.right;
 
             //rotate
             parent.right = pivot.left;
@@ -1035,9 +1033,9 @@ namespace RichPackage.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static AVLNode<T> RotateLeft(AVLNode<T> parent)
+        private static Node<T> RotateLeft(Node<T> parent)
         {
-            AVLNode<T> pivot = parent.left;
+            Node<T> pivot = parent.left;
 
             //rotate
             parent.left = pivot.right;
@@ -1051,17 +1049,17 @@ namespace RichPackage.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static AVLNode<T> RotateRL(AVLNode<T> parent)
+        private static Node<T> RotateRL(Node<T> parent)
         {
-            AVLNode<T> pivot = parent.left;
+            Node<T> pivot = parent.left;
             parent.left = RotateRight(pivot);
             return RotateLeft(parent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static AVLNode<T> RotateLR(AVLNode<T> parent)
+        private static Node<T> RotateLR(Node<T> parent)
         {
-            AVLNode<T> pivot = parent.right;
+            Node<T> pivot = parent.right;
             parent.right = RotateLeft(pivot);
             return RotateRight(parent);
         }
