@@ -3,11 +3,11 @@ https://www.geeksforgeeks.org/min-heap-in-java/
 https://en.wikipedia.org/wiki/Binary_heap
 */
 
+using RichPackage.GuardClauses;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using RichPackage.GuardClauses;
 
 //TODO - implement ICollection or IEnumerable or something
 
@@ -17,7 +17,7 @@ namespace RichPackage.Collections
     {
         protected const int FRONT = 0;
 
-        protected readonly List<T> elements; 
+        protected readonly List<T> elements;
 
         protected IComparer<T> comparer = Comparer<T>.Default;
 
@@ -26,22 +26,22 @@ namespace RichPackage.Collections
         /// Default value is <see cref="Comparer{T}.Default"/>.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
-        public IComparer<T> Comparer 
-        { 
-            get => comparer; 
-            set 
+        public IComparer<T> Comparer
+        {
+            get => comparer;
+            set
             {
                 GuardAgainst.ArgumentIsNull(value, nameof(value));
 
                 comparer = value;
-                if (Count > 1)
+                if (IsNotEmpty())
                     Heapify();
             }
         }
 
         #region Constructors
 
-        public AHeap() : this(32){}
+        public AHeap() : this(32) { }
 
         public AHeap(int capacity)
         {
@@ -63,12 +63,12 @@ namespace RichPackage.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsNotEmpty() => Count > 0;
 
-		/// <summary>
-		/// Look at the next item in the heap (without actually removing it).
-		/// </summary>
+        /// <summary>
+        /// Look at the next item in the heap (without actually removing it).
+        /// </summary>
         /// <exception cref="InvalidOperationException"/>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Peek() => elements.IsNotEmpty() ? elements[FRONT] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Peek() => elements.IsNotEmpty() ? elements[FRONT]
             : throw new InvalidOperationException("No elements in heap.");
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace RichPackage.Collections
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T PeekOrDefault(T defaultValue = default)
-		    => elements.IsNotEmpty() ? elements[FRONT] : defaultValue;
+            => elements.IsNotEmpty() ? elements[FRONT] : defaultValue;
 
         /// <summary>
         /// Get the next item from the heap.
@@ -87,7 +87,7 @@ namespace RichPackage.Collections
         {
             if (elements.IsEmpty())
                 throw new InvalidOperationException("No elements in heap.");
-            
+
             int BACK = elements.Count - 1; //cache for re-use
             T item = elements[FRONT];
             elements[FRONT] = elements[BACK];
@@ -105,22 +105,22 @@ namespace RichPackage.Collections
             HeapifyUp(elements.Count - 1);
         }
 
-		#endregion Query
+        #endregion Query
 
-		#region Modify
+        #region Modify
 
-		/// <summary>
-		/// Modify the first item that returns true from <paramref name="query"/> and
-		/// process it with <paramref name="procedure"/>. <br/>
-		/// Prefer <see cref="ModifyItem(Predicate{T}, Action{T})"/> if {T} is an object.
-		/// </summary> <br/>
-		public void ModifyItem(Predicate<T> query, ActionRef<T> procedure)
+        /// <summary>
+        /// Modify the first item that returns true from <paramref name="query"/> and
+        /// process it with <paramref name="procedure"/>. <br/>
+        /// Prefer <see cref="ModifyItem(Predicate{T}, Action{T})"/> if {T} is an object.
+        /// </summary> <br/>
+        public void ModifyItem(Predicate<T> query, ActionRef<T> procedure)
         {
             int count = elements.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 T element = elements[i];
-                if(query(element))
+                if (query(element))
                 {
                     procedure(ref element);
                     elements[i] = element; //reassign (for value types)
@@ -130,7 +130,7 @@ namespace RichPackage.Collections
                 }
             }
         }
-            
+
         /// <summary>
         /// Modify the first item that returns true from <paramref name="query"/> and
         /// process it with <paramref name="procedure"/>. <br/>
@@ -140,14 +140,14 @@ namespace RichPackage.Collections
         /// <exceptions><see cref="NotSupportedException"/></exceptions>
         public void ModifyItem(Predicate<T> query, Action<T> procedure)
         {
-            if(typeof(T) != typeof(object))
+            if (typeof(T) != typeof(object))
                 throw new NotSupportedException("This method does not work on value types as it won't modify the underlying value in the backing array.");
 
             int count = elements.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 T element = elements[i];
-                if(query(element))
+                if (query(element))
                 {
                     procedure(element);
                     HeapifyUp(i);
@@ -156,7 +156,7 @@ namespace RichPackage.Collections
                 }
             }
         }
-        
+
         /// <summary>
         /// Modify all items that returns true from <paramref name="query"/> and
         /// process it with <paramref name="procedure"/>. <br/>
@@ -165,10 +165,10 @@ namespace RichPackage.Collections
         public void ModifyItems(Predicate<T> query, ActionRef<T> procedure)
         {
             int count = elements.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 T element = elements[i];
-                if(query(element))
+                if (query(element))
                 {
                     procedure(ref element);
                     elements[i] = element; //reassign (for value types)
@@ -186,14 +186,14 @@ namespace RichPackage.Collections
         /// <exceptions><see cref="NotSupportedException"/></exceptions>
         public void ModifyItems(Predicate<T> query, Action<T> procedure)
         {
-            if(typeof(T) != typeof(object))
+            if (typeof(T) != typeof(object))
                 throw new NotSupportedException("This method does not work on value types as it won't modify the underlying value in the backing array.");
 
             int count = elements.Count;
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 T element = elements[i];
-                if(query(element))
+                if (query(element))
                     procedure(element);
             }
             Heapify();
@@ -224,11 +224,11 @@ namespace RichPackage.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static int GetLeftIndex(int index)
-            => 2 * index + 1;
+            => (2 * index) + 1;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static int GetRightIndex(int index)
-            => 2 * index + 2;
+            => (2 * index) + 2;
 
         #endregion
 
@@ -256,7 +256,7 @@ namespace RichPackage.Collections
         /// Follow this call with <see cref="Heapify"/> if the backing array is modified.
         /// Prefer <see cref="ForEach(Action{T})"/> if {T} is a reference type.
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ForEach(ActionRef<T> action)
         {
             int count = Count; // fetch once
@@ -277,7 +277,7 @@ namespace RichPackage.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T item) => elements.Contains(item);
-        
+
         /// <summary>
         /// Access the underlying array. Will re-heapify the array after the operation completes.
         /// Probably not a good idea to use this.
@@ -293,16 +293,16 @@ namespace RichPackage.Collections
             }
         }
 
-		#endregion
+        #endregion
 
-		#region IEnumerable
+        #region IEnumerable
 
         public IEnumerator<T> GetEnumerator() => elements.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => elements.GetEnumerator();
 
-		#endregion IEnumerable
+        #endregion IEnumerable
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void Swap(int a, int b)
         {
             T item = elements[a];
