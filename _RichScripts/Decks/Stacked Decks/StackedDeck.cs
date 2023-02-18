@@ -44,7 +44,7 @@ namespace RichPackage.Decks
 
         public override TValue Draw()
         {
-            var deck = weightedManifest;
+            List<TContainer> deck = unusedCards;
             if (deck.Count == 0)
                 return default;
 
