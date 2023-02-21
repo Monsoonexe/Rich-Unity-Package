@@ -939,7 +939,6 @@ namespace RichPackage.Collections
         private static int GetHeight(Node<T> current)
             => current == null ? 0 : current.height;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RecalculateHeight(Node<T> current)
         {
             int leftHeight = GetHeight(current.left);
@@ -976,7 +975,7 @@ namespace RichPackage.Collections
         public void FixViolatedTreeProperty()
         {
             int index = 0;
-            var items = new T[Count];
+            T[] items = new T[Count];
 
             while (Count-- > 0)
                 items[index++] = GetRemove(root.data);
@@ -1016,7 +1015,6 @@ namespace RichPackage.Collections
 
         #region Rotations
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Node<T> RotateRight(Node<T> parent)
         {
             Node<T> pivot = parent.right;
@@ -1032,7 +1030,6 @@ namespace RichPackage.Collections
             return pivot;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Node<T> RotateLeft(Node<T> parent)
         {
             Node<T> pivot = parent.left;
