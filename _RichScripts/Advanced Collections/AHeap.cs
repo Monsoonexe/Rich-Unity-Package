@@ -110,6 +110,20 @@ namespace RichPackage.Collections
         }
 
         /// <summary>
+        /// If the heap is not empty, <paramref name="value"/> contains the poppped value.
+        /// Otherwise, <paramref name="value"/> is undefined.
+        /// </summary>
+        /// <returns>True if <paramref name="value"/> contains the popped value.</returns>
+        public bool TryPop(out T value)
+        {
+            bool popped = elements.IsNotEmpty();
+
+            value = popped ? Pop() : default;
+
+            return popped;
+        }
+
+        /// <summary>
         /// Add an item to the heap.
         /// </summary>
         public void Push(T item)
