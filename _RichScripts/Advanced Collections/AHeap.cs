@@ -4,6 +4,7 @@ https://en.wikipedia.org/wiki/Binary_heap
 */
 
 using RichPackage.GuardClauses;
+using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -94,6 +95,18 @@ namespace RichPackage.Collections
             elements.RemoveAt(BACK);
             HeapifyDown(FRONT);
             return item;
+        }
+
+        /// <summary>
+        /// Get the next item from the heap or the <paramref name="default"/> value
+        /// if the heap is empty.
+        /// </summary>
+        public T PopOrDefault(T @default = default)
+        {
+            if (elements.IsEmpty())
+                return @default;
+            else
+                return Pop();
         }
 
         /// <summary>
