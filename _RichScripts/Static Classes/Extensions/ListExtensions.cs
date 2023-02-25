@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Random = UnityEngine.Random;
@@ -254,6 +255,12 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsIndexInRange<T>(this List<T> col, int index)
             => index >= 0 && index < col.Count;
+
+        /// <summary>
+        /// Returns the count or 0 if <paramref name="src"/> is null.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SafeCount(this IList src) => src?.Count ?? 0;
 
         /// <summary>
         /// Returns a 'new' list if <paramref name="list"/> is null or calls
