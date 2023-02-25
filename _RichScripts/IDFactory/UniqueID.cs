@@ -26,8 +26,8 @@ namespace RichPackage
             get => FromString(NewIDProvider());
         }
 
-        [field: SerializeField, LabelText(nameof(ID)), LabelWidth(13),
-            CustomContextMenu(nameof(Editor_New), nameof(Editor_New))]
+        [field: SerializeField, LabelText(nameof(ID)),
+            CustomContextMenu("Regenerate", nameof(Editor_New))]
         public string ID { get; private set; }
 
         #region Constructors
