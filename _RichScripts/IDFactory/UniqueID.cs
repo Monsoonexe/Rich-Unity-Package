@@ -27,7 +27,7 @@ namespace RichPackage
         }
 
         [field: SerializeField, LabelText(nameof(ID)),
-            CustomContextMenu("Regenerate", nameof(Editor_New))]
+            CustomContextMenu("Regenerate", nameof(GenerateNewId))]
         public string ID { get; private set; }
 
         #region Constructors
@@ -39,7 +39,7 @@ namespace RichPackage
 
         #endregion Constructors
 
-        public void Editor_New() => ID = New;
+        public void GenerateNewId() => ID = New;
         
         public override string ToString() => ID;
 
