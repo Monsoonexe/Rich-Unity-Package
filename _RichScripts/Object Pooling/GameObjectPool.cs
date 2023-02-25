@@ -56,7 +56,7 @@ namespace RichPackage.Pooling
         public GameObjectMethod OnEnpoolMethod = (p) => p.SetActive(false);
 
         // runtime data
-        private Stack<GameObject> pool = new Stack<GameObject>(); //stack has better locality than queue
+        private readonly Stack<GameObject> pool = new Stack<GameObject>(); //stack has better locality than queue
         private List<GameObject> manifest;
 
         /// <summary>
@@ -234,16 +234,13 @@ namespace RichPackage.Pooling
                 throw new Exception("[GameObjectPool] Trying to Enpool null!");
 
             Debug.AssertFormat(manifest.Contains(poolable),
-                "[GameObjectPool] This item is not included on this Pool's manifest. " +
+                "[GameObjectPool] This item is not in this Pool's manifest. " +
                 "This item probably belongs to another Pool. " +
                 "pendingPoolable: {0}. Pool: {1}. manifest[0] {2}.",
-                poolable, gameObject, manifest[0]);
+                poolable, gameObject, manifest.SafeCount());
 
-            if (!pool.Contains(poolable))//guard against multiple entries
-            {
-                pool.Push(poolable);
-                OnEnpoolMethod?.Invoke(poolable);//by default sets inactive.
-            }
+            pool.Push(poolable);
+            OnEnpoolMethod?.Invoke(poolable);//by default sets inactive.
         }
 
         #endregion En/Depool
@@ -284,7 +281,6 @@ namespace RichPackage.Pooling
             // work
             int poolSize = RichMath.Max(startingAmount, maxAmount);
             manifest = new List<GameObject>(poolSize);
-            pool = new Stack<GameObject>(poolSize);
 
             //load children?
             if (enpoolChildrenOnInit && poolParent != null)
