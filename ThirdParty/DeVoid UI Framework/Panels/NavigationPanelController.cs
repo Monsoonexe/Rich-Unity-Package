@@ -1,4 +1,4 @@
-﻿using RichPackage;
+using RichPackage;
 using RichPackage.UI;
 using Sirenix.OdinInspector;
 using System;
@@ -10,6 +10,9 @@ public class NavigationPanelController : APanelController
     [Title("Settings")]
     [SerializeField]
     protected bool navigateOnShow = false;
+
+    [SerializeField, ShowIf(nameof(navigateOnShow))]
+    private int startingNavButton = 0;
 
     [Title("Resources")]
     [SerializeField, Required]
@@ -55,7 +58,7 @@ public class NavigationPanelController : APanelController
         // default to showing first button
         if (navigateOnShow)
         {
-            OnNavigationButtonClicked(navButtons[0]);
+            OnNavigationButtonClicked(navButtons[startingNavButton]);
         }
     }
 
