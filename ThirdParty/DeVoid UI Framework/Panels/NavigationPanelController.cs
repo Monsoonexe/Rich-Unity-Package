@@ -1,4 +1,4 @@
-using RichPackage;
+﻿using RichPackage;
 using RichPackage.UI;
 using Sirenix.OdinInspector;
 using System;
@@ -26,7 +26,10 @@ public class NavigationPanelController : APanelController
     protected RichUIButton[] navButtons;
 
     // runtime data
-    private RichUIButton previousButton;
+    /// <summary>
+    /// A button that was previously selected.
+    /// </summary>
+    private RichUIButton selectedButton;
 
     #region Unity Messages
 
@@ -46,10 +49,12 @@ public class NavigationPanelController : APanelController
 
     #endregion Unity Messages
 
-    //protected override void OnHide()
-    //{
-    //    ResetButtons(); // free up some memory by destroying button
-    //}
+    #region AUIScreenController
+
+    protected override void OnHide()
+    {
+        ResetButtons();
+    }
 
     protected override void OnPropertiesSet()
     {
@@ -62,18 +67,12 @@ public class NavigationPanelController : APanelController
         }
     }
 
+    #endregion AUIScreenController
+
     protected virtual void OnNavigationButtonClicked(RichUIButton clickedButton)
     {
-        // track button state
-        if (previousButton != null)
-        {
-            previousButton.Interactable = true;
-        }
-        previousButton = clickedButton;
-
-        // set button state
-        clickedButton.Interactable = false;
-        clickedButton.Button.Select();
+        // handle button state
+        Select(clickedButton);
 
         // open window
         router.NavigateTo(clickedButton.StringProperty);
@@ -84,6 +83,22 @@ public class NavigationPanelController : APanelController
     private void GatherNavButtons()
     {
         navButtons = buttonHolder.GetComponentsInChildren<RichUIButton>();
+    }
+
+    /// <summary>
+    /// Puts <paramref name="button"/> into selected state.
+    /// </summary>
+    private void Select(RichUIButton button)
+    {
+        // release existing button
+        if (selectedButton != null)
+        {
+            selectedButton.Interactable = true;
+        }
+
+        selectedButton = button;
+        selectedButton.Interactable = false;
+        selectedButton.Button.Select();
     }
 
     private void InitButtons()
@@ -98,9 +113,6 @@ public class NavigationPanelController : APanelController
         }
     }
 
-    /// <summary>
-    /// Destroy Button Objects
-    /// </summary>
     protected virtual void ResetButtons()
     {
         int buttonCount = navButtons.Length;
@@ -108,7 +120,6 @@ public class NavigationPanelController : APanelController
         {
             RichUIButton button = navButtons[i];
             button.OnPressedEvent -= OnNavigationButtonClicked;
-            Destroy(button.gameObject);
         }
     }
 
