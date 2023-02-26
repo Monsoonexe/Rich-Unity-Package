@@ -149,7 +149,14 @@ namespace RichPackage.UI
         /// call base.OnDisable() to auto unsubscribe from button
         /// </summary>
         protected virtual void OnDisable()
-            => myButton.onClick.RemoveListener(Click);
+        {
+            myButton.onClick.RemoveListener(Click);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            myButton.onClick.RemoveAllListeners();
+        }
 
 		#endregion Unity Messages
 
@@ -160,7 +167,7 @@ namespace RichPackage.UI
         /// <summary>
         /// Removes all listeners except my own.
         /// </summary>
-        public void RemoveAllListeners()
+        public void ResetListeners()
         {
             myButton.onClick.RemoveAllListeners();
             myButton.onClick.AddListener(Click);
@@ -199,7 +206,7 @@ namespace RichPackage.UI
 
         public void Show(UnityAction onPress)
         {
-            RemoveAllListeners();
+            ResetListeners();
             AddListener(onPress);
             Show();
         }
