@@ -16,12 +16,12 @@ namespace RichPackage.UI
     {
         #region Constants
 
-        private const string Default_String_Property = "--";
-        private const string Properties_Group = "Properties";
+        private const string DefaultStringProperty = "--";
+        private const string PropertiesGroup = "Properties";
 
 		#endregion Constants
 
-		[Title("Refs")]
+		[Title("Prefab References")]
         [SerializeField, Required]
         protected Button myButton;
         
@@ -33,12 +33,12 @@ namespace RichPackage.UI
         public TextMeshProUGUI Label { get => myText; }
 
 		[Tooltip("Optional value that can be stored and retrieved later.")]
-        [LabelWidth(100), BoxGroup(Properties_Group)]
-        public int IntegerProperty = -1;
+        [LabelWidth(100), BoxGroup(PropertiesGroup)]
+        public int IntegerProperty = 0;
 
         [Tooltip("Optional value that can be stored and retrieved later.")]
-        [LabelWidth(100), BoxGroup(Properties_Group)]
-        public string StringProperty = Default_String_Property;
+        [LabelWidth(100), BoxGroup(PropertiesGroup)]
+        public string StringProperty = DefaultStringProperty;
 
         /// <summary>
         /// An optional value that can be placed on the button and retrieved later. Useful
@@ -48,13 +48,13 @@ namespace RichPackage.UI
 
 #if UNITY_EDITOR
 
-        [ShowInInspector, ReadOnly, BoxGroup(Properties_Group),
+        [ShowInInspector, ReadOnly, BoxGroup(PropertiesGroup),
             LabelText(nameof(ObjectProperty)), LabelWidth(100),
             PropertyTooltip("Optional value that can be stored and retrieved later " +
             "(can only be modified programmatically.")]
         public string Editor_ObjectPayloadString
         {
-            get => ObjectProperty?.ToString() ?? Default_String_Property;
+            get => ObjectProperty?.ToString() ?? DefaultStringProperty;
         }
 
 #endif
