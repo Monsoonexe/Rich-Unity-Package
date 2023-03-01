@@ -1,8 +1,8 @@
+using RichPackage;
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using RichPackage;
-using Sirenix.OdinInspector;
 
 [RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster)),
     SelectionBase]
@@ -26,7 +26,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// This is the data payload and settings for this screen. 
     /// You can rig this directly in a prefab and-or pass it when you show this screen.
     /// </summary>
-    [Tooltip( "This is the data payload and settings for this screen. You can rig this directly in a prefab and/or pass it when you show this screen.")]
+    [Tooltip("This is the data payload and settings for this screen. You can rig this directly in a prefab and/or pass it when you show this screen.")]
     [SerializeField]
     private TProps properties;
 
@@ -35,7 +35,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// You can rig this directly in a prefab and-or pass it when you show this screen.
     /// </summary>
     protected TProps Properties { get => properties; set => properties = value; }
-    
+
     /// <summary>
     /// Unique Identifier for this ID. Maybe it's prefab name?
     /// </summary>
@@ -68,17 +68,17 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
     /// <value>The destruction action.</value>
     public event Action<IUIScreenController> OnScreenDestroyed;
 
-	#endregion Events
+    #endregion Events
 
-	#region Unity Messages
+    #region Unity Messages
 
-	protected override void Reset()
+    protected override void Reset()
     {
         gameObject.GetOrAddComponent<Canvas>();
         gameObject.GetOrAddComponent<GraphicRaycaster>();
     }
 
-	protected override void Awake()
+    protected override void Awake()
     {
         base.Awake();
         //add Canvas to limit redraw.
@@ -97,11 +97,11 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         OnScreenDestroyed = null; // release ref
     }
 
-	#endregion Unity Messages
+    #endregion Unity Messages
 
-	#region Animation
+    #region Animation
 
-	private void Animate(ATransitionComponent animator,
+    private void Animate(ATransitionComponent animator,
         Action onCompleteCallback, bool isVisible)
     {
         if (!animator)
@@ -136,9 +136,9 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         OnTransitionOutFinishedCallback?.Invoke(this);
     }
 
-	#endregion Animation
+    #endregion Animation
 
-	#region AUIScreenController
+    #region AUIScreenController
 
     /// <summary>
     /// Use this to set load data from properties. Called when Screen is Shown.
@@ -185,11 +185,11 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         transitionINAnimator?.Stop(); // 
 
         // do animation
-        Animate(animate ? transitionOUTAnimator : null, 
+        Animate(animate ? transitionOUTAnimator : null,
             OnTransitionOUTFinished, false);
 
         // anything extra on Hide
-        OnHide(); 
+        OnHide();
     }
 
     public void Show() => Show(properties);
@@ -199,14 +199,14 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
         // set screen properties
         if (payload != null)
         {
-            if(payload is TProps props)
+            if (payload is TProps props)
             {
                 SetProperties(props);
             }
             else
             {
                 Debug.LogError($"[{nameof(AUIScreenController<TProps>)}] Properties passed have wrong type! " +
-					$"({payload.GetType()} instead of {typeof(TProps)}).", this);
+                    $"({payload.GetType()} instead of {typeof(TProps)}).", this);
 
                 // default to Inspector values
             }
@@ -214,19 +214,19 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
 
         OnHierarchyFix(); // react to change in hierarchy
 
-        //catch exception, but don't let it interrupt the opening of the window.
-		try
-		{
+        // catch exception, but don't let it interrupt the opening of the window.
+        try
+        {
             OnPropertiesSet(); // validate and load data
-		}
-		catch (Exception ex)
-		{
+        }
+        catch (Exception ex)
+        {
             Debug.LogException(ex, this);
-		}
+        }
 
         if (!gameObject.activeSelf) // if currently hidden
         {
-            //animate with this animator, when finished call this, show?
+            // animate with this animator, when finished call this, show?
             Animate(transitionINAnimator, OnTransitionINFinished, true);
         }
         else // already visible, so just do OnFinish callback
@@ -234,7 +234,7 @@ public abstract class AUIScreenController<TProps> : RichMonoBehaviour, IUIScreen
             OnTransitionInFinishedCallback?.Invoke(this);
         }
 
-    }//end function
+    } // end function
 
     #endregion Hide/Show Interface
 }
