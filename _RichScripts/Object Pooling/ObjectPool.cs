@@ -198,15 +198,18 @@ namespace RichPackage.Pooling
 				item = DepoolerMethod(); //remove item from pool
 				--Count; //track
 			}
-			else 
-			{ 
-				if (CreateNewWhenEmpty)
-					item = FactoryMethod();
-				else 
-					throw new InvalidOperationException("Pool is empty.");
+			else if (CreateNewWhenEmpty)
+            {
+                item = FactoryMethod();
+            }
+			else
+			{
+				throw new InvalidOperationException("Pool is empty.");
 			}
 
+			// initialize it
 			OnDepoolMethod?.Invoke(item);
+
 			return item;
 		}
 
