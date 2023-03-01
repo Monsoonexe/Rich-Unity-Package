@@ -417,7 +417,7 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (value == null)
-                throw new ArgumentNullException($"{paramName} is null object.");
+                ThrowHelper<ArgumentNullException>($"{paramName} is null object.");
         }
 
         /// <exception cref="ArgumentNullException"></exception>
@@ -426,7 +426,7 @@ namespace RichPackage.GuardClauses
             string paramName, string message)
         {
             if (value == null)
-                throw new ArgumentNullException($"{paramName} is null object. "
+                ThrowHelper<ArgumentNullException>($"{paramName} is null object. "
                     + message);
         }
 
@@ -436,8 +436,8 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (argumentValue == Guid.Empty.ToString())
-                throw new ArgumentException($"{paramName} " +
-                    $"cannot be string with value of empty guid.");
+                ThrowHelper<ArgumentException>($"{paramName} "
+                    + $"cannot be string with value of empty guid.");
         }
 
         /// <exception cref="ArgumentException"></exception>
@@ -446,7 +446,7 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (argumentValue == Guid.Empty)
-                throw new ArgumentException($"{paramName} " +
+                ThrowHelper<ArgumentException>($"{paramName} " +
                     $"cannot be empty guid.");
         }
 
@@ -455,7 +455,7 @@ namespace RichPackage.GuardClauses
         public static void InvalidEmail(string email)
         {
             if (!emailRegex.IsMatch(email))
-                throw new ArgumentException($"{email} is not a valid email.");
+                ThrowHelper<ArgumentException>($"{email} is not a valid email.");
         }
 
         /// <exception cref="ArgumentException"></exception>
@@ -463,7 +463,7 @@ namespace RichPackage.GuardClauses
         public static void InvalidURL(string url)
         {
             if (!urlRegex.IsMatch(url))
-                throw new ArgumentException($"{url} is not a valid URL.");
+                ThrowHelper<ArgumentException>($"{url} is not a valid URL.");
         }
 
         #region File IO
@@ -512,5 +512,11 @@ namespace RichPackage.GuardClauses
         }
 
         #endregion File IO
+    
+        private static TException ThrowHelper<TException>(string message)
+            where TException : Exception
+        {
+            throw (TException)Activator.CreateInstance(typeof(TException), message);
+        }
     }
 }
