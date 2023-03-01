@@ -42,8 +42,8 @@ namespace RichPackage.Pooling
         private class Pool : ObjectPool<T>
         {
             public Pool(Func<T> factoryMethod)
+                : base(Infinite_Pool_Size, 0, 0, factoryMethod)
             {
-                FactoryMethod = factoryMethod;
             }
         }
     }
