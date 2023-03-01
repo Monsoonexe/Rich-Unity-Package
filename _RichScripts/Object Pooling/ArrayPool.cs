@@ -73,13 +73,13 @@ namespace RichPackage
         public void Return(T[] array, bool clear = false)
         {
             if (MaxArraySize > 0 && array.Length > MaxArraySize)
-			{
+            {
                 //drop arrays that are too large for pool
-			}
-            else if(MaxBucketCapacity < 0 || _pool.Count < MaxBucketCapacity)
+            }
+            else if (MaxBucketCapacity < 0 || _pool.Count < MaxBucketCapacity)
             {
                 _pool.Add(array);
-                if(clear)
+                if (clear)
                     Array.Clear(array, 0, array.Length);
             }
             else //drop smallest array
@@ -90,7 +90,7 @@ namespace RichPackage
                     _pool.Remove(shortestItem);
                     _pool.Add(array);
                     _pool.Sort(comparer); //sort descending
-                    if(clear)
+                    if (clear)
                         Array.Clear(array, 0, array.Length);
                 }
             }
