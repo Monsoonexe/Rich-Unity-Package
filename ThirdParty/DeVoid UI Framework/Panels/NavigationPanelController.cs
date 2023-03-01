@@ -21,7 +21,7 @@ public class NavigationPanelController : APanelController
     [SerializeField, Required]
     private ANavigationProvider router;
 
-    [SerializeField,
+    [SerializeField, Required,
         CustomContextMenu(nameof(GatherNavButtons), nameof(GatherNavButtons))]
     protected RichUIButton[] navButtons;
 
