@@ -32,7 +32,7 @@ namespace RichPackage.Pooling
             return (U)GetPool<U>().Depool();
         }
 
-        public void Release<U>(U props) where U : T, new()
+        public void Return<U>(U props) where U : T, new()
         {
             GuardAgainst.ArgumentIsNull(props, nameof(props));
 
