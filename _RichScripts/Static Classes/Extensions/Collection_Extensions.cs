@@ -333,20 +333,20 @@ namespace RichPackage
             => index >= 0 && index < col.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNullOrEmpty<T>(this IList<T> list)
+        public static bool IsNullOrEmpty<T>(this ICollection<T> list)
             => list == null || list.Count == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(this IList list)
+        public static bool IsEmpty(this ICollection list)
             => list.Count == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty<T>(this IList<T> list)
+        public static bool IsEmpty<T>(this ICollection<T> list)
             => list.Count == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsNotEmpty<T>(this IList<T> list)
-            => list.Count != 0;
+        public static bool IsNotEmpty<T>(this ICollection<T> list)
+            => list.Count > 0;
 
         /// <summary>
         /// A and B are the same size and every element in A is in B (order agnostic).
