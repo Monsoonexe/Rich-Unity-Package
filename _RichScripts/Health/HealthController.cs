@@ -1,4 +1,4 @@
-﻿/*
+/*
 TODO - replace this with a Stats system
 health and mana are virtually identical, but the base class shouldn't be "health"
 
@@ -65,7 +65,16 @@ namespace RichPackage.HealthSystem
         private UnityEvent deadEvent = new UnityEvent();
         public UnityEvent DeadEvent { get => deadEvent; }
 
-        #endregion
+        #endregion Events
+
+        #region Object
+
+        public override string ToString()
+        {
+            return CurrentHealth.ToStringCached();
+        }
+
+        #endregion Object
 
         /// <summary>
         /// Recover given health. 0 > amount means ALL health.
