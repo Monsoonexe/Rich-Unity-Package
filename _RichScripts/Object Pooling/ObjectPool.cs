@@ -168,7 +168,7 @@ namespace RichPackage.Pooling
 			this.EnpoolerMethod = EnpoolerMethod;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region API
 
@@ -233,7 +233,7 @@ namespace RichPackage.Pooling
 				Depool();
 		}
 
-		#endregion
+		#endregion API
 
 		#region Utility
 
@@ -249,16 +249,16 @@ namespace RichPackage.Pooling
 			PoolObject = pool;
 		}
 
-		#endregion
-	}
+        #endregion Utility
+    }
 
-	#region Special Pools
+    #region Special Pools
 
-	/// <summary>
-	/// A pool that is backed by a <see cref="MaxHeap{T}"/>.
-	/// </summary>
-	/// <seealso cref="MaxHeap{T}"/>
-	public class MaxHeapPool<T> : ObjectPool<T>
+    /// <summary>
+    /// A pool that is backed by a <see cref="MaxHeap{T}"/>.
+    /// </summary>
+    /// <seealso cref="MaxHeap{T}"/>
+    public class MaxHeapPool<T> : ObjectPool<T>
 	{
 		/// <summary>
 		/// Internal backing object. It is safe to manipulate this backing object, but do NOT change the Count.
