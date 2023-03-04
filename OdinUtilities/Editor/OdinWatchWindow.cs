@@ -36,8 +36,8 @@ namespace RichPackage.Editor
         {
             string json = EditorJsonUtility.ToJson(this);
             EditorPrefs.SetString("OWW_props", json);
-            //_properties.Clear();
-            //_properties = null;
+            _properties.Clear();
+            _properties = null; 
             base.OnDisable();
         }
 
@@ -270,7 +270,7 @@ namespace RichPackage.Editor
 
             ~TreeValuesHolder()
             {
-
+                Tree?.Dispose();
             }
 
 			public bool CheckRefresh()
