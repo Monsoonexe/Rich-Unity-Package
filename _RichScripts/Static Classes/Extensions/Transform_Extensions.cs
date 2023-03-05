@@ -160,5 +160,27 @@ namespace RichPackage
 
             return transform; // allow chaining
         }
+
+        /// <summary>
+        /// Sorts ascending by default, unless <paramref name="inverse"/>, then descending.
+        /// </summary>
+        /// credit: https://github.com/JimmyCushnie/JimmysUnityUtilities/blob/master/Scripts/Extensions/base%20Unity%20types/TransformExtensions.cs
+        public static void SortChildrenAlphabetically(this Transform t, bool inverse = false)
+        {
+            var children = new List<Transform>(t.childCount);
+
+            for (int i = 0; i < t.childCount; i++)
+                children.Add(t.GetChild(i));
+
+
+            if (inverse)
+                children.Sort((t1, t2) => t2.name.CompareTo(t1.name));
+            else
+                children.Sort((t1, t2) => t1.name.CompareTo(t2.name));
+
+
+            for (int i = 0; i < children.Count; ++i)
+                children[i].SetSiblingIndex(i);
+        }
     }
 }
