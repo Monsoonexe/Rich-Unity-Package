@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RichPackage.Animation
@@ -36,7 +36,7 @@ namespace RichPackage.Animation
 
         private void Update()
         {
-            xform.Rotate(rotateVector * Time.deltaTime, space);
+            xform.Rotate(rotateVector * App.DeltaTime, space);
         }
 
         #endregion Unity Messages
