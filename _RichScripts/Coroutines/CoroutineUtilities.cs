@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 using RichPackage.YieldInstructions;
@@ -25,8 +25,8 @@ namespace RichPackage
         {
             while (true)
             {
-                process();
                 yield return yieldInstruction;
+                process();
             }
         }
 
@@ -73,6 +73,14 @@ namespace RichPackage
         public static Coroutine StartCoroutine(IEnumerator coroutine)
         {
             return Runner.StartCoroutine(coroutine);
+        }
+
+        /// <summary>
+        /// Routinely runs <paramref name="action"/> like Update at the specified <paramref name="interval"/>.
+        /// </summary>
+        public static Coroutine Update(Action action, float interval = 0)
+        {
+            return Runner.StartCoroutine(ProcessLoop(action, new WaitForSeconds(interval)));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
