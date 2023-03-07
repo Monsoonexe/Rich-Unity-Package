@@ -65,6 +65,12 @@ namespace RichPackage
         /// </summary>
         public static bool IsMainThread => System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadId;
 
+        /// <summary>
+        /// Is the application in the process of quitting? I.e. <see cref="Application.Quit"/>
+        /// has been called.
+        /// </summary>
+        public static bool IsQuitting { get; private set; }
+
         #region Constructors
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -96,6 +102,16 @@ namespace RichPackage
             ApplyAppSettings();
             DG.Tweening.DOTween.Init();
             UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
+        }
+
+        private void OnApplicationQuit()
+        {
+            // check if was called through this api
+            if (IsQuitting)
+                return;
+
+            // we were called by some other means, like exiting playmode in the editor
+            OnApplicationQuitInternal();
         }
 
         private void OnDestroy()
@@ -137,20 +153,33 @@ namespace RichPackage
         /// <summary>
         /// Quits the entire Unity application.
         /// </summary>
-		public void QuitApplication()
+        public static void QuitApplication() => QuitApplication(0);
+
+        /// <summary>
+        /// Quits the entire Unity application.
+        /// </summary>
+		public static void QuitApplication(int exitCode)
         {
-            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
+            OnApplicationQuitInternal();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
             Application.Quit();
         }
 
-		#region Static Interface
+        private static void OnApplicationQuitInternal()
+        {
+            IsQuitting = true;
+            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
+        }
+
+        #region Static Interface
 
         public static void ReloadCurrentLevel()
-            => SceneManager.LoadScene(
+        {
+            SceneManager.LoadScene(
                 SceneManager.GetActiveScene().buildIndex);
+        }
 
         public static App Construct()
             => Construct<App>(nameof(App));
