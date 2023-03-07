@@ -246,6 +246,11 @@ namespace RichPackage
 
         private void OnConsoleDeactivate()
         {
+#if UNITY_EDITOR
+            // is exiting playmode check
+            if (App.IsQuitting)
+                return;
+#endif
             enabled = true;
         }
 
