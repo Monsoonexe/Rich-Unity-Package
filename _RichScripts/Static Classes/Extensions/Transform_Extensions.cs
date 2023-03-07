@@ -172,12 +172,10 @@ namespace RichPackage
             for (int i = 0; i < t.childCount; i++)
                 children.Add(t.GetChild(i));
 
-
             if (inverse)
                 children.Sort((t1, t2) => t2.name.CompareTo(t1.name));
             else
                 children.Sort((t1, t2) => t1.name.CompareTo(t2.name));
-
 
             for (int i = 0; i < children.Count; ++i)
                 children[i].SetSiblingIndex(i);
