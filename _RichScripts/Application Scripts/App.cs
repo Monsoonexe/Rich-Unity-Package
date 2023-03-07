@@ -71,16 +71,6 @@ namespace RichPackage
         /// </summary>
         public static bool IsQuitting { get; private set; }
 
-        #region Constructors
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void GetMainThreadId()
-        {
-            MainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-        }
-
-        #endregion Constructors
-
         #region Unity Messages
 
         protected override void Reset()
@@ -97,7 +87,8 @@ namespace RichPackage
             {
                 return;
             }
-            
+
+            MainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitApplication);
             ApplyAppSettings();
             DG.Tweening.DOTween.Init();
