@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RichPackage.InputSystem
 {
     public class ConsoleInputProfile
-        : AInputProfileAsset<StandardAppInputProfile.InputProfile>
+        : AInputProfileAsset<ConsoleInputProfile.InputProfile>
     {
         [Serializable]
         public sealed class InputProfile : PlayerInputProfile
