@@ -21,10 +21,6 @@ namespace RichPackage.InputSystem
         [Title("Settings")]
         public bool debug = false;
 
-        [Title("Input Axes")]
-        [SerializeField, NaughtyAttributes.InputAxis]
-        private string focusPlayer;
-
         [ShowInInspector, LabelText("Active Profile")]
         private string Editor_ActiveProfileName => SafeGetActiveInputProfileName();
 
@@ -103,17 +99,6 @@ namespace RichPackage.InputSystem
             => ReferenceEquals(inputProfile, ActiveProfile);
 
         #endregion Managing Profiles
-
-        public static bool PollFocusPlayerButton()
-        {
-            return Input.GetButtonDown("TODO");
-        }
-
-        public static bool IsAnyShiftDown()
-        {
-            return Input.GetKey(KeyCode.LeftShift)
-                || Input.GetKey(KeyCode.RightShift);
-        }
 
         private string SafeGetActiveInputProfileName()
         {

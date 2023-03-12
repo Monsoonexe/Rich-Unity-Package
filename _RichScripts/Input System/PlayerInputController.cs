@@ -8,7 +8,7 @@ namespace RichPackage.InputSystem
     /// <summary>
     /// Controls which input profiles are active based on the game state.
     /// </summary>
-    public class PlayerInputController : RichMonoBehaviour
+    public sealed class PlayerInputController : RichMonoBehaviour
     {
         private static PlayerInputController s_instance;
 
