@@ -1,4 +1,4 @@
-﻿using QFSW.QC;
+using QFSW.QC;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,24 +8,25 @@ namespace RichPackage.InputSystem
     /// <summary>
     /// Controls which input profiles are active based on the game state.
     /// </summary>
-    public sealed class PlayerInputController : RichMonoBehaviour
+    /// <seealso cref="PlayerInput"/>
+    public class PlayerInputController : RichMonoBehaviour
     {
         private static PlayerInputController s_instance;
 
         [Title("Settings")]
         [SerializeField, Required]
-        private AInputProfileAsset startingProfile;
+        protected AInputProfileAsset startingProfile;
 
         [Title("Prefab Refs")]
         [SerializeField, Required]
-        private PlayerInput input;
+        protected PlayerInput input;
 
         [Title("Profiles")]
         [SerializeField, Required]
-        private AInputProfileAsset defaultProfile;
+        protected AInputProfileAsset defaultProfile;
 
         [SerializeField, Required]
-        private AInputProfileAsset consoleProfile;
+        protected AInputProfileAsset consoleProfile;
 
         private readonly Stack<string> profileHistory = new Stack<string>();
 
@@ -79,7 +80,7 @@ namespace RichPackage.InputSystem
             input.SetProfile(profileHistory.Pop());
         }
 
-        private IEnumerable<PlayerInput.Profile> EnumerateProfiles()
+        protected virtual IEnumerable<PlayerInput.Profile> EnumerateProfiles()
         {
             yield return defaultProfile;
             yield return consoleProfile;
