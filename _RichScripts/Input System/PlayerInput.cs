@@ -12,12 +12,6 @@ namespace RichPackage.InputSystem
     /// </summary>
     public sealed partial class PlayerInput : RichMonoBehaviour
     {
-        #region Static Fields
-
-        public static event Action OnQuitGameEvent;
-
-        #endregion Static Fields
-
         [Title("Settings")]
         public bool debug = false;
 
@@ -25,6 +19,8 @@ namespace RichPackage.InputSystem
         private string Editor_ActiveProfileName => SafeGetActiveInputProfileName();
 
         public string ActiveProfileName => fsm.ActiveStateName;
+
+        public Profile CurrentProfile => (Profile)fsm.ActiveState;
 
         public StateBase<string> ActiveProfile
         {
@@ -128,6 +124,11 @@ namespace RichPackage.InputSystem
             [ShowInInspector, ReadOnly]
             public bool IsActive { get; private set; }
 
+            /// <summary>
+            /// Additional querries to make while in this context.
+            /// </summary>
+            public event Action Update;
+
             #region Constructors
 
             public Profile() : base(needsExitTime: false) { }
@@ -145,16 +146,18 @@ namespace RichPackage.InputSystem
             /// <remarks>Do <see cref="Input"/> logic here.</remarks>
             public override void OnLogic()
             {
-                if (IsAnyShiftDown() && Input.GetKeyDown(KeyCode.Escape))
-                {
-                    OnQuitGameEvent?.Invoke();
-                }
+                Update?.Invoke();
             }
 
             /// <remarks>Inheritors should call <see cref="OnExit"/></remarks>
             public override void OnExit()
             {
                 IsActive = false;
+            }
+
+            protected void UpdateLogic()
+            {
+                Update?.Invoke();
             }
 
             #endregion StateBase

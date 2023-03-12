@@ -1,5 +1,6 @@
-using QFSW.QC;
+﻿using QFSW.QC;
 using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,6 +30,19 @@ namespace RichPackage.InputSystem
         protected AInputProfileAsset consoleProfile;
 
         private readonly Stack<string> profileHistory = new Stack<string>();
+
+        #region Events
+
+        /// <summary>
+        /// Subscribe an input event to run in the current context.
+        /// </summary>
+        public event Action Update
+        {
+            add => input.CurrentProfile.Update += value;
+            remove => input.CurrentProfile.Update -= value;
+        }
+
+        #endregion Events
 
         #region Unity Messages
 
