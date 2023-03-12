@@ -14,10 +14,6 @@ namespace RichPackage.InputSystem
     {
         private static PlayerInputController s_instance;
 
-        [Title("Settings")]
-        [SerializeField, Required]
-        protected AInputProfileAsset startingProfile;
-
         [Title("Prefab Refs")]
         [SerializeField, Required]
         protected PlayerInput input;
@@ -57,7 +53,7 @@ namespace RichPackage.InputSystem
             if (!Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: false))
                 return;
 
-            input.Init(EnumerateProfiles(), startingProfile);
+            input.Init(EnumerateProfiles(), defaultProfile);
         }
 
         private void Start()
