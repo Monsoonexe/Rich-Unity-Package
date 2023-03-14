@@ -79,7 +79,7 @@ public class WindowUILayer : AUILayer<IWindowController>
         // hide current window?
         if (CurrentWindow != null // if there is already a Window
             && CurrentWindow.HideOnForegroundLost // and it will relinquish the foreground
-            && !entry.screen.IsPopup) //and not a pop-up, which are always on top
+            && !entry.screen.IsPopup) // and not a pop-up, which are always on top
         {
             CurrentWindow.Hide(true);
         }
@@ -237,7 +237,7 @@ public class WindowUILayer : AUILayer<IWindowController>
     #endregion Screen History
 
     #region Event Responses
-    
+
     private void OnInAnimationFinished(IUIScreenController screen)
     {
         RemoveTransition(screen);
