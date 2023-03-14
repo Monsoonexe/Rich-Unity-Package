@@ -5,23 +5,37 @@ using UnityEngine;
 [Serializable]
 public class PanelPriorityLayerList
 {
-    [Tooltip("")]
     [SerializeField]
-    private List<PanelPriorityLayerListEntry> paraLayers = 
-        new List<PanelPriorityLayerListEntry>();
+    private List<PanelPriorityLayerListEntry> paraLayers
+        = new List<PanelPriorityLayerListEntry>();
 
-    private Dictionary<EPanelPriority, Transform> lookup = 
-        new Dictionary<EPanelPriority, Transform>();
+    private readonly Dictionary<EPanelPriority, Transform> lookup
+        = new Dictionary<EPanelPriority, Transform>();
+
+    #region Constructors
+
+    public PanelPriorityLayerList()
+    {
+        // nada
+    }
+
+    public PanelPriorityLayerList(List<PanelPriorityLayerListEntry> entries)
+    {
+        paraLayers = entries;
+    }
+
+    #endregion Constructors
 
     public Dictionary<EPanelPriority, Transform> ParaLayerLookup
     {
         get
         {
-            //validate
-            if(lookup == null || lookup.Count == 0)
+            // validate
+            if (lookup.Count == 0)
             {
                 CacheLookup();
             }
+
             return lookup;
         }
     }
@@ -31,25 +45,10 @@ public class PanelPriorityLayerList
     /// </summary>
     private void CacheLookup()
     {
-        lookup = new Dictionary<EPanelPriority, Transform>();
-
-        for(var i = 0; i < paraLayers.Count; ++i)
+        for (int i = 0; i < paraLayers.Count; ++i)
         {
-            lookup.Add(paraLayers[i].Priority, paraLayers[i].TargetParent);
+            PanelPriorityLayerListEntry layer = paraLayers[i];
+            lookup.Add(layer.Priority, layer.TargetParent);
         }
     }
-
-    #region Constructors
-
-    public PanelPriorityLayerList()
-    {
-
-    }
-
-    public PanelPriorityLayerList(List<PanelPriorityLayerListEntry> entries)
-    {
-        paraLayers = entries;
-    }
-
-    #endregion Constructors
 }
