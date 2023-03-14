@@ -70,9 +70,8 @@ public abstract class AUILayer<TScreen> : RichMonoBehaviour
     /// <summary>
     /// Returns an array of all the ScreenIDs that are registered to this layer.
     /// </summary>
-    /// <returns></returns>
-    public string[] GetRegisteredScreenIDs()
-        => registeredScreens.Values.Select((s) => s.ScreenID).ToArray();
+    public IEnumerable<string> GetRegisteredScreenIDs()
+        => registeredScreens.Values.Select((s) => s.ScreenID);
 
     /// <summary>
     /// Register a Screen this this Layer.

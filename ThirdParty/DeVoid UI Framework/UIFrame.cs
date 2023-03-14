@@ -402,9 +402,9 @@ public class UIFrame : RichMonoBehaviour
         panelLayer.PrintRegisteredScreenIDs();
 	}
 
-    public string[] GetRegisteredScreenIDs()
+    public IEnumerable<string> GetRegisteredScreenIDs()
 	{
-        return  windowLayer.GetRegisteredScreenIDs()
+        return windowLayer.GetRegisteredScreenIDs()
             .Concat(panelLayer.GetRegisteredScreenIDs());
 	}
 
