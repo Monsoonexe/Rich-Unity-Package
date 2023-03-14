@@ -8,7 +8,7 @@
 public class PanelUILayer : AUILayer<IPanelController>
 {
     [SerializeField]
-    private PanelPriorityLayerList priorityLayers = 
+    private PanelPriorityLayerList priorityLayers =
         new PanelPriorityLayerList();
 
     private void ReparentToParaLayer(EPanelPriority priority,
@@ -18,24 +18,24 @@ public class PanelUILayer : AUILayer<IPanelController>
 
         if (!priorityLayers.ParaLayerLookup.TryGetValue(priority, out targetTransform))
         {
-            targetTransform = this.transform;
+            targetTransform = transform;
         }
 
         screenTransform.SetParent(targetTransform, false);
     }
 
-    public override void ReparentScreen(IUIScreenController controller, 
+    public override void ReparentScreen(IUIScreenController controller,
         Transform screenTransform)
     {
-		if (controller is IPanelController panelController)
-		{
-			ReparentToParaLayer(panelController.Priority, screenTransform);
-		}
-		else
-		{
-			base.ReparentScreen(controller, screenTransform);
-		}
-	}
+        if (controller is IPanelController panelController)
+        {
+            ReparentToParaLayer(panelController.Priority, screenTransform);
+        }
+        else
+        {
+            base.ReparentScreen(controller, screenTransform);
+        }
+    }
 
     public override void HideScreen(IPanelController screen, bool animate = true)
     {
@@ -47,7 +47,7 @@ public class PanelUILayer : AUILayer<IPanelController>
         screen.Show();
     }
 
-    public override void ShowScreen<TProps>(IPanelController screen, 
+    public override void ShowScreen<TProps>(IPanelController screen,
         TProps properties)
     {
         screen.Show(properties);
@@ -56,11 +56,6 @@ public class PanelUILayer : AUILayer<IPanelController>
     public bool IsPanelVisible(string panelID)
     {
         IPanelController panel;
-        if(registeredScreens.TryGetValue(panelID, out panel))
-        {
-            return panel.IsVisible;
-        }
-
-        return false;
+        return registeredScreens.TryGetValue(panelID, out panel) && panel.IsVisible;
     }
 }
