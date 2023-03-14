@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using RichPackage;
 using Sirenix.OdinInspector;
 using QFSW.QC;
+using System.Collections.Generic;
 
 /// <summary>
 /// This is the central hub for all things UI. All your calls should be directed at this.
@@ -35,13 +37,11 @@ public class UIFrame : RichMonoBehaviour
     [SerializeField, Required]
     private GraphicRaycaster myGraphicRaycaster;
 
-    public Camera UICamera { get => mainCanvas.worldCamera; }
-
-    public int OpenWindowCount { get => windowLayer.ScreenCount; }
-
-    public int OpenPanelCount { get => panelLayer.ScreenCount; }
-
-    public int OpenScreenCount { get => OpenWindowCount + OpenPanelCount; }
+    public Camera UICamera
+    {
+        get => mainCanvas.worldCamera;
+        set => mainCanvas.worldCamera = value;
+    }
 
     #region Events
 
@@ -167,7 +167,7 @@ public class UIFrame : RichMonoBehaviour
 
     private void OpenCurrentWindow()
     {
-        bool firstWindow = OpenWindowCount == 0;
+        bool firstWindow = windowLayer.CurrentWindow == null;
         
         windowLayer.CurrentWindow.OnWindowOpen();
 

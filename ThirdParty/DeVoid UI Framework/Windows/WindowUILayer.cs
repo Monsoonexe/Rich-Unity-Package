@@ -200,7 +200,7 @@ public class WindowUILayer : AUILayer<IWindowController>
             return windowProperties.WindowQueuePriority != WindowPriorityENUM.ForceForeground;
         }
 
-        // enqueu if it doesn't HAVE to be at the foreground
+        // enqueue if it doesn't HAVE to be at the foreground
         if (controller.WindowPriority != WindowPriorityENUM.ForceForeground)
         {
             Debug.Log("Enqueueing screenID: " + controller.ScreenID);
