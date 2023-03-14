@@ -151,8 +151,13 @@ public class UIFrame : RichMonoBehaviour
     [Button, DisableInEditorMode]
     public void OpenWindow(string screenID)
     {
-        windowLayer.ShowScreenByID(screenID); // relay
-        OpenCurrentWindow();
+        bool firstWindow = windowLayer.CurrentWindow == null;
+        windowLayer.ShowScreenByID(screenID);
+        windowLayer.CurrentWindow.OnWindowOpen();
+
+        // raise event if was closed but now open
+        if (firstWindow && OnFirstWindowOpened != null)
+            OnFirstWindowOpened();
     }
 
     /// <summary>
@@ -161,14 +166,8 @@ public class UIFrame : RichMonoBehaviour
     public void OpenWindow<TProps>(string screenID, TProps properties)
         where TProps : IWindowProperties
     {
-        windowLayer.ShowScreenByID(screenID, properties);
-        OpenCurrentWindow();
-    }
-
-    private void OpenCurrentWindow()
-    {
         bool firstWindow = windowLayer.CurrentWindow == null;
-        
+        windowLayer.ShowScreenByID(screenID, properties);
         windowLayer.CurrentWindow.OnWindowOpen();
 
         // raise event if was closed but now open
