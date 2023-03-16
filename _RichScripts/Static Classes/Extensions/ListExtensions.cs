@@ -287,6 +287,40 @@ namespace RichPackage
             list.Clear();
             return list;
         }
+        
+
+        /// <summary>
+        /// Fast removal from a list. Only use this if the order of items in <paramref name="src"/>
+        /// doesn't matter.
+        /// </summary>
+        public static T QuickGetRemove<T>(this List<T> src, int index)
+        {
+            T item = src[index];
+            QuickRemove(src, index);
+            return item;
+        }
+
+        /// <summary>
+        /// Fast removal from a list. Only use this if the order of items in <paramref name="src"/>
+        /// doesn't matter.
+        /// </summary>
+        public static void QuickRemove<T>(this List<T> src, T item)
+        {
+            int index = src.IndexOf(item);
+
+            if (index >= 0)
+                QuickRemove(src, index);
+        }
+
+        /// <summary>
+        /// Fast removal from a list. Only use this if the order of items in <paramref name="src"/>
+        /// doesn't matter.
+        /// </summary>
+        public static void QuickRemove<T>(this List<T> src, int index)
+        {
+            src.Swap(index, src.LastIndex());
+            src.RemoveLast();
+        }
 
         /// <summary>
         /// Calls <see cref="List{T}.ToArray"/> and <see cref="List{T}.Clear"/> and returns the array.
