@@ -56,17 +56,21 @@ namespace RichPackage.InputSystem
             input.Init(EnumerateProfiles(), defaultProfile);
         }
 
-        private void Start()
+        protected virtual void Start()
         {
+            // events
             QuantumConsole.Instance.OnActivate += OnConsoleActivate;
             QuantumConsole.Instance.OnDeactivate += OnConsoleDeactivate;
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
-            Singleton.Release(this, ref s_instance);
+            // events
             QuantumConsole.Instance.OnActivate -= OnConsoleActivate;
             QuantumConsole.Instance.OnDeactivate -= OnConsoleDeactivate;
+
+            // singleton
+            Singleton.Release(this, ref s_instance);
         }
 
         #endregion Unity Messages
