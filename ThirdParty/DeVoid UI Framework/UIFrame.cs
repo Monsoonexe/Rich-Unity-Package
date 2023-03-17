@@ -120,6 +120,10 @@ public class UIFrame : RichMonoBehaviour
 
     public void CloseAllWindows(bool animate = true)
     {
+        // ignore if no windows are open
+        if (windowLayer.CurrentWindow == null)
+            return;
+
         windowLayer.HideAll(animate); // relay
         OnAllWindowsClosed?.Invoke();
     }
@@ -130,8 +134,11 @@ public class UIFrame : RichMonoBehaviour
     /// <seealso cref="CloseCurrentWindow"/>
     public void CloseWindow(string screenID, bool animate = true)
     {
+        bool windowWasOpen = windowLayer.CurrentWindow != null;
         windowLayer.HideScreenByID(screenID, animate); // relay
-        if (windowLayer.CurrentWindow == null)
+
+        // raise event if the last window was closed
+        if (windowWasOpen && windowLayer.CurrentWindow == null)
             OnAllWindowsClosed?.Invoke();
     }
 
@@ -146,17 +153,17 @@ public class UIFrame : RichMonoBehaviour
     }
 
     /// <summary>
-    /// Opens the Window with the given ID, with no Properties
+    /// Opens the Window with the given ID, with no Properties.
     /// </summary>
     [Button, DisableInEditorMode]
     public void OpenWindow(string screenID)
     {
-        bool firstWindow = windowLayer.CurrentWindow == null;
+        bool openingFirstWindow = windowLayer.CurrentWindow == null;
         windowLayer.ShowScreenByID(screenID);
         windowLayer.CurrentWindow.OnWindowOpen();
 
         // raise event if was closed but now open
-        if (firstWindow && OnFirstWindowOpened != null)
+        if (openingFirstWindow && OnFirstWindowOpened != null)
             OnFirstWindowOpened();
     }
 
