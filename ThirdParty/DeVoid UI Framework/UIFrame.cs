@@ -221,10 +221,6 @@ public class UIFrame : RichMonoBehaviour
     /// <summary>
     /// Shows a panel by its ID, giving Property Payload
     /// </summary>
-    /// <typeparam name="TProps"></typeparam>
-    /// <param name="screenID"></param>
-    /// <param name="properties"></param>
-    /// <seealso cref="IPanelProperties"/>
     public void ShowPanel<TProps>(string screenID, TProps properties)
         where TProps : IPanelProperties
     {
@@ -238,7 +234,6 @@ public class UIFrame : RichMonoBehaviour
 	/// <summary>
 	/// Hide all Panels and close all Windows.
 	/// </summary>
-	/// <param name="animate"></param>
 	[Command("hide-all", MonoTargetType.Registry)]
     public void HideAll(bool animate = true)
     {
