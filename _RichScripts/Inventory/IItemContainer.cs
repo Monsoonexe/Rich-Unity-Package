@@ -24,6 +24,7 @@ namespace RichPackage.InventorySystem
         int ItemCount(string itemID);
         int ItemCount(Item item);
         void RemoveAll();
+
         /// <summary>
         /// 
         /// </summary>
@@ -34,6 +35,7 @@ namespace RichPackage.InventorySystem
         /// just takes what you have up to that limit.</param>
         /// <returns></returns>
         ItemStack RemoveItem(Item item, int amount, bool greedy = false);
+
         /// <summary>
         /// 
         /// </summary>
