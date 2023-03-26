@@ -11,6 +11,11 @@ namespace RichPackage.Mathematics
         [SerializeField]
         protected AnimationCurve curve;
 
+        protected virtual void Reset()
+        {
+            SetDevDescription("A mathematical curve that can be scripted.");
+        }
+
         [Button]
         public virtual float Evaluate(float t)
         {
