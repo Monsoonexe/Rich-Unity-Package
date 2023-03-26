@@ -29,12 +29,12 @@ namespace RichPackage.TriggerVolumes
 
         [FoldoutGroup(EVENT_GROUP)]
         [SerializeField]
-        protected UnityEvent enterEvent = new UnityEvent();
+        protected UnityEvent enterEvent;
         public UnityEvent OnEnterEvent { get => enterEvent; }
 
         [FoldoutGroup(EVENT_GROUP)]
         [SerializeField]
-        protected UnityEvent exitEvent = new UnityEvent();
+        protected UnityEvent exitEvent;
         public UnityEvent OnExitEvent { get => exitEvent; }
 
         [Button, DisableInEditorMode]
@@ -45,6 +45,9 @@ namespace RichPackage.TriggerVolumes
 
         protected void HandleEnterCollision(GameObject other)
         {
+            if (!enabled)
+                return;
+
             if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
             {
                 ++triggerCount;
@@ -54,6 +57,9 @@ namespace RichPackage.TriggerVolumes
 
         protected void HandleExitCollision(GameObject other)
         {
+            if (!enabled)
+                return;
+
             if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
             {
                 exitEvent.Invoke();
