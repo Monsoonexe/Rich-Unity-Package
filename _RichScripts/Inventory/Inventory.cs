@@ -289,7 +289,7 @@ namespace RichPackage.InventorySystem
         {   //O(n) complexity. Can be reduced by sorting list, or one major stack divided up
             var amount = 0;//return value
             foreach (var stack in stock)
-                if (stack.Item.ID == itemID)
+                if (stack.Item.Id == itemID)
                     amount += stack.Amount;
             return amount;
         }

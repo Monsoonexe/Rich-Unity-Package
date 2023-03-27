@@ -183,7 +183,7 @@ namespace RichPackage.InventorySystem
         public override string ToString()
         {
             return 
-                (Item != null ? Item.ItemName : "empty")
+                (Item != null ? Item.SingleName : "empty")
                 +  " " + _amount.ToString();
         }
 
