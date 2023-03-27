@@ -21,20 +21,21 @@ namespace RichPackage
         public static Func<string> NewIDProvider { get; set; }
             = () => Guid.NewGuid().ToString().Remove("-").Substring(0, MAX_LENGTH);
 
-        public static UniqueID New
-        {
-            get => FromString(NewIDProvider());
-        }
+        public static UniqueID New => FromString(NewIDProvider());
 
         [field: SerializeField, LabelText(nameof(ID)),
             CustomContextMenu("Regenerate", nameof(GenerateNewId))]
         public string ID { get; private set; }
+
+        private int? cachedHash;
+        public int Hash { get => cachedHash ?? (cachedHash = ID.GetHashCode()).Value; }
 
         #region Constructors
 
         public UniqueID(string id)
         {
             ID = id;
+            cachedHash = null;
         }
 
         #endregion Constructors
@@ -43,9 +44,9 @@ namespace RichPackage
         
         public override string ToString() => ID;
 
-        public override int GetHashCode() => ID.GetHashCode();
+        public override int GetHashCode() => Hash;
 
-        public bool Equals(UniqueID other) => ID.QuickEquals(other.ID);
+        public bool Equals(UniqueID other) => Hash == other.Hash;
 
         public static UniqueID FromString(string src) => new UniqueID(src);
 
