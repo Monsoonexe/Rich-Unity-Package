@@ -252,6 +252,6 @@ namespace RichPackage.SaveSystem
 			Editor_PrintIDIsNotUnique();
 		}
 
-		#endregion
-	}
+        #endregion Editor: Set Save ID Helper Functions
+    }
 }
