@@ -1,11 +1,5 @@
-﻿/*
-TODO make a generic type: ItemStack<T>
-
-*/
-
-using System;
+﻿using System;
 using UnityEngine;
-using RichPackage;
 
 namespace RichPackage.InventorySystem
 {
@@ -13,10 +7,7 @@ namespace RichPackage.InventorySystem
     /// Serializeable Item Stack. Formerlly called "ItemAmount'. Contains runtime data.
     /// This should probably be a struct.
     /// </summary>
-    /// <seealso cref="ItemStack_Ext"/>
     /// <seealso cref="ItemStack"/>
-    /// <seealso cref="BaseItemSlot"/>
-    /// <remarks></remarks>
     [Serializable]
     public struct ItemStack// value type
     {
@@ -159,7 +150,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Create a new ItemStack by taking "newStackAmount" from this stack (stingy).
         /// </summary>
-        /// <param name="stack"></param>
         /// <param name="newStackAmount"></param>
         /// <returns>Returns a stack of 0 Amount if newStackAmount > stack.Amount</returns>
         public ItemStack SplitStack(int newStackAmount)
@@ -176,7 +166,7 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Take 'amount' from 'this' stack and give to 'destination' stack (stingy).
         /// </summary>
-        /// <param name="stack"></param>
+        /// <param name="destination"></param>
         /// <param name="newStackAmount"></param>
         /// <returns></returns>
         public bool SplitStack(ref ItemStack destination, int newStackAmount)
@@ -196,22 +186,6 @@ namespace RichPackage.InventorySystem
                 (Item != null ? Item.ItemName : "empty")
                 +  " " + _amount.ToString();
         }
-
-        //public static ItemStack operator +(ItemStack a, ItemStack b)
-        //{
-        //    var item = a._item == b._item ? a._item : null;
-        //    var amount = item == null ? 0 : a._amount + b._amount;
-        //    var sub = a.SubAmount == b.SubAmount ? a.SubAmount : 0;
-        //    return new ItemStack(item, amount, sub);
-        //}
-
-        //public static ItemStack operator -(ItemStack a, ItemStack b)
-        //{
-        //    var item = a._item == b._item ? a._item : null;
-        //    var amount = item == null ? 0 : a._amount - b._amount;
-        //    var sub = a.SubAmount == b.SubAmount ? a.SubAmount : 0;
-        //    return new ItemStack(item, amount, sub);
-        //}
 
         public static implicit operator Item(ItemStack a) => a.Item; //explicit conversion
         public static implicit operator int (ItemStack a) => a.Amount;

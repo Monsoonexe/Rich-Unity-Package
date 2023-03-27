@@ -1,6 +1,6 @@
-﻿using System.Text;
+﻿using RichPackage.Audio;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using ScriptableObjectArchitecture;
 
 namespace RichPackage.InventorySystem
 {
@@ -8,20 +8,19 @@ namespace RichPackage.InventorySystem
     /// 
     /// </summary>
     /// <seealso cref="ItemStack"/>
-    [CreateAssetMenu(fileName = "_Item",
-                    menuName = "ScriptableObjects/Item")]
-    public class Item : RichScriptableObject//data
-    {   //please update Constructors when adding properties!
+    public partial class Item : RichScriptableObject
+    {
         public const int MAX_STACK_AMOUNT = 9999;
 
-        [Header("---Item---")]
+        [Title("Item")]
         [SerializeField]
         [Tooltip("Unique id that identifies item (every 'sword of fallen' will have same id).")]
-        protected string id;
+        protected UniqueID id;
+
         /// <summary>
         /// Unique id that identifies item (every 'sword of fallen' will have same id).
         /// </summary>
-        public string ID { get { return id; } } // public readonly serialized property  
+        public UniqueID ID { get { return id; } } // public readonly serialized property  
 
         [SerializeField]
         [Tooltip("Usually key or quest items cannot be destroyed.")]
@@ -39,11 +38,11 @@ namespace RichPackage.InventorySystem
         [TextArea(1, 60)]
         [SerializeField]
         [Tooltip("General player-facing description (a potion that makes you invisible).")]
-        protected string itemDescription = "Please enter an in-game description.";
+        protected string description = "Please enter an in-game description.";
         /// <summary>
         /// "General player-facing description (a potion that makes you invisible)."
         /// </summary>
-        public string ItemDescription { get => itemDescription; }
+        public string Description { get => description; }
 
         [SerializeField]
         [Tooltip("Sprite that represents like items in Inventory.")]
@@ -53,8 +52,7 @@ namespace RichPackage.InventorySystem
         /// </summary>
         public Sprite Icon { get => icon; }
 
-        [SerializeField]
-        [Tooltip("The Item's physical form, if it were to be instantiated.")]
+        [SerializeField, Tooltip("The Item's physical form, if it were to be instantiated.")]
         private GameObject itemPrefab;
         /// <summary>
         /// The Item's physical form, if it were to be instantiated.
@@ -70,10 +68,10 @@ namespace RichPackage.InventorySystem
         /// </summary>
         public virtual int MaximumStacks { get => maximumStack; } // public readonly serialized property    
 
-        [Header("---Audio---")]
+        [Title("Audio")]
         [SerializeField]
-        protected AudioClipReference itemAudio;
-        public AudioClipReference ItemAudio { get => itemAudio; }
+        protected RichAudioClipReference itemAudio;
+        public RichAudioClipReference ItemAudio { get => itemAudio; }
 
         /// <summary>
         /// Special, itemized description of item.
@@ -81,57 +79,8 @@ namespace RichPackage.InventorySystem
         /// <returns></returns>
         public virtual string GetDescription()
         {
-            return itemDescription;
+            return description;
         }
-
-        #region Constructors
-
-        /// <summary>
-        /// This should be treated like the 'new' operator. Creates a run-time instance.
-        /// To create a .asset, consider Editor_Construct()
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
-        /// <param name="type"></param>
-        /// <param name="sprite"></param>
-        /// <param name="maxStack"></param>
-        /// <param name="clip"></param>
-        public static Item Construct(string name, string description,
-            Sprite sprite, int maxStack, AudioClipReference clip,
-            GameObject itemPrefab)
-        {
-            var newItem = CreateInstance<Item>(); //new
-
-            newItem.itemName = name;
-            newItem.itemDescription = description;
-            newItem.icon = sprite;
-            newItem.maximumStack = maxStack;
-            newItem.itemAudio = clip;
-            newItem.itemPrefab = itemPrefab;
-
-            return newItem;
-        }
-
-        /// <summary>
-        /// Copy constructor.
-        /// </summary>
-        /// <param name="itemToCopy"></param>
-        /// <returns>Copy of given item</returns>
-        public static Item Construct(Item itemToCopy)
-        {
-            var newItem = CreateInstance<Item>();
-
-            newItem.itemName = itemToCopy.itemName;
-            newItem.itemDescription = itemToCopy.itemDescription;
-            newItem.icon = itemToCopy.icon;
-            newItem.maximumStack = itemToCopy.maximumStack;
-            newItem.itemAudio = itemToCopy.itemAudio;
-            newItem.itemPrefab = itemToCopy.itemPrefab;
-
-            return newItem;
-        }
-
-        #endregion
 
     #if UNITY_EDITOR//AssetDatabase is Editor only
 
@@ -140,8 +89,8 @@ namespace RichPackage.InventorySystem
         /// </summary>
         protected virtual void OnValidate()
         {
-            if(string.IsNullOrEmpty(id))
-                id = GetInstanceID().ToString();
+            if (string.IsNullOrEmpty(id))
+                id = UniqueID.New;
         }
 
     #endif

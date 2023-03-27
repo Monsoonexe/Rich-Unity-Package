@@ -21,7 +21,8 @@ namespace RichPackage.InventorySystem
         /// </summary>
         [Tooltip("List of all Items in stock. Can be ScriptableObject " +
             "data or Runtime data, like an ATool.")]
-        [SerializeField] protected List<ItemStack> stock = new List<ItemStack>();
+        [SerializeField]
+        protected List<ItemStack> stock = new List<ItemStack>();
 
         /// <summary>
         /// All items  this Inventory has.
@@ -85,7 +86,6 @@ namespace RichPackage.InventorySystem
                 newStack.AddToStack(ref stack);
                 stock.Add(newStack);
             }
-
         }
 
         /// <summary>
@@ -96,30 +96,29 @@ namespace RichPackage.InventorySystem
         /// <param name="index"></param>
         public void AddToStackAtIndex(ref ItemStack stack, int index)
         {
+            // validate
             if(index >= capacityLimit || index < 0)
             {
                 throw new System.IndexOutOfRangeException("[Inventory] " + index 
                     + " / " + capacityLimit);
             }
+
+            while (index >= stock.Count)//pad with empty slots
+                stock.Add(new ItemStack(null));
+
+            var stockItem = stock[index]; //get COPY
+            if (stockItem.Item == null //empty
+                || stockItem.Item == stack.Item)//same type items
+            {
+                stockItem.AddToStack(ref stack);
+                stock[index] = stockItem;//re-assign because it's a struct
+                Debug.Assert(stack.Amount >= 0, "[Inventory] amount < 0", this);
+            }
             else
             {
-                while (index >= stock.Count)//pad with empty slots
-                    stock.Add(new ItemStack(null));
-
-                var stockItem = stock[index]; //get COPY
-                if (stockItem.Item == null //empty
-                    || stockItem.Item == stack.Item)//same type items
-                {
-                    stockItem.AddToStack(ref stack);
-                    stock[index] = stockItem;//re-assign because it's a struct
-                    Debug.Assert(stack.Amount >= 0, "[Inventory] amount < 0", this);
-                }
-                else
-                {
-                    Debug.AssertFormat(false,
-                        "[Inventory] Items do not match: {0}, {1} ", 
-                        stockItem.Item, stack.Item);
-                }
+                Debug.AssertFormat(false,
+                    "[Inventory] Items do not match: {0}, {1} ",
+                    stockItem.Item, stack.Item);
             }
         }
 
@@ -175,7 +174,7 @@ namespace RichPackage.InventorySystem
                 amount = int.MaxValue;
             }
 
-            if(greedy)
+            if (greedy)
             {
                 var itemIndex = 0;//while loop iterator
                 var itemCount = stock.Count;//cache for loop
