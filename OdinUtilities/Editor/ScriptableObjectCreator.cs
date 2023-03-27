@@ -163,10 +163,11 @@ namespace RichPackage.Editor
             if (this.previewObject)
             {
                 string path = $"{targetFolder}/{assetName}.asset";
-                path = AssetDatabase.GenerateUniqueAssetPath(path);
+                path = AssetDatabase.GenerateUniqueAssetPath(path); // item 1, item 2, etc.
                 AssetDatabase.CreateAsset(this.previewObject, path);
                 AssetDatabase.Refresh();
-                Selection.activeObject = this.previewObject;
+                var item = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
+                Selection.activeObject = item;
                 EditorApplication.delayCall += this.Close;
             }
         }
