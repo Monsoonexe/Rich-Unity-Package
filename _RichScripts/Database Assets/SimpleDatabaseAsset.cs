@@ -36,7 +36,7 @@ namespace RichPackage.Databases
 		private void OnValidate()
 		{
             // refresh if entries were manually edited
-            if (entries.Count != entryMap.Count)
+            if (entries.Count != entryMap?.Count)
                 RefreshEntryMap();
 		}
 
