@@ -500,6 +500,13 @@ namespace RichPackage
                 action(list[i]);
         }
 
+        public static IEnumerable<(T Item, int Index)> ForEachWithIndex<T>(this IEnumerable<T> src)
+		{
+            int i = 0;
+            foreach (var v in src)
+                yield return (v, i++);
+		}
+
         public static void ForEachWithIndex<T>(this IEnumerable<T> collection, Action<T, int> action)
         {
             int i = 0;
