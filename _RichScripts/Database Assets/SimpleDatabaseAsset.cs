@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -100,35 +101,37 @@ namespace RichPackage.Databases
 
 		#endregion File IO
 
+		
 		[Serializable]
-        private class DatabaseEntry
+		private class DatabaseEntry
 		{
-            [SerializeField]
-            private string key;
+			[SerializeField]
+			private string key;
 
-            [SerializeField]
-            private string value;
+			[SerializeField]
+			private string value;
 
-            public string Key { get => key; private set => key = value; }
+			public string Key { get => key; private set => key = value; }
 
 			#region Constructors
 
 			public DatabaseEntry(string key)
-            {
-                Key = key;
-            }
+			{
+				Key = key;
+			}
 
 			#endregion Constructors
 
 			public void SetValue<T>(T value)
 			{
-                this.value = JsonUtility.ToJson(value);
+				this.value = JsonConvert.SerializeObject(value);
 			}
 
-            public T GetValue<T>()
+			public T GetValue<T>()
 			{
-                return JsonUtility.FromJson<T>(value);
+				return JsonConvert.DeserializeObject<T>(value);
 			}
-        }
+		}
+	}
     }
 }
