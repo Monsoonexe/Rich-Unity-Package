@@ -23,7 +23,7 @@ namespace RichPackage.Databases
 
 		protected virtual void Reset()
 		{
-			SetDeveloperDescription($"A database for {typeof(TData).Name}s.");
+			SetDevDescription($"A database for {typeof(TData).Name}s.");
 		}
 
 		public virtual TData Get(int index)
