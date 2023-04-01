@@ -132,6 +132,5 @@ namespace RichPackage.Databases
 				return JsonConvert.DeserializeObject<T>(value);
 			}
 		}
-	}
     }
 }
