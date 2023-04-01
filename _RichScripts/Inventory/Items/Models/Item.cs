@@ -36,6 +36,7 @@ namespace RichPackage.InventorySystem
         [SerializeField]
         [Tooltip("General player-facing description (a potion that makes you invisible).")]
         protected string description = "Please enter an in-game description.";
+
         /// <summary>
         /// "General player-facing description (a potion that makes you invisible)."
         /// </summary>
@@ -44,6 +45,7 @@ namespace RichPackage.InventorySystem
         [SerializeField]
         [Tooltip("Sprite that represents like items in Inventory.")]
         protected Sprite icon;
+
         /// <summary>
         /// Sprite that represents like items in Inventory.
         /// //
@@ -52,6 +54,7 @@ namespace RichPackage.InventorySystem
 
         [SerializeField, Tooltip("The Item's physical form, if it were to be instantiated.")]
         private GameObject itemPrefab;
+
         /// <summary>
         /// The Item's physical form, if it were to be instantiated.
         /// </summary>
@@ -75,6 +78,7 @@ namespace RichPackage.InventorySystem
         [SerializeField]
         [Tooltip("How many of this item can be stacked in Inventory? (usually Tools and Weapons are 1.")]
         protected int maximumStack = MaxStackSize;
+
         /// <summary>
         /// "How many of this item can be stacked in Inventory? (usually Tools and Weapons are 1."
         /// </summary>
