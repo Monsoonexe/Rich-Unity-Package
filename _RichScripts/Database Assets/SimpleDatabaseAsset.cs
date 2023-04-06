@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace RichPackage.Databases
@@ -22,10 +23,10 @@ namespace RichPackage.Databases
         /// </summary>
         private Dictionary<string, DatabaseEntry> entryMap;
 
-		#region Unity Messages
+        #region Unity Messages
 
-		protected virtual void Reset()
-		{
+        protected virtual void Reset()
+        {
             SetDevDescription($"A database object for storing serialized data.");
         }
 
@@ -34,17 +35,17 @@ namespace RichPackage.Databases
             RefreshEntryMap();
         }
 
-		private void OnValidate()
-		{
+        private void OnValidate()
+        {
             // refresh if entries were manually edited
             if (entries.Count != entryMap?.Count)
                 RefreshEntryMap();
-		}
+        }
 
-		#endregion Unity Messages
+        #endregion Unity Messages
 
-		[Button]
-		private void RefreshEntryMap()
+        [Button]
+        private void RefreshEntryMap()
         {
             // create or reset
             if (entryMap == null)
@@ -53,7 +54,7 @@ namespace RichPackage.Databases
                 entryMap.Clear();
 
             // load list into table
-            foreach (var entry in entries)
+            foreach (DatabaseEntry entry in entries)
             {
                 entryMap[entry.Key] = entry;
             }
@@ -70,67 +71,93 @@ namespace RichPackage.Databases
             return entry;
         }
 
-		#region CRUD
+        #region CRUD
 
         public void Delete(string key)
-		{
+        {
             if (entryMap.TryGetValue(key, out DatabaseEntry entry))
-			{
+            {
                 entryMap.Remove(key);
                 entries.QuickRemove(entry);
-			}
-		}
+            }
+        }
 
         public T Get<T>(string key, T @default = default)
-		{
-            if (entryMap.TryGetValue(key, out DatabaseEntry entry))
-                return entry.GetValue<T>();
-            return default;
-		}
+        {
+            return entryMap.TryGetValue(key, out DatabaseEntry entry) ? entry.GetValue<T>() : default;
+        }
 
         public void Set<T>(string key, T value)
-		{
+        {
             GetOrCreateEntry(key).SetValue(value);
-		}
+        }
 
-		#endregion CRUD
+        public void Clear()
+        {
+            entryMap.Clear();
+            entries.Clear();
+        }
 
-		#region File IO
+        #endregion CRUD
 
-        // TODO - save / load from file
+        public bool Contains(string key) => entryMap.ContainsKey(key);
 
-		#endregion File IO
+        #region File IO
 
-		
-		[Serializable]
-		private class DatabaseEntry
-		{
-			[SerializeField]
-			private string key;
+        public void SaveToFile(string filePath)
+        {
+            string json = JsonConvert.SerializeObject(entries);
+            File.WriteAllText(filePath, json);
+        }
 
-			[SerializeField]
-			private string value;
+        public void LoadFromFile(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                Debug.LogError($"File '{filePath}' doesn't exist.", this);
+                Clear();
+                return;
+            }
 
-			public string Key { get => key; private set => key = value; }
+            var serializer = new JsonSerializer();
+            using (var sr = new StreamReader(File.OpenRead(filePath)))
+            using (var jsonTextReader = new Newtonsoft.Json.JsonTextReader(sr))
+            {
+                entries = (List<DatabaseEntry>)serializer.Deserialize(jsonTextReader, typeof(List<DatabaseEntry>));
+            }
+        }
 
-			#region Constructors
+        #endregion File IO
 
-			public DatabaseEntry(string key)
-			{
-				Key = key;
-			}
+        [Serializable]
+        private class DatabaseEntry
+        {
+            [SerializeField]
+            private string key;
 
-			#endregion Constructors
+            [SerializeField]
+            private string value;
 
-			public void SetValue<T>(T value)
-			{
-				this.value = JsonConvert.SerializeObject(value);
-			}
+            public string Key { get => key; private set => key = value; }
 
-			public T GetValue<T>()
-			{
-				return JsonConvert.DeserializeObject<T>(value);
-			}
-		}
+            #region Constructors
+
+            public DatabaseEntry(string key)
+            {
+                Key = key;
+            }
+
+            #endregion Constructors
+
+            public void SetValue<T>(T value)
+            {
+                this.value = JsonConvert.SerializeObject(value);
+            }
+
+            public T GetValue<T>()
+            {
+                return JsonConvert.DeserializeObject<T>(value);
+            }
+        }
     }
 }
