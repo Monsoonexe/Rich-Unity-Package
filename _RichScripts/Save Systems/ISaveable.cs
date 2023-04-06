@@ -9,10 +9,8 @@ namespace RichPackage.SaveSystem
 	{
 		UniqueID SaveID { get; }
 
-		void SaveState(ES3File saveFile);
+		void SaveState(ISaveSystem saveFile);
 
-		void LoadState(ES3File saveFile);
-
-		void DeleteState(ES3File saveFile);
+		void LoadState(ISaveSystem saveFile);
 	}
 }

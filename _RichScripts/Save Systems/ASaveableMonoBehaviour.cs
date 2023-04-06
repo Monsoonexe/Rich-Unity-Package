@@ -54,12 +54,17 @@ namespace RichPackage.SaveSystem
 	/// </summary>
 	/// <seealso cref="SaveSystem"/>
 	public abstract class ASaveableMonoBehaviour<TState> : ASaveableMonoBehaviour
-		where TState : ASaveableMonoBehaviour.AState, new()
-	{	
+		where TState : new()
+	{
 		[SerializeField]
 		private TState saveData = new TState();
 
-		public TState SaveData => saveData; //readonly property
+		public TState SaveData { get => saveData; set => saveData = value; }
+
+		protected bool saveDataIsDirty;
+
+		[SerializeField]
+		protected UniqueID saveDataId;
 
 		#region ISaveable Implementation
 
@@ -77,28 +82,28 @@ namespace RichPackage.SaveSystem
 		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
 		public override UniqueID SaveID 
 		{ 
-			get => saveData.saveID; 
-			protected set => saveData.saveID = value;
+			get => saveDataId; 
+			protected set => saveDataId = value;
 		}
 
 		/// <summary>
 		/// Saves <see cref="AState"/> to saveFile.
 		/// </summary>
-		public override void SaveState(ES3File saveFile)
+		public override void SaveState(ISaveSystem saveFile)
 		{    //recommended code
-			if (saveData.IsDirty)
+			if (saveDataIsDirty)
 				saveFile.Save(SaveID, saveData);
-			saveData.IsDirty = false;
+            saveDataIsDirty = false;
 		}
 
 		/// <summary>
 		/// Loads <see cref="AState"/> state from saveFile.
 		/// </summary>
-		public override void LoadState(ES3File saveFile)
+		public override void LoadState(ISaveSystem saveFile)
 		{    //recommended code
-			if (saveFile.KeyExists(SaveID))
-				saveFile.LoadInto(SaveID, SaveData);
-			SaveData.IsDirty = false;
+			if (saveFile.Contains(SaveID))
+                SaveData = saveFile.Load<TState>(SaveID);
+            saveDataIsDirty = false;
 		}
 
 		#endregion
@@ -110,36 +115,6 @@ namespace RichPackage.SaveSystem
 	public abstract class ASaveableMonoBehaviour : RichMonoBehaviour,
 		ISaveable, IEquatable<ISaveable>
 	{
-		/// <summary>
-		/// Contains all the data that needs to be saved
-		/// </summary>
-		[Serializable]
-		public abstract class AState : IEquatable<AState>
-		{
-			public AState()
-			{
-				saveID = UniqueID.New;
-				IsDirty = false;
-			}
-
-			[HideInInspector]
-			[ES3NonSerializable] //don't save it to file
-			[Tooltip("Must be unique to all other saveables!")]
-			public UniqueID saveID;
-
-			//more fields....
-
-			/// <summary>
-			/// Set this flag to true to indicate that this has new data to save.
-			/// </summary>
-			[ES3NonSerializable] //don't save it to file
-			[ShowInInspector, ReadOnly]
-			[PropertyTooltip("True when the data has changed and this needs to be saved.")]
-			public virtual bool IsDirty { get; set; } = false;
-
-			public bool Equals(AState other) => this.saveID == other.saveID;
-		}
-
 		#region Unity Messages
 
 		protected override void Reset()
@@ -176,17 +151,12 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// Saves <see cref="AState"/> to saveFile.
 		/// </summary>
-		public abstract void SaveState(ES3File saveFile);
+		public abstract void SaveState(ISaveSystem saveFile);
 
 		/// <summary>
 		/// Loads <see cref="AState"/> state from saveFile.
 		/// </summary>
-		public abstract void LoadState(ES3File saveFile);
-
-		/// <summary>
-		/// Erases save data from file.
-		/// </summary>
-		public void DeleteState(ES3File saveFile) => saveFile.DeleteKey(SaveID);
+		public abstract void LoadState(ISaveSystem saveFile);
 
 		/// <summary>
 		/// Saveables are equal if their data will be saved to the same entry (has same key).

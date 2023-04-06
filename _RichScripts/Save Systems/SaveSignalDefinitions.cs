@@ -8,23 +8,23 @@ namespace RichPackage.SaveSystem.Signals
 	/// <seealso cref="SaveStateToFileSignal"/>
 	public class SaveGameSignal : ASignal
 	{
-		//exists
+		// exists
 	}
 
 	/// <summary>
 	/// The game state needs to be saved to this file.
 	/// </summary>
-	public class SaveStateToFileSignal : ASignal<ES3File>
+	public class SaveStateToFileSignal : ASignal<ISaveSystem>
     {
-        //exists
+        // exists
     }
 
 	/// <summary>
 	/// The game's state needs to be loaded from this file.
 	/// </summary>
-	public class LoadStateFromFileSignal : ASignal<ES3File>
+	public class LoadStateFromFileSignal : ASignal<ISaveSystem>
 	{
-		//exists
+		// exists
 	}
 
 	/// <summary>

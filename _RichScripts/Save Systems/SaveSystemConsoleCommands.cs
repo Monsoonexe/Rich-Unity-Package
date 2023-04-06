@@ -1,4 +1,5 @@
-﻿using QFSW.QC;
+﻿#if ES3
+using QFSW.QC;
 using UnityEngine;
 
 namespace RichPackage.SaveSystem
@@ -59,3 +60,4 @@ namespace RichPackage.SaveSystem
 		#endregion
 	}
 }
+#endif // ES3
