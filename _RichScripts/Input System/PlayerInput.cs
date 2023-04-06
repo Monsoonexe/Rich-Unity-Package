@@ -162,15 +162,6 @@ namespace RichPackage.InputSystem
 
             #endregion StateBase
 
-            #region Input Helpers
-
-            protected bool IsAnyShiftDown()
-            {
-                return PlayerInput.IsAnyShiftDown();
-            }
-
-            #endregion Input Helpers
-
             #region Object
 
             public override string ToString()
@@ -180,6 +171,5 @@ namespace RichPackage.InputSystem
 
             #endregion Object
         }
-
     }
 }
