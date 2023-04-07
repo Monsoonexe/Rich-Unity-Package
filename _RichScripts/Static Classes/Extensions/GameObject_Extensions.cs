@@ -192,30 +192,18 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Returns true if TComponent was found and not null.
+        /// Returns the hierarchy path from the root to this object.
         /// </summary>
-        /// <returns>True if Component was found and is not null.</returns>
-        public static bool TryGetComponent<TComponent>(this GameObject gameObject,
-            out TComponent component)
+        public static string GetFullPath(this GameObject gameObject)
         {
-            component = gameObject.GetComponent<TComponent>();
-            return component != null;
-        }
-
-        /// <summary>
-        /// Get a new List each TComponent that is on each the root of each GameObject.
-        /// </summary>
-        /// <returns>A list of non-null component references.</returns>
-        public static List<TComponent> GetComponents<TComponent>(
-            this IList<GameObject> gameObjects)
-            where TComponent : Component
-        {
-            int count = gameObjects.Count;
-            var components = new List<TComponent>(count);
-            for (int i = 0; i < count; ++i)
-                if (gameObjects[i].TryGetComponent(out TComponent comp))
-                    components.Add(comp);
-            return components;
+            string path = gameObject.name;
+            Transform parent = gameObject.transform.parent;
+            while (parent != null)
+            {
+                path = $"{parent.name}/{path}";
+                parent = parent.parent;
+            }
+            return path;
         }
 
         /// <summary>
