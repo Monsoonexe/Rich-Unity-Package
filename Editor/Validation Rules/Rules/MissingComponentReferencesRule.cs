@@ -42,7 +42,7 @@ namespace RichPackage.Editor.ValidationRules
         {
 	        void SelectObject() => Selection.activeGameObject = obj;
 
-	        void PrintPath() => Debug.Log(obj.scene.name + "/" + obj.GetHierarchyPath());
+	        void PrintPath() => Debug.Log(obj.scene.name + "/" + obj.GetFullPath());
 
 			void Fix()
 			{
