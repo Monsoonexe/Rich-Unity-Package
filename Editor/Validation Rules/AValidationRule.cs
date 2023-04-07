@@ -8,6 +8,8 @@ namespace RichPackage.Editor.ValidationRules
     /// <seealso cref="ValidationRulesWindow"/>
     public abstract class AValidationRule : IValidationRule
     {
+        private bool ignored;
+
         public string SaveName
         {
             get => ValidationRuleUtility.SaveNameRoot + GetType().Name;
@@ -15,17 +17,11 @@ namespace RichPackage.Editor.ValidationRules
 
         public bool Ignore
         {
-            get => ApexEditorUtility.Settings.Get(SaveName, false);
+            // TODO - save these values
+            get => ignored;
             set
             {
-                if (value)
-                {
-                    ApexEditorUtility.Settings.Set(SaveName, true);
-                }
-                else
-                {
-                    ApexEditorUtility.Settings.Delete(SaveName);
-                }
+                ignored = value;
             }
         }
         
