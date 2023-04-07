@@ -27,7 +27,7 @@ namespace RichPackage.Editor.ValidationRules
         private static Type[] _allGameRuleTypes = Type.EmptyTypes;
         private static IValidationRule[] _rules = Array.Empty<IValidationRule>();
 
-        [MenuItem("Editor tools/Windows/Validation Rules Wizard", isValidateFunction: false, 2)]
+        [MenuItem("Tools/Scary Robot/Validation Rules Wizard", isValidateFunction: false, 2)]
         public static void ShowWindow()
         {
             Instance = GetWindow<ValidationRulesWindow>(true, "Validation Wizard", true);
