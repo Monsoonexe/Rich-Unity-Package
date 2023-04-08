@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace RichPackage.Reflection
 {
-    public static class ReflectionUtility 
+    public static class ReflectionUtility
     {
         public static Type[] GetAllClassesWithAttribute(Type attribute, bool inherit = true)
         {
@@ -191,6 +191,14 @@ namespace RichPackage.Reflection
         public static bool IsBuiltInUnityObjectType(Type type)
         {
             return type.Namespace != null && type.Name.Contains("UnityEngine");
+        }
+    
+        /// <returns>All the public instance properties that can be read and written.</returns>
+        public static IEnumerable<PropertyInfo> GetAllProperties<T>()
+        {
+            return typeof(T)
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where((p) => p.CanRead && p.CanWrite);
         }
     }
 }
