@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using ScriptableObjectArchitecture;
 using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
+using System.Collections.Generic;
 
 namespace RichPackage.SaveSystem
 {
@@ -12,7 +13,7 @@ namespace RichPackage.SaveSystem
 	public class ScriptableObjectSaveSystem : RichMonoBehaviour
 	{
 		[SerializeField]
-		private BaseVariable[] savedVariables;
+		private List<BaseVariable> savedVariables;
 
 		protected override void Reset()
 		{
@@ -97,5 +98,12 @@ namespace RichPackage.SaveSystem
                     break;
             }
         }
+
+		public static void Register(BaseVariable variable)
+		{
+			var instance = FindObjectOfType<ScriptableObjectSaveSystem>();
+			instance.savedVariables.Add(variable);
+            instance.Editor_MarkDirty();
+		}
 	}
 }
