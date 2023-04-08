@@ -8,10 +8,7 @@ namespace ScriptableObjectArchitecture
     /// </summary>
     public abstract class SOArchitectureBaseObject : ScriptableObject
     {
-#pragma warning disable 0414
-        [SerializeField]
-        private DeveloperDescription DeveloperDescription = new DeveloperDescription();
-#pragma warning restore
+        public DeveloperDescription DeveloperDescription = new DeveloperDescription();
 
         private string _name;
 
