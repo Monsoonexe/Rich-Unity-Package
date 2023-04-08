@@ -50,7 +50,6 @@ namespace RichPackage.SaveSystem
 {
 	/// <summary>
 	/// Base class with everything you need to save some persistent data.
-	/// All inheritors should derive save data from <see cref="AState"/>.
 	/// </summary>
 	/// <seealso cref="SaveSystem"/>
 	public abstract class ASaveableMonoBehaviour<TState> : ASaveableMonoBehaviour
