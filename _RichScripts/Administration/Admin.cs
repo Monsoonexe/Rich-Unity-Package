@@ -61,14 +61,14 @@ namespace RichPackage.Administration
         private static void LoginInternal()
 		{
             IsAdmin = true;
-            Debug.Log(RichText.Green("Admin logged in."));
+            //Debug.Log(RichText.Green("Admin logged in."));
             OnLogin?.Invoke();
         }
 
 		private static void LogoutInternal()
         {
             IsAdmin = false;
-            Debug.Log("Admin logged out.");
+            //Debug.Log("Admin logged out.");
             OnLogout?.Invoke();
         }
 
