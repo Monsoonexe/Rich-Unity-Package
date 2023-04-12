@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
@@ -51,6 +51,9 @@ namespace RichPackage.Audio
         [SerializeField, Min(0)]
         private int sfxAudioSourceCount = 6;
 
+        [SerializeField, Tooltip("DontDestroyOnLoad to exist between scenes.")]
+        private bool persistent = false;
+
         public Ease FadeEase = Ease.Linear;
 
         public Vector2 PitchShiftRange = new Vector2(0.8f, 1.2f);
@@ -85,7 +88,7 @@ namespace RichPackage.Audio
         protected override void Awake()
         {
             base.Awake();
-            if (Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: true))
+            if (Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: persistent))
             {
                 UnityServiceLocator.Instance.RegisterAudioPlayer(this);
                 CreateAudioSources();
