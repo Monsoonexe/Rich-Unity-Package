@@ -37,6 +37,9 @@ namespace RichPackage
         [SerializeField, MinValue(10), MaxValue(90)]
         private int targetFrameRate = 60;
 
+        [SerializeField, Tooltip("Determines whether the hardware pointer is visible or not.")]
+        private bool cursorVisible = false;
+
         [SerializeField]
         private bool alwaysAdminInEditor = true;
 
@@ -138,6 +141,7 @@ namespace RichPackage
         private void ApplyAppSettings()
         {
             Application.targetFrameRate = targetFrameRate;
+            Cursor.visible = cursorVisible;
             AttemptAutoAdminLogin();
         }
 
