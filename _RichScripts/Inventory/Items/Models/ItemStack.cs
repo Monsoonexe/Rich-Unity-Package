@@ -9,7 +9,7 @@ namespace RichPackage.InventorySystem
     /// </summary>
     /// <seealso cref="ItemStack"/>
     [Serializable]
-    public struct ItemStack// value type
+    public struct ItemStack
     {
         [SerializeField]
         private Item _item;
@@ -24,7 +24,7 @@ namespace RichPackage.InventorySystem
             get => _amount;
             set
             {
-                _amount = RichMath.Clamp(value, 0, MaxAmount);//max value
+                _amount = RichMath.Clamp(value, 0, MaxAmount); // max value
                 if (_amount == 0) Item = null; // disown Item
             }
         }
