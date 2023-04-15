@@ -281,14 +281,14 @@ namespace RichPackage
 
         public static bool IsPrime(this long n)
         {
-            //Primality test using 6k+-1 optimization.
-            //early exits
+            // Primality test using 6k+-1 optimization.
+            // early exits
             if (n <= 3)
-                return n > 1; //everything <= 1 is non-prime
-            else if (n % 2 == 0 || n % 3 == 0)
-                return false; //no even number is prime, nor multiple of 3
+                return n > 1; // everything <= 1 is non-prime
+            else if (n % 2 == 0|| n % 3 == 0)
+                return false; // no even number is prime, nor multiple of 3
 
-            //test all others
+            // test all others
             long i = 5;
             while (i * i <= n)
             {
@@ -296,6 +296,7 @@ namespace RichPackage
                     return false;
                 i += 6;
             }
+
             return true;
         }
     }
