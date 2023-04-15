@@ -2,6 +2,9 @@
 
 namespace RichPackage
 {
+	/// <summary>
+	/// Extensions and helpers for <see langword="int"/>s.
+	/// </summary>
 	public static class Int_Extensions
 	{
 		/// <summary>
@@ -49,5 +52,12 @@ namespace RichPackage
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int Xnor(this int lhs, int rhs)
 			=> ~(lhs ^ rhs);
-	}
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsEven(this int n)
+        {
+            // all odd numbers (even negatives) end in a 1.
+            return (n & 1) == 0;
+        }
+    }
 }
