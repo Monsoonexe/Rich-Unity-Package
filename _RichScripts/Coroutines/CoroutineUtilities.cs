@@ -48,10 +48,7 @@ namespace RichPackage
         public static IEnumerator InvokeAfter(
             Action action, float delay)
         {
-            var timer = SimpleTimer.StartNew();
-
-            do yield return null;
-            while (timer < delay);
+            yield return new WaitForSeconds(delay);
             action();
         }
 
