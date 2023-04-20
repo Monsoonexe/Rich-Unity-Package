@@ -26,7 +26,7 @@ namespace RichPackage.Editor
 
         #region Menu Items
 
-        [MenuItem("Scenes/Open SceneMenu.cs")]
+        [MenuItem("Scenes/Open SceneMenu.cs", priority = -5)]
         public static void OpenSceneMenuScript()
         {
             var scriptFile = AssetDatabase.LoadAssetAtPath<MonoScript>(
@@ -45,7 +45,7 @@ namespace RichPackage.Editor
             }
         }
 
-        [MenuItem("Scenes/Reload Current Scene")]
+        [MenuItem("Scenes/Reload Current Scene", priority = -5)]
         public static void ReloadCurrentScene()
             => LoadScene(SceneManager.GetActiveScene());
 
