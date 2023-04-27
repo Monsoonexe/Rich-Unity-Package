@@ -22,16 +22,47 @@ namespace RichPackage
             startTime = App.Time;
         }
 
-        public static bool operator >(SimpleTimer timer, float duration)
+        #region Object
+
+        public override string ToString()
+        {
+            return Elapsed.ToString();
+        }
+
+        public string ToString(string formatting)
+        {
+            var time = TimeSpan.FromSeconds(Elapsed);
+            return time.ToString(formatting);
+        }
+
+        #endregion Object
+
+        #region Operator Overloads
+
+        public static bool operator > (SimpleTimer timer, float duration)
             => timer.Elapsed > duration;
 
-        public static bool operator <(SimpleTimer timer, float duration)
+        public static bool operator < (SimpleTimer timer, float duration)
             => timer.Elapsed < duration;
 
-        public static bool operator >=(SimpleTimer timer, float duration)
+        public static bool operator >= (SimpleTimer timer, float duration)
             => timer.Elapsed >= duration;
 
-        public static bool operator <=(SimpleTimer timer, float duration)
+        public static bool operator <= (SimpleTimer timer, float duration)
             => timer.Elapsed <= duration;
+
+        public static float operator + (SimpleTimer timer, float value)
+            => timer.Elapsed + value;
+
+        public static float operator - (SimpleTimer timer, float value)
+            => timer.Elapsed - value;
+
+        public static float operator * (SimpleTimer timer, float value)
+            => timer.Elapsed * value;
+
+        public static float operator / (SimpleTimer timer, float value)
+            => timer.Elapsed / value;
+
+        #endregion Operator Overloads
     }
 }
