@@ -77,14 +77,16 @@ namespace RichPackage.Editor
 
         protected override OdinMenuTree BuildMenuTree()
         {
+            if (scriptableObjectTypes == null)
+                scriptableObjectTypes = GatherTypes();
+
             this.MenuWidth = 270;
             this.WindowPadding = Vector4.zero;
 
             OdinMenuTree tree = new OdinMenuTree(false);
             tree.Config.DrawSearchToolbar = true;
             tree.DefaultMenuStyle = OdinMenuStyle.TreeViewStyle;
-            tree.AddRange(scriptableObjectTypes
-                .Where(x => !x.IsAbstract), GetMenuPathForType)
+            tree.AddRange(scriptableObjectTypes.Where(x => !x.IsAbstract), GetMenuPathForType)
                 .AddThumbnailIcons();
             tree.SortMenuItemsByName();
             tree.Selection.SelectionConfirmed += x => this.CreateAsset();
@@ -103,7 +105,7 @@ namespace RichPackage.Editor
                 var t = this.SelectedType;
                 if (t != null && !t.IsAbstract)
                 {
-                    assetName = "new " + this.MenuTree.Selection.First().Name;
+                    assetName = this.MenuTree.Selection.First().Name.Remove(" ") + "_";
                     this.previewObject = CreateInstance(t);
                 }
             };
@@ -168,7 +170,7 @@ namespace RichPackage.Editor
                 AssetDatabase.Refresh();
                 var item = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
                 Selection.activeObject = item;
-                EditorApplication.delayCall += this.Close;
+                // EditorApplication.delayCall += this.Close;
             }
         }
 
