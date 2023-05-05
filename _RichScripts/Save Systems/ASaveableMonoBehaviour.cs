@@ -70,10 +70,9 @@ namespace RichPackage.SaveSystem
 		[PropertyOrder(-1)]
 		[DelayedProperty]
 		[Title("Saving")]
-		[CustomContextMenu("Set to Name", "SetDefaultSaveID")]
-		[CustomContextMenu("Set to Scene-Name", "SetSaveIDToScene_Name")]
-		[CustomContextMenu("Set to GUID", "SetSaveIDToGUID")]
-		[CustomContextMenu("Complain if not unique", "Editor_PrintIDIsNotUnique")]
+		[CustomContextMenu("Set to Name", nameof(SetDefaultSaveID))]
+		[CustomContextMenu("Set to Scene-Name", nameof(SetSaveIDToScene_Name))]
+		[CustomContextMenu("Complain if not unique", nameof(Editor_PrintIDIsNotUnique))]
 		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
 		public override UniqueID SaveID 
 		{ 
