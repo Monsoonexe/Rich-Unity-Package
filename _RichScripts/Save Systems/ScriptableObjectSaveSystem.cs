@@ -18,24 +18,25 @@ namespace RichPackage.SaveSystem
 		protected override void Reset()
 		{
 			base.Reset();
-			SetDevDescription("Saves ScriptableObjectArchitecture data.");
+			SetDevDescription("Saves " +
+				"ScriptableObjectArchitecture data.");
 		}
 
 		private void OnEnable()
 		{
-			// subscribe to save events
+			//subscribe to save events
 			GlobalSignals.Get<SaveStateToFileSignal>().AddListener(SaveState);
 			GlobalSignals.Get<LoadStateFromFileSignal>().AddListener(LoadState);
 		}
 
 		private void OnDisable()
 		{
-			// unsubscribe from save events
+			//ubsubscribe from save events
 			GlobalSignals.Get<SaveStateToFileSignal>().RemoveListener(SaveState);
 			GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
 		}
 
-		private void SaveState(ISaveSystem saveFile)
+		private void SaveState(ES3File saveFile)
 		{
 			foreach(var datum in savedVariables)
 			{
@@ -43,7 +44,7 @@ namespace RichPackage.SaveSystem
 			}
 		}
 
-		private void LoadState(ISaveSystem saveFile)
+		private void LoadState(ES3File saveFile)
 		{
 			foreach (var datum in savedVariables)
 			{
@@ -51,31 +52,39 @@ namespace RichPackage.SaveSystem
 			}
 		}
 
-		private void LoadDatum(ISaveSystem saveFile,
+		private void LoadDatum(ES3File saveFile,
 			BaseVariable variable)
 		{
 			string saveKey = variable.Name;
-            switch (variable)
-            {
-                case IntVariable intVar:
-                    intVar.Value = saveFile.Load(saveKey, intVar.Value);
-                    break;
-                case FloatVariable floatVar:
-                    floatVar.Value = saveFile.Load(saveKey, floatVar.Value);
-                    break;
-                case BoolVariable boolVar:
-                    boolVar.Value = saveFile.Load(saveKey, boolVar.Value);
-                    break;
-                case StringVariable stringVar:
-                    stringVar.Value = saveFile.Load(saveKey, stringVar.Value);
-                    break;
-                default:
-                    Debug.LogError($"Cannot save {variable.GetType()}.", variable);
-                    break;
-            }
-        }
+			if (variable is IntVariable intVar)
+			{
+				intVar.Value = saveFile.Load<int>(
+					saveKey, intVar.Value);
+			}
+			else if (variable is FloatVariable floatVar)
+			{
+				floatVar.Value = saveFile.Load<float>(
+					saveKey, floatVar.Value);
+			}
+			else if (variable is BoolVariable boolVar)
+			{
+				boolVar.Value = saveFile.Load<bool>(
+					saveKey, boolVar.Value);
+			}
+			else if (variable is StringVariable stringVar)
+			{
+				stringVar.Value = saveFile.Load<string>(
+					saveKey, stringVar.Value);
+			}
+			else
+			{
+				Debug.LogWarning("[ScriptableObjectSaveSystem]" +
+					" Save Type not implemented. "
+					+ "Rich is just being lazy.");
+			}
+		}
 
-		private void SaveDatum(ISaveSystem saveFile,
+		private void SaveDatum(ES3File saveFile,
 			BaseVariable variable)
 		{
 			string saveKey = variable.Name;
@@ -106,4 +115,5 @@ namespace RichPackage.SaveSystem
             instance.Editor_MarkDirty();
 		}
 	}
+
 }
