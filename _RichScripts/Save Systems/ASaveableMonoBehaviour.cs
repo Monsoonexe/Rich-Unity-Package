@@ -110,7 +110,7 @@ namespace RichPackage.SaveSystem
 		ISaveable, IEquatable<ISaveable>
 	{
 		/// <summary>
-		/// Contains all the data that needs to be saved
+		/// Contains all the data that needs to be saved. The object's memento.
 		/// </summary>
 		[Serializable]
 		public abstract class AState : IEquatable<AState>

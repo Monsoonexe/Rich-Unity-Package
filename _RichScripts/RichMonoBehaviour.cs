@@ -71,11 +71,22 @@ namespace RichPackage
             return StartCoroutine(CoroutineUtilities.InvokeNextFrame(action));
         }
 
-        protected Coroutine InvokeAfterDelay(Action action, float delay_s)
+        protected Coroutine Invoke(Action action, float delay_s)
         {
             return StartCoroutine(CoroutineUtilities.InvokeAfter(action, delay_s));
         }
 
+        /// <summary>
+        /// Runs <paramref name="action"/> after waiting on <paramref name="yieldInstruction"/>.
+        /// </summary>
+        protected Coroutine Invoke(Action action, YieldInstruction yieldInstruction)
+        {
+            return StartCoroutine(CoroutineUtilities.InvokeAfter(action, yieldInstruction));
+        }
+
+        /// <summary>
+        /// Runs <paramref name="action"/> after waiting on <paramref name="yieldInstruction"/>.
+        /// </summary>
         protected Coroutine InvokeAfterDelay(Action action, YieldInstruction yieldInstruction)
         {
             return StartCoroutine(CoroutineUtilities.InvokeAfter(action, yieldInstruction));
