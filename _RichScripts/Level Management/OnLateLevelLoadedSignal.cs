@@ -33,6 +33,8 @@ namespace RichPackage.Events.Signals
             OnLateSceneLoadedData -= action;
         }
 
+        public void Dispatch() => Dispatch(null);
+
         public void Dispatch(SceneVariable newScene)
         {
             OnLateSceneLoaded?.Invoke();
