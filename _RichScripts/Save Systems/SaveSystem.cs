@@ -83,7 +83,7 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		public static bool HasSaveData
 		{
-			get => s_instance.SaveFile.Load<bool>(HAS_SAVE_DATA_KEY, false);
+			get => s_instance.SaveFile.Load(HAS_SAVE_DATA_KEY, false);
 		}
 
 		/// <summary>
@@ -296,7 +296,7 @@ namespace RichPackage.SaveSystem
 		#endregion ISaveable Consumers
 
 		[QFSW.QC.Command("openSaveFile"), Button]
-		public static void OpenSaveFileInVSCode()
+		public static void OpenSaveFile()
 		{
 			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
 			if (ins == null)
@@ -306,16 +306,7 @@ namespace RichPackage.SaveSystem
 			}
 
 			ins.LoadFile(ins.saveGameSlotIndex);
-			string arg = $"\"code '\"{ins.SaveFile.settings.FullPath}\"'\""; //wrap in double-quotes to pass string with spaces as single argument
-			var options = new System.Diagnostics.ProcessStartInfo()
-			{
-				FileName = "powershell",
-				Arguments = arg,
-				UseShellExecute = false,
-			};
-			var process = System.Diagnostics.Process.Start(options);
-			process.EnableRaisingEvents = true;
-			process.Exited += (obj, ctx) => ((System.Diagnostics.Process)obj).Dispose();
+			System.Diagnostics.Process.Start(ins.SaveFile.settings.FullPath);
 		}
 	}
 }
