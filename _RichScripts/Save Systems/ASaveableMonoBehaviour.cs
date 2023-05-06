@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
@@ -61,7 +61,7 @@ namespace RichPackage.SaveSystem
 
 		public TState SaveData => saveData; //readonly property
 
-		#region ISaveable Implementation
+		#region ISaveable
 
 		/// <summary>
 		/// A persistent, unique string identifier.
@@ -100,7 +100,7 @@ namespace RichPackage.SaveSystem
 			SaveData.IsDirty = false;
 		}
 
-		#endregion
+		#endregion ISaveable
 	}
 
 	/// <summary>
@@ -172,20 +172,59 @@ namespace RichPackage.SaveSystem
 
 		public abstract UniqueID SaveID { get; protected set; }
 
-		/// <summary>
-		/// Saves <see cref="AState"/> to saveFile.
-		/// </summary>
-		public abstract void SaveState(ES3File saveFile);
+        /// <summary>
+        /// Saves <see cref="AState"/> to persistent storage.
+        /// </summary>
+        public abstract void SaveState(ES3File saveFile);
+
+        /// <summary>
+        /// Loads <see cref="AState"/> state from persistent storage.
+        /// </summary>
+        public abstract void LoadState(ES3File saveFile);
+
+        #endregion ISaveable
+
+        #region Save / Load Helpers
+
+        /// <summary>
+        /// Saves this object's state to persistent storage.
+        /// </summary>
+        protected void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
+
+        /// <summary>
+        /// Saves <paramref name="value"/> to this object's memento with the <paramref name="key"/>.
+        /// </summary>
+        protected void SaveValue<T>(string key, T value)
+		{
+			string fullKey = SaveID + key;
+            SaveSystem.Instance.SaveFile.Save(fullKey, value);
+		}
 
 		/// <summary>
-		/// Loads <see cref="AState"/> state from saveFile.
+		/// Load data from this object's memento with the <paramref name="key"/>.
 		/// </summary>
-		public abstract void LoadState(ES3File saveFile);
+		protected T LoadValue<T>(string key)
+        {
+            string fullKey = SaveID + key;
+			return SaveSystem.Instance.SaveFile.Load<T>(fullKey);
+        }
+
+        /// <summary>
+        /// Load data from this object's memento with the <paramref name="key"/> or returns 
+		/// <paramref name="defaultValue"/> if the key doesn't exist.
+        /// </summary>
+        protected T LoadValue<T>(string key, T defaultValue)
+        {
+            string fullKey = SaveID + key;
+			return SaveSystem.Instance.SaveFile.Load(fullKey, defaultValue);
+        }
 
 		/// <summary>
 		/// Erases save data from file.
 		/// </summary>
 		public void DeleteState(ES3File saveFile) => saveFile.DeleteKey(SaveID);
+
+		public bool HasSaveData(ES3File saveFile) => saveFile.KeyExists(SaveID);
 
 		/// <summary>
 		/// Saveables are equal if their data will be saved to the same entry (has same key).
@@ -193,9 +232,9 @@ namespace RichPackage.SaveSystem
 		/// <returns>True if saves to either objects will write to the same entry (key collision).</returns>
 		public bool Equals(ISaveable other) => this.SaveID == other.SaveID;
 
-		#endregion
+        #endregion Save / Load Helpers
 
-		public static bool IsSaveIDUnique(ASaveableMonoBehaviour query)
+        public static bool IsSaveIDUnique(ASaveableMonoBehaviour query)
 			=> IsSaveIDUnique(query, out _);
 
 		public static bool IsSaveIDUnique(ASaveableMonoBehaviour query, 
