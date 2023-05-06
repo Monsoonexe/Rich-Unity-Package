@@ -13,6 +13,26 @@ namespace RichPackage
         public Quaternion rotation;
         public Vector3 scale;
 
+		public void Load(Transform t)
+		{
+			// validate
+			GuardAgainst.ArgumentIsNull(t, nameof(t));
+
+			// operate
+			if (space == Space.Self)
+			{
+				position = t.localPosition;
+				rotation = t.localRotation;
+				scale = t.localScale;
+			}
+			else
+			{
+				position = t.position;
+				rotation = t.rotation;
+				scale = t.lossyScale;
+			}
+		}
+
         #region Constructors
 
         public TransformProperties(Transform transform, Space space = Space.World)
