@@ -1,10 +1,13 @@
-﻿using System;
+﻿/* https://docs.moodkie.com/product/easy-save-3/ 
+ */
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
-using RichPackage.Debugging;
+using RichPackage.GuardClauses;
 
 namespace RichPackage.SaveSystem
 { 
@@ -20,7 +23,7 @@ namespace RichPackage.SaveSystem
 
 		#endregion	
 
-		//singleton
+		// singleton
 		private static SaveSystem s_instance;
 		public static SaveSystem Instance 
 		{
@@ -36,10 +39,13 @@ namespace RichPackage.SaveSystem
 		private ES3SerializableSettings saveDataMetaInformation;
 
 		[Title("Settings")]
+		public bool debug = false;
 		public bool deleteOnPlay = false;
 		public bool loadOnStart = false;
 
+		[Title("Save File Settings")]
 		public ES3.EncryptionType encryptionType;
+		public string encryptionPassword = "ScaryPassword";
 
         [SerializeField, Min(0)]
 		private int saveGameSlotIndex = 0;
@@ -57,7 +63,7 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// True if there exists some amount of SaveData which can be loaded.
 		/// </summary>
-		public static bool HasSaveData
+		public static bool SaveDataExists
 		{
 			get => s_instance.SaveFile.Load(HAS_SAVE_DATA_KEY, false);
 		}
@@ -144,17 +150,21 @@ namespace RichPackage.SaveSystem
 			return new ES3SerializableSettings(fileName)
 			{
 				encryptionType = encryptionType,
+				encryptionPassword = encryptionPassword,
 			};
 		}
 
 		private void LoadFile(int slot)
 		{
-			//validate
-			//GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
+			// validate
+			GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
 
-			//work
+			// operate
 			currentSaveFile = new ES3File(gameSaveFiles[slot]);
-		}
+
+			if (debug)
+				Debug.Log($"Loaded file at slot {slot} '{currentSaveFile.settings.path}'.");
+        }
 
 		/// <summary>
 		/// Triggered by dispatching <see cref="SaveGameSignal"/>.
@@ -162,10 +172,12 @@ namespace RichPackage.SaveSystem
 		[Button, DisableInEditorMode]
 		public void Save()
 		{
-			SaveFile.Save(HAS_SAVE_DATA_KEY, value: true);//flag to indicate there is indeed some save data
-			GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(SaveFile);//broadcast save command
-			SaveFile.Sync();//save from RAM to Disk
-			RichDebug.EditorLog($"Saved file: {SaveFile.settings.path}.");
+			SaveFile.Save(HAS_SAVE_DATA_KEY, value: true); // flag to indicate there is indeed some save data
+			GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(SaveFile); // broadcast save command
+			SaveFile.Sync(); // save from RAM to Disk
+
+            if (debug)
+                Debug.Log($"Saved file: {SaveFile.settings.path}.");
 		}
 
 		[Button, HorizontalGroup("Delete")]
@@ -174,28 +186,29 @@ namespace RichPackage.SaveSystem
 		[Button, HorizontalGroup("Delete", 0.5f)]
 		public void DeleteSave(int slot)
 		{
-			//validate
-			//gameSaveFiles.AssertValidIndex(slot);
+			// validate
+			// gameSaveFiles.AssertValidIndex(slot);
 
-			//work
-			ES3File saveFile = new ES3File(gameSaveFiles[slot]); //load into memory
+			// operate
+			var saveFile = new ES3File(gameSaveFiles[slot]); //load into memory
 			saveFile.Clear();
 			saveFile.Sync(); //needed?
 
-			Debug.Log($"Deletedfile: {saveFile.settings.path}.");
+            if (debug)
+                Debug.Log($"Deletedfile: {saveFile.settings.path}.");
 		}
 
 		[Button, DisableInEditorMode, HorizontalGroup("Load")]
 		public void Load()
 		{
-			currentSaveFile?.Sync(); //flush cache to disk before switching save files.
+			currentSaveFile?.Sync(); // flush cache to disk before switching save files.
 			LoadFile(saveGameSlotIndex);
 
-			//broadcast load command
+			// broadcast load command
 			GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
 
-			//load player inventory
-			RichDebug.EditorLog($"Loaded file: {SaveFile.settings.path}.");
+            if (debug)
+                Debug.Log($"Loaded file: {SaveFile.settings.path}.");
 		}
 
 		[Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
