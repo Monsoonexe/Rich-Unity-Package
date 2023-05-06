@@ -3,12 +3,12 @@
 namespace RichPackage.SaveSystem.Signals
 {
 	/// <summary>
-	/// Raise a request to have the game save its current state.
+	/// Raise a request to have the entire game save its current state.
 	/// </summary>
 	/// <seealso cref="SaveStateToFileSignal"/>
 	public class SaveGameSignal : ASignal
 	{
-		//exists
+		// exists
 	}
 
 	/// <summary>
@@ -16,20 +16,19 @@ namespace RichPackage.SaveSystem.Signals
 	/// </summary>
 	public class SaveStateToFileSignal : ASignal<ES3File>
     {
-        //exists
+        // exists
     }
 
 	/// <summary>
-	/// The game's state needs to be loaded from this file.
+	/// The game state needs to be loaded from this file.
 	/// </summary>
 	public class LoadStateFromFileSignal : ASignal<ES3File>
 	{
-		//exists
+		// exists
 	}
 
 	/// <summary>
-	/// Alert a listener that this object would like its
-	/// state saved.
+	/// Alert a listener that this object would like its state saved.
 	/// </summary>
 	public class SaveObjectStateSignal : ASignal<ISaveable>
 	{
