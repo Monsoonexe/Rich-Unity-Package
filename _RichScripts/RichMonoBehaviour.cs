@@ -42,7 +42,14 @@ namespace RichPackage
         /// Cached Transform  
         /// (because native 'transform' is secretly <see cref="GameObject.GetComponent{Transform}"/>' which is expensive on repeat).
         /// </summary>
-        public new Transform transform { get => myTransform; }
+        public new Transform transform
+        {
+#if UNITY_EDITOR
+            get => myTransform ? myTransform : (myTransform = base.transform);
+#else // remove null-check in builds to boost performance
+            get => myTransform;
+#endif
+        }
 
         #region Unity Messages
 
