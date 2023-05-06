@@ -80,10 +80,16 @@ namespace RichPackage.SaveSystem
 			protected set => saveData.saveID = value;
 		}
 
-		/// <summary>
-		/// Saves <see cref="AState"/> to saveFile.
-		/// </summary>
-		public override void SaveState(ES3File saveFile)
+        protected override void SaveState()
+        {
+			SaveData.IsDirty = true; // force set flag
+            base.SaveState(); // save
+        }
+
+        /// <summary>
+        /// Saves <see cref="AState"/> to saveFile.
+        /// </summary>
+        public override void SaveState(ES3File saveFile)
 		{    //recommended code
 			if (saveData.IsDirty)
 				saveFile.Save(SaveID, saveData);
@@ -189,7 +195,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Saves this object's state to persistent storage.
         /// </summary>
-        protected void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
+        protected virtual void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
 
         /// <summary>
         /// Saves <paramref name="value"/> to this object's memento with the <paramref name="key"/>.
