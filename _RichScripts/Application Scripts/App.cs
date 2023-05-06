@@ -69,10 +69,25 @@ namespace RichPackage
         public static bool IsMainThread => System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadId;
 
         /// <summary>
+        /// Backing value for <see cref="IsQuitting"/>.
+        /// </summary>
+        private static bool _isQuitting;
+
+        /// <summary>
         /// Is the application in the process of quitting? I.e. <see cref="Application.Quit"/>
         /// has been called.
         /// </summary>
-        public static bool IsQuitting { get; private set; }
+        public static bool IsQuitting
+        {
+#if UNITY_EDITOR
+            get => _isQuitting 
+                || (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode &&
+                    UnityEditor.EditorApplication.isPlaying);
+#else
+            get => _isQuitting;
+#endif
+            private set => _isQuitting = value;
+        }
 
         #region Unity Messages
 
@@ -129,7 +144,7 @@ namespace RichPackage
             FixedDeltaTime = UnityEngine.Time.fixedDeltaTime;
         }
 
-		#endregion Unity Messages
+        #endregion Unity Messages
 
         private void AttemptAutoAdminLogin()
         {
@@ -185,7 +200,7 @@ namespace RichPackage
             return instance;
 		}
 
-		#endregion Static Interface
+        #endregion Static Interface
 	}
 
     /// <summary>
