@@ -160,7 +160,8 @@ namespace RichPackage.LevelManagement
             yield return new WaitUntilEvent(GlobalSignals.Get<OnLevelLoadedSignal>()); //levelHasLoaded = true
 
             // clean up while screen still black
-            GC.Collect(); //why not? screen is totally black now.
+            GC.Collect(); // why not? screen is totally black now.
+            yield return Resources.UnloadUnusedAssets();
 
             yield return null; // wait one
 
@@ -174,7 +175,7 @@ namespace RichPackage.LevelManagement
 
             // finalize
             IsTransitioning = false;
-            Destroy(gameObject);//left over from previous level
+            Destroy(gameObject); // left over from previous level
         }
 
         #region Static Interface
