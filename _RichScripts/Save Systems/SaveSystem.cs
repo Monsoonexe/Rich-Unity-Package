@@ -272,7 +272,7 @@ namespace RichPackage.SaveSystem
 		{
 			Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
 			saveGameSlotIndex = slot;
-			return SaveFile != null && SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+			return SaveFile != null && FileHasSaveData();
 		}
 
 		#region ISaveable Consumers
