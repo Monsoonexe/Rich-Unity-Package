@@ -34,34 +34,8 @@ namespace RichPackage.SaveSystem
 			private set => s_instance = value;
 		}
 
-		[Serializable]
-		public class SaveSystemData : AState
-		{
-			[SerializeField]
-			private string[] saveFiles;
-
-			public string[] SaveFiles 
-			{ 
-				get => saveFiles; 
-				set
-				{
-					saveFiles = value;
-					IsDirty = true;
-				}
-			}
-
-			public SaveSystemData() : this(new string[0]) { }
-
-			public SaveSystemData(string[] saveFiles) : base()
-			{
-				this.saveFiles = saveFiles;
-				IsDirty = true;
-			}
-		}
-
 		[SerializeField]
-		private List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>
-				{ new ES3SerializableSettings(DEFAULT_SAVE_FILE_NAME) };
+		private List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>();
 
 		[Title("System Save Data")]
 		[SerializeField, Tooltip("File that stores meta information about the actual save files themselves.")]
@@ -71,7 +45,9 @@ namespace RichPackage.SaveSystem
 		public bool deleteOnPlay = false;
 		public bool loadOnStart = false;
 
-		[SerializeField, Min(0)]
+		public ES3.EncryptionType encryptionType;
+
+        [SerializeField, Min(0)]
 		private int saveGameSlotIndex = 0;
 
 		[SerializeField, Min(0)]
@@ -95,11 +71,11 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// Gets the current save file that is loaded.
 		/// </summary>
-		private ES3File SaveFile
+		public ES3File SaveFile
 		{
 			get
 			{
-				//work
+				// work
 				if (currentSaveFile == null)
 					LoadFile(saveGameSlotIndex);
 				return currentSaveFile;
@@ -115,7 +91,9 @@ namespace RichPackage.SaveSystem
 
 			//first slot is free
 			gameSaveFiles = gameSaveFiles ?? new List<ES3SerializableSettings>
-				{ new ES3SerializableSettings(DEFAULT_SAVE_FILE_NAME) };
+			{
+				CreateNewSettings()
+			};
 		}
 
 		protected override void Awake()
@@ -166,6 +144,14 @@ namespace RichPackage.SaveSystem
 		}
 
 		#endregion Unity Messages
+
+		private ES3SerializableSettings CreateNewSettings(string fileName = DEFAULT_SAVE_FILE_NAME)
+		{
+			return new ES3SerializableSettings(fileName)
+			{
+				encryptionType = encryptionType,
+			};
+		}
 
 		private void LoadFile(int slot)
 		{
@@ -257,7 +243,7 @@ namespace RichPackage.SaveSystem
 				gameSaveFiles.Clear();
 				//load existing files
 				foreach (var f in SaveData.SaveFiles)
-					gameSaveFiles.Add(new ES3SerializableSettings(f));
+					gameSaveFiles.Add(CreateNewSettings(f));
 				currentSaveFile = null;
 			}
 			//initialize
@@ -299,9 +285,34 @@ namespace RichPackage.SaveSystem
 		/// </summary>
 		public void DeleteMe(ISaveable item) => item.LoadState(SaveFile);
 
-		#endregion ISaveable Consumers
+        #endregion ISaveable Consumers
 
-		[QFSW.QC.Command("openSaveFile"), Button]
+        [Serializable]
+        public class SaveSystemData : AState
+        {
+            [SerializeField]
+            private string[] saveFiles;
+
+            public string[] SaveFiles
+            {
+                get => saveFiles;
+                set
+                {
+                    saveFiles = value;
+                    IsDirty = true;
+                }
+            }
+
+            public SaveSystemData() : this(new string[0]) { }
+
+            public SaveSystemData(string[] saveFiles) : base()
+            {
+                this.saveFiles = saveFiles;
+                IsDirty = true;
+            }
+        }
+
+        [QFSW.QC.Command("openSaveFile"), Button]
 		public static void OpenSaveFile()
 		{
 			SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
