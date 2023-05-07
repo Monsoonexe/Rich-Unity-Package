@@ -265,6 +265,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Contains all the data that needs to be saved. The object's memento.
         /// </summary>
+		/// <remarks>This MUST be tagged with the <see cref="SerializableAttribute"/>.</remarks>
         [Serializable]
         public abstract class AState : IEquatable<AState>
         {
