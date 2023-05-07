@@ -114,36 +114,6 @@ namespace RichPackage.SaveSystem
 	public abstract class ASaveableMonoBehaviour : RichMonoBehaviour,
 		ISaveable, IEquatable<ISaveable>
 	{
-		/// <summary>
-		/// Contains all the data that needs to be saved. The object's memento.
-		/// </summary>
-		[Serializable]
-		public abstract class AState : IEquatable<AState>
-		{
-			public AState()
-			{
-				saveID = UniqueID.New;
-				IsDirty = false;
-			}
-
-			[HideInInspector]
-			[ES3NonSerializable] //don't save it to file
-			[Tooltip("Must be unique to all other saveables!")]
-			public UniqueID saveID;
-
-			//more fields....
-
-			/// <summary>
-			/// Set this flag to true to indicate that this has new data to save.
-			/// </summary>
-			[ES3NonSerializable] //don't save it to file
-			[ShowInInspector, ReadOnly]
-			[PropertyTooltip("True when the data has changed and this needs to be saved.")]
-			public virtual bool IsDirty { get; set; } = false;
-
-			public bool Equals(AState other) => this.saveID == other.saveID;
-		}
-
 		#region Unity Messages
 
 		protected override void Reset()
@@ -290,6 +260,37 @@ namespace RichPackage.SaveSystem
 			Editor_PrintIDIsNotUnique();
 		}
 
-		#endregion Editor: Set Save ID Helper Functions
-	}
+        #endregion Editor: Set Save ID Helper Functions
+
+        /// <summary>
+        /// Contains all the data that needs to be saved. The object's memento.
+        /// </summary>
+        [Serializable]
+        public abstract class AState : IEquatable<AState>
+        {
+            public AState()
+            {
+                saveID = UniqueID.New;
+                IsDirty = false;
+            }
+
+            [HideInInspector]
+            [ES3NonSerializable] //don't save it to file
+            [Tooltip("Must be unique to all other saveables!")]
+            public UniqueID saveID;
+
+            //more fields....
+
+            /// <summary>
+            /// Set this flag to true to indicate that this has new data to save.
+            /// </summary>
+            [ES3NonSerializable] //don't save it to file
+            [ShowInInspector, ReadOnly]
+            [PropertyTooltip("True when the data has changed and this needs to be saved.")]
+            public virtual bool IsDirty { get; set; } = false;
+
+            public bool Equals(AState other) => this.saveID == other.saveID;
+        }
+
+    }
 }
