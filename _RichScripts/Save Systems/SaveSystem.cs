@@ -10,7 +10,7 @@ using Sirenix.OdinInspector;
 using RichPackage.GuardClauses;
 
 namespace RichPackage.SaveSystem
-{ 
+{
 	/// <summary>
 	/// I facilitate saving and manage save files.
 	/// </summary>
@@ -25,7 +25,7 @@ namespace RichPackage.SaveSystem
 
 		// singleton
 		private static SaveSystem s_instance;
-		public static SaveSystem Instance 
+		public static SaveSystem Instance
 		{
 			get => s_instance;
 			private set => s_instance = value;
@@ -129,7 +129,6 @@ namespace RichPackage.SaveSystem
 		{
 			// subscribe to events
 			GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
-			GlobalSignals.Get<OnPreLevelUnloadSignal>().AddListener(Save);
 			GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(SaveMe);
 		}
@@ -138,7 +137,6 @@ namespace RichPackage.SaveSystem
 		{
 			// unsubscribe from events
 			GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
-			GlobalSignals.Get<OnPreLevelUnloadSignal>().RemoveListener(Save);
 			GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(SaveMe);
 		}
