@@ -12,27 +12,46 @@ namespace RichPackage.Editor.ValidationRules
 	/// <seealso cref="ValidationRulesWindow"/>
 	public sealed class RequiredAttributeRule : AValidationRule
 	{
-		public override void Validate()
-		{
-			var comps = Resources.FindObjectsOfTypeAll<Component>();
-			foreach (var component in comps)
-			{
-				CheckIssuesFromType(component);
-			}
-			
-			var scriptableObjects = Resources.FindObjectsOfTypeAll<ScriptableObject>();
-			foreach (var scriptableObject in scriptableObjects)
-			{
-				CheckIssuesFromType(scriptableObject);
-			}
+		public static bool CheckResources = false;
 
-			// TODO - check all scriptable objects
-		}
+		public override void Validate()
+        {
+			ValidateResources();
+			ValidateActiveScene();
+        }
+
+		private void ValidateActiveScene()
+        {
+            var sceneObjects = Object.FindObjectsOfType<MonoBehaviour>();
+            foreach (var sceneObject in sceneObjects)
+            {
+                CheckIssuesFromType(sceneObject);
+            }
+        }
+
+		private void ValidateResources()
+        {
+			if (!CheckResources)
+				return;
+
+            var comps = Resources.FindObjectsOfTypeAll<Component>();
+            foreach (var component in comps)
+            {
+                CheckIssuesFromType(component);
+            }
+
+            var scriptableObjects = Resources.FindObjectsOfTypeAll<ScriptableObject>();
+            foreach (var scriptableObject in scriptableObjects)
+            {
+                CheckIssuesFromType(scriptableObject);
+            }
+        }
 
 		private void CheckIssuesFromType(Object src)
 		{
 			var fields = ReflectionUtility.GetFieldsWithAttributeInherited(
 				src, typeof(RequiredAttribute));
+
 			foreach (var field in fields)
 			{
 				CheckIssue(src, field);
