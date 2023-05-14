@@ -141,9 +141,14 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(SaveMe);
 		}
 
-		#endregion Unity Messages
+        private void OnApplicationQuit()
+        {
+			SaveFile.Sync();
+        }
 
-		private ES3SerializableSettings CreateNewSettings(string fileName = DEFAULT_SAVE_FILE_NAME)
+        #endregion Unity Messages
+
+        private ES3SerializableSettings CreateNewSettings(string fileName = DEFAULT_SAVE_FILE_NAME)
 		{
 			return new ES3SerializableSettings(fileName)
 			{
