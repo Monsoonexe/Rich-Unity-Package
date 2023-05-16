@@ -8,7 +8,7 @@ namespace RichPackage
     {
         public float startTime;
 
-        public float Elapsed => App.Time - startTime;
+        public float Elapsed => UnityEngine.Time.time - startTime;
 
         public static SimpleTimer StartNew()
         {
@@ -19,7 +19,7 @@ namespace RichPackage
 
         public void Reset()
         {
-            startTime = App.Time;
+            startTime = UnityEngine.Time.time;
         }
 
         public static bool operator >(SimpleTimer timer, float duration)
