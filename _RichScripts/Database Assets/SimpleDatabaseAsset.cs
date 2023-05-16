@@ -129,6 +129,52 @@ namespace RichPackage.Databases
 
         #endregion File IO
 
+        #region Json
+
+        public string ToJson()
+        {
+            using (var stream = new StringWriter())
+            using (var  writer = new JsonTextWriter(stream))
+            {
+                writer.WriteStartObject();
+
+                foreach (var prop in entries)
+                {
+                    writer.WritePropertyName(prop.Key);
+                    writer.WriteValue(prop.RawValue);
+                }
+
+                writer.WriteEndObject();
+                return writer.ToString();
+            }
+        }
+
+        public void FromJson(string json)
+        {
+            if (entries == null)
+                entries = new List<DatabaseEntry>();
+
+            using (var stream = new StringReader(json))
+            using (var reader = new JsonTextReader(stream))
+            {
+                while (reader.Read())
+                {
+                    string key = (string)reader.Value;
+
+                    if (!reader.Read())
+                        throw new Exception("Invalid json!");
+
+                    string rawValue = (string)reader.Value;
+
+                    entries.Add(new DatabaseEntry(key, rawValue));
+                }
+            }
+
+            RefreshEntryMap();
+        }
+
+        #endregion Json
+
         [Serializable]
         private class DatabaseEntry
         {
@@ -139,12 +185,19 @@ namespace RichPackage.Databases
             private string value;
 
             public string Key { get => key; private set => key = value; }
+            public string RawValue { get => value; }
 
             #region Constructors
 
             public DatabaseEntry(string key)
             {
                 Key = key;
+            }
+
+            public DatabaseEntry(string key, string rawValue)
+            {
+                this.Key = key;
+                this.value = rawValue;
             }
 
             #endregion Constructors
