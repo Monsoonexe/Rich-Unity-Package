@@ -16,12 +16,12 @@ namespace RichPackage.Databases
         /// The backing store for the data.
         /// </summary>
         [SerializeField]
-        private List<DatabaseEntry> entries;
+        private List<DatabaseEntry> entries = new List<DatabaseEntry>();
 
         /// <summary>
         /// Lookup table for faster operations.
         /// </summary>
-        private Dictionary<string, DatabaseEntry> entryMap;
+        private readonly Dictionary<string, DatabaseEntry> entryMap = new Dictionary<string, DatabaseEntry>();
 
         #region Unity Messages
 
@@ -38,7 +38,7 @@ namespace RichPackage.Databases
         private void OnValidate()
         {
             // refresh if entries were manually edited
-            if (entries.Count != entryMap?.Count)
+            if (entries.Count != entryMap.Count)
                 RefreshEntryMap();
         }
 
@@ -47,11 +47,7 @@ namespace RichPackage.Databases
         [Button]
         private void RefreshEntryMap()
         {
-            // create or reset
-            if (entryMap == null)
-                entryMap = new Dictionary<string, DatabaseEntry>(entries.Count);
-            else
-                entryMap.Clear();
+            entryMap.Clear();
 
             // load list into table
             foreach (DatabaseEntry entry in entries)
@@ -189,10 +185,7 @@ namespace RichPackage.Databases
 
             #region Constructors
 
-            public DatabaseEntry(string key)
-            {
-                Key = key;
-            }
+            public DatabaseEntry(string key) : this(key, string.Empty) { }
 
             public DatabaseEntry(string key, string rawValue)
             {
