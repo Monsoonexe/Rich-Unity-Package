@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using RichPackage.FunctionalProgramming;
+using UnityEngine;
 
 namespace RichPackage
 {
@@ -45,6 +47,30 @@ namespace RichPackage
             T temp = a;
             a = b;
             b = temp;
+        }
+
+        public static TObject GetClosestObject<TObject>(
+            IEnumerable<(TObject obj, Transform transform)> objs, Vector3 worldPoint)
+            where TObject : class
+        {
+            TObject result = null; // return value
+            float minDist = Mathf.Infinity;
+
+            foreach ((TObject obj, Transform transform) in objs)
+            {
+                // use squared-distance strategy. The distance isn't correct, but the 
+                // relative distance is preserved
+                Vector3 direction = transform.position - worldPoint;
+                float distanceSquared = direction.sqrMagnitude; // no sqrt
+
+                if (distanceSquared < minDist)
+                {
+                    result = obj;
+                    minDist = distanceSquared;
+                }
+            }
+
+            return result;
         }
     }
 }
