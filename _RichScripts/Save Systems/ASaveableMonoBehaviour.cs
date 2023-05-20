@@ -82,32 +82,43 @@ namespace RichPackage.SaveSystem
 
         protected override void SaveState()
         {
-			SaveData.IsDirty = true; // force set flag
             base.SaveState(); // save
         }
 
         /// <summary>
-        /// Saves <see cref="AState"/> to saveFile.
+        /// Saves <see cref="SaveData"/> to saveFile.
         /// </summary>
         public override void SaveState(ES3File saveFile)
-		{    //recommended code
-			if (saveData.IsDirty)
-				saveFile.Save(SaveID, saveData);
-			saveData.IsDirty = false;
+        {
+            SaveStateInternal();
+			saveFile.Save(SaveID, saveData);
 		}
 
 		/// <summary>
-		/// Loads <see cref="AState"/> state from saveFile.
+		/// Loads <see cref="SaveData"/> state from saveFile.
 		/// </summary>
 		public override void LoadState(ES3File saveFile)
-		{    //recommended code
+		{
 			if (saveFile.KeyExists(SaveID))
-				saveFile.LoadInto(SaveID, SaveData);
-			SaveData.IsDirty = false;
+			{
+                saveFile.LoadInto(SaveID, SaveData);
+				LoadStateInternal();
+            }
 		}
 
-		#endregion ISaveable
-	}
+        /// <summary>
+        /// The deriving class should load the state from <see cref="SaveData"/>.
+        /// </summary>
+		/// <remarks>Only called if there was state to load.</remarks>
+        protected abstract void LoadStateInternal();
+
+		/// <summary>
+		/// The deriving class should save the current state into <see cref="SaveData"/>.
+		/// </summary>
+        protected abstract void SaveStateInternal();
+
+        #endregion ISaveable
+    }
 
 	/// <summary>
 	/// Base class for all things with default saving behaviour that responds to events.
@@ -297,5 +308,28 @@ namespace RichPackage.SaveSystem
 		}
 
         #endregion Editor: Set Save ID Helper Functions
+
+        /// <summary>
+        /// Contains all the data that needs to be saved. The object's memento.
+        /// </summary>
+		/// <remarks>This MUST be tagged with the <see cref="SerializableAttribute"/>.</remarks>
+        [Serializable]
+        public abstract class AState : IEquatable<AState>
+        {
+            public AState()
+            {
+                saveID = UniqueID.New;
+            }
+
+            [HideInInspector]
+            [ES3NonSerializable] //don't save it to file
+            [Tooltip("Must be unique to all other saveables!")]
+            public UniqueID saveID;
+
+            //more fields....
+
+            public bool Equals(AState other) => this.saveID == other.saveID;
+        }
+
     }
 }

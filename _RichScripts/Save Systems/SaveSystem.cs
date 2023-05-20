@@ -239,40 +239,44 @@ namespace RichPackage.SaveSystem
 		[Button, HorizontalGroup("META")]
 		public void DeleteMetaInformation() => (new ES3File(saveDataMetaInformation)).Clear();
 
-		public override void SaveState(ES3File saveFile)
-		{
-			//always update state
-			SaveData.SaveFiles = gameSaveFiles.ToSubArray((file) => file.FullPath);
+        #region Save/Load
 
-			//save to raw default file
-			if (SaveData.IsDirty)
-				saveFile.Save(SaveID, SaveData);
-			SaveData.IsDirty = false;
-			saveFile.Sync();
+        protected override void LoadStateInternal()
+        {
+            gameSaveFiles.Clear();
+            //load existing files
+            foreach (var f in SaveData.SaveFiles)
+                gameSaveFiles.Add(CreateNewSettings(f));
+            currentSaveFile = null;
+        }
+
+        protected override void SaveStateInternal()
+        {
+            SaveData.SaveFiles = gameSaveFiles.ToSubArray((file) => file.FullPath);
+        }
+
+        public override void SaveState(ES3File saveFile)
+		{
+			// save to raw default file
+			base.SaveState(saveFile);
+			saveFile.Sync(); // flush cache
 		}
 
 		public override void LoadState(ES3File saveFile)
 		{
 			currentSaveFile?.Sync();
-			if (saveFile.KeyExists(SaveID))
-			{
-				saveFile.LoadInto(SaveID, SaveData);
-				gameSaveFiles.Clear();
-				//load existing files
-				foreach (var f in SaveData.SaveFiles)
-					gameSaveFiles.Add(CreateNewSettings(f));
-				currentSaveFile = null;
-			}
-			//initialize
+			base.LoadState(saveFile);
 		}
 
-		#endregion Meta Save Data
+        #endregion Save/Load
 
-		/// <summary>
-		/// Checks to see if there is any save data in the active file.
-		/// </summary>
-		/// <returns>True if the save file has any data in it, and false if it's unused.</returns>
-		public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+        #endregion Meta Save Data
+
+        /// <summary>
+        /// Checks to see if there is any save data in the active file.
+        /// </summary>
+        /// <returns>True if the save file has any data in it, and false if it's unused.</returns>
+        public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
 
 		/// <summary>
 		/// Checks to see if there is any save data in the file at the given slot.
@@ -316,7 +320,6 @@ namespace RichPackage.SaveSystem
                 set
                 {
                     saveFiles = value;
-                    IsDirty = true;
                 }
             }
 
@@ -325,7 +328,6 @@ namespace RichPackage.SaveSystem
             public SaveSystemData(string[] saveFiles) : base()
             {
                 this.saveFiles = saveFiles;
-                IsDirty = true;
             }
         }
 
@@ -342,5 +344,5 @@ namespace RichPackage.SaveSystem
 			ins.LoadFile(ins.saveGameSlotIndex);
 			System.Diagnostics.Process.Start(ins.SaveFile.settings.FullPath);
 		}
-	}
+    }
 }

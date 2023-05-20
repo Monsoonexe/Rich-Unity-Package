@@ -2,21 +2,14 @@ namespace RichPackage.SaveSystem
 {
     public class RememberTransform : ASaveableMonoBehaviour<RememberTransform.Memento>
     {
-        public override void SaveState(ES3File saveFile)
+        protected override void LoadStateInternal()
         {
-            SaveData.IsDirty = true;
-            SaveData.properties.Load(myTransform); // move live data to memento
-            base.SaveState(saveFile);
+            SaveData.properties.Store(myTransform); // from memento into object
         }
 
-        public override void LoadState(ES3File saveFile)
+        protected override void SaveStateInternal()
         {
-            // use current state if no save data
-            if (!saveFile.KeyExists(SaveID))
-                return;
-
-            base.LoadState(saveFile);
-            SaveData.properties.Store(myTransform); // set live data from memento
+            SaveData.properties.Load(myTransform); // from object to memento
         }
 
         [System.Serializable]
