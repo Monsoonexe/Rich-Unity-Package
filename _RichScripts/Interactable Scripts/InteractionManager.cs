@@ -192,7 +192,7 @@ namespace RichPackage.Interaction
                 {
                     proximityIInteractable = newIInteractable;
                     enterRangeEvent.Invoke();
-                    proximityIInteractable.OnEnterRange();
+                    proximityIInteractable.OnEnterRange(actor);
                 }
             }
         }
@@ -208,7 +208,7 @@ namespace RichPackage.Interaction
                     && newIInteractable == proximityIInteractable) // prevents repeats / stuttering
                 {
                     exitRangeEvent.Invoke();
-                    proximityIInteractable.OnExitRange();
+                    proximityIInteractable.OnExitRange(actor);
                     proximityIInteractable = null;
                 }
             }
