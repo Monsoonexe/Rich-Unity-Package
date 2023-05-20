@@ -12,9 +12,6 @@ namespace RichPackage.Interaction
         /// <param name="actor">Activate of the "visitor" pattern.</param>
         void Interact(IInteractable interactable);
 
-		// generic, non-special interaction
-		void InteractWith(IInteractable interactable);
-
 		/* special interactions
 		 * void InteractWith(Spinner spinner);
 		 * void InteractWith(Playdough dough);

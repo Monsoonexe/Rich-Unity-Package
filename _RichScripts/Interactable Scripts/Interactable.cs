@@ -54,16 +54,16 @@ namespace RichPackage.Interaction
         public virtual void OnExitHover()
             => exitHoverEvent.Invoke();
 
-        public virtual void OnEnterRange()
+        public virtual void OnEnterRange(IInteractor actor)
             => enterRangeEvent.Invoke();
 
-        public virtual void OnExitRange()
+        public virtual void OnExitRange(IInteractor actor)
             => exitRangeEvent.Invoke();
 
         public virtual void Activate(IInteractor actor)
         {
             interactEvent.Invoke();
-            actor.InteractWith(this);
+            // actor.InteractWith(this);
         }
 
         public virtual void Release(IInteractor actor)
