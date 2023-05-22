@@ -297,7 +297,7 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// Delete <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
 		/// </summary>
-		public void DeleteMe(ISaveable item) => item.LoadState(SaveFile);
+		public void DeleteMe(ISaveable item) => item.DeleteState(SaveFile);
 
         #endregion ISaveable Consumers
 
