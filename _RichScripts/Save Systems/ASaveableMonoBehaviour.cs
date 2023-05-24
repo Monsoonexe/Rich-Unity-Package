@@ -73,7 +73,7 @@ namespace RichPackage.SaveSystem
 		[CustomContextMenu("Set to Name", nameof(SetDefaultSaveID))]
 		[CustomContextMenu("Set to Scene-Name", nameof(SetSaveIDToScene_Name))]
 		[CustomContextMenu("Complain if not unique", nameof(Editor_PrintIDIsNotUnique))]
-		[ValidateInput("@IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
+		[ValidateInput("@GameObject_Extensions.IsPrefab(gameObject) || IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
 		public override UniqueID SaveID 
 		{ 
 			get => saveData.saveID; 
@@ -278,6 +278,10 @@ namespace RichPackage.SaveSystem
 		[Conditional(ConstStrings.UNITY_EDITOR)]
 		public void Editor_PrintIDIsNotUnique()
 		{
+			// ignore uniqueness check for prefabs
+			if (gameObject.IsPrefab())
+				return;
+
 			if (!IsSaveIDUnique(this, out var other))
 			{
 				Debug.LogWarning($"{nameof(SaveID)} name collision! The uniqueID <{SaveID}> " +
