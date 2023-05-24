@@ -23,6 +23,8 @@ namespace RichPackage
 
         public static UniqueID New => FromString(NewIDProvider());
 
+        public static readonly UniqueID None = new UniqueID(string.Empty);
+
         [field: SerializeField, LabelText(nameof(ID)),
             CustomContextMenu("Regenerate", nameof(GenerateNewId))]
         public string ID { get; private set; }
