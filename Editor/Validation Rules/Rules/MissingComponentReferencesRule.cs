@@ -29,7 +29,7 @@ namespace RichPackage.Editor.ValidationRules
 
         private void Validate(GameObject obj)
 		{
-			var query = obj.GetComponents<Component>()
+			var query = obj.GetComponentsInChildren<Component>(includeInactive: true)
 				.Where(c => c == null);
 
 			foreach (var comp in query)
