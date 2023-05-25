@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
@@ -170,7 +171,7 @@ namespace RichPackage.SaveSystem
 			GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
 
 			// operate
-			currentSaveFile = new ES3File(gameSaveFiles[slot]);
+			currentSaveFile = CreateSaveFileObject(gameSaveFiles[slot]);
 
 			if (debug)
 				Debug.Log($"Loaded file at slot {slot} '{currentSaveFile.settings.path}'.");
@@ -200,7 +201,7 @@ namespace RichPackage.SaveSystem
 			// gameSaveFiles.AssertValidIndex(slot);
 
 			// operate
-			var saveFile = new ES3File(gameSaveFiles[slot]); //load into memory
+			var saveFile = CreateSaveFileObject(gameSaveFiles[slot]); //load into memory
 			saveFile.Clear();
 			saveFile.Sync(); //needed?
 
@@ -231,13 +232,50 @@ namespace RichPackage.SaveSystem
 		#region Meta Save Data
 
 		[Button, HorizontalGroup("META")]
-		public void SaveMetaInformation() => SaveState(new ES3File(saveDataMetaInformation));
+		public void SaveMetaInformation() => SaveState(CreateSaveFileObject(saveDataMetaInformation));
 
 		[Button, HorizontalGroup("META")]
-		public void LoadMetaInformation() => LoadState(new ES3File(saveDataMetaInformation));
+		public void LoadMetaInformation() => LoadState(CreateSaveFileObject(saveDataMetaInformation));
 
-		[Button, HorizontalGroup("META")]
-		public void DeleteMetaInformation() => (new ES3File(saveDataMetaInformation)).Clear();
+        [Button, HorizontalGroup("META")]
+		public void DeleteMetaInformation() => (CreateSaveFileObject(saveDataMetaInformation)).Clear();
+
+		private ES3File CreateSaveFileObject(ES3SerializableSettings settings)
+        {
+            try
+            {
+                return new ES3File(settings);
+            }
+            catch
+            {
+				// I encountered a corrupted file issue during a crash that prevented
+				// loading the meta info file, which broke the save system entirely.
+				// If anything goes wrong and this file can't be loaded,
+				// the nuclear option is proposed
+				string filePath = settings.FullPath;
+                switch (settings.location)
+                {
+                    case ES3.Location.File:
+						// ensure we only delete data in the appropriate folder
+                        if (filePath.Contains(Application.persistentDataPath)
+							&& File.Exists(filePath))
+						{
+                            File.Delete(filePath);
+						}
+                        break;
+                    case ES3.Location.PlayerPrefs:
+						PlayerPrefs.DeleteKey(filePath);
+                        break;
+                    case ES3.Location.InternalMS:
+                    case ES3.Location.Resources:
+                    case ES3.Location.Cache:
+						// shouldn't happen
+                        break;
+                }
+            }
+
+            return new ES3File(settings); // if this fails, god help us all
+        }
 
         #region Save/Load
 
