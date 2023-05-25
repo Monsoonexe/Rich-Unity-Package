@@ -44,11 +44,7 @@ namespace RichPackage
         /// </summary>
         public new Transform transform
         {
-#if UNITY_EDITOR
             get => myTransform ? myTransform : (myTransform = base.transform);
-#else // remove null-check in builds to boost performance
-            get => myTransform;
-#endif
         }
 
         #region Unity Messages
