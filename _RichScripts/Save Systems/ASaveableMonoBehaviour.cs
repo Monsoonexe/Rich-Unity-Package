@@ -79,11 +79,6 @@ namespace RichPackage.SaveSystem
 			protected set => saveData.saveID = value;
 		}
 
-        protected override void SaveState()
-        {
-            base.SaveState(); // save
-        }
-
         /// <summary>
         /// Saves <see cref="SaveData"/> to saveFile.
         /// </summary>
