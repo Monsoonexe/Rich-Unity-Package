@@ -131,7 +131,7 @@ namespace RichPackage.SaveSystem
 			// subscribe to events
 			GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
 			GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
-			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(SaveMe);
+			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(Save);
 		}
 
 		protected override void OnDisable()
@@ -139,7 +139,7 @@ namespace RichPackage.SaveSystem
 			// unsubscribe from events
 			GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
 			GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
-			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(SaveMe);
+			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(Save);
 		}
 
         private void OnApplicationQuit()
@@ -325,12 +325,12 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// Save <paramref name="item"/> to the currently active <see cref="SaveFile"/>.
 		/// </summary>
-		public void SaveMe(ISaveable item) => item.SaveState(SaveFile);
+		public void Save(ISaveable item) => item.SaveState(SaveFile);
 
 		/// <summary>
 		/// Load <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
 		/// </summary>
-		public void LoadMe(ISaveable item) => item.LoadState(SaveFile);
+		public void Load(ISaveable item) => item.LoadState(SaveFile);
 
 		/// <summary>
 		/// Delete <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
