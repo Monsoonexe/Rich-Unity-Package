@@ -1,3 +1,5 @@
+using Mono.CSharp.Linq;
+
 namespace RichPackage.SaveSystem
 {
     public interface ISaveSystem
@@ -17,6 +19,11 @@ namespace RichPackage.SaveSystem
         /// </summary>
         /// <param name="default">A default value in case <paramref name="key"/> isn't a key.</param>
         T Load<T>(string key, T @default);
+
+        /// <summary>
+        /// Load memento with <paramref name="key"/>.
+        /// </summary>
+        void LoadInto<T>(string key, T memento) where T : class;
 
         /// <summary>
         /// Returns tr

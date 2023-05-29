@@ -20,7 +20,8 @@ namespace RichPackage.SaveSystem
 	/// <summary>
 	/// I facilitate saving and manage save files.
 	/// </summary>
-	public class SaveSystem : ASaveableMonoBehaviour<SaveSystem.SaveSystemData>
+	public class SaveSystem : ASaveableMonoBehaviour<SaveSystem.SaveSystemData>,
+		ISaveSystem
 	{
 		#region Constants
 
@@ -151,7 +152,7 @@ namespace RichPackage.SaveSystem
 
         private void OnApplicationQuit()
         {
-			SaveFile.Sync();
+			Sync();
         }
 
         #endregion Unity Messages
@@ -229,9 +230,12 @@ namespace RichPackage.SaveSystem
 			Load();
 		}
 
-		#region Meta Save Data
+        [Button, DisableInEditorMode]
+        public void Sync() => SaveFile.Sync();
 
-		[Button, HorizontalGroup("META")]
+        #region Meta Save Data
+
+        [Button, HorizontalGroup("META")]
 		public void SaveMetaInformation() => SaveState(CreateSaveFileObject(saveDataMetaInformation));
 
 		[Button, HorizontalGroup("META")]
@@ -327,12 +331,12 @@ namespace RichPackage.SaveSystem
 			return SaveFile != null && FileHasSaveData();
 		}
 
-		#region ISaveable Consumers
+        #region ISaveable Consumers
 
-		/// <summary>
-		/// Save <paramref name="item"/> to the currently active <see cref="SaveFile"/>.
-		/// </summary>
-		public void Save(ISaveable item) => item.SaveState(SaveFile);
+        /// <summary>
+        /// Save <paramref name="item"/> to the currently active <see cref="SaveFile"/>.
+        /// </summary>
+        public void Save(ISaveable item) => item.SaveState(SaveFile);
 
 		/// <summary>
 		/// Load <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
@@ -342,9 +346,22 @@ namespace RichPackage.SaveSystem
 		/// <summary>
 		/// Delete <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
 		/// </summary>
-		public void DeleteMe(ISaveable item) => item.DeleteState(SaveFile);
+		public void Delete(ISaveable item) => item.DeleteState(SaveFile);
 
         #endregion ISaveable Consumers
+
+        #region ISaveSystem
+
+        public void Save<T>(string key, T memento) => SaveFile.Save(key, memento);
+        public T Load<T>(string key) => SaveFile.Load<T>(key);
+        public T Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
+		public void LoadInto<T>(string key, T memento) where T : class 
+			=> SaveFile.LoadInto(key, memento);
+        public bool Contains(string key) => SaveFile.KeyExists(key);
+        public void Delete(string key) => SaveFile.DeleteKey(key);
+		public void Clear() => SaveFile.Clear();
+
+        #endregion ISaveSystem
 
         [Serializable]
         public class SaveSystemData : AState
@@ -382,5 +399,6 @@ namespace RichPackage.SaveSystem
 			ins.LoadFile(ins.saveGameSlotIndex);
 			System.Diagnostics.Process.Start(ins.SaveFile.settings.FullPath);
 		}
+
     }
 }
