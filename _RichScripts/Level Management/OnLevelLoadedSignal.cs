@@ -35,8 +35,8 @@ namespace RichPackage.Events.Signals
 
         public void Dispatch(SceneVariable newScene)
         {
-            OnSceneLoaded?.Invoke();
             OnSceneLoadedData?.Invoke(newScene);
+            OnSceneLoaded?.Invoke();
         }
     }
 }
