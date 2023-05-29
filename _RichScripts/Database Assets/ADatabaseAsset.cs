@@ -34,7 +34,7 @@ namespace RichPackage.Databases
 			return items[index];
 		}
 
-		public virtual int Get(TData value)
+		public virtual int GetKey(TData value)
 		{
 			int index = items.IndexOf(value);
 
@@ -45,7 +45,7 @@ namespace RichPackage.Databases
 				throw new System.Collections.Generic.KeyNotFoundException();
 			}
 
-			return index;
+			return items[index].Key;
 		}
 
 		#region Editor
