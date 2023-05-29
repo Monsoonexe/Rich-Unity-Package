@@ -84,14 +84,10 @@ namespace RichPackage.Databases
 
 			// detect duplicates
 			var groups = items.GroupBy(x => x.name);
-			bool allUnique = groups.All(g => g.Count() == 1);
-			if (!allUnique)
-			{
-				foreach (var duplicate in groups.Where(g => g.Count() > 1))
-					Debug.LogError(editorErrorMessage = $"There are duplicate <{duplicate.Key}> entities in the database. " +
-						$"Please remove them leaving only 1.", this);
-			}
-		}
+            foreach (var duplicate in groups.Where(g => g.Count() > 1))
+                Debug.LogError(editorErrorMessage = $"There are duplicate <{duplicate.Key}> entities in the database. " +
+                    $"Please remove them leaving only 1.", this);
+        }
 
 #endif
 		#endregion Editor
