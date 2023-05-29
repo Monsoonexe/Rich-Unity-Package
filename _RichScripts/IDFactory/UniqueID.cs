@@ -56,9 +56,9 @@ namespace RichPackage
             => obj is UniqueID other && Equals(other);
 
         public static bool operator == (UniqueID a, UniqueID b) => a.Equals(b);
-
         public static bool operator != (UniqueID a, UniqueID b) => !(a == b);
 
         public static implicit operator string (UniqueID id) => id.ID;
+        public static implicit operator int(UniqueID id) => id.Hash;
     }
 }
