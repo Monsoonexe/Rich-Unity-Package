@@ -55,6 +55,7 @@ namespace RichPackage.SaveSystem
                 SaveData.enabled = target.enabled;
         }
 
+        [System.Serializable]
         public class Memento : AState
         {
             public Color color;
