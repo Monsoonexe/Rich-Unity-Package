@@ -23,7 +23,7 @@ namespace RichPackage.SaveSystem
 
         protected override void Reset()
         {
-            SetDevDescription("Saves/loads the properties of the target transform.");
+            SetDevDescription("Saves/loads the properties of the target light.");
             SaveID = UniqueIdUtilities.CreateIdFrom(this, true);
 
             // set default
