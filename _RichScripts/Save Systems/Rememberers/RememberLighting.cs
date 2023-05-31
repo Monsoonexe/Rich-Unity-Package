@@ -17,7 +17,6 @@ namespace RichPackage.SaveSystem
         // public bool rememberIndirectMultiplier = false;
         public bool rememberRange = false;
         public bool rememberEnabled = false;
-        public bool rememberGameObjectActive = false;
 
         #region Unity Messages
 
@@ -42,8 +41,6 @@ namespace RichPackage.SaveSystem
                 target.range = SaveData.range;
             if (rememberEnabled)
                 target.enabled = SaveData.enabled;
-            if (rememberGameObjectActive)
-                target.gameObject.SetActive(SaveData.gameObjectActive);
         }
 
         protected override void SaveStateInternal()
@@ -56,8 +53,6 @@ namespace RichPackage.SaveSystem
                 SaveData.range = target.range;
             if (rememberEnabled)
                 SaveData.enabled = target.enabled;
-            if (rememberGameObjectActive)
-                SaveData.gameObjectActive = target.gameObject.activeSelf;
         }
 
         public class Memento : AState
@@ -67,7 +62,6 @@ namespace RichPackage.SaveSystem
             // public float indirectMultiplier;
             public float range;
             public bool enabled;
-            public bool gameObjectActive;
         }
     }
 }
