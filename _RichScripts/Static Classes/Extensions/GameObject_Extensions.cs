@@ -7,10 +7,20 @@ namespace RichPackage
 {
     public static class GameObject_Extensions
     {
+        /// <summary>
+        /// In the Editor, this method returns <see langword="true"/> if <paramref name="gameObject"/> is part of a prefab asset. <br/>
+        /// In a Build, the semantics change as there are no prefabs in builds. Rather, this returns <langword cref="true"/> if <paramref name="gameObject"/>
+        /// is attached to a scene.
+        /// </summary>
         public static bool IsPrefab(this GameObject gameObject)
         {
-            // a prefab has 0 roots if in project or 1 if it's in the prefab editor scene
-            return gameObject.scene.rootCount <= 1;
+#if UNITY_EDITOR
+                return UnityEditor.PrefabUtility.IsPartOfPrefabAsset(gameObject);
+#else
+                // we need a different check for builds :(
+                // build semantics -- is the gameObject attached to a scene?
+                return gameObject.scene.IsValid(); // can't use this in editor because of the prefab edit mode. 
+#endif
         }
 
         /// <summary>
