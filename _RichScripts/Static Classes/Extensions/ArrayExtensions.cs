@@ -139,7 +139,17 @@ namespace RichPackage
             Array.Copy(data, index, result, 0, length);
             return result;
         }
-    }
+	    
+		/// <returns>The index of the first item that matches against <paramref name="query"/> or -1 if none found.</returns>
+		public static int IndexOf<T>(this T[] array, Predicate<T> query)
+		{
+			int len = array.Length;
+			for (int i = 0; i < len; ++i)
+			if (query(array[i]))
+				return i;
+			return -1;
+			}
+		}
 
     public static class ArrayUtils
     {
