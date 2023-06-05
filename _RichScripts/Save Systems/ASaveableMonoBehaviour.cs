@@ -165,7 +165,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Saves this object's state to persistent storage.
         /// </summary>
-        protected void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
+        public void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
 
         /// <summary>
         /// Saves <paramref name="value"/> to this object's memento with the <paramref name="key"/>.
