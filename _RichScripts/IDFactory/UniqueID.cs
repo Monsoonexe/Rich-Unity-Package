@@ -8,7 +8,7 @@ namespace RichPackage
     /// A string-based unique identifier.
     /// </summary>
     [Serializable]
-    public struct UniqueID : IEquatable<UniqueID>
+    public struct UniqueID : IEquatable<UniqueID>, IEquatable<string>, IEquatable<int>
     {
         private const int MAX_LENGTH = 16;
 
@@ -48,12 +48,17 @@ namespace RichPackage
 
         public override int GetHashCode() => Hash;
 
-        public bool Equals(UniqueID other) => Hash == other.Hash;
+        public override bool Equals(object obj) => obj is UniqueID other && Equals(other);
+
+        #region IEquatable
+
+        public bool Equals(UniqueID other) => this.Hash == other.Hash;
+        public bool Equals(string other) => ID.QuickEquals(other);
+        public bool Equals(int other) => Hash == other;
+
+        #endregion IEquatable
 
         public static UniqueID FromString(string src) => new UniqueID(src);
-
-        public override bool Equals(object obj)
-            => obj is UniqueID other && Equals(other);
 
         public static bool operator == (UniqueID a, UniqueID b) => a.Equals(b);
         public static bool operator != (UniqueID a, UniqueID b) => !(a == b);
