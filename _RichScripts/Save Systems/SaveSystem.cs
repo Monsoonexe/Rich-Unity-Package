@@ -243,13 +243,16 @@ namespace RichPackage.SaveSystem
             {
                 return new ES3File(settings);
             }
-            catch
+            catch (Exception ex)
             {
-				// I encountered a corrupted file issue during a crash that prevented
-				// loading the meta info file, which broke the save system entirely.
-				// If anything goes wrong and this file can't be loaded,
-				// the nuclear option is proposed
-				string filePath = settings.FullPath;
+				Debug.LogError($"Encountered a {ex.GetType()} while attempting to read save file. Wiping corrupted save file.");
+				Debug.LogException(ex);
+
+                // I encountered a corrupted file issue during a crash that prevented
+                // loading the meta info file, which broke the save system entirely.
+                // If anything goes wrong and this file can't be loaded,
+                // the nuclear option is proposed
+                string filePath = settings.FullPath;
                 switch (settings.location)
                 {
                     case ES3.Location.File:

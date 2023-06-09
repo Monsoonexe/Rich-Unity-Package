@@ -6,46 +6,6 @@ using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
 using Debug = UnityEngine.Debug;
 
-/*	//example derived class
- * 
- * public class PlotController : ASaveableMonoBehaviour<PlotController.PlotSaveData>
-	{
-		[Serializable]
-		public class PlotSaveData : AState
-		{
-			public int buildIndex;
-			public Plot plotData;
-
-			#region Constructors
-			public PlotSaveData() 
-			{
-				buildIndex = 0;
-				plotData = null;
-			}
-
-			public PlotSaveData(int buildIndex)
-			{
-				this.buildIndex = buildIndex;
-				this.plotData = null;
-			}
-
-			public PlotSaveData(int buildIndex, Plot plotData)
-			{
-				this.buildIndex = buildIndex;
-				this.plotData = plotData;
-			}
-			#endregion
-		}
-
-		public override void LoadState(ES3File file)
-		{
-			base.LoadState(file);
-			//update model to reflect data
-		}
-
- * 
- */
-
 namespace RichPackage.SaveSystem
 {
 	/// <summary>
@@ -56,7 +16,7 @@ namespace RichPackage.SaveSystem
 		where TState : ASaveableMonoBehaviour.AState, new()
 	{	
 		[SerializeField]
-		private TState saveData = new TState();
+		protected TState saveData = new TState();
 
 		public TState SaveData => saveData; //readonly property
 
