@@ -162,6 +162,14 @@ namespace RichPackage
         }
 
         /// <summary>
+        /// Zeroes the postion and rotation of <paramref name="transform"/>.
+        /// </summary>
+        /// <returns><paramref name="transform"/> to allow chaining.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform ResetLocal(this Transform transform)
+            => Reset(transform, Space.Self);
+
+        /// <summary>
         /// Sorts ascending by default, unless <paramref name="inverse"/>, then descending.
         /// </summary>
         /// credit: https://github.com/JimmyCushnie/JimmysUnityUtilities/blob/master/Scripts/Extensions/base%20Unity%20types/TransformExtensions.cs
