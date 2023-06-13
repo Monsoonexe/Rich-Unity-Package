@@ -60,7 +60,7 @@ public class ScaleScreenTransition : ATransitionComponent
         else
         {
             targetScale = 1f;
-            rTransform.localScale = new Vector3(0f, 0.00f, 0f);
+            rTransform.localScale = new Vector3(0f, 0f, 1f);
         }
 
         var xScale = rTransform.DOScaleX(targetScale, duration * xYSplit).SetEase(ease);
@@ -78,15 +78,6 @@ public class ScaleScreenTransition : ATransitionComponent
         if(canvasGroup)
             canvasGroup.alpha = 1f;
         callback?.Invoke();
-        //try
-        //{
-        //          callback?.Invoke();
-        //}
-        //      catch(Exception ex)
-        //{
-        //          Debug.LogException(ex, this);
-        //          throw ex;
-        //}
         callback = null;
     }
 
