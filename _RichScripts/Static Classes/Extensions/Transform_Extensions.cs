@@ -142,6 +142,22 @@ namespace RichPackage
             return list;
         }
         
+        public static bool IsDescendantOf(this Transform transform, Transform ancestor)
+        {
+            if (ancestor == null)
+                return false;
+
+            Transform parent = transform.parent;
+            while (parent != null)
+            {
+                if (parent.QuickEquals(ancestor))
+                    return true;
+                parent = parent.parent;
+            }
+
+            return false;
+        }
+        
         /// <summary>
         /// Zeroes the postion and rotation of <paramref name="transform"/>.
         /// </summary>
