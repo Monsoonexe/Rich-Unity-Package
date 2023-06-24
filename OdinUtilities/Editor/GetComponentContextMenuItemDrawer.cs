@@ -34,9 +34,12 @@ namespace RichPackage.Editor
                 on: false, () => FindObjectOfTypeAndSetReference(property));
 
             // add AddComponent<T>()
-            genericMenu.AddItem(new GUIContent(
-                $"{nameof(GameObject.AddComponent)}<{componentName}>()"),
-                on: false, () => AddComponentAndSetReference(property));
+            if (!typeof(T).IsAbstract)
+            {
+                genericMenu.AddItem(new GUIContent(
+                    $"{nameof(GameObject.AddComponent)}<{componentName}>()"),
+                    on: false, () => AddComponentAndSetReference(property));
+            }
         }
 
         private void GetComponentAndSetReference(InspectorProperty property)
