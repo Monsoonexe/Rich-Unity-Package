@@ -77,7 +77,15 @@ namespace RichPackage
         /// </summary>
         public static Coroutine Update(Action action, float interval = 0)
         {
-            return Runner.StartCoroutine(ProcessLoop(action, new WaitForSeconds(interval)));
+            return Update(action, new WaitForSeconds(interval));
+        }
+
+        /// <summary>
+        /// Routinely runs <paramref name="action"/> like Update at the specified <paramref name="interval"/>.
+        /// </summary>
+        public static Coroutine Update(Action action, YieldInstruction interval)
+        {
+            return Runner.StartCoroutine(ProcessLoop(action, interval));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
