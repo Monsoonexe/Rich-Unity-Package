@@ -159,6 +159,8 @@ namespace RichPackage
 
         #endregion Coroutine Helpers
 
+        public override string ToString() => $"{name} ({GetType().Name})";
+
         /// <summary>
         /// Creates a new <see cref="GameObject"/> with the given 
         /// <typeparamref name="T"/> component attached.
