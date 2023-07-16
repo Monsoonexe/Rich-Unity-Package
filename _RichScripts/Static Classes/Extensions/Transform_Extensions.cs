@@ -169,6 +169,13 @@ namespace RichPackage
         public static Transform ResetLocal(this Transform transform)
             => Reset(transform, Space.Self);
 
+        public static Transform SetLocalPositionAndRotation(this Transform t, Vector3 position, Vector3 rotation)
+        {
+            t.localPosition = position;
+            t.localEulerAngles = rotation;
+            return t;
+        }
+
         /// <summary>
         /// Sorts ascending by default, unless <paramref name="inverse"/>, then descending.
         /// </summary>
