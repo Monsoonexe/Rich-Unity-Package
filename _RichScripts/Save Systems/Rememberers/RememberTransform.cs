@@ -22,12 +22,12 @@ namespace RichPackage.SaveSystem
 
         protected override void LoadStateInternal()
         {
-            SaveData.properties.Store(target); // from memento into object
+            SaveData.properties.Load(target); // from memento into object
         }
 
         protected override void SaveStateInternal()
         {
-            SaveData.properties.Load(target); // from object to memento
+            SaveData.properties.Store(target); // from object to memento
         }
 
         [System.Serializable]
