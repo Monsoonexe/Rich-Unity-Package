@@ -39,7 +39,7 @@ namespace RichPackage
         /// <summary>
         /// Sets this object's properties to <paramref name="t"/>'s.
         /// </summary>
-        public void Load(Transform t)
+        public void Store(Transform t)
         {
             // validate
             GuardAgainst.ArgumentIsNull(t, nameof(t));
@@ -60,16 +60,16 @@ namespace RichPackage
         /// <summary>
         /// Sets this object's properties to <paramref name="t"/>'s.
         /// </summary>
-        public void Load(Transform t, Space space)
+        public void Store(Transform t, Space space)
         {
             this.space = space;
-            Load(t);
+            Store(t);
         }
 
         /// <summary>
-        /// Stores this object's properties to <paramref name="t"/>'s.
+        /// Loads <paramref name="t"/>'s properties into this object.
         /// </summary>
-        public void Store(Transform t)
+        public void Load(Transform t)
         {
             // validate
             GuardAgainst.ArgumentIsNull(t, nameof(t));
@@ -107,10 +107,8 @@ namespace RichPackage
         /// </summary>
         public static void SetLocalPositionAndRotation(this Transform t, TransformProperties props)
         {
-            // validate
-            Debug.Assert(props.space == Space.Self);
-
             // operate
+            props.space = Space.Self;
             t.localPosition = props.position;
             t.localRotation = props.rotation;
         }
