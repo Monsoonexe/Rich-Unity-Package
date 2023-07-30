@@ -1,5 +1,4 @@
-﻿
-namespace RichPackage
+﻿namespace RichPackage
 {
     /// <summary>
     /// Default timer that calculates the elapsed time based on <see cref="UnityEngine.Time.time"/>.
@@ -31,7 +30,7 @@ namespace RichPackage
 
         public string ToString(string formatting)
         {
-            var time = TimeSpan.FromSeconds(Elapsed);
+            var time = System.TimeSpan.FromSeconds(Elapsed);
             return time.ToString(formatting);
         }
 
