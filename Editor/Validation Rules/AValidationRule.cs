@@ -15,18 +15,20 @@ namespace RichPackage.Editor.ValidationRules
 
         public bool Ignore
         {
-            get => ApexEditorUtility.Settings.Get(SaveName, false);
-            set
-            {
-                if (value)
-                {
-                    ApexEditorUtility.Settings.Set(SaveName, true);
-                }
-                else
-                {
-                    ApexEditorUtility.Settings.Delete(SaveName);
-                }
-            }
+            // TODO - persistent storage
+            get; set;
+            //get => ApexEditorUtility.Settings.Get(SaveName, false);
+            //set
+            //{
+            //    if (value)
+            //    {
+            //        ApexEditorUtility.Settings.Set(SaveName, true);
+            //    }
+            //    else
+            //    {
+            //        ApexEditorUtility.Settings.Delete(SaveName);
+            //    }
+            //}
         }
         
         public List<ValidationRuleIssue> Issues { get; protected set; } = new List<ValidationRuleIssue>();
