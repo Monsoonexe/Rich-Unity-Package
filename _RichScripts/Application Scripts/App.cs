@@ -80,13 +80,23 @@ namespace RichPackage
         public static bool IsQuitting
         {
 #if UNITY_EDITOR
-            get => _isQuitting 
+            get => _isQuitting
                 || (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode &&
                     UnityEditor.EditorApplication.isPlaying);
 #else
             get => _isQuitting;
 #endif
-            private set => _isQuitting = value;
+            private set
+		{
+			GuardAgainst.IsFalse(value, "Why would you set this to false???");
+	
+			// prevent re-firing
+			if (_isQuitting == value)
+	    return;
+	
+	_isQuitting = value;
+			Signals.Get<OnApplicationQuitSignal>().Invoke(); // propagate event ASAP
+		}
         }
 
         #region Unity Messages
@@ -105,6 +115,10 @@ namespace RichPackage
             {
                 return;
             }
+	    
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
 
             MainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitApplication);
@@ -112,6 +126,18 @@ namespace RichPackage
             DG.Tweening.DOTween.Init();
             UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
         }
+	
+#if UNITY_EDITOR
+		private void OnPlayModeChanged(UnityEditor.PlayModeStateChange mode)
+        {
+			if (mode == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            {
+				IsQuitting = true;
+                // it's important to unsubscribe as the listeners are persistent
+				UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+			}
+		}
+#endif
 
         private void OnApplicationQuit()
         {
