@@ -20,6 +20,18 @@ namespace RichPackage
             get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
         }
 
+        public static Coroutine Delay(float delay)
+        {
+            return Runner.StartCoroutine(DelayLoop(delay));
+        }
+
+        public static IEnumerator DelayLoop(float _delay)
+        {
+            var timer = SimpleTimer.StartNew();
+            while (timer < _delay)
+                yield return null;
+        }
+
         public static IEnumerator ProcessLoop(Action process,
             YieldInstruction yieldInstruction = null)
         {
@@ -104,13 +116,26 @@ namespace RichPackage
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void StopCoroutineSafely(ref Coroutine coroutine)
+        public static void StopCoroutineSafely(ref Coroutine coroutine)
         {
             if (coroutine != null)
             {
                 StopCoroutine(coroutine);
                 coroutine = null;
             }
+        }
+
+        /// <summary>
+        /// Starts a coroutine that completes when <paramref name="query"/> returns <see langword="true"/>.
+        /// </summary>
+        public static Coroutine WaitUntil(Func<bool> query)
+        {
+            static IEnumerator Wait(Func<bool> _query)
+            {
+                yield return new WaitUntil(_query);
+            }
+
+            return Runner.StartCoroutine(Wait(query));
         }
     }
 }
