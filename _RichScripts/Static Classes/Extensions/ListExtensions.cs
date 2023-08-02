@@ -249,6 +249,19 @@ namespace RichPackage
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Contains<T>(this List<T> list, Predicate<T> query)
+            => IndexOf(list, query) > -1;
+
+        public static int IndexOf<T>(this IList<T> list, Predicate<T> query)
+        {
+            int length = list.Count;
+            for (int i = 0; i < length; ++i)
+                if (query(list[i]))
+                    return i;
+            return -1;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty<T>(this List<T> list)
             => list.Count == 0;
 
