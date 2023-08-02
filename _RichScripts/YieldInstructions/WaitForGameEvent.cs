@@ -11,7 +11,6 @@ namespace RichPackage.YieldInstructions
 	/// and cannot be used synchronously like 
 	/// <see cref="CommonYieldInstructions"/>.</remarks>
 	/// <seealso cref="WaitWhile"/>
-	/// <seealso cref="WaitUntil"/>
 	[System.Obsolete("Use " + nameof(WaitUntilEvent) + " instead.")]
     public class WaitForGameEvent : CustomYieldInstruction
     {
