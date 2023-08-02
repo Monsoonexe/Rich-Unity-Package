@@ -1,4 +1,5 @@
 ﻿using RichPackage.GuardClauses;
+using System;
 using UnityEngine;
 
 namespace RichPackage
@@ -7,7 +8,7 @@ namespace RichPackage
 	/// Properties for a <see cref="Transform"/>.
 	/// </summary>
 	[System.Serializable]
-	public struct TransformProperties
+	public struct TransformProperties : IEquatable<Transform>, IEquatable<TransformProperties>
 	{
 		public Space space;
 		public Vector3 position;
@@ -35,6 +36,8 @@ namespace RichPackage
 		}
 
         #endregion Constructors
+
+        // TODO - Load and Store names SUCK!!! I can never remember which is whic.
 
         /// <summary>
         /// Sets this object's properties to <paramref name="t"/>'s.
@@ -67,7 +70,7 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Loads <paramref name="t"/>'s properties into this object.
+        /// Set's <paramref name="t"/>'s properties to those stored in this object.
         /// </summary>
         public void Load(Transform t)
         {
@@ -76,16 +79,29 @@ namespace RichPackage
 
             // operate
             if (space == Space.Self)
-            {
-                t.localPosition = position;
-                t.localRotation = rotation;
-            }
+                t.SetLocalPositionAndRotation(position, rotation);
             else
-            {
-                t.position = position;
-                t.rotation = rotation;
-            }
+                t.SetPositionAndRotation(position, rotation);
         }
+
+        #region IEquatable
+
+        public bool Equals(Transform other)
+        {
+            return this.Equals(new TransformProperties(other, space));
+        }
+
+        public bool Equals(TransformProperties other)
+        {
+            // throw? or just return false? A mixmatch is probably a mistake, right?
+            if (other.space != this.space)
+                throw new InvalidOperationException($"The two comparands are in different spaces and cannot be compared: 'this' is {this.space} space but 'other' is {other.space} space!");
+
+            return this.position == other.position 
+                && this.rotation == other.rotation;
+        }
+
+        #endregion IEquatable
     }
 
     public static class TransformPropertiesExtensions
@@ -111,6 +127,11 @@ namespace RichPackage
             props.space = Space.Self;
             t.localPosition = props.position;
             t.localRotation = props.rotation;
+        }
+    
+        public static bool Equals(this Transform t, TransformProperties other)
+        {
+            return other.Equals(t);
         }
     }
 }
