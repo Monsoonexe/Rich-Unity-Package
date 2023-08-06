@@ -16,6 +16,7 @@ namespace RichPackage.SaveSystem
             base.Reset();
             SetDevDescription("Remembers the last time and state of the animation.");
             myAnimator = GetComponent<Animator>();
+            SaveID = $"{name}-{nameof(RememberAnimatorState)}";
         }
 
         #region Save/Load
