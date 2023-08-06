@@ -106,6 +106,11 @@ namespace RichPackage
         {
             return Runner.StartCoroutine(ProcessLoop(process, yieldInstruction));
         }
+
+        public static Coroutine StartInvokeAfter(Action action, YieldInstruction yieldInstruction)
+        {
+            return Runner.StartCoroutine(InvokeAfter(action, yieldInstruction));
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopCoroutine(Coroutine coroutine)
