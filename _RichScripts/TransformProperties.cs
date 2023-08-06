@@ -1,4 +1,4 @@
-﻿using RichPackage.GuardClauses;
+using RichPackage.GuardClauses;
 using System;
 using UnityEngine;
 
@@ -94,7 +94,8 @@ namespace RichPackage
         public bool Equals(TransformProperties other)
         {
             // throw? or just return false? A mixmatch is probably a mistake, right?
-            if (other.space != this.space)
+            // it's possible that world and local space can be identical...
+            if (this.space != other.space)
                 throw new InvalidOperationException($"The two comparands are in different spaces and cannot be compared: 'this' is {this.space} space but 'other' is {other.space} space!");
 
             return this.position == other.position 
@@ -127,11 +128,6 @@ namespace RichPackage
             props.space = Space.Self;
             t.localPosition = props.position;
             t.localRotation = props.rotation;
-        }
-    
-        public static bool Equals(this Transform t, TransformProperties other)
-        {
-            return other.Equals(t);
         }
     }
 }
