@@ -14,7 +14,6 @@ namespace RichPackage.SaveSystem
         [Title("Settings")]
         public bool rememberColor = false;
         public bool rememberIntensity = false;
-        // public bool rememberIndirectMultiplier = false;
         public bool rememberRange = false;
         public bool rememberEnabled = false;
 
@@ -60,7 +59,6 @@ namespace RichPackage.SaveSystem
         {
             public Color color;
             public float intensity;
-            // public float indirectMultiplier;
             public float range;
             public bool enabled;
         }

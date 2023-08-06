@@ -8,24 +8,45 @@ namespace RichPackage
     /// </summary>
     public static class Animator_Extensions
     {
-        public static IEnumerator WaitForEnd(this Animator animator)
+        public static Coroutine WaitForEnd(this Animator animator)
         {
             AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
             Debug.Assert(!state.loop, "I'll wait forever if the animation loops. looping is unsupported.", animator);
 
-            yield return CoroutineUtilities.Delay(state.length);
+            return CoroutineUtilities.Delay(state.length);
         }
 
-        public static IEnumerator WaitForExit(this Animator animator)
+        public static Coroutine WaitForExit(this Animator animator)
         {
             AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
-            yield return CoroutineUtilities.WaitUntil(() =>
+            if (state.loop)
             {
-                AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
-                return currentState.fullPathHash != state.fullPathHash;
-            });
+                return CoroutineUtilities.WaitUntil(() =>
+                {
+                    AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+                    return currentState.fullPathHash != state.fullPathHash;
+                });
+            }
+            else
+            {
+                return WaitForEnd(animator);
+            }
+        }
+
+        public static Coroutine PlayThenDisable(this Animator animator, string stateName)
+        {
+            animator.Play(stateName);
+            return CoroutineUtilities.StartInvokeAfter(() => animator.enabled = false,
+                WaitForExit(animator));
+        }
+
+        public static void PlayLastFrame(this Animator animator, string stateName)
+        {
+            animator.Play(stateName);
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            animator.playbackTime = currentState.length;
         }
     }
 }
