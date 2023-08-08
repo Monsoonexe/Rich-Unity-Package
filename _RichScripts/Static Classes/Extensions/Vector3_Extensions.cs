@@ -26,7 +26,25 @@ namespace RichPackage
 
         public static Vector3 WithZ(this Vector3 a, float z)
             => new Vector3(a.x, a.y, z);
-        
+
+        public static Vector3 PlusX(this Vector3 a, float x)
+            => new Vector3(a.x + x, a.y, a.z);
+
+        public static Vector3 PlusY(this Vector3 a, float y)
+            => new Vector3(a.x, a.y + y, a.z);
+
+        public static Vector3 PlusZ(this Vector3 a, float z)
+            => new Vector3(a.x, a.y, a.z + z);
+
+        public static Vector3 MinusX(this Vector3 a, float x)
+            => new Vector3(a.x - x, a.y, a.z);
+
+        public static Vector3 MinusY(this Vector3 a, float y)
+            => new Vector3(a.x, a.y - y, a.z);
+
+        public static Vector3 MinusZ(this Vector3 a, float z)
+            => new Vector3(a.x, a.y, a.z - z);
+
         /// <summary>
         /// Handy function to make assigning/copying vectors easier
         /// myPostion = somePosition.With(z = 1);//same, but with different z-value
