@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System;
+using Sirenix.OdinInspector;
 
 namespace RichPackage.Collections
 {
@@ -127,10 +128,16 @@ namespace RichPackage.Collections
             public string Name;
             public EType Type;
 
+            [ShowIf("@Type == EType.Int")]
             public int IntValue;
+
+            [ShowIf("@Type == EType.Float")]
             public float FloatValue;
+
+            [ShowIf("@Type == EType.String")]
             public string StringValue;
 
+            [ShowInInspector, ShowIf("@Type == EType.Bool")]
             public bool BoolValue
             {
                 // use the integer field as the backing store to save some space
