@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 namespace RichPackage
@@ -47,6 +46,12 @@ namespace RichPackage
             animator.Play(stateName);
             AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
             animator.playbackTime = currentState.length;
+        }
+
+        public static void SkipToEnd(this Animator animator)
+        {
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            animator.Play(currentState.fullPathHash, -1, currentState.length);
         }
     }
 }
