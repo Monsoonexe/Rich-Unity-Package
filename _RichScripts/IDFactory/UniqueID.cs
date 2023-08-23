@@ -30,7 +30,7 @@ namespace RichPackage
         public string ID { get; private set; }
 
         private int? cachedHash;
-        public int Hash { get => cachedHash ?? (cachedHash = ID.GetHashCode()).Value; }
+        public int Hash { get => cachedHash ?? RecalculateHash(); }
 
         #region Constructors
 
@@ -41,6 +41,11 @@ namespace RichPackage
         }
 
         #endregion Constructors
+
+        /// <summary>
+        /// Only required to call if ID was changed magically and cached hash became stale.
+        /// </summary>
+        public int RecalculateHash() => (cachedHash = ID.GetHashCode()).Value;
 
         public void GenerateNewId() => ID = New;
         
