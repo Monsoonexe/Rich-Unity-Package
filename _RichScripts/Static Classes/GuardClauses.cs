@@ -273,8 +273,6 @@ namespace RichPackage.GuardClauses
 
         #region Comparison
 
-        //TODO - moar
-
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void IsOutOfRange<T>(T argumentValue,
