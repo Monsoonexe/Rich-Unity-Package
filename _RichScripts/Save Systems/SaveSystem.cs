@@ -9,19 +9,21 @@ using RichPackage.Events.Signals;
 using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
 using RichPackage.GuardClauses;
+using System.Linq;
 
 namespace RichPackage.SaveSystem
 {
 	/// <summary>
 	/// I facilitate saving and manage save files.
 	/// </summary>
-	public class SaveSystem : ASaveableMonoBehaviour<SaveSystem.SaveSystemData>,
+	public class SaveSystem : RichMonoBehaviour,
 		ISaveSystem
 	{
 		#region Constants
 
 		private const string HAS_SAVE_DATA_KEY = "HasData";
 		private const string DEFAULT_SAVE_FILE_NAME = "Save.es3";
+		private const string SaveFileExtension = ".es3";
 
 		#endregion	
 
@@ -33,12 +35,8 @@ namespace RichPackage.SaveSystem
 			private set => s_instance = value;
 		}
 
-		[SerializeField]
-		private List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>();
-
-		[Title("System Save Data")]
-		[SerializeField, Tooltip("File that stores meta information about the actual save files themselves.")]
-		private ES3SerializableSettings saveDataMetaInformation;
+		[ShowInInspector, HideInEditorMode]
+		private readonly List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>();
 
 		[Title("Settings")]
 		public bool debug = false;
@@ -90,12 +88,6 @@ namespace RichPackage.SaveSystem
 		{
 			base.Reset();
 			SetDevDescription("I facilitate saving and manage save files.");
-
-			//first slot is free
-			gameSaveFiles = gameSaveFiles ?? new List<ES3SerializableSettings>
-			{
-				CreateNewSettings()
-			};
 		}
 
 		protected override void Awake()
@@ -109,15 +101,18 @@ namespace RichPackage.SaveSystem
                 return;
 			}
 
+#if UNITY_EDITOR
+			// clear the current save for easier iteration
 			if (deleteOnPlay)
 				DeleteSave();
+#endif
 
-			LoadMetaInformation();
+            LoadSaveFilePaths();
+			Load(DEFAULT_SAVE_FILE_NAME);
 		}
 
 		private void OnDestroy()
 		{
-			SaveMetaInformation(); //just to be safe
 			Singleton.Release(this, ref s_instance);
 		}
 
@@ -127,19 +122,19 @@ namespace RichPackage.SaveSystem
 				Load();
 		}
 
-		protected override void OnEnable()
+		protected void OnEnable()
 		{
 			// subscribe to events
 			GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
-			GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
+			// GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().AddListener(Save);
 		}
 
-		protected override void OnDisable()
+		protected void OnDisable()
 		{
 			// unsubscribe from events
 			GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
-			GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
+			// GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
 			GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(Save);
 		}
 
@@ -159,7 +154,7 @@ namespace RichPackage.SaveSystem
 			};
 		}
 
-		private void LoadFile(int slot)
+		public void LoadFile(int slot)
 		{
 			// validate
 			GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
@@ -171,10 +166,53 @@ namespace RichPackage.SaveSystem
 				Debug.Log($"Loaded file at slot {slot} '{currentSaveFile.settings.path}'.");
         }
 
-		/// <summary>
-		/// Triggered by dispatching <see cref="SaveGameSignal"/>.
-		/// </summary>
-		[Button, DisableInEditorMode]
+		private void Load(ES3SerializableSettings saveFile)
+        {
+			// operate
+			currentSaveFile = CreateSaveFileObject(saveFile);
+        }
+
+		/// <param name="fileName">The name of the save file with no extension.</param>
+		public void Load(string fileName)
+		{
+			LoadSaveFilePaths();
+            ES3SerializableSettings saveFile = gameSaveFiles
+                .Where(settings => Path.GetFileNameWithoutExtension(settings.FullPath).QuickEquals(fileName))
+				.FirstOrDefault();
+
+			// if not found
+			if (saveFile == null)
+			{
+				Debug.LogError($"Could not find a save file with the name {saveFile}.");
+				return;
+			}
+
+			Load(saveFile);
+        }
+
+        [Button, DisableInEditorMode, HorizontalGroup("Load")]
+        public void Load()
+        {
+            LoadFile(saveGameSlotIndex);
+
+            // broadcast load command
+            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
+
+            if (debug)
+                Debug.Log($"Loaded file: {SaveFile.settings.path}.");
+        }
+
+        [Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
+        public void Load(int slot)
+        {
+            saveGameSlotIndex = slot;
+            Load();
+        }
+
+        /// <summary>
+        /// Triggered by dispatching <see cref="SaveGameSignal"/>.
+        /// </summary>
+        [Button, DisableInEditorMode]
 		public void Save()
 		{
 			SaveFile.Save(HAS_SAVE_DATA_KEY, value: true); // flag to indicate there is indeed some save data
@@ -191,51 +229,19 @@ namespace RichPackage.SaveSystem
 		[Button, HorizontalGroup("Delete", 0.5f)]
 		public void DeleteSave(int slot)
 		{
-			// validate
-			// gameSaveFiles.AssertValidIndex(slot);
-
 			// operate
 			var saveFile = CreateSaveFileObject(gameSaveFiles[slot]); //load into memory
-			saveFile.Clear();
-			saveFile.Sync(); //needed?
+			saveFile.Clear(); // clear any lingering data
+            saveFile.Sync(); // sync with file system
 
             if (debug)
                 Debug.Log($"Deletedfile: {saveFile.settings.path}.");
-		}
-
-		[Button, DisableInEditorMode, HorizontalGroup("Load")]
-		public void Load()
-		{
-			currentSaveFile?.Sync(); // flush cache to disk before switching save files.
-			LoadFile(saveGameSlotIndex);
-
-			// broadcast load command
-			GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
-
-            if (debug)
-                Debug.Log($"Loaded file: {SaveFile.settings.path}.");
-		}
-
-		[Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
-		public void Load(int slot)
-		{
-			saveGameSlotIndex = slot;
-			Load();
 		}
 
         [Button, DisableInEditorMode]
         public void Sync() => SaveFile.Sync();
 
         #region Meta Save Data
-
-        [Button, HorizontalGroup("META")]
-		public void SaveMetaInformation() => SaveState(CreateSaveFileObject(saveDataMetaInformation));
-
-		[Button, HorizontalGroup("META")]
-		public void LoadMetaInformation() => LoadState(CreateSaveFileObject(saveDataMetaInformation));
-
-        [Button, HorizontalGroup("META")]
-		public void DeleteMetaInformation() => (CreateSaveFileObject(saveDataMetaInformation)).Clear();
 
 		private ES3File CreateSaveFileObject(ES3SerializableSettings settings)
         {
@@ -279,32 +285,23 @@ namespace RichPackage.SaveSystem
 
         #region Save/Load
 
-        protected override void LoadStateInternal()
+        protected void LoadSaveFilePaths()
         {
             gameSaveFiles.Clear();
+
             //load existing files
-            foreach (var f in SaveData.SaveFiles)
-                gameSaveFiles.Add(CreateNewSettings(f));
+            foreach (string file in EnumerateSaveFiles())
+                gameSaveFiles.Add(CreateNewSettings(file));
+
             currentSaveFile = null;
         }
 
-        protected override void SaveStateInternal()
+		private IEnumerable<string> EnumerateSaveFiles()
         {
-            SaveData.SaveFiles = gameSaveFiles.ToSubArray((file) => file.FullPath);
+            // look for all of the save files in the persistent data location
+            return Directory.EnumerateFiles(Application.persistentDataPath)
+                .Where(filePath => Path.GetExtension(filePath).QuickEquals(SaveFileExtension));
         }
-
-        public override void SaveState(ES3File saveFile)
-		{
-			// save to raw default file
-			base.SaveState(saveFile);
-			saveFile.Sync(); // flush cache
-		}
-
-		public override void LoadState(ES3File saveFile)
-		{
-			currentSaveFile?.Sync();
-			base.LoadState(saveFile);
-		}
 
         #endregion Save/Load
 
@@ -348,39 +345,16 @@ namespace RichPackage.SaveSystem
 
         #region ISaveSystem
 
-        public void Save<T>(string key, T memento) => SaveFile.Save(key, memento);
-        public T Load<T>(string key) => SaveFile.Load<T>(key);
-        public T Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
-		public void LoadInto<T>(string key, T memento) where T : class 
+        void ISaveSystem.Save<T>(string key, T memento) => SaveFile.Save(key, memento);
+        T ISaveSystem.Load<T>(string key) => SaveFile.Load<T>(key);
+        T ISaveSystem.Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
+		void ISaveSystem.LoadInto<T>(string key, T memento) where T : class 
 			=> SaveFile.LoadInto(key, memento);
-        public bool Contains(string key) => SaveFile.KeyExists(key);
-        public void Delete(string key) => SaveFile.DeleteKey(key);
-		public void Clear() => SaveFile.Clear();
+        bool ISaveSystem.Contains(string key) => SaveFile.KeyExists(key);
+        void ISaveSystem.Delete(string key) => SaveFile.DeleteKey(key);
+		void ISaveSystem.Clear() => SaveFile.Clear();
 
         #endregion ISaveSystem
-
-        [Serializable]
-        public class SaveSystemData : AState
-        {
-            [SerializeField]
-            private string[] saveFiles;
-
-            public string[] SaveFiles
-            {
-                get => saveFiles;
-                set
-                {
-                    saveFiles = value;
-                }
-            }
-
-            public SaveSystemData() : this(new string[0]) { }
-
-            public SaveSystemData(string[] saveFiles) : base()
-            {
-                this.saveFiles = saveFiles;
-            }
-        }
 
         [QFSW.QC.Command("openSaveFile"), Button]
 		public static void OpenSaveFile()
