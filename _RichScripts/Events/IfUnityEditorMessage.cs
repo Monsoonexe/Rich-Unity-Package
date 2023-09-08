@@ -56,7 +56,7 @@ namespace RichPackage.UnityMessages
 #if UNITY_EDITOR
 			ifEvent.Invoke();
 #else	
-			ifNotEvent.Invoke():
+			ifNotEvent.Invoke();
 #endif
 		}
 	}
