@@ -382,9 +382,7 @@ namespace RichPackage.Managed
 
         #region Editor
 
-#if UNITY_EDITOR
         private const string ButtonGroup = "Functions";
-#endif
 
         [Conditional(ConstStrings.UNITY_EDITOR)]
         private static void AssertSingletonExists()
