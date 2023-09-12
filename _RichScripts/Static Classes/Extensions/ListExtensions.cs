@@ -334,6 +334,38 @@ namespace RichPackage
             src.Swap(index, src.LastIndex());
             src.RemoveLast();
         }
+        
+    	/// <summary>
+    	/// Returns 'true' if all elements of each IList are equivalent, otherwise returns 'false'.
+    	/// </summary>
+    	public static bool SequenceEqual<T>(this IList<T> a, IList<T> b)
+    	{
+    		int aCount = a.Count; // cache to reduce function overhead
+    		int bCount = b.Count;
+    
+    		if (aCount != bCount)
+    			return false;
+    
+    		// compare each item in the sequence
+    		for (int i = 0; i < aCount; i++)
+    		{
+    			T ai = a[i];
+    			T bi = b[i];
+    
+    			// nothing to compare
+    			if (ai == null && bi == null)
+    				continue;
+    
+    			// .Equals is a member method, so figure out which one is non-null to be on the lhs
+    			if (ai == null && !bi.Equals(ai))
+    				return false;
+    
+    			if (!ai.Equals(bi))
+    				return false;
+    		}
+    
+    		return true;
+    	}
 
         /// <summary>
         /// Calls <see cref="List{T}.ToArray"/> and <see cref="List{T}.Clear"/> and returns the array.
