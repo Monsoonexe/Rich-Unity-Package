@@ -58,7 +58,7 @@ namespace RichPackage.Editor
 
         private void FindObjectOfTypeAndSetReference(InspectorProperty property)
         {
-            Component comp = Object.FindObjectOfType<T>(true);
+            Component comp = Object.FindObjectOfType<T>();
 
             if (comp == null)
             {
