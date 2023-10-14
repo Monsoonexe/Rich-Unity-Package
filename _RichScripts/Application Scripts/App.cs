@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
 using RichPackage.Audio;
 using Sirenix.OdinInspector;
+using RichPackage.GuardClauses;
 
 namespace RichPackage
 {
@@ -86,17 +87,18 @@ namespace RichPackage
 #else
             get => _isQuitting;
 #endif
+
             private set
-		{
-			GuardAgainst.IsFalse(value, "Why would you set this to false???");
-	
-			// prevent re-firing
-			if (_isQuitting == value)
-	    return;
-	
-	_isQuitting = value;
-			Signals.Get<OnApplicationQuitSignal>().Invoke(); // propagate event ASAP
-		}
+            {
+                GuardAgainst.IsFalse(value, "Why would you set this to false???");
+
+                // prevent re-firing
+                if (_isQuitting == value)
+                    return;
+
+                _isQuitting = value;
+                // GlobalSignals.Get<OnApplicationQuitSignal>().Invoke(); // propagate event ASAP
+            }
         }
 
         #region Unity Messages
