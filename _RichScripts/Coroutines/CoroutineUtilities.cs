@@ -135,7 +135,7 @@ namespace RichPackage
         /// </summary>
         public static Coroutine WaitUntil(Func<bool> query)
         {
-            static IEnumerator Wait(Func<bool> _query)
+            IEnumerator Wait(Func<bool> _query)
             {
                 yield return new WaitUntil(_query);
             }
