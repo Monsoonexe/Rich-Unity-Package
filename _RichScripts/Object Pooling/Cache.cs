@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 namespace RichPackage.Pooling
 {
-    public class Cache : Cache<object> { } // simple definition
+    public class Cache : Cache<object>
+    {
+        public static readonly Dictionary<object, object> Global = new Dictionary<object, object>();
+    }
 
     public class Cache<T>
     {
