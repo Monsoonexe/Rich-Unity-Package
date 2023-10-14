@@ -124,7 +124,15 @@ namespace RichPackage
                 SetLayerRecursively(child, newLayer);
             }
         }
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SetLocalPositionAndRotation(this Transform t,
+            in Vector3 position, in Quaternion rotation)
+        {
+            t.localPosition = position;
+            t.localRotation = rotation;
+        }
+
         public static Transform[] GetChildren(this Transform parent)
         {
             int count = parent.childCount;
