@@ -45,6 +45,16 @@ namespace RichPackage.Editor.ValidationRules
 	        SelectObject(obj);
 	        Highlighter.Highlight("Inspector", ObjectNames.NicifyVariableName(field.Name));
         }
-        
+     
+        /// <param name="asset">The asset to select.</param>
+        /// <param name="actionName">Gets displayed in on the button text.</param>
+        public static ValidationRuleAction CreateSelectObjectAction(Object asset,
+            string actionName = "Select Object")
+        {
+            return new ValidationRuleAction(actionName, () =>
+            {
+                SelectObject(asset);
+            });
+        }
     }
 }
