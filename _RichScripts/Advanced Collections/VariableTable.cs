@@ -2,14 +2,40 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System;
 using Sirenix.OdinInspector;
+using RichPackage.GuardClauses;
 
 namespace RichPackage.Collections
 {
-    [Serializable]
+    [Serializable,
+        Newtonsoft.Json.JsonObject(MemberSerialization = Newtonsoft.Json.MemberSerialization.Fields)] // serialize this object with json the same way you would in unity
     public class VariableTable // TODO - ICollection
     {
         [UnityEngine.SerializeField]
         private List<VariableEntry> entries = new List<VariableEntry>();
+
+        #region Constructors
+
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        public VariableTable() { }
+
+        /// <summary>
+        /// Copy-constructor.
+        /// </summary>
+        public VariableTable(VariableTable source)
+        {
+            GuardAgainst.ArgumentIsNull(source, nameof(source));
+
+            foreach (var entry in source.entries)
+            {
+                entries.Add(new VariableEntry(entry, entry.Name));
+            }
+        }
+
+        #endregion Constructors
+
+        #region Bools
 
         public void SetBoolValue(UniqueID name, bool value = default)
         {
@@ -20,10 +46,12 @@ namespace RichPackage.Collections
 
         public bool GetBoolValue(UniqueID name)
         {
-            VariableEntry entry = GetEntryOrThrow(name);
+            VariableEntry entry = LookupEntryOrThrow(name);
             VerifyType(entry.Type, EType.Bool);
             return entry.BoolValue;
         }
+
+        #endregion Bools
 
         public void SetIntValue(UniqueID name, int value = default)
         {
@@ -34,7 +62,7 @@ namespace RichPackage.Collections
 
         public int GetIntValue(UniqueID name)
         {
-            VariableEntry entry = GetEntryOrThrow(name);
+            VariableEntry entry = LookupEntryOrThrow(name);
             VerifyType(entry.Type, EType.Int);
             return entry.IntValue;
         }
@@ -48,7 +76,7 @@ namespace RichPackage.Collections
 
         public float GetFloatValue(UniqueID name)
         {
-            VariableEntry entry = GetEntryOrThrow(name);
+            VariableEntry entry = LookupEntryOrThrow(name);
             VerifyType(entry.Type, EType.Float);
             return entry.FloatValue;
         }
@@ -62,7 +90,7 @@ namespace RichPackage.Collections
 
         public string GetStringValue(UniqueID name)
         {
-            VariableEntry entry = GetEntryOrThrow(name);
+            VariableEntry entry = LookupEntryOrThrow(name);
             VerifyType(entry.Type, EType.String);
             return entry.StringValue;
         }
@@ -93,10 +121,18 @@ namespace RichPackage.Collections
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private VariableEntry LookupEntry(UniqueID name)
-            => entries.Find(e => e.Name == name);
+        {
+            foreach (var e in entries)
+            {
+                if (e.Name == name)
+                    return e;
+            }
+
+            return null;
+        }
 
         /// <exception cref="KeyNotFoundException"></exception>
-        private VariableEntry GetEntryOrThrow(UniqueID name)
+        private VariableEntry LookupEntryOrThrow(UniqueID name)
         {
             return LookupEntry(name)
                 ?? throw new KeyNotFoundException(name);
@@ -122,7 +158,8 @@ namespace RichPackage.Collections
             String
         }
 
-        [Serializable]
+        [Serializable,
+            Newtonsoft.Json.JsonObject(MemberSerialization = Newtonsoft.Json.MemberSerialization.Fields)] // serialize this object with json the same way you would in unity]
         private class VariableEntry
         {
             public UniqueID Name;
@@ -145,6 +182,32 @@ namespace RichPackage.Collections
                 set => IntValue = value.ToInt();
             }
 
+            /// <summary>
+            /// Weakly-typed value.
+            /// </summary>
+            public object WeakValue
+            {
+                get
+                {
+                    switch (Type)
+                    {
+                        case EType.Bool:
+                            return BoolValue;
+                        case EType.Int:
+                            return IntValue;
+                        case EType.Float:
+                            return FloatValue;
+                        case EType.String:
+                            return StringValue;
+                        default: throw ExceptionUtilities.GetInvalidEnumCaseException(Type);
+                    }
+                }
+
+                // TODO - setter?
+            }
+
+            #region Constructors
+
             public VariableEntry(UniqueID name, EType type)
             {
                 Name = name;
@@ -153,6 +216,25 @@ namespace RichPackage.Collections
                 FloatValue = 0;
                 StringValue = null;
             }
+
+            /// <summary>
+            /// Copy-constructor.
+            /// </summary>
+            public VariableEntry(VariableEntry src, UniqueID id)
+            {
+                GuardAgainst.ArgumentIsNull(src, nameof(src));
+
+                // set id
+                this.Name = id;
+
+                // copy properties
+                this.Type = src.Type;
+                this.IntValue = src.IntValue;
+                this.FloatValue = src.FloatValue;
+                this.StringValue = src.StringValue;
+            }
+
+            #endregion Constructors
         }
     }
 }
