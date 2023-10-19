@@ -53,6 +53,8 @@ namespace RichPackage.Collections
 
         #endregion Bools
 
+        #region Ints
+
         public void SetIntValue(UniqueID name, int value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.Int);
@@ -66,6 +68,10 @@ namespace RichPackage.Collections
             VerifyType(entry.Type, EType.Int);
             return entry.IntValue;
         }
+
+        #endregion Ints
+
+        #region Floats
 
         public void SetFloatValue(UniqueID name, float value = default)
         {
@@ -81,6 +87,10 @@ namespace RichPackage.Collections
             return entry.FloatValue;
         }
 
+        #endregion Floats
+
+        #region Strings
+
         public void SetStringValue(UniqueID name, string value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.String);
@@ -95,6 +105,8 @@ namespace RichPackage.Collections
             return entry.StringValue;
         }
 
+        #endregion Strings
+
         public void Delete(UniqueID name)
         {
             int i = entries.IndexOf(v => v.Name == name);
@@ -103,6 +115,8 @@ namespace RichPackage.Collections
         }
 
         public void Clear() => entries.Clear();
+
+        #region Lookup
 
         private VariableEntry GetOrCreateEntry(UniqueID name, EType type)
         {
@@ -119,7 +133,6 @@ namespace RichPackage.Collections
             return entry;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private VariableEntry LookupEntry(UniqueID name)
         {
             foreach (var e in entries)
@@ -138,6 +151,8 @@ namespace RichPackage.Collections
                 ?? throw new KeyNotFoundException(name);
         }
 
+        #endregion Lookup
+
         private static void VerifyType(EType expected, EType actual)
         {
             if (expected != actual)
@@ -145,6 +160,12 @@ namespace RichPackage.Collections
                 string message = $"Variable type mismatch: Expected {expected} but was {actual}.";
                 throw new InvalidOperationException(message);
             }
+        }
+
+        public object this[UniqueID name]
+        {
+            get => LookupEntryOrThrow(name).WeakValue;
+            set => GetOrCreateEntry(name, EType.Bool).WeakValue = value; // the type doesn't matter
         }
 
         /// <summary>
@@ -202,8 +223,30 @@ namespace RichPackage.Collections
                         default: throw ExceptionUtilities.GetInvalidEnumCaseException(Type);
                     }
                 }
-
-                // TODO - setter?
+                set
+                {
+                    switch (value)
+                    {
+                        case bool boolValue:
+                            Type = EType.Bool;
+                            BoolValue = boolValue;
+                            break;
+                        case int intValue:
+                            Type = EType.Int;
+                            IntValue = intValue;
+                            break;
+                        case float floatValue:
+                            Type = EType.Float;
+                            FloatValue = floatValue;
+                            break;
+                        case string stringValue:
+                            Type = EType.String;
+                            StringValue = stringValue;
+                            break;
+                        default:
+                            throw new InvalidCastException($"The type {value.GetType()} isn't supported. Please use a supported primitive type defined in {nameof(EType)}.");
+                    }
+                }
             }
 
             #region Constructors
@@ -235,6 +278,7 @@ namespace RichPackage.Collections
             }
 
             #endregion Constructors
+
         }
     }
 }
