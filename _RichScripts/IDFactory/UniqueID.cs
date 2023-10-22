@@ -50,11 +50,26 @@ namespace RichPackage
 
         public static UniqueID FromString(string src) => new UniqueID(src);
 
-        public override bool Equals(object obj)
-            => obj is UniqueID other && Equals(other);
+        #region Equality Operators
+
+        public override bool Equals(object obj) => obj is UniqueID other && Equals(other);
 
         public static bool operator == (UniqueID a, UniqueID b) => a.Equals(b);
         public static bool operator != (UniqueID a, UniqueID b) => !(a == b);
+
+        public static bool operator ==(UniqueID a, string b) => a.Equals(b);
+        public static bool operator !=(UniqueID a, string b) => !(a == b);
+
+        public static bool operator ==(string a, UniqueID b) => b.Equals(a);
+        public static bool operator !=(string a, UniqueID b) => !(a == b);
+
+        public static bool operator ==(int a, UniqueID b) => b.Equals(a);
+        public static bool operator !=(int a, UniqueID b) => !(a == b);
+
+        public static bool operator ==(UniqueID a, int b) => b.Equals(a);
+        public static bool operator !=(UniqueID a, int b) => !(a == b);
+
+        #endregion Equality Operators
 
         public static implicit operator string (UniqueID id) => id.ID;
         public static implicit operator int(UniqueID id) => id.Hash;
