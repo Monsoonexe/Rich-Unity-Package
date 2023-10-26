@@ -26,7 +26,8 @@ namespace RichPackage
         public static readonly UniqueID None = new UniqueID(string.Empty);
 
         [field: SerializeField, LabelText(nameof(ID)),
-            CustomContextMenu("Regenerate", nameof(GenerateNewId))]
+            CustomContextMenu("Regenerate", nameof(GenerateNewId)),
+            PropertyTooltip("$" + nameof(Hash))]
         public string ID { get; private set; }
 
         private int? cachedHash;
