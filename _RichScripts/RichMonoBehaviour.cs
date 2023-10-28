@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using System.Runtime.CompilerServices;
 
 namespace RichPackage
 {
@@ -147,11 +148,13 @@ namespace RichPackage
 
         #region Coroutine Helpers
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void StopCoroutineSafely(Coroutine coroutine)
         {
             CoroutineUtilities.StopCoroutineSafely(coroutine);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void StopCoroutineSafely(ref Coroutine coroutine)
         {
             CoroutineUtilities.StopCoroutineSafely(ref coroutine);
@@ -167,7 +170,7 @@ namespace RichPackage
         /// </summary>
         /// <returns>The newly created instance.</returns>
         public static T Construct<T>() where T : RichMonoBehaviour
-            => new GameObject(typeof(T).Name).AddComponent<T>();
+            => Construct<T>(typeof(T).Name);
 
         /// <summary>
         /// Creates a new <see cref="GameObject"/> with the given 
