@@ -202,6 +202,7 @@ namespace RichPackage.Collections
             String = 3
         }
 
+        // TODO - custom json serializer to really trim the fat
         [Serializable,
             Newtonsoft.Json.JsonObject(MemberSerialization = Newtonsoft.Json.MemberSerialization.Fields)] // serialize this object with json the same way you would in unity]
         private class VariableEntry

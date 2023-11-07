@@ -5,11 +5,12 @@ using UnityEngine;
 namespace RichPackage.SaveSystem
 {
     /// <summary>
-    /// 
+    /// Saves/Loads game variables that exist as a component on a game object.
     /// </summary>
+    /// <seealso cref="GameObjectVariables"/>
     public class RememberGameObjectVariables : ASaveableMonoBehaviour<RememberGameObjectVariables.Memento>
     {
-        [Required]
+        [Required, Tooltip("The thing that gets remembered.")]
         public GameObjectVariables target;
 
         protected override void Reset()
