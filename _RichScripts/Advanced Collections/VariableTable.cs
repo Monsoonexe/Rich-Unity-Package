@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System;
-using Sirenix.OdinInspector;
 using RichPackage.GuardClauses;
+using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
 
 namespace RichPackage.Collections
 {
@@ -27,7 +26,7 @@ namespace RichPackage.Collections
         {
             GuardAgainst.ArgumentIsNull(source, nameof(source));
 
-            foreach (var entry in source.entries)
+            foreach (VariableEntry entry in source.entries)
             {
                 entries.Add(new VariableEntry(entry, entry.Name));
             }
@@ -107,14 +106,18 @@ namespace RichPackage.Collections
 
         #endregion Strings
 
+        #region Delete
+
         public void Delete(UniqueID name)
         {
             int i = entries.IndexOf(v => v.Name == name);
             if (i > -1)
-                entries.RemoveAt(i);
+                entries.QuickRemove(i);
         }
 
         public void Clear() => entries.Clear();
+
+        #endregion Delete
 
         #region Lookup
 
@@ -135,7 +138,7 @@ namespace RichPackage.Collections
 
         private VariableEntry LookupEntry(UniqueID name)
         {
-            foreach (var e in entries)
+            foreach (VariableEntry e in entries)
             {
                 if (e.Name == name)
                     return e;
@@ -152,6 +155,26 @@ namespace RichPackage.Collections
         }
 
         #endregion Lookup
+
+        #region Copying
+
+        public void CopyTo(VariableTable other) => other.AddRange(entries);
+
+        public void CopyFrom(VariableTable other) => AddRange(other.entries);
+
+        #endregion Copying
+
+        #region Collection
+
+        private void AddRange(IEnumerable<VariableEntry> entries)
+        {
+            foreach (VariableEntry e in entries)
+            {
+                e.CopyTo(GetOrCreateEntry(e.Name, e.Type));
+            }
+        }
+
+        #endregion Collection
 
         private static void VerifyType(EType expected, EType actual)
         {
@@ -173,10 +196,10 @@ namespace RichPackage.Collections
         /// </summary>
         private enum EType
         {
-            Bool,
-            Int,
-            Float,
-            String
+            Bool = 0,
+            Int = 1,
+            Float = 2,
+            String = 3
         }
 
         [Serializable,
@@ -220,7 +243,8 @@ namespace RichPackage.Collections
                             return FloatValue;
                         case EType.String:
                             return StringValue;
-                        default: throw ExceptionUtilities.GetInvalidEnumCaseException(Type);
+                        default:
+                            throw ExceptionUtilities.GetInvalidEnumCaseException(Type);
                     }
                 }
                 set
@@ -278,6 +302,28 @@ namespace RichPackage.Collections
             }
 
             #endregion Constructors
+
+            #region Copying
+
+            public void CopyTo(VariableEntry other)
+            {
+                this.Name = other.Name;
+                this.Type = other.Type;
+                this.IntValue = other.IntValue;
+                this.FloatValue = other.FloatValue;
+                this.StringValue = other.StringValue;
+            }
+
+            public void CopyFrom(VariableEntry other)
+            {
+                other.Name = this.Name;
+                other.Type = this.Type;
+                other.IntValue = this.IntValue;
+                other.FloatValue = this.FloatValue;
+                other.StringValue = this.StringValue;
+            }
+
+            #endregion Copying
 
         }
     }
