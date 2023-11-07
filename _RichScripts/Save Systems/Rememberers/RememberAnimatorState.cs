@@ -21,7 +21,7 @@ namespace RichPackage.SaveSystem
             base.Reset();
             SetDevDescription("Remembers the last time and state of the animation.");
             myAnimator = GetComponent<Animator>();
-            SaveID = $"{name}-{nameof(RememberAnimatorState)}";
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false);
         }
 
         protected override void OnDisable()
