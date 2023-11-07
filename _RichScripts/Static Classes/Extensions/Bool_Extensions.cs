@@ -46,7 +46,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Toggle(this ref bool a) => a = !a;
 
-        /// <returns> 1 if <see langword="true"/>, otherwise 0 if <see langword="false"/>.</returns>
+        /// <returns> 1 if <see langword="true"/>, otherwise 0.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToInt(this bool b) => b ? 1 : 0;
 
