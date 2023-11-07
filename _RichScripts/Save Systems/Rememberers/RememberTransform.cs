@@ -35,5 +35,19 @@ namespace RichPackage.SaveSystem
         {
             public TransformProperties properties;
         }
+
+        #region Editor
+#if UNITY_EDITOR
+
+        [UnityEditor.MenuItem("CONTEXT/" + nameof(Transform) + "/Add Rememberer")]
+        private static void AddRememberer(UnityEditor.MenuCommand command)
+        {
+            var t = (Transform)command.context; // the thing clicked on
+            t.gameObject.AddComponent<RememberTransform>()
+                .target = t; // assign this thing as the thing to be saved
+        }
+
+#endif
+        #endregion Editor
     }
 }

@@ -9,12 +9,14 @@ namespace RichPackage.SaveSystem
     public sealed class RememberAnimatorState : ASaveableMonoBehaviour<RememberAnimatorState.Memento>
     {
         [Required]
-        public Animator myAnimator;
+        public Animator myAnimator; // TODO - rename to 'target'
 
         /// <summary>
         /// The live state of the animator when this was last disabled.
         /// </summary>
         private AnimatorStateInfo? stagedState;
+
+        #region Unity Messages
 
         protected override void Reset()
         {
@@ -35,6 +37,8 @@ namespace RichPackage.SaveSystem
             base.OnEnable();
             stagedState = null; // use live state instead when enabled
         }
+
+        #endregion Unity Messages
 
         #region Save/Load
 
@@ -58,5 +62,19 @@ namespace RichPackage.SaveSystem
         }
 
         #endregion Save/Load
+
+        #region Editor
+#if UNITY_EDITOR
+
+        [UnityEditor.MenuItem("CONTEXT/" + nameof(Animator) + "/Add Rememberer")]
+        private static void AddRememberer(UnityEditor.MenuCommand command)
+        {
+            var t = (Animator)command.context; // the thing clicked on
+            t.gameObject.AddComponent<RememberAnimatorState>()
+                .myAnimator = t; // assign this thing as the thing to be saved
+        }
+
+#endif
+        #endregion Editor
     }
 }

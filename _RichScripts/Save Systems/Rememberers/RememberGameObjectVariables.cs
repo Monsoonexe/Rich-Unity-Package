@@ -17,6 +17,7 @@ namespace RichPackage.SaveSystem
         {
             SetDevDescription("Saves/loads the properties of the target variables component.");
             SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false);
+            target = GetComponentInChildren<GameObjectVariables>();
         }
 
         #region Save/Load

@@ -25,10 +25,12 @@ namespace RichPackage.SaveSystem
             SaveID = UniqueIdUtilities.CreateIdFrom(this, true);
 
             // set default
-            target = GetComponent<Light>();
+            target = GetComponentInChildren<Light>();
         }
 
         #endregion Unity Messages
+
+        #region Save/Load
 
         protected override void LoadStateInternal()
         {
@@ -62,5 +64,21 @@ namespace RichPackage.SaveSystem
             public float range;
             public bool enabled;
         }
+
+#endregion Save/Load
+
+        #region Editor
+#if UNITY_EDITOR
+
+        [UnityEditor.MenuItem("CONTEXT/" + nameof(Light) + "/Add Rememberer")]
+        private static void AddRememberer(UnityEditor.MenuCommand command)
+        {
+            var t = (Light)command.context; // the thing clicked on
+            t.gameObject.AddComponent<RememberLighting>()
+                .target = t; // assign this thing as the thing to be saved
+        }
+
+#endif
+        #endregion Editor
     }
 }
