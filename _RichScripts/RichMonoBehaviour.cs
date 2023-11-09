@@ -174,6 +174,12 @@ namespace RichPackage
 
         #endregion Coroutine Helpers
 
+        protected async Cysharp.Threading.Tasks.UniTask WaitUntil(Func<bool> condition)
+        {
+            while (this != null && !condition())
+                await Cysharp.Threading.Tasks.UniTask.Yield();
+        }
+
         public override string ToString() => $"{name} ({GetType().Name})";
 
         /// <summary>
