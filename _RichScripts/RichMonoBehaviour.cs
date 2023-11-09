@@ -3,6 +3,7 @@ using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace RichPackage
 {
@@ -158,6 +159,17 @@ namespace RichPackage
         protected void StopCoroutineSafely(ref Coroutine coroutine)
         {
             CoroutineUtilities.StopCoroutineSafely(ref coroutine);
+        }
+
+        protected Coroutine InvokeWhen(Action action, Func<bool> condition)
+        {
+            IEnumerator Wait(Action _action, Func<bool> _condition)
+            {
+                yield return new WaitUntil(_condition);
+                _action();
+            }
+
+            return StartCoroutine(Wait(action, condition));
         }
 
         #endregion Coroutine Helpers
