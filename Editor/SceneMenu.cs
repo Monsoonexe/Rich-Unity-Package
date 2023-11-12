@@ -22,20 +22,21 @@ namespace RichPackage.Editor
 {
     public static partial class SceneMenu
     {        
-        private const string scriptFilePath = "Assets/RichPackage/Editor/SceneMenu.cs";
+        public const string ScriptFilePath = "Assets/RichPackage/Editor/SceneMenu.cs";
+        public const string MenuPath = "Scenes/";
 
         #region Menu Items
 
-        [MenuItem("Scenes/Open SceneMenu.cs", priority = -5)]
+        [MenuItem(MenuPath + "Open SceneMenu.cs", priority = -5)]
         public static void OpenSceneMenuScript()
         {
             var scriptFile = AssetDatabase.LoadAssetAtPath<MonoScript>(
-                scriptFilePath);
+                ScriptFilePath);
 
             if(scriptFile == null)
             {
                 //complain
-                Debug.LogWarning($"SceneMenu.cs not found! Check path at {scriptFilePath}." +
+                Debug.LogWarning($"SceneMenu.cs not found! Check path at {ScriptFilePath}." +
 					$"You can also double-click this log message to open the file.");
             }
             else
@@ -45,23 +46,23 @@ namespace RichPackage.Editor
             }
         }
 
-        [MenuItem("Scenes/Reload Current Scene", priority = -5)]
+        [MenuItem(MenuPath + "Reload Current Scene", priority = -5)]
         public static void ReloadCurrentScene()
             => LoadScene(SceneManager.GetActiveScene());
 
-		#endregion
+        #endregion Menu Items
 
-		#region Functions
+        #region Functions
 
-		/// <summary>
-		/// Load a scene and prompt User to save the scene.
-		/// </summary>
-		public static void LoadScene(string scenePath)
+        /// <summary>
+        /// Load a scene and prompt User to save the scene.
+        /// </summary>
+        public static void LoadScene(string scenePath)
 		{
             if (!System.IO.Path.HasExtension(scenePath))
                 scenePath += ".unity";
                 
-			//prompt to save
+			// prompt to save
 			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
 			{
 				//actually change scenes
@@ -81,6 +82,6 @@ namespace RichPackage.Editor
         public static void LoadScene(SceneVariable sceneVar)
             => LoadScene(sceneVar.Value.SceneName);
 
-		#endregion
-	}
+        #endregion Functions
+    }
 }
