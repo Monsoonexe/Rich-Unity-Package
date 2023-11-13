@@ -119,7 +119,7 @@ namespace RichPackage.Audio
         /// Create an AudioManager in the Scene.
         /// </summary>
 #if UNITY_EDITOR
-        [UnityEditor.MenuItem("RichUtilities/Audio/Create Instance in Scene")]
+        [UnityEditor.MenuItem("Tools/RichPackage/Audio/Create Instance in Scene")]
 #endif
         public static AudioManager Init()
         {

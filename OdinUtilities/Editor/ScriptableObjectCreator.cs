@@ -40,7 +40,7 @@ namespace RichPackage.Editor
         }
 
         [MenuItem("Assets/Create Scriptable Object", priority = -1000),
-            MenuItem("Tools/Odin Inspector/Create Scriptable Object")]
+            MenuItem("Tools/Odin/Create Scriptable Object")]
         private static void OpenWindow()
         {
 			// handle generation

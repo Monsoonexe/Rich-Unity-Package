@@ -14,7 +14,7 @@ namespace RichPackage.Editor
 	[CommandPrefix("player-prefs.")]
 	public class PlayerPrefsEditor : OdinEditorWindow
 	{
-		private const string MenuPath = "RichUtilities/PlayerPrefs/";
+		private const string MenuPath = RichEditorUtility.MenuName + "PlayerPrefs/";
 
 		public static PlayerPrefsEditor Instance { get; private set; }
 

@@ -8,7 +8,7 @@ namespace RichPackage.Editor
 	/// </summary>
 	public static class OpenTerminalMenuItem
 	{
-		private const string TerminalMenu = "RichUtilities/Terminals";
+		private const string TerminalMenu = RichEditorUtility.MenuName + "Terminals";
 
 		[MenuItem(TerminalMenu + "/Powershell %`")] //%` means you can press ctrl+` to call this function
 		public static void OpenPowershell()

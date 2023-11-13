@@ -1,5 +1,3 @@
-using RichPackage;
-using UnityEngine;
 using UnityEditor;
 
 namespace RichPackage.Editor
@@ -14,6 +12,7 @@ namespace RichPackage.Editor
         /// </summary>
         /// <remarks>Ends in a backslash.</remarks>
         public const string MenuName = "Tools/RichPackage/";
+        public const string WindowMenuName = MenuName + "Windows/";
 
         private const string CompilerLockMenu = "Tools/Lock Compiler";
 

@@ -16,14 +16,7 @@ namespace RichPackage.Editor
 	/// </summary>
 	public static class SpecialFoldersMenu
 	{
-		private const string MenuPath = "RichUtilities/Special Folders/";
-
-		//Removed because you can just right->click Console->Open Editor Log
-		//[MenuItem(MenuPath + nameof(OpenConsoleLog))]
-		//public static void OpenConsoleLog()
-		//{
-		//	Process.Start(Application.consoleLogPath);
-		//}
+		private const string MenuPath = RichEditorUtility.MenuName + "Special Folders/";
 
 		[MenuItem(MenuPath + nameof(OpenDataPath) + " (Assets)")]
 		public static void OpenDataPath()

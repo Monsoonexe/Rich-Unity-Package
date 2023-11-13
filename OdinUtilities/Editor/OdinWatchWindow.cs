@@ -189,7 +189,7 @@ namespace RichPackage.Editor
 
         #endregion Unity Messages
 
-        [MenuItem("Tools/Odin Inspector/Watch Window")]
+        [MenuItem("Tools/Odin/Watch Window")]
 		public static void ShowMenu()
 		{
 			_instance = GetWindow<OdinWatchWindow>();

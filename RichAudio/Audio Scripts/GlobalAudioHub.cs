@@ -26,7 +26,7 @@ namespace RichPackage.Audio
         }
 
 #if UNITY_EDITOR
-        [UnityEditor.MenuItem("RichUtilities/Audio/GlobalAudioHub")]
+        [UnityEditor.MenuItem("Tools/RichPackage/Audio/GlobalAudioHub")]
 #endif
         public static void ConstructGlobal()
         {
