@@ -55,6 +55,8 @@ namespace RichPackage.SaveSystem
 
 		public int MaxSaveFiles { get => maxSaveFiles; }
 
+		public string SaveDataFolder => Application.persistentDataPath;
+
 		/// <summary>
 		/// Save file which is currently loaded. If it's null, it needs to be loaded from disk.
 		/// </summary>
@@ -175,15 +177,14 @@ namespace RichPackage.SaveSystem
 		/// <param name="fileName">The name of the save file with no extension.</param>
 		public void Load(string fileName)
 		{
-			LoadSaveFilePaths();
             ES3SerializableSettings saveFile = gameSaveFiles
-                .Where(settings => Path.GetFileNameWithoutExtension(settings.FullPath).QuickEquals(fileName))
+                .Where(settings => settings.FullPath.QuickEndsWith(fileName)) // check file extension
 				.FirstOrDefault();
 
 			// if not found
 			if (saveFile == null)
 			{
-				Debug.LogError($"Could not find a save file with the name {saveFile}.");
+				Debug.LogError($"Could not find a save file with the name {fileName}.");
 				return;
 			}
 
