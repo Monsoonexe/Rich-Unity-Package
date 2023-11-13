@@ -45,9 +45,7 @@ namespace RichPackage.Collections
 
         public bool GetBoolValue(UniqueID name)
         {
-            VariableEntry entry = LookupEntryOrThrow(name);
-            VerifyType(entry.Type, EType.Bool);
-            return entry.BoolValue;
+            return LookupEntryOrThrow(name, EType.Bool).BoolValue;
         }
 
         #endregion Bools
@@ -81,9 +79,7 @@ namespace RichPackage.Collections
 
         public float GetFloatValue(UniqueID name)
         {
-            VariableEntry entry = LookupEntryOrThrow(name);
-            VerifyType(entry.Type, EType.Float);
-            return entry.FloatValue;
+            return LookupEntryOrThrow(name, EType.Float).FloatValue;
         }
 
         #endregion Floats
@@ -99,12 +95,26 @@ namespace RichPackage.Collections
 
         public string GetStringValue(UniqueID name)
         {
-            VariableEntry entry = LookupEntryOrThrow(name);
-            VerifyType(entry.Type, EType.String);
-            return entry.StringValue;
+            return LookupEntryOrThrow(name, EType.String).StringValue;
         }
 
         #endregion Strings
+
+        #region Chars
+
+        public void SetCharValue(UniqueID name, char value = default)
+        {
+            VariableEntry entry = GetOrCreateEntry(name, EType.Char);
+            VerifyType(entry.Type, EType.Char);
+            entry.CharValue = value;
+        }
+
+        public char GetCharValue(UniqueID name)
+        {
+            return LookupEntryOrThrow(name, EType.Bool).CharValue;
+        }
+
+        #endregion Chars
 
         #region Delete
 
@@ -150,8 +160,16 @@ namespace RichPackage.Collections
         /// <exception cref="KeyNotFoundException"></exception>
         private VariableEntry LookupEntryOrThrow(UniqueID name)
         {
-            return LookupEntry(name)
-                ?? throw new KeyNotFoundException(name);
+            return LookupEntry(name) ?? throw new KeyNotFoundException(name);
+        }
+
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        private VariableEntry LookupEntryOrThrow(UniqueID name, EType type)
+        {
+            VariableEntry entry = LookupEntryOrThrow(name);
+            VerifyType(entry.Type, type);
+            return entry;
         }
 
         #endregion Lookup
@@ -176,6 +194,7 @@ namespace RichPackage.Collections
 
         #endregion Collection
 
+        /// <exception cref="InvalidOperationException"></exception>
         private static void VerifyType(EType expected, EType actual)
         {
             if (expected != actual)
@@ -199,7 +218,8 @@ namespace RichPackage.Collections
             Bool = 0,
             Int = 1,
             Float = 2,
-            String = 3
+            String = 3,
+            Char = 4,
         }
 
         // TODO - custom json serializer to really trim the fat
@@ -227,6 +247,14 @@ namespace RichPackage.Collections
                 set => IntValue = value.ToInt();
             }
 
+            [ShowInInspector, ShowIf("@Type == EType.Char")]
+            public char CharValue
+            {
+                // use the integer field as the backing store to save some space
+                get => (char)IntValue;
+                set => IntValue = value;
+            }
+
             /// <summary>
             /// Weakly-typed value.
             /// </summary>
@@ -244,6 +272,8 @@ namespace RichPackage.Collections
                             return FloatValue;
                         case EType.String:
                             return StringValue;
+                        case EType.Char:
+                            return CharValue;
                         default:
                             throw ExceptionUtilities.GetInvalidEnumCaseException(Type);
                     }
@@ -267,6 +297,10 @@ namespace RichPackage.Collections
                         case string stringValue:
                             Type = EType.String;
                             StringValue = stringValue;
+                            break;
+                        case char charValue:
+                            Type = EType.Char;
+                            CharValue = charValue;
                             break;
                         default:
                             throw new InvalidCastException($"The type {value.GetType()} isn't supported. Please use a supported primitive type defined in {nameof(EType)}.");
