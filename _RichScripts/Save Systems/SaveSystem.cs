@@ -264,8 +264,7 @@ namespace RichPackage.SaveSystem
                 {
                     case ES3.Location.File:
 						// ensure we only delete data in the appropriate folder
-                        if (filePath.Contains(Application.persistentDataPath)
-							&& File.Exists(filePath))
+                        if (filePath.Contains(SaveDataFolder) && File.Exists(filePath))
 						{
                             File.Delete(filePath);
 						}
