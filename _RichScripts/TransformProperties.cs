@@ -1,3 +1,4 @@
+using DG.Tweening;
 using RichPackage.GuardClauses;
 using System;
 using UnityEngine;
@@ -128,6 +129,30 @@ namespace RichPackage
             props.space = Space.Self;
             t.localPosition = props.position;
             t.localRotation = props.rotation;
+        }
+    }
+
+    public static class TransformPropertiesDOTweenExtensions
+    {
+        /// <summary>
+        /// Tweens <paramref name="target"/>'s position and rotation to the target <paramref name="endValue"/>.
+        /// </summary>
+        public static Sequence DOOrient(this Transform target, TransformProperties endValue, float duration)
+        {
+            Sequence seq = DOTween.Sequence(); // result
+
+            if (endValue.space == Space.Self)
+            {
+                seq.Append(target.DOMove(endValue.position, duration))
+                    .Join(target.DORotate(endValue.rotation.eulerAngles, duration));
+            }
+            else
+            {
+                seq.Append(target.DOLocalMove(endValue.position, duration))
+                    .Join(target.DOLocalRotate(endValue.rotation.eulerAngles, duration));
+            }
+
+            return seq;
         }
     }
 }
