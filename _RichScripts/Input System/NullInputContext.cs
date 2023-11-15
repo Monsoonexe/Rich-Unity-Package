@@ -3,8 +3,8 @@ namespace RichPackage.InputSystem
     /// <summary>
     /// Does nothing.
     /// </summary>
-    public sealed class NullInputContext : IInputContext
+    public sealed class NullInputContext : BasicInputContext
     {
-        public void Execute() { } // do nothing
+        public override void Execute() { } // do nothing
     }
 }

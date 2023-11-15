@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace RichPackage.InputSystem
 {
-    public sealed class ConsoleInputContext : IInputContext
+    public sealed class ConsoleInputContext : BasicInputContext
     {
-        public void Execute()
+        public override void Execute()
         {
             QuantumConsole qc = QuantumConsole.Instance;
             Debug.Assert(qc.IsActive, "I expected the console to be open while in the Console Input Context.");
