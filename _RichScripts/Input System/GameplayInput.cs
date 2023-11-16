@@ -54,6 +54,10 @@ namespace RichPackage.InputSystem
             Set(stash.Pop());
         }
 
+        public void ClearHistory()
+        {
+            stash.Clear();
+        }
 
         #endregion Context Management
     }
