@@ -106,6 +106,40 @@ namespace RichPackage
 
         #region GetComponent Helpers
 
+        protected void FindComponentIfNull<T>(ref T component, bool includeInactive = true, bool addIfNotFound = false)
+            where T : class // don't constrain to Component so we can look for interfaces, too
+        {
+            if (component != null)
+                return;
+
+            // look on self
+            component = GetComponent<T>();
+
+            if (component != null)
+                return;
+
+            // look in children
+            component = GetComponentInChildren<T>(includeInactive);
+
+            if (component != null)
+                return;
+
+            // look in parent
+            component = GetComponentInParent<T>(includeInactive);
+
+            if (component != null)
+                return;
+
+            // look everywhere
+            component = FindObjectOfType(typeof(T), includeInactive) as T;
+
+            if (component != null)
+                return;
+
+            // add it
+            component = gameObject.AddComponent(typeof(T)) as T;
+        }
+ 
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
             where T : Component
         {
@@ -127,7 +161,9 @@ namespace RichPackage
                 return comp;
             if ((comp = GetComponentInChildren<T>()) != null)
                 return comp;
-            
+            if ((comp = GetComponentInParent<T>()) != null)
+                return comp;
+
             return gameObject.AddComponent<T>();
         }
 
