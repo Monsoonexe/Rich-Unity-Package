@@ -11,12 +11,6 @@ namespace RichPackage
         ///
         ///</summary>
         public static float Angle(this Transform a, Transform b)
-            => Vector3.Angle(a.position, b.position);
-
-        ///<summary>
-        ///
-        ///</summary>
-        public static float AngleForward(this Transform a, Transform b)
             => Vector3.Angle(a.forward, b.position);
 
         ///<summary>
