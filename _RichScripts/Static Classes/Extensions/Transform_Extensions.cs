@@ -7,6 +7,28 @@ namespace RichPackage
 {
     public static class Transform_Extensions
     {
+        #region Angles
+
+        public static bool IsLookingAt(this Transform a, Transform b, float accuracy = 0.9f)
+        {
+            Vector2 direction = (b.position - a.position).normalized;
+            float angle = Vector2.Dot(a.forward, direction);
+            return angle >= accuracy;
+        }
+
+        public static bool IsFacing(this Transform a, Transform b, float accuracy = 0.9f)
+        {
+            Vector3 aPos = a.position;
+            Vector3 bPos = b.position;
+
+            Vector2 aPos2D = new Vector2(aPos.x, aPos.z);
+            Vector2 bPos2D = new Vector2(bPos.x, bPos.z);
+
+            Vector2 direction = (bPos2D - aPos2D).normalized;
+            float angle = Vector2.Dot(a.forward, direction);
+            return angle >= accuracy;
+        }
+
         ///<summary>
         ///
         ///</summary>
@@ -16,10 +38,10 @@ namespace RichPackage
         ///<summary>
         /// 0 <= Y <= 180
         ///</summary>
-        public static float AngleForwardDOT(this Transform a, Transform b)
+        public static float AngleDot(this Transform a, Transform b)
         {
-            var worldSpaceForwardVector = a.TransformDirection(a.forward.normalized);//what is my forward vector in world space (normalized)
-            var worldSpaceTargetDirection = (b.position - a.position).normalized;//direct from me to target (normalized)
+            Vector3 worldSpaceForwardVector = a.TransformDirection(a.forward.normalized);//what is my forward vector in world space (normalized)
+            Vector3 worldSpaceTargetDirection = (b.position - a.position).normalized;//direct from me to target (normalized)
 
             return Vector3.Dot(worldSpaceForwardVector, worldSpaceTargetDirection);//Ax * Bx + Ay * By + Az * Bz
         }
@@ -29,9 +51,8 @@ namespace RichPackage
         ///</summary>
         public static float AngleForwardSigned(this Transform a, Transform b)
         {
-            
-            var targetDir = b.position - a.position;
-            var forward = a.forward;
+            Vector3 targetDir = b.position - a.position;
+            Vector3 forward = a.forward;
             return Vector3.SignedAngle(targetDir, forward, Vector3.up);
         }
 
@@ -40,11 +61,13 @@ namespace RichPackage
         ///</summary>
         public static float AngleArcTan(this Transform a, Transform b)
         {
-            var targetsRelativePosition = a.InverseTransformPoint(b.position);//what is the target's position if it were in MY local space
+            Vector3 targetsRelativePosition = a.InverseTransformPoint(b.position);//what is the target's position if it were in MY local space
             
             return Mathf.Atan2(targetsRelativePosition.x, targetsRelativePosition.y) * Mathf.Rad2Deg;//get arc tan, then convert to degrees
         }
-        
+
+        #endregion Angles
+
         /// <param name="predicate">The condition you are looking for.</param>
         /// <param name="recursive">Should children, grandchildren, etc be searched.</param>
         /// <returns>The <see cref="Transform"/> that matched <paramref name="predicate"/>,
