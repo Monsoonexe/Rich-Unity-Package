@@ -137,7 +137,7 @@ namespace RichPackage
                 return;
 
             // add it
-            component = gameObject.AddComponent(typeof(T)) as T;
+            // component = gameObject.AddComponent(typeof(T)) as T;
         }
  
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
