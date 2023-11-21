@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 
 namespace RichPackage.InputSystem
@@ -11,6 +12,9 @@ namespace RichPackage.InputSystem
         private IInputContext context;
 
         public IInputContext Context { get => context; set => Set(value); }
+
+        [ShowInInspector]
+        public string CurrentContextName => Context?.Name ?? "none";
 
         #region Unity Messages
 
@@ -81,6 +85,11 @@ namespace RichPackage.InputSystem
         /// Run the input logic. Use calls to UnityEngine.Input.
         /// </summary>
         void Execute();
+
+        /// <summary>
+        /// Unique identifier.
+        /// </summary>
+        string Name { get; }
     }
 
     public abstract class BasicInputContext : IInputContext
@@ -88,5 +97,6 @@ namespace RichPackage.InputSystem
         public abstract void Execute();
         public void OnEnter() { }
         public void OnExit() { }
+        public string Name => GetType().Name;
     }
 }
