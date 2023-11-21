@@ -104,7 +104,10 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool EqualsOrdinalIgnoreCase(this string strA, string strB)
             => string.Compare(strA, strB, StringComparison.OrdinalIgnoreCase) == 0;
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool ContainsOrdinal(this string src, string query)
+            => string.Equals(src, query, StringComparison.Ordinal);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ContainsIgnoreCase(this string source, string query)
