@@ -7,7 +7,7 @@ namespace Cysharp.Threading.Tasks
     /// <summary>
     /// 
     /// </summary>
-    public static class UniTaskExtensions
+    public static class UniTaskExtensions2
     {
         public static UniTask ToUniTask(this UnityEvent e)
         {
@@ -40,10 +40,29 @@ namespace Cysharp.Threading.Tasks
             return e.OnInvokeAsync(CancellationToken.None);
         }
 
-        public static async UniTask WaitUntil(this Func<bool> condition, CancellationToken cancellationToken = default)
+        public static async UniTask WaitUntil(this Func<bool> condition,
+            CancellationToken cancellationToken = default)
         {
             while (!(cancellationToken.IsCancellationRequested || condition()))
                 await UniTask.Yield();
+
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        public static UniTask LoopAsync(Action action, Func<bool> condition, float interval,
+            CancellationToken cancellationToken = default)
+            => LoopAsync(action, condition, TimeSpan.FromSeconds(interval), cancellationToken);
+
+        public static async UniTask LoopAsync(Action action, Func<bool> condition,
+            TimeSpan interval, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            while (condition() && !cancellationToken.IsCancellationRequested)
+            {
+                action();
+                await UniTask.Delay(interval, cancellationToken: cancellationToken);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
         }
