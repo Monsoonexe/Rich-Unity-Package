@@ -337,10 +337,6 @@ namespace RichPackage
             => list == null || list.Count == 0;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsEmpty(this ICollection list)
-            => list.Count == 0;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsEmpty<T>(this ICollection<T> list)
             => list.Count == 0;
 
