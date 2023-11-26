@@ -49,7 +49,7 @@ namespace RichPackage.InputSystem
 
         public void Push(IInputContext context)
         {
-            stash.Push(context);
+            stash.Push(this.context);
             Set(context);
         }
 
