@@ -21,6 +21,12 @@ namespace RichPackage.InputSystem
 
         #region Unity Messages
 
+        protected override void Reset()
+        {
+            enabled = false; // to avoid overlap
+            SetDevDescription("An input context that exists in the scene.");
+        }
+
         protected abstract void Update();
 
         #endregion Unity Messages
