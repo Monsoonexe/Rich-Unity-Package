@@ -47,10 +47,10 @@ namespace RichPackage.InputSystem
             this.context.OnEnter();
         }
 
-        public void Push(IInputContext context)
+        public void Push(IInputContext newContext)
         {
-            stash.Push(this.context);
-            Set(context);
+            stash.Push(context);
+            Set(newContext);
         }
 
         public void Pop()
