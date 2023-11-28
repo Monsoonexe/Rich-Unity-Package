@@ -195,7 +195,7 @@ namespace RichPackage.Collections
         #endregion Collection
 
         /// <exception cref="InvalidOperationException"></exception>
-        private static void VerifyType(EType expected, EType actual)
+        private static void VerifyType(EType actual, EType expected)
         {
             if (expected != actual)
             {
