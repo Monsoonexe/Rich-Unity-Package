@@ -25,6 +25,8 @@ namespace RichPackage
             message = conditionMessage;
         }
 
+        public static ConditionInfo FromFalse(string message) => new ConditionInfo(false, message);
+
         public static bool operator ==(ConditionInfo a, bool b)
         {
             return a.status == b;
