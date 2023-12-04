@@ -109,6 +109,8 @@ namespace RichPackage.SaveSystem
 #endif
 
             LoadSaveFilePaths();
+            if (gameSaveFiles.IsEmpty())
+                Create();
             Load(DEFAULT_SAVE_FILE_NAME);
         }
 
@@ -120,7 +122,9 @@ namespace RichPackage.SaveSystem
         private void Start()
         {
             if (loadOnStart)
+            {
                 Load();
+            }
         }
 
         protected void OnEnable()
@@ -221,6 +225,12 @@ namespace RichPackage.SaveSystem
 
             if (debug)
                 Debug.Log($"Saved file: {SaveFile.settings.path}.");
+        }
+
+        public void Create(string fileName = DEFAULT_SAVE_FILE_NAME)
+        {
+            ES3SerializableSettings settings = CreateNewSettings(fileName);
+            gameSaveFiles.Add(settings);
         }
 
         [Button, HorizontalGroup("Delete")]
