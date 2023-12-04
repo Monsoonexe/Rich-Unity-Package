@@ -18,7 +18,7 @@ namespace RichPackage.GuardClauses
         //https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string
         private const string VALID_URL_PATTERN =
             @"([\w+]+\:\/\/)?([\w\d-]+\.)*[\w-]+[\.\:]\w+([\/\?\=\&\#.]?[\w-]+)*\/?";
-        
+
         private const string VALID_WINDOWS_FILEPATH_PATTERN = @"^(.*\\)([^\\]*)$";
 
         private const string DEFAULT_PARAM_NAME = "argument";
@@ -297,7 +297,7 @@ namespace RichPackage.GuardClauses
 
         /// <exception cref="ArgumentException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void IsGreaterThan<T> (T argumentValue, 
+        public static void IsGreaterThan<T>(T argumentValue,
             T compareValue, string paramName = DEFAULT_PARAM_NAME)
             where T : IComparable<T>
         {
@@ -415,7 +415,7 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (value == null)
-                ThrowHelper<ArgumentNullException>($"{paramName} is null object.");
+                throw new ArgumentNullException($"{paramName} is null object.");
         }
 
         /// <exception cref="ArgumentNullException"></exception>
@@ -424,17 +424,17 @@ namespace RichPackage.GuardClauses
             string paramName, string message)
         {
             if (value == null)
-                ThrowHelper<ArgumentNullException>($"{paramName} is null object. "
+                throw new ArgumentNullException($"{paramName} is null object. "
                     + message);
         }
 
         /// <exception cref="ArgumentException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void IsStringEmptyGuid(string argumentValue, 
+        public static void IsStringEmptyGuid(string argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (argumentValue == Guid.Empty.ToString())
-                ThrowHelper<ArgumentException>($"{paramName} "
+                throw new ArgumentException($"{paramName} "
                     + $"cannot be string with value of empty guid.");
         }
 
@@ -444,7 +444,7 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (argumentValue == Guid.Empty)
-                ThrowHelper<ArgumentException>($"{paramName} " +
+                throw new ArgumentException($"{paramName} " +
                     $"cannot be empty guid.");
         }
 
@@ -453,7 +453,7 @@ namespace RichPackage.GuardClauses
         public static void InvalidEmail(string email)
         {
             if (!emailRegex.IsMatch(email))
-                ThrowHelper<ArgumentException>($"{email} is not a valid email.");
+                throw new ArgumentException($"{email} is not a valid email.");
         }
 
         /// <exception cref="ArgumentException"></exception>
@@ -461,7 +461,7 @@ namespace RichPackage.GuardClauses
         public static void InvalidURL(string url)
         {
             if (!urlRegex.IsMatch(url))
-                ThrowHelper<ArgumentException>($"{url} is not a valid URL.");
+                throw new ArgumentException($"{url} is not a valid URL.");
         }
 
         #region File IO
@@ -510,11 +510,6 @@ namespace RichPackage.GuardClauses
         }
 
         #endregion File IO
-    
-        private static TException ThrowHelper<TException>(string message)
-            where TException : Exception
-        {
-            throw (TException)Activator.CreateInstance(typeof(TException), message);
-        }
+
     }
 }
