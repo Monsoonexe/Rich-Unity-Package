@@ -24,7 +24,7 @@ namespace RichPackage.SaveSystem
         private const string DEFAULT_SAVE_FILE_NAME = "Save.es3";
         private const string SaveFileExtension = ".es3";
 
-        #endregion	
+        #endregion Constants
 
         // singleton
         private static SaveSystem s_instance;
@@ -201,9 +201,6 @@ namespace RichPackage.SaveSystem
 
             // broadcast load command
             GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
-
-            if (debug)
-                Debug.Log($"Loaded file: {SaveFile.settings.path}.");
         }
 
         [Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
@@ -366,17 +363,10 @@ namespace RichPackage.SaveSystem
         #endregion ISaveSystem
 
         [QFSW.QC.Command("openSaveFile"), Button]
-        public static void OpenSaveFile()
+        public void OpenSaveFile()
         {
-            SaveSystem ins = Instance != null ? Instance : FindObjectOfType<SaveSystem>();
-            if (ins == null)
-            {
-                Debug.LogWarning("No SaveSystem in Scene.");
-                return;
-            }
-
-            ins.LoadFile(ins.saveGameSlotIndex);
-            System.Diagnostics.Process.Start(ins.SaveFile.settings.FullPath);
+            LoadFile(saveGameSlotIndex);
+            System.Diagnostics.Process.Start(SaveFile.settings.FullPath);
         }
 
     }
