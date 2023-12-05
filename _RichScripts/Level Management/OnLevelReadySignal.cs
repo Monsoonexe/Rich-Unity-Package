@@ -8,7 +8,7 @@ namespace RichPackage.Events.Signals
     /// Please enter a description.
     /// </summary>
     /// <seealso cref="OnLevelLoadedSignal"/>
-    public sealed class OnLateLevelLoadedSignal : ABaseSignal
+    public sealed class OnLevelReadySignal : ABaseSignal
     {
         private event Action OnLateSceneLoaded;
         private event Action<SceneVariable> OnLateSceneLoadedData;

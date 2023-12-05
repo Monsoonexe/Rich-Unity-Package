@@ -6,7 +6,7 @@ namespace RichPackage.Events.Signals
     /// <summary>
     /// Dispatched by SceneManager.sceneLoaded when such.
     /// </summary>
-    /// <see cref="OnLateLevelLoadedSignal"/>
+    /// <see cref="OnLevelReadySignal"/>
     public sealed class OnLevelLoadedSignal : ABaseSignal,
         ISignalListener, ISignalListener<SceneVariable>
     {
