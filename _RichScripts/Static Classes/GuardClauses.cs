@@ -415,17 +415,7 @@ namespace RichPackage.GuardClauses
             string paramName = DEFAULT_PARAM_NAME)
         {
             if (value == null)
-                throw new ArgumentNullException($"{paramName} is null object.");
-        }
-
-        /// <exception cref="ArgumentNullException"></exception>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ArgumentIsNull(object value,
-            string paramName, string message)
-        {
-            if (value == null)
-                throw new ArgumentNullException($"{paramName} is null object. "
-                    + message);
+                throw new ArgumentNullException(paramName);
         }
 
         /// <exception cref="ArgumentException"></exception>
