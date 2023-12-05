@@ -119,10 +119,12 @@ namespace RichPackage.SaveSystem
             Singleton.Release(this, ref s_instance);
         }
 
-        private void Start()
+        private System.Collections.IEnumerator Start()
         {
             if (loadOnStart)
             {
+                // ensure all start and awake calls have been made
+                yield return new WaitForEndOfFrame();
                 Load();
             }
         }
