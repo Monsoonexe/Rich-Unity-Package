@@ -21,6 +21,8 @@ namespace RichPackage.Databases
 #endif
 		protected TData[] items;
 
+		public bool autoAssignKeys = false;
+
 		protected virtual void Reset()
 		{
 			SetDevDescription($"A database for {typeof(TData).Name}s.");
@@ -73,8 +75,9 @@ namespace RichPackage.Databases
 					hasNull = true;
 				}
 				else
-				{
-					Item.Key = Index;
+                {
+                    if (autoAssignKeys)
+						Item.Key = Index;
 				}
 			}
 
