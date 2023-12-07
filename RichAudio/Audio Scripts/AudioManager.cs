@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.CompilerServices;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -90,7 +89,6 @@ namespace RichPackage.Audio
             base.Awake();
             if (Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: persistent))
             {
-                UnityServiceLocator.Instance.RegisterAudioPlayer(this);
                 CreateAudioSources();
                 ActiveMusicTrack = backgroundMusicTrackB; // start with b to switch to a
                 instanceIsInitialized = true;
@@ -107,7 +105,6 @@ namespace RichPackage.Audio
                 foreach (var source in sfxAudioSources)
                     DOTween.Kill(source);
                 sourceDictionary.Clear();
-                UnityServiceLocator.Instance.DeregisterAudioPlayer(this);
             }
         }
 

@@ -110,7 +110,6 @@ namespace RichPackage
             GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitApplication);
             ApplyAppSettings();
             DG.Tweening.DOTween.Init();
-            UnityServiceLocator.Instance.RegisterProvider<AudioManager>(AudioManager.Init);
         }
 
         private void OnApplicationQuit()

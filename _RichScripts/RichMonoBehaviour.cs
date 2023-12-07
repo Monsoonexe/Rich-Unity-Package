@@ -169,20 +169,6 @@ namespace RichPackage
 
         #endregion GetComponent Helpers
 
-        #region Service Locator
-
-        public static readonly UnityServiceLocator Services = UnityServiceLocator.Instance;
-
-        protected static void RegisterService<T>(T instance)
-            where T : RichMonoBehaviour
-            => Services.RegisterService(typeof(T), instance);
-
-        protected static void ReleaseService<T>(T _)
-            where T : RichMonoBehaviour
-            => Services.DeregisterService<T>();
-
-        #endregion Service Locator
-
         #region Coroutine Helpers
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -34,17 +34,23 @@ namespace RichPackage.UI
 	/// Standard message box.
 	/// </summary>
 	[SelectionBase]
-	public sealed class MessageBox : RichUIElement, IMessageBox
+	public class MessageBox : RichUIElement, IMessageBox
 	{
-		private const string YES = "Yes";
+        #region Constants
+
+        private const string YES = "Yes";
 		private const string NO = "No";
 		private const string OKAY = "Okay";
 		private const string CANCEL = "Cancel";
 
-		/// <summary>
-		/// For loading really complex payloads.
-		/// </summary>
-		[Serializable]
+        #endregion Constants
+
+        #region Fields
+
+        /// <summary>
+        /// For loading really complex payloads.
+        /// </summary>
+        [Serializable]
 		public struct Payload
 		{
 			[Serializable]
@@ -109,32 +115,23 @@ namespace RichPackage.UI
 
 		public event MessageBoxResultCallback OnResult;
 
-		public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
+        /// <summary>
+        /// Used in <see cref="ShowAsync"/> to avoid a closure.
+        /// </summary>
+        private bool asyncResultPending = false;
+
+        #endregion Fields
+
+        public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
 
 		public EMessageBoxResult LastResult { get; private set; } = EMessageBoxResult.None;
 
-		/// <summary>
-		/// Used in <see cref="ShowAsync"/> to avoid a closure.
-		/// </summary>
-		private bool asyncResultPending = false;
-
 		#region Unity Messages
-
-		protected override void Awake()
-		{
-			base.Awake();
-			UnityServiceLocator.Instance.RegisterMessageBox(this);
-		}
 
 		private void Start()
 		{
 			if (hideOnStart)
 				Hide();
-		}
-
-		private void OnDestroy()
-		{
-			UnityServiceLocator.Instance.DeregisterMessageBox(this);
 		}
 
 		#endregion Unity Messages
