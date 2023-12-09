@@ -31,7 +31,7 @@ namespace RichPackage.Databases
 		public virtual TData Get(int index)
 		{
 			if (!items.IndexIsInRange(index))
-				throw new System.IndexOutOfRangeException($"{index} | {items.Length}");
+				throw new System.IndexOutOfRangeException($"{nameof(items)}: {index} | {items.Length}");
 
 			return items[index];
 		}
@@ -43,11 +43,23 @@ namespace RichPackage.Databases
 			// complain if couldn't be found
 			if (index < 0)
 			{
-				Debug.LogError($"The item {value} could not be looked up in this database.", this);
-				throw new System.Collections.Generic.KeyNotFoundException();
+				string message = $"The item '{value}' could not be found in {name}.";
+				throw new System.Collections.Generic.KeyNotFoundException(message);
 			}
 
 			return items[index].Key;
+		}
+
+		public bool TryGet(int key, out TData item)
+		{
+			item = null;
+			if (items.IndexIsInRange(key))
+			{
+				item = items[key];
+				return true;
+			}
+
+			return false;
 		}
 
 		#region Editor
