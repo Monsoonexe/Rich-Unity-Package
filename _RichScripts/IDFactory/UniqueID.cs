@@ -27,7 +27,8 @@ namespace RichPackage
 
         [field: SerializeField, LabelText(nameof(ID)),
             CustomContextMenu("Regenerate", nameof(GenerateNewId)),
-            PropertyTooltip("$" + nameof(Hash))]
+            PropertyTooltip("$" + nameof(Hash)),
+            OnValueChanged(nameof(RecalculateHash))]
         public string ID { get; private set; }
 
         private int? cachedHash;
