@@ -89,8 +89,9 @@ namespace RichPackage.Editor
 			}
 		}
 
-		private void OnDisable()
+		protected override void OnDisable()
 		{
+			base.OnDisable();
 			CancelOperation();
 			if (cts != null)
 			{
