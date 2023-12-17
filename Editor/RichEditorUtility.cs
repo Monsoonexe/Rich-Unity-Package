@@ -2,9 +2,6 @@ using UnityEditor;
 
 namespace RichPackage.Editor
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static partial class RichEditorUtility
     {
         /// <summary>
@@ -15,7 +12,7 @@ namespace RichPackage.Editor
         public const string WindowMenuName = MenuName + "Windows/";
 
         private const string CompilerLockMenu = "Tools/Lock Compiler";
-
+        
         [MenuItem(CompilerLockMenu)]
         public static void ToggleCompilerLock()
         {
@@ -34,5 +31,9 @@ namespace RichPackage.Editor
                 EditorApplication.LockReloadAssemblies();
             }
         }
+
+        [MenuItem("Tools/Reload Domain")]
+        public static void ReloadDomain() => EditorUtility.RequestScriptReload();
+
     }
 }
