@@ -3,7 +3,6 @@
  */
 
 using System.Runtime.CompilerServices;
-using RichPackage.Managed;
 using Sirenix.OdinInspector;
 
 namespace RichPackage.UnityMessages
@@ -13,9 +12,7 @@ namespace RichPackage.UnityMessages
 	/// any of the given UnityMessages are called.
 	/// </summary>
 	/// <seealso cref="ManagedBehaviourEngine"/>
-	public sealed class UnityMessageListener : AUnityLifetimeMessage,
-        IManagedFixedUpdate, IManagedEarlyUpdate, IManagedLateUpdate,
-		IManagedUpdate, IManagedOnApplicationPause, IManagedOnApplicationQuit
+	public sealed class UnityMessageListener : AUnityLifetimeMessage
     {
 		[Title(nameof(messages)), HideLabel,
 			OnValueChanged(nameof(ClearBitsIfNoneIsSet))]
@@ -36,10 +33,6 @@ namespace RichPackage.UnityMessages
 			base.Awake();
 			ClearBitsIfNoneIsSet();
 
-			//should I only subscribe to events to which flags are set?
-			//not as responsive, but more performant.
-			ManagedBehaviourEngine.RegisterManagedBehavior(this); //all of them
-
 			//awake
 			InvokeIfFlagSet(EUnityMessage.Awake);
 		}
@@ -48,32 +41,27 @@ namespace RichPackage.UnityMessages
 
 		#region Managed Messages
 
-		public void ManagedEarlyUpdate()
-		{
-			InvokeIfFlagSet(EUnityMessage.EarlyUpdate);
-		}
-
-		public void ManagedFixedUpdate()
+		public void FixedUpdate()
 		{
 			InvokeIfFlagSet(EUnityMessage.FixedUpdate);
 		}
 
-		public void ManagedLateUpdate()
+		public void LateUpdate()
 		{
 			InvokeIfFlagSet(EUnityMessage.LateUpdate);
 		}
 
-		public void ManagedUpdate()
+		public void Update()
 		{
 			InvokeIfFlagSet(EUnityMessage.Update);
 		}
 
-		public void ManagedOnApplicationQuit()
+		public void OnApplicationQuit()
 		{
 			InvokeIfFlagSet(EUnityMessage.OnApplicationQuit);
 		}
 
-		public void ManagedOnApplicationPause(bool pause)
+		public void OnApplicationPause(bool pause)
 		{
 			InvokeIfFlagSet(EUnityMessage.OnApplicationPause);
 		}
