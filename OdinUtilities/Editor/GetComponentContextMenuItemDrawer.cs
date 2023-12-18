@@ -23,8 +23,13 @@ namespace RichPackage.Editor
                 $"{nameof(Component.GetComponent)}<{componentName}>()"),
                 on: false, () => GetComponentAndSetReference(property));
 
-            // add GetComponentInChildren<T>()
+            // add GetComponentInParent<T>()
             genericMenu.AddItem(new GUIContent(
+                $"{nameof(Component.GetComponentInParent)}<{componentName}>()"),
+                on: false, () => GetComponentInParentAndSetReference(property));
+
+			// add GetComponentInChildren<T>()
+			genericMenu.AddItem(new GUIContent(
                 $"{nameof(Component.GetComponentInChildren)}<{componentName}>()"),
                 on: false, () => GetComponentInChildrenAndSetReference(property));
 
@@ -45,14 +50,24 @@ namespace RichPackage.Editor
         private void GetComponentAndSetReference(InspectorProperty property)
         {
             Component comp = property.Parent.BaseValueEntry.WeakSmartValue
-                .CastTo<Component>().GetComponent<T>();
+                .CastTo<Component>()
+                .GetComponent<T>();
             property.ValueEntry.WeakValues[0] = comp;
         }
 
-        private void GetComponentInChildrenAndSetReference(InspectorProperty property)
+        private void GetComponentInParentAndSetReference(InspectorProperty property)
+        {
+			Component comp = property.Parent.BaseValueEntry.WeakSmartValue
+				.CastTo<Component>()
+                .GetComponentInParent<T>();
+			property.ValueEntry.WeakValues[0] = comp;
+		}
+
+		private void GetComponentInChildrenAndSetReference(InspectorProperty property)
         {
             Component comp = property.Parent.BaseValueEntry.WeakSmartValue
-                .CastTo<Component>().GetComponentInChildren<T>();
+                .CastTo<Component>()
+                .GetComponentInChildren<T>(includeInactive: true);
             property.ValueEntry.WeakValues[0] = comp;
         }
 
@@ -73,7 +88,6 @@ namespace RichPackage.Editor
             Component newComponent = property.Parent.BaseValueEntry.WeakSmartValue
                 .CastTo<Component>().gameObject
                 .AddComponent<T>();
-
             property.ValueEntry.WeakValues[0] = newComponent;
         }
     }
