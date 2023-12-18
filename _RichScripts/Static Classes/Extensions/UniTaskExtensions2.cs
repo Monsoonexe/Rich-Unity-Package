@@ -11,7 +11,8 @@ namespace Cysharp.Threading.Tasks
     {
         public static UniTask ToUniTask(this UnityEvent e)
         {
-            var tcs = new UniTaskCompletionSource();
+			// NOTE: might result in a memory leak if the event is never invoked
+			var tcs = new UniTaskCompletionSource();
             e.AddListener(OnInvoke);
             void OnInvoke()
             {
@@ -23,8 +24,9 @@ namespace Cysharp.Threading.Tasks
         }
 
         public static UniTask<T> ToUniTask<T>(this UnityEvent<T> e)
-        {
-            var tcs = new UniTaskCompletionSource<T>();
+		{
+			// NOTE: might result in a memory leak if the event is never invoked
+			var tcs = new UniTaskCompletionSource<T>();
             e.AddListener(OnInvoke);
             void OnInvoke(T r)
             {
