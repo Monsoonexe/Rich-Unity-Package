@@ -115,11 +115,6 @@ namespace RichPackage.UI
 
 		public event MessageBoxResultCallback OnResult;
 
-        /// <summary>
-        /// Used in <see cref="ShowAsync"/> to avoid a closure.
-        /// </summary>
-        private bool asyncResultPending = false;
-
         #endregion Fields
 
         public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
@@ -260,12 +255,6 @@ namespace RichPackage.UI
 		#region Async
 
 		/// <summary>
-		/// Avoids a closure.
-		/// </summary>
-		private void AsyncResultComplete(EMessageBoxResult result)
-			=> asyncResultPending = false;
-
-		/// <summary>
 		/// Call like EMessageBoxResult result = await ShowAsync(...);
 		/// </summary>
 		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
@@ -283,45 +272,10 @@ namespace RichPackage.UI
 			string button2Text = null,
 			string button3Text = null)
 		{
-			this.animate = animate;
-			this.Style = style;
-			promptText.text = messageBoxText;
-			titleText.text = messageBoxTitle;
-
-			// async stuff
-			asyncResultPending = true;
-			OnResult = AsyncResultComplete;
-
-			// setup
-			switch (style)
-			{
-				case EMessageBoxButton.OK:
-					Debug.Assert(string.IsNullOrEmpty(button2Text), "Too many button texts supplied.");
-					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
-					SetupSingleButton(button1Text);
-					break;
-				case EMessageBoxButton.OKCancel:
-					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
-					SetupDoubleButton(button1Text, button2Text);
-					break;
-				case EMessageBoxButton.YesNo:
-					Debug.Assert(string.IsNullOrEmpty(button3Text), "Too many button texts supplied.");
-					SetupDoubleButton(button1Text, button2Text);
-					break;
-				case EMessageBoxButton.YesNoCancel:
-					SetupTripleButton(button1Text, button2Text, button3Text);
-					break;
-				default:
-					throw ExceptionUtilities.GetInvalidEnumCaseException(style);
-			}
-
-			Show(); //show visuals
-			if (animate && transitionINAnimator != null)
-			{
-				ToggleButtonInteractivityFalse(); //disallow interaction until open.
-				transitionINAnimator.Animate(windowTransform,
-					onCompleteCallback: ToggleButtonInteractivityTrue);
-			}
+			bool asyncResultPending = true;
+			
+			Show(messageBoxText, messageBoxTitle, style, animate,
+				(_) => asyncResultPending = false, button1Text, button2Text, button3Text);
 
 			while (asyncResultPending)
 				await UniTask.Yield(); //basically yield return null;
