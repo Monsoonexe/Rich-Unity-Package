@@ -8,6 +8,8 @@ namespace RichPackage.SaveSystem
     /// </summary>
     public class GameObjectVariables : RichMonoBehaviour
     {
+        protected const string ContextMenu = "CONTEXT/" + nameof(GameObjectVariables) + "/";
+
         [SerializeField]
         private VariableTable table;
 
@@ -20,12 +22,19 @@ namespace RichPackage.SaveSystem
         #region Editor
 #if UNITY_EDITOR
 
-        [UnityEditor.MenuItem("CONTEXT/" + nameof(GameObjectVariables) + "/Add Rememberer")]
+        [UnityEditor.MenuItem(ContextMenu + "Add Rememberer")]
         protected static void AddRememberer(UnityEditor.MenuCommand command)
         {
             var g = (GameObjectVariables)command.context; // the thing clicked on
             g.gameObject.AddComponent<RememberGameObjectVariables>()
                 .target = g; // assign this thing as the thing to be saved
+        }
+
+        [UnityEditor.MenuItem(ContextMenu + "Clear Table")]
+        private static void ContextMenuClearTable(UnityEditor.MenuCommand command)
+        {
+            var g = (GameObjectVariables)command.context; // the thing clicked on
+            g.table.Clear();
         }
 
 #endif
