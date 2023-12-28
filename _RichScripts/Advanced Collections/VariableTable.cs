@@ -207,9 +207,9 @@ namespace RichPackage.Collections
 
         #region Copying
 
-        public void CopyTo(VariableTable other) => other.AddRange(entries);
+        public void CopyFrom(VariableTable other) => other.AddRange(entries);
 
-        public void CopyFrom(VariableTable other) => AddRange(other.entries);
+        public void CopyTo(VariableTable other) => AddRange(other.entries);
 
         #endregion Copying
 
