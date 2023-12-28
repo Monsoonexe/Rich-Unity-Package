@@ -36,82 +36,107 @@ namespace RichPackage.Collections
 
         #region Bools
 
-        public void SetBoolValue(UniqueID name, bool value = default)
+        public void SetBool(UniqueID name, bool value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.Bool);
             VerifyType(entry.Type, EType.Bool);
             entry.BoolValue = value;
         }
 
-        public bool GetBoolValue(UniqueID name)
+        public bool GetBool(UniqueID name)
         {
             return LookupEntryOrThrow(name, EType.Bool).BoolValue;
+        }
+
+        public bool GetBoolOrDefault(UniqueID name, bool @default = default)
+        {
+            return LookupEntry(name)?.BoolValue ?? @default;
         }
 
         #endregion Bools
 
         #region Ints
 
-        public void SetIntValue(UniqueID name, int value = default)
+        public void SetInt(UniqueID name, int value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.Int);
             VerifyType(entry.Type, EType.Int);
             entry.IntValue = value;
         }
 
-        public int GetIntValue(UniqueID name)
+        public int GetInt(UniqueID name)
         {
             VariableEntry entry = LookupEntryOrThrow(name);
             VerifyType(entry.Type, EType.Int);
             return entry.IntValue;
         }
 
+        public int GetIntOrDefault(UniqueID name, int @default = default)
+        {
+            return LookupEntry(name)?.IntValue ?? @default;
+        }
+
         #endregion Ints
 
         #region Floats
 
-        public void SetFloatValue(UniqueID name, float value = default)
+        public void SetFloat(UniqueID name, float value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.Float);
             VerifyType(entry.Type, EType.Float);
             entry.FloatValue = value;
         }
 
-        public float GetFloatValue(UniqueID name)
+        public float GetFloat(UniqueID name)
         {
             return LookupEntryOrThrow(name, EType.Float).FloatValue;
+        }
+
+        public float GetFloatOrDefault(UniqueID name, float @default = default)
+        {
+            return LookupEntry(name)?.FloatValue ?? @default;
         }
 
         #endregion Floats
 
         #region Strings
 
-        public void SetStringValue(UniqueID name, string value = default)
+        public void SetString(UniqueID name, string value = "")
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.String);
             VerifyType(entry.Type, EType.String);
             entry.StringValue = value;
         }
 
-        public string GetStringValue(UniqueID name)
+        public string GetString(UniqueID name)
         {
             return LookupEntryOrThrow(name, EType.String).StringValue;
+        }
+
+        public string GetCharOrDefault(UniqueID name, string @default = "")
+        {
+            return LookupEntry(name)?.StringValue ?? @default;
         }
 
         #endregion Strings
 
         #region Chars
 
-        public void SetCharValue(UniqueID name, char value = default)
+        public void SetChar(UniqueID name, char value = default)
         {
             VariableEntry entry = GetOrCreateEntry(name, EType.Char);
             VerifyType(entry.Type, EType.Char);
             entry.CharValue = value;
         }
 
-        public char GetCharValue(UniqueID name)
+        public char GetChar(UniqueID name)
         {
             return LookupEntryOrThrow(name, EType.Bool).CharValue;
+        }
+
+        public char GetFloatOrDefault(UniqueID name, char @default = default)
+        {
+            return LookupEntry(name)?.CharValue ?? @default;
         }
 
         #endregion Chars
