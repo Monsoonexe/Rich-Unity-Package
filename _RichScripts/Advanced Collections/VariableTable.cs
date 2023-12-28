@@ -148,10 +148,16 @@ namespace RichPackage.Collections
 
         private VariableEntry LookupEntry(UniqueID name)
         {
+            // TODO - a lookup cache (remember to invalidate the cache on delete)
+            // private VariableEntry lastEntry;
+            //if (lastEntry.Name == name)
+            //    return lastEntry;
+            // set last entry before exiting
+
             foreach (VariableEntry e in entries)
             {
                 if (e.Name == name)
-                    return e;
+                    return e; // return lastEntry = e;
             }
 
             return null;
