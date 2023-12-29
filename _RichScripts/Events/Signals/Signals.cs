@@ -41,9 +41,9 @@ namespace RichPackage.Events.Signals
     {
         private static readonly SignalHub hub = new SignalHub();
 
-        public static SType Get<SType>()
-            where SType : ISignal, new()
-            => hub.Get<SType>();
+        public static TSignal Get<TSignal>()
+            where TSignal : ISignal, new()
+            => hub.Get<TSignal>();
 
         public static ISignal Get(string hash)
             => hub.Get(hash);
@@ -83,22 +83,22 @@ namespace RichPackage.Events.Signals
         /// <summary>
         /// Getter for a signal of a given type
         /// </summary>
-        /// <typeparam name="SType">Type of signal</typeparam>
+        /// <typeparam name="TSignal">Type of signal</typeparam>
         /// <returns>The proper signal binding</returns>
-        public SType Get<SType>()
-            where SType : ISignal, new()
+        public TSignal Get<TSignal>()
+            where TSignal : ISignal, new()
         {
-            Type signalType = typeof(SType);
+            Type signalType = typeof(TSignal);
 
             // fetch existing or bind new
             if (signals.TryGetValue(signalType, out ISignal signal))
             {
-                return (SType)signal;
+                return (TSignal)signal;
             }
             else
             {
                 // bind
-                var sig = new SType();
+                var sig = new TSignal();
                 signals.Add(signalType, sig);
                 return sig;
             }
@@ -112,7 +112,7 @@ namespace RichPackage.Events.Signals
         {
             Type signalType = Type.GetType(signalHash);
             if (!signals.TryGetValue(signalType, out ISignal signal))
-			{   // bind
+            {   // bind
                 signal = (ISignal)Activator.CreateInstance(signalType); // new SignalType()
                 signals.Add(signalType, signal);
             }
