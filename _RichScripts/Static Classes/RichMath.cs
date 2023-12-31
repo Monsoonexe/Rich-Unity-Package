@@ -80,7 +80,27 @@ namespace RichPackage
                 : value < min ? min
                 : value;
 
-        #endregion
+        public static float ClampMin(float value, float min)
+        {
+            return value < min ? min : value;
+        }
+
+        public static float ClampMax(float value, float max)
+        {
+            return value > max ? max : value;
+        }
+
+        public static int ClampMin(int value, int min)
+        {
+            return value < min ? min : value;
+        }
+
+        public static int ClampMax(int value, int max)
+        {
+            return value > max ? max : value;
+        }
+
+        #endregion Clamp
 
         #region Absolute Value
 
