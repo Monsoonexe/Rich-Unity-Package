@@ -57,9 +57,18 @@ namespace RichPackage.Audio
 
         public Vector2 PitchShiftRange = new Vector2(0.8f, 1.2f);
 
-        [Title("---Resources---")]
+        [Title("Mixer")]
         [SerializeField]
         private AudioMixer audioMixer;
+
+        [SerializeField]
+        private string backgroundMusicGroup = "Music";
+
+        [SerializeField]
+        private string soundFxGroup = "SFX";
+
+        [SerializeField]
+        private GameObject sourceParent;
 
         private AudioSource[] sfxAudioSources;
 
@@ -84,8 +93,17 @@ namespace RichPackage.Audio
 
         #region Unity Messages
 
+        protected override void Reset()
+        {
+            SetDevDescription("Handles pooling AudioSources for static audio.");
+            sourceParent = gameObject;
+        }
+
         protected override void Awake()
         {
+            if (sourceParent == null)
+                sourceParent = gameObject;
+            
             base.Awake();
             if (Singleton.TakeOrDestroy(this, ref s_instance, dontDestroyOnLoad: persistent))
             {
@@ -132,6 +150,13 @@ namespace RichPackage.Audio
             return Instance;
         }
 
+        private AudioSource CreateAudioSource()
+        {
+            var source = sourceParent.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            return source;
+        }
+
         /// <summary>
         /// Create all the AudioSources needed for the whole game.
         /// </summary>
@@ -143,24 +168,23 @@ namespace RichPackage.Audio
 
             for (int i = 0; i < sfxAudioSourceCount; ++i)
             {
-                sfxAudioSources[i] = gameObject.AddComponent<AudioSource>(); // new AudioSource
-                sfxAudioSources[i].playOnAwake = false;
+                sfxAudioSources[i] = CreateAudioSource();
             }
 
             //create background track sources
-            backgroundMusicTrackA = gameObject.AddComponent<AudioSource>();
-            backgroundMusicTrackA.playOnAwake = false;
-            backgroundMusicTrackB = gameObject.AddComponent<AudioSource>();
-            backgroundMusicTrackB.playOnAwake = false;
+            backgroundMusicTrackA = CreateAudioSource();
+            backgroundMusicTrackB = CreateAudioSource();
 
             if (audioMixer)
-            {   //this section of code makes a lot of assumptions about the given audio mixer
-                var sfxGroup = audioMixer.FindMatchingGroups("SFX").First();
+            {  
+                // this section of code makes a lot of assumptions about the given audio mixer
+                AudioMixerGroup sfxGroup = audioMixer.FindMatchingGroups(soundFxGroup).First();
                 for (int i = 0; i < sfxAudioSourceCount; ++i)
                 {
                     sfxAudioSources[i].outputAudioMixerGroup = sfxGroup;
                 }
-                var bgGroup = audioMixer.FindMatchingGroups("Music").First();
+                
+                AudioMixerGroup bgGroup = audioMixer.FindMatchingGroups(backgroundMusicGroup).First();
                 backgroundMusicTrackA.outputAudioMixerGroup = bgGroup;
                 backgroundMusicTrackB.outputAudioMixerGroup = bgGroup;
             }
@@ -190,7 +214,7 @@ namespace RichPackage.Audio
             // priority below this value are safe from overriding
             const int Will_Not_Override = 1;
             int size = sources.Length;
-            int lowestPriority = clipPriority.Clamp(Will_Not_Override, byte.MaxValue);
+            int lowestPriority = RichMath.ClampMin(clipPriority, Will_Not_Override);
             int lowestIndex = 0;
 
             for (int i = 0; i < size; ++i)
@@ -250,6 +274,7 @@ namespace RichPackage.Audio
             {
                 source.volume = options.Volume;
             }
+            
             source.pitch = options.PitchShift
                 ? PitchShiftRange.RandomRange()
                 : 1.0f; // don't shift
@@ -494,5 +519,4 @@ namespace RichPackage.Audio
 
         #endregion Play Background Music
     }
-
 }
