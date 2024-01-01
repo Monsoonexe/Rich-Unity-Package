@@ -2,9 +2,7 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using RichPackage.FunctionalProgramming;
-
 using Random = UnityEngine.Random;
-using Debug = UnityEngine.Debug;
 
 namespace RichPackage
 {

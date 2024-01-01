@@ -497,11 +497,11 @@ namespace RichPackage
         }
 
         public static IEnumerable<(T Item, int Index)> ForEachWithIndex<T>(this IEnumerable<T> src)
-		{
+        {
             int i = 0;
             foreach (var v in src)
                 yield return (v, i++);
-		}
+        }
 
         public static void ForEachWithIndex<T>(this IEnumerable<T> collection, Action<T, int> action)
         {
@@ -725,12 +725,10 @@ namespace RichPackage
         /// <summary>
         /// Swap element at index a with element at index b.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(this IList<T> list, int a, int b)
-        {   //validate
-            list.CastAs<IList>().IndexShouldBeInRange(a);
-            list.CastAs<IList>().IndexShouldBeInRange(b);
-
-            //perform swap
+        {
+            // perform swap
             T tmp = list[a];
             list[a] = list[b];
             list[b] = tmp;
@@ -747,6 +745,14 @@ namespace RichPackage
         public static T GetRandomElement<T>(this IList<T> collection)
             => collection[Random.Range(0, collection.Count)];
 
+        public static T TakeRandomElement<T>(this List<T> src)
+        {
+            int index = GetRandomIndex(src);
+            T item = src[index];
+            src.RemoveAt(index);
+            return item;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetRandomIndex(this IList list)
             => Random.Range(0, list.Count);
@@ -759,22 +765,24 @@ namespace RichPackage
             IList<T> usedCollection)
         {
             // build a pool of indices that have not been used.  
-            List<int> possibleIndices = ListPool<int>.Get();
-
-            int totalCount = totalCollection.Count;
-            for (int i = 0; i < totalCount; ++i)
-                if (!usedCollection.Contains(totalCollection[i]))
-                    possibleIndices.Add(i);//this index is safe to choose from
-
-            if (possibleIndices.Count == 0)
+            using (ListPool<int>.Get(out List<int> possibleIndices))
             {
-                Debug.Log($"Every index used in collection. Count: {totalCollection.Count}");
-                return default;
-            }
+                int totalCount = totalCollection.Count;
+                for (int i = 0; i < totalCount; ++i)
+                {
+                    if (!usedCollection.Contains(totalCollection[i]))
+                        possibleIndices.Add(i);//this index is safe to choose from
+                }
 
-            T t = totalCollection[possibleIndices.GetRandomElement()];
-            ListPool<int>.Release(possibleIndices);
-            return t;
+                // sanity check
+                if (possibleIndices.Count == 0)
+                {
+                    Debug.Log($"Every index used in collection. Count: {totalCollection.Count}");
+                    return default;
+                }
+
+                return totalCollection[possibleIndices.GetRandomElement()];
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

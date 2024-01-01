@@ -18,9 +18,11 @@ namespace RichPackage.Audio
 		[SerializeField, ShowIf(nameof(UseConstant))]
 		private AudioOptions overrideOptions = AudioOptions.DefaultSfx;
 
-		#region Properties
+        private AudioManager AudioManager => AudioManager.Instance;
 
-		[field: SerializeField, LabelText(nameof(UseConstant)),
+        #region Properties
+
+        [field: SerializeField, LabelText(nameof(UseConstant)),
 			PropertyOrder(-1)]
 		public bool UseConstant { get; private set; }
 
@@ -62,11 +64,9 @@ namespace RichPackage.Audio
 
 		#endregion Constructors
 
-		public void PlaySFX()
-			=> AudioManager.Instance.PlayOneShot(Clip, Options);
+		public void PlaySFX() => AudioManager.PlayOneShot(Clip, Options);
 
-		public AudioID PlayMusic()
-			=> AudioManager.Instance.PlayMusic(Clip, Options);
+		public AudioID PlayMusic() => AudioManager.PlayMusic(Clip, Options);
 
 		public static implicit operator AudioClip (RichAudioClipReference a)
 			=> a.Clip;
