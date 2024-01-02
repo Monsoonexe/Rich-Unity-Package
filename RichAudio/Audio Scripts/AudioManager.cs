@@ -82,7 +82,7 @@ namespace RichPackage.Audio
         /// <summary>
         /// This is so the caller can query the sound after the fact, like for interruping a spell.
         /// </summary>
-        private Dictionary<AudioID, AudioSource> sourceDictionary
+        private readonly Dictionary<AudioID, AudioSource> sourceDictionary
             = new Dictionary<AudioID, AudioSource>(6);
 
         public bool IsBackgroundTrackPlaying { get => ActiveMusicTrack.isPlaying; }
@@ -129,26 +129,6 @@ namespace RichPackage.Audio
         #endregion Unity Messages
 
         #region Initialize
-
-        /// <summary>
-        /// Create an AudioManager in the Scene.
-        /// </summary>
-#if UNITY_EDITOR
-        [UnityEditor.MenuItem("Tools/RichPackage/Audio/Create Instance in Scene")]
-#endif
-        public static AudioManager Init()
-        {
-            if (!Instance)
-            {
-                var prefab = Resources.Load<AudioManager>(nameof(AudioManager));
-#if UNITY_EDITOR
-                UnityEditor.PrefabUtility.InstantiatePrefab(prefab);
-#else
-                Instantiate(prefab);
-#endif
-            }
-            return Instance;
-        }
 
         private AudioSource CreateAudioSource()
         {
