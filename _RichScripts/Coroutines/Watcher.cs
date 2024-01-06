@@ -89,6 +89,13 @@ namespace RichPackage
 
         #region Constructors
 
+        protected AnimatorParameterWatcher(Animator animator, Action<T> callback)
+            : this(animator)
+        {
+            GuardAgainst.ArgumentIsNull(callback, nameof(callback));
+            this.OnChanged += callback;
+        }
+
         protected AnimatorParameterWatcher(Animator animator)
         {
             GuardAgainst.ArgumentIsNull(animator, nameof(animator));
@@ -102,18 +109,30 @@ namespace RichPackage
 
     public sealed class BoolAnimatorParameterWatcher : AnimatorParameterWatcher<bool>
     {
-        public BoolAnimatorParameterWatcher(Animator animator, string parameterName)
-            : base(animator)
+        public BoolAnimatorParameterWatcher(Animator animator, string parameterName, Action<bool> callback)
+            : base(animator, callback)
         {
             GuardAgainst.ArgumentIsNull(parameterName, parameterName);
             this.getter = () => animator.GetBool(parameterName);
         }
-    }
 
+        public BoolAnimatorParameterWatcher(Animator animator, string parameterName)
+            : this(animator, parameterName, null)
+        {
+        }
+    }
+    
     public sealed class FloatAnimatorParameterWatcher : AnimatorParameterWatcher<float>
     {
+        public FloatAnimatorParameterWatcher(Animator animator, string parameterName, Action<float> callback)
+            : base(animator, callback)
+        {
+            GuardAgainst.ArgumentIsNull(parameterName, parameterName);
+            this.getter = () => animator.GetFloat(parameterName);
+        }
+        
         public FloatAnimatorParameterWatcher(Animator animator, string parameterName)
-            : base(animator)
+            : this(animator, parameterName, null)
         {
             GuardAgainst.ArgumentIsNull(parameterName, parameterName);
             this.getter = () => animator.GetFloat(parameterName);
