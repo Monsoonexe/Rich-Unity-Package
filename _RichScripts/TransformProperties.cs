@@ -5,44 +5,38 @@ using UnityEngine;
 
 namespace RichPackage
 {
-	/// <summary>
-	/// Properties for a <see cref="Transform"/>.
-	/// </summary>
-	[System.Serializable]
-	public struct TransformProperties : IEquatable<Transform>, IEquatable<TransformProperties>
-	{
-		public Space space;
-		public Vector3 position;
+    /// <summary>
+    /// Properties for a <see cref="Transform"/>.
+    /// </summary>
+    [Serializable]
+    public struct TransformProperties : IEquatable<Transform>, IEquatable<TransformProperties>
+    {
+        public Space space;
+        public Vector3 position;
         public Quaternion rotation;
 
         #region Constructors
 
         public TransformProperties(Transform transform, Space space = Space.World)
-		{
+        {
             // validate
-			GuardAgainst.ArgumentIsNull(transform, nameof(transform));
+            GuardAgainst.ArgumentIsNull(transform, nameof(transform));
 
             // operate
-			this.space = space;
-			if (space == Space.Self)
-			{
-                position = transform.localPosition;
-                rotation = transform.localRotation;
-            }
-			else
-			{
-                position = transform.position;
-                rotation = transform.rotation;
-            }
-		}
+            this.space = space;
+            position = default;
+            rotation = default;
+            Store(transform);
+        }
 
         #endregion Constructors
 
-        // TODO - Load and Store names SUCK!!! I can never remember which is whic.
+        // TODO - Load and Store names SUCK!!! I can never remember which is which.
 
         /// <summary>
         /// Sets this object's properties to <paramref name="t"/>'s.
         /// </summary>
+        /// <remarks>this = that</remarks>
         public void Store(Transform t)
         {
             // validate
@@ -64,6 +58,7 @@ namespace RichPackage
         /// <summary>
         /// Sets this object's properties to <paramref name="t"/>'s.
         /// </summary>
+        /// <remarks>this = that</remarks>
         public void Store(Transform t, Space space)
         {
             this.space = space;
@@ -73,6 +68,7 @@ namespace RichPackage
         /// <summary>
         /// Set's <paramref name="t"/>'s properties to those stored in this object.
         /// </summary>
+        /// <remarks>that = this</remarks>
         public void Load(Transform t)
         {
             // validate
@@ -99,7 +95,7 @@ namespace RichPackage
             if (this.space != other.space)
                 throw new InvalidOperationException($"The two comparands are in different spaces and cannot be compared: 'this' is {this.space} space but 'other' is {other.space} space!");
 
-            return this.position == other.position 
+            return this.position == other.position
                 && this.rotation == other.rotation;
         }
 
@@ -156,3 +152,4 @@ namespace RichPackage
         }
     }
 }
+
