@@ -193,6 +193,42 @@ namespace RichPackage
             return t;
         }
 
+        public static Transform SetLocalPositionX(this Transform t, float x)
+        {
+            t.localPosition = t.localPosition.WithX(x);
+            return t;
+        }
+
+        public static Transform SetLocalPositionY(this Transform t, float y)
+        {
+            t.localPosition = t.localPosition.WithY(y);
+            return t;
+        }
+
+        public static Transform SetLocalPositionZ(this Transform t, float z)
+        {
+            t.localPosition = t.localPosition.WithZ(z);
+            return t;
+        }
+
+        public static Transform SetPositionX(this Transform t, float x)
+        {
+            t.position = t.position.WithX(x);
+            return t;
+        }
+
+        public static Transform SetPositionY(this Transform t, float y)
+        {
+            t.position = t.position.WithY(y);
+            return t;
+        }
+
+        public static Transform SetPositionZ(this Transform t, float z)
+        {
+            t.position = t.position.WithZ(z);
+            return t;
+        }
+
         /// <summary>
         /// Sorts ascending by default, unless <paramref name="inverse"/>, then descending.
         /// </summary>
