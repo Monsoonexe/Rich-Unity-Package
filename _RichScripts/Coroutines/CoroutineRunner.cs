@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace RichPackage.Coroutines
 {
@@ -21,6 +22,8 @@ namespace RichPackage.Coroutines
         /// <returns>A new instance.</returns>
         public static CoroutineRunner CreateNew(bool scenePersistent)
         {
+            Assert.IsFalse(App.IsQuitting, "Should not be creating a coroutine runner when the app is quitting.");
+                
             var go = new GameObject(nameof(CoroutineRunner));
             
             if (scenePersistent)
