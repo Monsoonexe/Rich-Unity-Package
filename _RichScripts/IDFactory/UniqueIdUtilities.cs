@@ -10,7 +10,7 @@ namespace RichPackage
         public static UniqueID CreateIdFrom(MonoBehaviour mono, bool includeScene)
         {
             string scene = includeScene
-                ? mono.gameObject.scene.name // ends in '\'
+                ? mono.gameObject.scene.name + "/"
                 : string.Empty;
             string name = mono.name;
             string type = mono.GetType().Name;
