@@ -1,4 +1,5 @@
-﻿using System;
+using RichPackage.GuardClauses;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -225,7 +226,31 @@ namespace RichPackage
                 if (parent)
                     SetActiveInHierarchy(parent.gameObject, active);
             }
+
             gameObject.SetActiveChecked(active);
+        }
+
+        public static IEnumerable<TComp> EnumerateComponents<TComp>(
+            this GameObject obj, bool recursive)
+            where TComp : class
+        {
+            GuardAgainst.ArgumentIsNull(obj, nameof(obj));
+            
+            using (UnityEngine.Rendering.ListPool<TComp>.Get(out var comps))
+            {
+                obj.GetComponents(comps);
+                foreach (TComp comp in comps)
+                    yield return comp;
+            }
+
+            if (recursive)
+            {
+                foreach (Transform child in obj.transform)
+                {
+                    foreach (TComp comp in EnumerateComponents<TComp>(obj, recursive))
+                        yield return comp;
+                }
+            }
         }
     }
 }
