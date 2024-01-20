@@ -34,7 +34,7 @@ namespace RichPackage
         }
 
         [Title("App Settings")]
-        [SerializeField, MinValue(10), MaxValue(90)]
+        [SerializeField, MinValue(10), MaxValue(120)]
         private int targetFrameRate = 60;
 
         [SerializeField, Tooltip("Determines whether the hardware pointer is visible or not.")]
