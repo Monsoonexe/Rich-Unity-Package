@@ -207,9 +207,9 @@ namespace RichPackage.Collections
 
         #region Copying
 
-        public void CopyFrom(VariableTable other) => other.AddRange(entries);
+        public void CopyTo(VariableTable other) => other.AddRange(entries);
 
-        public void CopyTo(VariableTable other) => AddRange(other.entries);
+        public void CopyFrom(VariableTable other) => AddRange(other.entries);
 
         #endregion Copying
 
@@ -260,6 +260,8 @@ namespace RichPackage.Collections
         {
             public UniqueID Name;
             public EType Type;
+
+            #region Value
 
             [ShowIf("@Type == EType.Int")]
             public int IntValue;
@@ -339,6 +341,8 @@ namespace RichPackage.Collections
                 }
             }
 
+            #endregion Value
+
             #region Constructors
 
             public VariableEntry(UniqueID name, EType type)
@@ -371,7 +375,7 @@ namespace RichPackage.Collections
 
             #region Copying
 
-            public void CopyTo(VariableEntry other)
+            public void CopyFrom(VariableEntry other)
             {
                 this.Name = other.Name;
                 this.Type = other.Type;
@@ -380,7 +384,7 @@ namespace RichPackage.Collections
                 this.StringValue = other.StringValue;
             }
 
-            public void CopyFrom(VariableEntry other)
+            public void CopyTo(VariableEntry other)
             {
                 other.Name = this.Name;
                 other.Type = this.Type;
@@ -391,6 +395,10 @@ namespace RichPackage.Collections
 
             #endregion Copying
 
+            public override string ToString()
+            {
+                return $"{Name}: {WeakValue}";
+            }
         }
     }
 }
