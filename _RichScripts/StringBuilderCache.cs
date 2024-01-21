@@ -30,6 +30,11 @@
             return new StringBuilder(capacity);
         }
 
+        public static PooledObject Rent(out StringBuilder builder)
+        {
+            return new PooledObject(builder = Rent());
+        }
+
         public static void Return(StringBuilder sb)
         {
             if (sb.Capacity <= MAX_BUILDER_SIZE)
@@ -49,5 +54,22 @@
             return result;
         }
 
+        /// <summary>
+        /// Pooled object.
+        /// </summary>
+        public struct PooledObject : IDisposable
+        {
+            private readonly StringBuilder stringBuilder;
+
+            internal PooledObject(StringBuilder stringBuilder)
+            {
+                this.stringBuilder = stringBuilder;
+            }
+
+            /// <summary>
+            /// Disposable pattern implementation.
+            /// </summary>
+            void IDisposable.Dispose() => Return(stringBuilder);
+        }
     }
 }
