@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace RichPackage
 {
@@ -11,7 +12,8 @@ namespace RichPackage
         {
             AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
-            Debug.Assert(!state.loop, "I'll wait forever if the animation loops. looping is unsupported.", animator);
+            Assert.IsTrue(!state.loop,
+                "I'll wait forever if the animation loops. Looping is unsupported. Use " + nameof(WaitForExit));
 
             return CoroutineUtilities.Delay(state.length);
         }
