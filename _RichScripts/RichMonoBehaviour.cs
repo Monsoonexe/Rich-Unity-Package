@@ -112,32 +112,11 @@ namespace RichPackage
             if (component != null)
                 return;
 
-            // look on self
-            component = GetComponent<T>();
-
-            if (component != null)
-                return;
-
-            // look in children
-            component = GetComponentInChildren<T>(includeInactive);
-
-            if (component != null)
-                return;
-
-            // look in parent
-            component = GetComponentInParent<T>(includeInactive);
-
-            if (component != null)
-                return;
-
-            // look everywhere
-            component = FindObjectOfType(typeof(T), includeInactive) as T;
-
-            if (component != null)
-                return;
-
-            // add it
-            // component = gameObject.AddComponent(typeof(T)) as T;
+            // null-coalesce should be okay here because we're not using the result of functions, not serialized properties
+            component = GetComponent<T>()
+                ?? GetComponentInChildren<T>(includeInactive)
+                ?? GetComponentInParent<T>(includeInactive)
+                ?? FindObjectOfType(typeof(T), includeInactive) as T;
         }
  
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
