@@ -1,4 +1,7 @@
 ﻿
+using System.IO;
+using System;
+
 namespace RichPackage.SaveSystem
 {
 	/// <summary>
@@ -9,10 +12,10 @@ namespace RichPackage.SaveSystem
 	{
 		UniqueID SaveID { get; }
 
-		void SaveState(ES3File saveFile);
+		void SaveState(ISaveStore saveFile);
 
-		void LoadState(ES3File saveFile);
+		void LoadState(ISaveStore saveFile);
 
-		void DeleteState(ES3File saveFile);
+		void DeleteState(ISaveStore saveFile);
 	}
 }

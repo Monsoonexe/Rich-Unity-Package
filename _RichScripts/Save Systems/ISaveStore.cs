@@ -1,8 +1,6 @@
-using Mono.CSharp.Linq;
-
 namespace RichPackage.SaveSystem
 {
-    public interface ISaveSystem
+    public interface ISaveStore
     {
         /// <summary>
         /// Save <paramref name="memento"/> with <paramref name="key"/>.
@@ -30,7 +28,7 @@ namespace RichPackage.SaveSystem
         /// </summary>
         /// <param name="key"></param>
         /// <returns><see langword="true"/> if there is data saved in <paramref name="key"/>.</returns>
-        bool Contains(string key);
+        bool KeyExists(string key);
 
         /// <summary>
         /// Removes the memento with <paramref name="key"/>.

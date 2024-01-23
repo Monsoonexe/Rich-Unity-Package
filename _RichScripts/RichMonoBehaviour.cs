@@ -164,13 +164,22 @@ namespace RichPackage
 
         protected Coroutine InvokeWhen(Action action, Func<bool> condition)
         {
-            IEnumerator Wait(Action _action, Func<bool> _condition)
+            static IEnumerator Wait(Action _action, Func<bool> _condition)
             {
                 yield return new WaitUntil(_condition);
                 _action();
             }
 
             return StartCoroutine(Wait(action, condition));
+        }
+
+        public Coroutine StartTimerRoutine(float duration)
+        {
+            static IEnumerator Wait(float _duration)
+            {
+                yield return new WaitForSeconds(_duration);
+            }
+            return StartCoroutine(Wait(duration));
         }
 
         #endregion Coroutine Helpers

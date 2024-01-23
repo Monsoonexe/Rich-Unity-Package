@@ -36,7 +36,7 @@ namespace RichPackage.SaveSystem
 			GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
 		}
 
-		private void SaveState(ES3File saveFile)
+		private void SaveState(ISaveStore saveFile)
 		{
 			foreach(var datum in savedVariables)
 			{
@@ -44,7 +44,7 @@ namespace RichPackage.SaveSystem
 			}
 		}
 
-		private void LoadState(ES3File saveFile)
+		private void LoadState(ISaveStore saveFile)
 		{
 			foreach (var datum in savedVariables)
 			{
@@ -52,7 +52,7 @@ namespace RichPackage.SaveSystem
 			}
 		}
 
-		private void LoadDatum(ES3File saveFile,
+		private void LoadDatum(ISaveStore saveFile,
 			BaseVariable variable)
 		{
 			string saveKey = variable.Name;
@@ -84,7 +84,7 @@ namespace RichPackage.SaveSystem
 			}
 		}
 
-		private void SaveDatum(ES3File saveFile,
+		private void SaveDatum(ISaveStore saveFile,
 			BaseVariable variable)
 		{
 			string saveKey = variable.Name;
@@ -107,13 +107,5 @@ namespace RichPackage.SaveSystem
                     break;
             }
         }
-
-		public static void Register(BaseVariable variable)
-		{
-			var instance = FindObjectOfType<ScriptableObjectSaveSystem>();
-			instance.savedVariables.Add(variable);
-            instance.Editor_MarkDirty();
-		}
 	}
-
 }

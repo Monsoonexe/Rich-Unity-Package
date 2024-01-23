@@ -14,7 +14,7 @@ namespace RichPackage.SaveSystem.Signals
 	/// <summary>
 	/// The game state needs to be saved to this file.
 	/// </summary>
-	public class SaveStateToFileSignal : ASignal<ES3File>
+	public class SaveStateToFileSignal : ASignal<ISaveStore>
     {
         // exists
     }
@@ -22,7 +22,7 @@ namespace RichPackage.SaveSystem.Signals
 	/// <summary>
 	/// The game state needs to be loaded from this file.
 	/// </summary>
-	public class LoadStateFromFileSignal : ASignal<ES3File>
+	public class LoadStateFromFileSignal : ASignal<ISaveStore>
 	{
 		// exists
 	}

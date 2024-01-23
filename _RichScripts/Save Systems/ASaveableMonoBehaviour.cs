@@ -42,7 +42,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Saves <see cref="SaveData"/> to saveFile.
         /// </summary>
-        public override void SaveState(ES3File saveFile)
+        public override void SaveState(ISaveStore saveFile)
         {
             SaveStateInternal();
             saveFile.Save(SaveID, saveData);
@@ -51,7 +51,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Loads <see cref="SaveData"/> state from saveFile.
         /// </summary>
-        public override void LoadState(ES3File saveFile)
+        public override void LoadState(ISaveStore saveFile)
         {
             if (saveFile.KeyExists(SaveID))
             {
@@ -111,12 +111,12 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Saves <see cref="AState"/> to persistent storage.
         /// </summary>
-        public abstract void SaveState(ES3File saveFile);
+        public abstract void SaveState(ISaveStore saveFile);
 
         /// <summary>
         /// Loads <see cref="AState"/> state from persistent storage.
         /// </summary>
-        public abstract void LoadState(ES3File saveFile);
+        public abstract void LoadState(ISaveStore saveFile);
 
         #endregion ISaveable
 
@@ -158,9 +158,9 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Erases save data from file.
         /// </summary>
-        public void DeleteState(ES3File saveFile) => saveFile.DeleteKey(SaveID);
+        public void DeleteState(ISaveStore saveFile) => saveFile.Delete(SaveID);
 
-        public bool HasSaveData(ES3File saveFile) => saveFile.KeyExists(SaveID);
+        public bool HasSaveData(ISaveStore saveFile) => saveFile.KeyExists(SaveID);
 
         /// <summary>
         /// Saveables are equal if their data will be saved to the same entry (has same key).

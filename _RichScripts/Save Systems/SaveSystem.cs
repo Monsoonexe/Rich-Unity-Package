@@ -16,7 +16,7 @@ namespace RichPackage.SaveSystem
     /// <summary>
     /// I facilitate saving and manage save files.
     /// </summary>
-    public class SaveSystem : RichMonoBehaviour, ISaveSystem
+    public class SaveSystem : RichMonoBehaviour, ISaveStore
     {
         #region Constants
 
@@ -202,7 +202,7 @@ namespace RichPackage.SaveSystem
             LoadFile(saveGameSlotIndex);
 
             // broadcast load command
-            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(SaveFile);
+            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
         }
 
         [Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
@@ -219,7 +219,7 @@ namespace RichPackage.SaveSystem
         public void Save()
         {
             SaveFile.Save(HAS_SAVE_DATA_KEY, value: true); // flag to indicate there is indeed some save data
-            GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(SaveFile); // broadcast save command
+            GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(this); // broadcast save command
             SaveFile.Sync(); // save from RAM to Disk
 
             if (debug)
@@ -337,30 +337,30 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Save <paramref name="item"/> to the currently active <see cref="SaveFile"/>.
         /// </summary>
-        public void Save(ISaveable item) => item.SaveState(SaveFile);
+        public void Save(ISaveable item) => item.SaveState(this);
 
         /// <summary>
         /// Load <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
         /// </summary>
-        public void Load(ISaveable item) => item.LoadState(SaveFile);
+        public void Load(ISaveable item) => item.LoadState(this);
 
         /// <summary>
         /// Delete <paramref name="item"/> from the currently active <see cref="SaveFile"/>.
         /// </summary>
-        public void Delete(ISaveable item) => item.DeleteState(SaveFile);
+        public void Delete(ISaveable item) => item.DeleteState(this);
 
         #endregion ISaveable Consumers
 
         #region ISaveSystem
 
-        void ISaveSystem.Save<T>(string key, T memento) => SaveFile.Save(key, memento);
-        T ISaveSystem.Load<T>(string key) => SaveFile.Load<T>(key);
-        T ISaveSystem.Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
-        void ISaveSystem.LoadInto<T>(string key, T memento) where T : class 
+        void ISaveStore.Save<T>(string key, T memento) => SaveFile.Save(key, memento);
+        T ISaveStore.Load<T>(string key) => SaveFile.Load<T>(key);
+        T ISaveStore.Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
+        void ISaveStore.LoadInto<T>(string key, T memento) where T : class 
             => SaveFile.LoadInto(key, memento);
-        bool ISaveSystem.Contains(string key) => SaveFile.KeyExists(key);
-        void ISaveSystem.Delete(string key) => SaveFile.DeleteKey(key);
-        void ISaveSystem.Clear() => SaveFile.Clear();
+        bool ISaveStore.KeyExists(string key) => SaveFile.KeyExists(key);
+        void ISaveStore.Delete(string key) => SaveFile.DeleteKey(key);
+        void ISaveStore.Clear() => SaveFile.Clear();
 
         #endregion ISaveSystem
 
