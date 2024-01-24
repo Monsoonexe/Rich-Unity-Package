@@ -4,7 +4,7 @@ using System;
 namespace RichPackage.Events.Signals
 {
     /// <summary>
-    /// Dispatched by SceneManager.sceneLoaded when such.
+    /// Raised when the level has finished loading and can be initialized.
     /// </summary>
     /// <see cref="OnLevelReadySignal"/>
     public sealed class OnLevelLoadedSignal : ABaseSignal,
