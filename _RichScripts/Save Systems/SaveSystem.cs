@@ -10,6 +10,7 @@ using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
 using RichPackage.GuardClauses;
 using System.Linq;
+using RichPackage.YieldInstructions;
 
 namespace RichPackage.SaveSystem
 {
@@ -124,7 +125,7 @@ namespace RichPackage.SaveSystem
             if (loadOnStart)
             {
                 // ensure all start and awake calls have been made
-                yield return new WaitForEndOfFrame();
+                yield return CommonYieldInstructions.WaitForEndOfFrame;
                 Load();
             }
         }
