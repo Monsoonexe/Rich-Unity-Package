@@ -49,6 +49,9 @@ namespace RichPackage
             b = temp;
         }
 
+        /// <summary>
+        /// Returns an item from <paramref name="objs"/> that is closest to <paramref name="worldPoint"/>.
+        /// </summary>
         public static TObject GetClosestObject<TObject>(
             IEnumerable<(TObject obj, Transform transform)> objs, Vector3 worldPoint)
             where TObject : class
@@ -58,8 +61,7 @@ namespace RichPackage
 
             foreach ((TObject obj, Transform transform) in objs)
             {
-                // use squared-distance strategy. The distance isn't correct, but the 
-                // relative distance is preserved
+                // use squared-distance strategy: we care about relative distance, not exact distance.
                 Vector3 direction = transform.position - worldPoint;
                 float distanceSquared = direction.sqrMagnitude; // no sqrt
 
