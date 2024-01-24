@@ -32,10 +32,9 @@ namespace RichPackage.Editor
                 | AssemblyTypeFlags.PluginTypes;
 
             HashSet<Type> types = AssemblyUtilities.GetTypes(flags)
-                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t))
+                .Concat(Assembly.GetAssembly(typeof(ScriptableObjectArchitecture.SOArchitectureBaseObject)).GetTypes())
+                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t) && t.IsAbstract == false)
                 .ToHashSet();
-            types.AddRange(Assembly.GetAssembly(typeof(ScriptableObjectArchitecture.SOArchitectureBaseObject)).GetTypes()
-                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t)));
             return types;
         }
 
