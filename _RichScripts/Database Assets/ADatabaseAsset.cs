@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RichPackage.Databases
 {
@@ -37,15 +38,24 @@ namespace RichPackage.Databases
         /// </summary>
         public IReadOnlyCollection<TData> All => items;
 
+        #region Unity Messages
+
         protected virtual void Reset()
         {
             SetDevDescription($"A database for {typeof(TData).Name}.");
         }
+        
+        protected void OnEnable()
+        {
+            BuildTable();
+        }
 
-        private void OnEnable()
+        #endregion Unity Messages
+
+        protected void BuildTable()
         {
             lookupTable.Clear();
-            foreach (var item in items)
+            foreach (TData item in items)
             {
 #if UNITY_EDITOR
                 try
@@ -128,6 +138,9 @@ namespace RichPackage.Databases
         protected virtual void OnValidate()
         {
             editorErrorMessage = null;
+
+            if (items.Length != lookupTable.Count)
+                BuildTable();
 
             if (!VerifyNoNullEntries())
                 return;
