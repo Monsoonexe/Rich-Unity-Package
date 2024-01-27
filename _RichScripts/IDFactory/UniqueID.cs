@@ -28,7 +28,7 @@ namespace RichPackage
 
         [field: SerializeField, LabelText(nameof(ID)),
             OnValueChanged(nameof(RecalculateHash))]
-        public string ID { get; private set; }
+        public string ID { get; private set; } // I wish I could make this null-safe. if only it were backed by a SerializeField :/
 
         private int? cachedHash;
         public int Hash { get => cachedHash ?? RecalculateHash(); }
