@@ -262,6 +262,8 @@ namespace RichPackage.SaveSystem
             //more fields....
 
             public bool Equals(AState other) => this.saveID == other.saveID;
+
+            public override string ToString() => saveID + $" ({GetType()})";
         }
 
     }
