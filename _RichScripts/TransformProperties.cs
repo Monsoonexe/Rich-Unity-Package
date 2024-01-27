@@ -24,62 +24,13 @@ namespace RichPackage
 
             // operate
             this.space = space;
-            position = default;
-            rotation = default;
-            Store(transform);
+            if (space == Space.World)
+                transform.GetPositionAndRotation(out position, out rotation);
+            else
+                transform.GetLocalPositionAndRotation(out position, out rotation);
         }
 
         #endregion Constructors
-
-        // TODO - Load and Store names SUCK!!! I can never remember which is which.
-
-        /// <summary>
-        /// Sets this object's properties to <paramref name="t"/>'s.
-        /// </summary>
-        /// <remarks>this = that</remarks>
-        public void Store(Transform t)
-        {
-            // validate
-            GuardAgainst.ArgumentIsNull(t, nameof(t));
-
-            // operate
-            if (space == Space.Self)
-            {
-                position = t.localPosition;
-                rotation = t.localRotation;
-            }
-            else
-            {
-                position = t.position;
-                rotation = t.rotation;
-            }
-        }
-
-        /// <summary>
-        /// Sets this object's properties to <paramref name="t"/>'s.
-        /// </summary>
-        /// <remarks>this = that</remarks>
-        public void Store(Transform t, Space space)
-        {
-            this.space = space;
-            Store(t);
-        }
-
-        /// <summary>
-        /// Set's <paramref name="t"/>'s properties to those stored in this object.
-        /// </summary>
-        /// <remarks>that = this</remarks>
-        public void Load(Transform t)
-        {
-            // validate
-            GuardAgainst.ArgumentIsNull(t, nameof(t));
-
-            // operate
-            if (space == Space.Self)
-                t.SetLocalPositionAndRotation(position, rotation);
-            else
-                t.SetPositionAndRotation(position, rotation);
-        }
 
         #region IEquatable
 
@@ -105,26 +56,44 @@ namespace RichPackage
     public static class TransformPropertiesExtensions
     {
         /// <summary>
-        /// Sets the world space position and rotation of <paramref name="t"/>.
+        /// Gets the world position and rotation properties from <paramref name="t"/>.
         /// </summary>
-        public static void SetPositionAndRotation(this Transform t, TransformProperties props)
+        public static TransformProperties GetPositionAndRotation(this Transform t)
         {
-            // validate
-            Debug.Assert(props.space == Space.World);
-
-            // operate
-            t.SetPositionAndRotation(props.position, props.rotation);
+            t.GetPositionAndRotation(out Vector3 position, out Quaternion rotation);
+            return new TransformProperties
+            {
+                space = Space.World,
+                position = position,
+                rotation = rotation
+            };
         }
 
         /// <summary>
-        /// Sets the local space position and rotation of <paramref name="t"/>.
+        /// Gets the local position and rotation properties from <paramref name="t"/>.
         /// </summary>
-        public static void SetLocalPositionAndRotation(this Transform t, TransformProperties props)
+        public static TransformProperties GetLocalPositionAndRotation(this Transform t)
+        {
+            t.GetLocalPositionAndRotation(out Vector3 position, out Quaternion rotation);
+            return new TransformProperties
+            {
+                space = Space.Self,
+                position = position,
+                rotation = rotation
+            };
+        }
+
+        /// <summary>
+        /// Sets the world space position and rotation of <paramref name="t"/>.
+        /// </summary>
+        public static void SetPositionAndRotation(this Transform t, 
+            TransformProperties props)
         {
             // operate
-            props.space = Space.Self;
-            t.localPosition = props.position;
-            t.localRotation = props.rotation;
+            if (props.space == Space.Self)
+                t.SetLocalPositionAndRotation(props.position, props.rotation);
+            else
+                t.SetPositionAndRotation(props.position, props.rotation);
         }
     }
 

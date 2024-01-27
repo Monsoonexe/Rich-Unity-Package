@@ -52,8 +52,11 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// All the known save files with extensions.
         /// </summary>
-        [ShowInInspector, InlineButton(nameof(RescanForSaveFiles), "Scan"),
-            CustomContextMenu("Sort", nameof(SortSaveFileNames))]
+        [ShowInInspector,
+            ListDrawerSettings(IsReadOnly = true),
+            InlineButton(nameof(RescanForSaveFiles), "Scan"),
+            CustomContextMenu("Sort", nameof(SortSaveFileNames)),
+            Tooltip("Don't edit these.")]
         private readonly List<string> saveFileNames = new List<string>();
 
         [Title("Settings")]
@@ -117,6 +120,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// The name of the currently loaded save file.
         /// </summary>
+        [ShowInInspector]
         public string SaveFileName
         {
             get
