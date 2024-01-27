@@ -535,17 +535,22 @@ namespace RichPackage.SaveSystem
         public void DeleteAll()
         {
             if (SaveFileCount == 0)
+            {
+                if (debug)
+                    Debug.Log("There are no save files to delete.", this);
                 return;
+            }
 
 #if UNITY_EDITOR
             if (Application.isEditor)
             {
                 string title = "Are you sure?";
-                string prompt = $"Delete all the save files at '{SaveFileDirectory}'?";
+                string prompt = $"All the files with the extension '{SaveFileExtension}' at '{SaveFileDirectory}' will be deleted";
                 if (!UnityEditor.EditorUtility.DisplayDialog(title, prompt, "Yes", "No"))
                     return;
             }
 #endif
+            int count = SaveFileCount;
             // re-use this list to avoid an allocation
             saveFileNames.Clear();
             foreach (string file in EnumerateSaveFilePaths())
@@ -553,7 +558,7 @@ namespace RichPackage.SaveSystem
             saveFile = null;
 
             if (debug)
-                Debug.Log("Deleted all save data.", this);
+                Debug.Log($"Deleted {count} save files.", this);
         }
 
         #endregion File Management
