@@ -61,6 +61,7 @@ namespace RichPackage.SaveSystem
 
         [Title("Settings")]
         public bool debug = false;
+        public bool syncOnQuit = true;
         public EStartBehaviour startBehaviour = EStartBehaviour.LoadGameOnStart;
 
         [Title("Save File Settings")]
@@ -213,7 +214,7 @@ namespace RichPackage.SaveSystem
 
         private void OnDestroy()
         {
-            if (App.IsQuitting)
+            if (syncOnQuit && App.IsQuitting && IsFileLoaded)
                 SaveToFile();
 
             Singleton.Release(this, ref s_instance);
