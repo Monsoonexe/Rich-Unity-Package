@@ -1,9 +1,7 @@
-using RichPackage.UI;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,7 +45,7 @@ namespace RichPackage.Databases
         {
             SetDevDescription($"A database for {typeof(TData).Name}.");
         }
-        
+
         protected void OnEnable()
         {
             BuildTable();
@@ -83,7 +81,7 @@ namespace RichPackage.Databases
         {
             if (lookupTable.TryGetValue(key, out TData value))
                 return value;
-                
+
             throw new KeyNotFoundException($"Key {key} not found in {this}.");
         }
 
@@ -100,7 +98,7 @@ namespace RichPackage.Databases
 
         public TData GetOrDefault(int key, TData @default = default)
         {
-            return lookupTable.TryGetValue(key, out var value) ? value : @default;
+            return lookupTable.TryGetValue(key, out TData value) ? value : @default;
         }
 
         public bool TryGet(int key, out TData value)
@@ -202,7 +200,7 @@ namespace RichPackage.Databases
         protected bool VerifyNoNullEntries()
         {
             bool valid = true;
-            foreach (var (Item, Index) in items.ForEachWithIndex())
+            foreach ((TData Item, int Index) in items.ForEachWithIndex())
             {
                 if (Item == null)
                 {
@@ -246,7 +244,7 @@ namespace RichPackage.Databases
 
         protected void AssignUniqueKey(TData data)
         {
-            int newKey; 
+            int newKey;
             do
                 newKey = GenerateNewKey(); // assign a newly generated key
             while (Contains(newKey)); // check for key collision
