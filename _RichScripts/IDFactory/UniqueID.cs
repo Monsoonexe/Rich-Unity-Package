@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RichPackage
 {
@@ -18,16 +19,14 @@ namespace RichPackage
         /// By default it implements the <see cref="Guid"/> class,
         /// but it can be overridden with your own implementation.
         /// </summary>
-        public static Func<string> NewIDProvider { get; set; }
+        public static Func<string> NewIdProvider { get; set; }
             = () => Guid.NewGuid().ToString().Remove("-").Substring(0, MAX_LENGTH);
 
-        public static UniqueID New => FromString(NewIDProvider());
+        public static UniqueID New => FromString(NewIdProvider());
 
         public static readonly UniqueID None = new UniqueID(string.Empty);
 
         [field: SerializeField, LabelText(nameof(ID)),
-            CustomContextMenu("Regenerate", nameof(GenerateNewId)),
-            PropertyTooltip("$" + nameof(Hash)),
             OnValueChanged(nameof(RecalculateHash))]
         public string ID { get; private set; }
 
@@ -47,7 +46,12 @@ namespace RichPackage
         /// <summary>
         /// Only required to call if ID was changed magically and cached hash became stale.
         /// </summary>
-        public int RecalculateHash() => (cachedHash = ID.GetHashCode()).Value;
+        public int RecalculateHash()
+        {
+            if (ID == null)
+                return 0;
+            return (cachedHash = ID.GetHashCode()).Value;
+        }
 
         public void GenerateNewId() => ID = New;
         
