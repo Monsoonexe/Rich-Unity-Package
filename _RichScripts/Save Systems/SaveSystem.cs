@@ -1,4 +1,12 @@
 /* https://docs.moodkie.com/product/easy-save-3/ 
+ *  TODO - separate out save file management from game state saving
+ *  
+ *  Notes:
+ *  Always explicitly state whether the string contains an extension or not.
+ *  This can be ui-facing, so all public methods should return file names without extensions unless explicit.
+ *  
+ *  Resist the urge to use QuickEquals in here
+ *  
  */
 
 using System;
@@ -10,7 +18,9 @@ using RichPackage.SaveSystem.Signals;
 using Sirenix.OdinInspector;
 using RichPackage.GuardClauses;
 using System.Linq;
+using UnityEngine.Assertions;
 using RichPackage.YieldInstructions;
+using System.Collections;
 
 namespace RichPackage.SaveSystem
 {
@@ -21,6 +31,7 @@ namespace RichPackage.SaveSystem
     {
         #region Constants
 
+        // there is a line in ES3 that deletes files from disk if the file is Sync'ed with 0 keys.
         private const string HAS_SAVE_DATA_KEY = "HasData";
         private const string DEFAULT_SAVE_FILE_NAME = "Save.es3";
         private const string SaveFileExtension = ".es3";
@@ -35,54 +46,124 @@ namespace RichPackage.SaveSystem
             private set => s_instance = value;
         }
 
-        [ShowInInspector, HideInEditorMode]
-        private readonly List<ES3SerializableSettings> gameSaveFiles = new List<ES3SerializableSettings>();
+        [SerializeField]
+        private ES3SerializableSettings settings; // always clone this
+
+        /// <summary>
+        /// All the known save files with extensions.
+        /// </summary>
+        [ShowInInspector, InlineButton(nameof(RescanForSaveFiles), "Scan"),
+            CustomContextMenu("Sort", nameof(SortSaveFileNames))]
+        private readonly List<string> saveFileNames = new List<string>();
 
         [Title("Settings")]
         public bool debug = false;
-        public bool deleteOnPlay = false;
-        public bool loadOnStart = false;
+        public EStartBehaviour startBehaviour = EStartBehaviour.LoadGameOnStart;
 
         [Title("Save File Settings")]
         public ES3.EncryptionType encryptionType;
         public string encryptionPassword = "ScaryPassword";
 
-        [SerializeField, Min(0)]
-        private int saveGameSlotIndex = 0;
+        /// <summary>
+        /// Use the property instead of this directly.
+        /// </summary>
+        private string _saveFileDirectory = null;
 
-        [SerializeField, Min(0)]
-        private int maxSaveFiles = 3;
+        /// <summary>
+        /// The directory path for save files. Creates the path if it doesn't exist. Ends in a backslash.
+        /// </summary>
+        public string SaveFileDirectory
+        {
+            // need to lazy-fetch because of Unity API
+            get
+            {
+                if (_saveFileDirectory.IsNullOrEmpty()) // sometimes unity serializes this to empty string :/
+                    SaveFileDirectory = Application.persistentDataPath;
+                return _saveFileDirectory;
+            }
+            set
+            {
+                GuardAgainst.ArgumentIsNull(value, nameof(value));
+                if (Path.HasExtension(value))
+                    throw new InvalidOperationException($"Expected a directory but saw a file path. '{value}'");
 
-        public int MaxSaveFiles { get => maxSaveFiles; }
+                if (_saveFileDirectory == value)
+                    return;
 
-        public string SaveDataFolder => Application.persistentDataPath;
+                // ensure the folder exists
+                EnsureFilePathExists(value + "x.txt"); // this method expects a file path, so give a dummy file name
+                Assert.IsTrue(Directory.Exists(value)); // sanity check
+
+                // ensure the directory ends in a backslash
+                if (value.Last() is not '/' or '\\')
+                    value += '/';
+
+                _saveFileDirectory = value;
+            }
+        }
+
+        public bool LoadFileOnAwake => startBehaviour == EStartBehaviour.LoadFileOnAwake || LoadGameOnStart;
+        public bool LoadGameOnStart => startBehaviour == EStartBehaviour.LoadGameOnStart;
+        public bool ClearFileOnAwake => startBehaviour == EStartBehaviour.ClearFileOnAwake;
+        public int SaveFileCount => saveFileNames.Count;
+        public bool IsFileLoaded => saveFile != null;
+
+        /// <summary>
+        /// The name of the currently loaded save file with its file extension.
+        /// </summary>
+        /// <seealso cref="SaveFileExtension"/>
+        public string SaveFileNameWithExtension => Path.GetFileName(SaveFile.settings.path);
+
+        /// <summary>
+        /// The name of the currently loaded save file.
+        /// </summary>
+        public string SaveFileName
+        {
+            get
+            {
+                if (!IsFileLoaded)
+                    return "-none-";
+                return Path.GetFileNameWithoutExtension(SaveFileNameWithExtension);
+            }
+        }
+
+        /// <summary>
+        /// Fulll, absolute path to the currently loaded file.
+        /// </summary>
+        public string SaveFilePath => SaveFile.settings.FullPath;
+
+        public IReadOnlyList<string> AllSaveFileNames
+        {
+            get
+            {
+                return saveFileNames
+                    .Select(path => Path.GetFileNameWithoutExtension(path))
+                    .ToArray();
+            }
+        }
 
         /// <summary>
         /// Save file which is currently loaded. If it's null, it needs to be loaded from disk.
         /// </summary>
-        private ES3File currentSaveFile;
-
-        /// <summary>
-        /// True if there exists some amount of SaveData which can be loaded.
-        /// </summary>
-        public static bool SaveDataExists
-        {
-            get => s_instance.SaveFile.Load(HAS_SAVE_DATA_KEY, false);
-        }
+        private ES3File saveFile;
 
         /// <summary>
         /// Gets the current save file that is loaded.
         /// </summary>
-        public ES3File SaveFile
+        private ES3File SaveFile
         {
             get
             {
-                // work
-                if (currentSaveFile == null)
-                    LoadFile(saveGameSlotIndex);
-                return currentSaveFile;
+                if (saveFile == null)
+                    throw new InvalidOperationException("No save file is loaded. Please load or create a file first.");
+                return saveFile;
             }
         }
+
+        /// <summary>
+        /// The stored data inside the save file.
+        /// </summary>
+        public ISaveStore Data => this;
 
         #region Unity Messages
 
@@ -94,8 +175,6 @@ namespace RichPackage.SaveSystem
 
         protected override void Awake()
         {
-            base.Awake();
-
             if (!Singleton.TakeOrDestroy(this, ref s_instance,
                 dontDestroyOnLoad: true))
             {
@@ -103,161 +182,446 @@ namespace RichPackage.SaveSystem
                 return;
             }
 
-#if UNITY_EDITOR
-            // clear the current save for easier iteration
-            if (deleteOnPlay)
-                DeleteSave();
-#endif
+            int count = ScanForSaveFiles().Count;
 
-            LoadSaveFilePaths();
-            if (gameSaveFiles.IsEmpty())
-                Create();
-            Load(DEFAULT_SAVE_FILE_NAME);
+            if (ClearFileOnAwake && count > 0)
+                DeleteFile();
+
+            if (LoadFileOnAwake)
+            {
+                // ensure there is at least one save file
+                if (count == 0)
+                    CreateFile();
+
+                LoadFile();
+            }
+        }
+
+        private IEnumerator Start()
+        {
+            if (LoadGameOnStart)
+            {
+                // ensure all Awake, OnEnable, and Start calls have been made
+                yield return CommonYieldInstructions.WaitForEndOfFrame;
+                LoadGame();
+            }
         }
 
         private void OnDestroy()
         {
-            Singleton.Release(this, ref s_instance);
-        }
+            if (App.IsQuitting)
+                SaveToFile();
 
-        private System.Collections.IEnumerator Start()
-        {
-            if (loadOnStart)
-            {
-                // ensure all start and awake calls have been made
-                yield return CommonYieldInstructions.WaitForEndOfFrame;
-                Load();
-            }
+            Singleton.Release(this, ref s_instance);
         }
 
         protected void OnEnable()
         {
             // subscribe to events
-            GlobalSignals.Get<SaveGameSignal>().AddListener(Save);
-            // GlobalSignals.Get<OnLevelLoadedSignal>().AddListener(Load);
+            GlobalSignals.Get<SaveGameSignal>().AddListener(SaveGame);
             GlobalSignals.Get<SaveObjectStateSignal>().AddListener(Save);
         }
 
         protected void OnDisable()
         {
             // unsubscribe from events
-            GlobalSignals.Get<SaveGameSignal>().RemoveListener(Save);
-            // GlobalSignals.Get<OnLevelLoadedSignal>().RemoveListener(Load);
+            GlobalSignals.Get<SaveGameSignal>().RemoveListener(SaveGame);
             GlobalSignals.Get<SaveObjectStateSignal>().RemoveListener(Save);
-        }
-
-        private void OnApplicationQuit()
-        {
-            Sync();
         }
 
         #endregion Unity Messages
 
-        private ES3SerializableSettings CreateNewSettings(string fileName = DEFAULT_SAVE_FILE_NAME)
+        #region Path Helpers
+
+        public void ValidateFilePath(ref string fileName)
         {
-            return new ES3SerializableSettings(fileName)
+            GuardAgainst.ArgumentIsNull(fileName, nameof(fileName));
+            EnsureProperFileExtension(ref fileName);
+        }
+
+        public string EnsureProperFileExtension(ref string fileName)
+        {
+            // ensure it has the proper extension
+            if (Path.HasExtension(fileName))
             {
-                encryptionType = encryptionType,
-                encryptionPassword = encryptionPassword,
-            };
-        }
-
-        public void LoadFile(int slot)
-        {
-            // validate
-            GuardAgainst.IndexOutOfRange(gameSaveFiles, slot);
-
-            // operate
-            currentSaveFile = CreateSaveFileObject(gameSaveFiles[slot]);
-
-            if (debug)
-                Debug.Log($"Loaded file at slot {slot} '{currentSaveFile.settings.path}'.");
-        }
-
-        private void Load(ES3SerializableSettings saveFile)
-        {
-            // operate
-            currentSaveFile = CreateSaveFileObject(saveFile);
-        }
-
-        /// <param name="fileName">The name of the save file with no extension.</param>
-        public void Load(string fileName)
-        {
-            ES3SerializableSettings saveFile = gameSaveFiles
-                .Where(settings => settings.FullPath.QuickEndsWith(fileName)) // check file extension
-                .FirstOrDefault();
-
-            // if not found
-            if (saveFile == null)
+                string fileExtension = Path.GetExtension(fileName);
+                // check for bad extension
+                if (fileExtension != SaveFileExtension)
+                    throw new Exception($"File extension must be '{SaveFileExtension}' but is '{fileExtension}'.");
+            }
+            else
             {
-                Debug.LogError($"Could not find a save file with the name {fileName}.");
-                return;
+                // append .es3
+                fileName += SaveFileExtension;
             }
 
-            Load(saveFile);
+            return fileName;
         }
 
-        [Button, DisableInEditorMode, HorizontalGroup("Load")]
-        public void Load()
+        private string GetFullPath(string fileName)
         {
-            LoadFile(saveGameSlotIndex);
-
-            // broadcast load command
-            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
+            EnsureProperFileExtension(ref fileName);
+            return SaveFileDirectory + fileName;
         }
 
-        [Button, DisableInEditorMode, HorizontalGroup("Load", 0.5f)]
-        public void Load(int slot)
+        #endregion Path Helpers
+
+        #region File Management
+
+        /// <summary>
+        /// Generates a new, unique file name without file extension.
+        /// </summary>
+        public string GenerateFileName()
         {
-            saveGameSlotIndex = slot;
-            Load();
+            string defaultFileName = DEFAULT_SAVE_FILE_NAME;
+
+            // check for default file name
+            if (!FileExists(defaultFileName))
+                return Path.GetFileNameWithoutExtension(defaultFileName);
+
+            // it already exists, so append numbers to it
+            string fileNameBase = Path.GetFileNameWithoutExtension(defaultFileName);
+            int num = 1;
+            string fileName;
+
+            do
+            {
+                string numString = num.ToStringCached();
+                num++;
+                fileName = $"{fileNameBase} {numString}{SaveFileExtension}";
+
+            } while (FileExists(fileName));
+
+            // remove the .es3
+            return Path.GetFileNameWithoutExtension(fileName);
         }
 
         /// <summary>
-        /// Triggered by dispatching <see cref="SaveGameSignal"/>.
+        /// Load all the save file paths from the disk and store them.
         /// </summary>
-        [Button, DisableInEditorMode]
-        public void Save()
+        public void RescanForSaveFiles() => ScanForSaveFiles();
+
+        /// <summary>
+        /// Load all the save file paths from the disk and store them.
+        /// </summary>
+        private List<string> ScanForSaveFiles()
         {
-            SaveFile.Save(HAS_SAVE_DATA_KEY, value: true); // flag to indicate there is indeed some save data
-            GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(this); // broadcast save command
-            SaveFile.Sync(); // save from RAM to Disk
+            saveFileNames.Clear();
+            saveFileNames.AddRange(EnumerateSaveFileNames());
 
             if (debug)
-                Debug.Log($"Saved file: {SaveFile.settings.path}.");
+                Debug.Log($"Found {saveFileNames.Count} save files.", this);
+
+            return saveFileNames;
         }
 
-        public void Create(string fileName = DEFAULT_SAVE_FILE_NAME)
+        /// <summary>
+        /// Iterates through the files on disk.
+        /// </summary>
+        public IEnumerable<string> EnumerateSaveFilePaths()
         {
-            ES3SerializableSettings settings = CreateNewSettings(fileName);
-            gameSaveFiles.Add(settings);
+            // look for all of the save files in the persistent data location
+            return Directory.EnumerateFiles(SaveFileDirectory)
+                .Where(filePath => Path.GetExtension(filePath) == SaveFileExtension);
         }
 
-        [Button, HorizontalGroup("Delete")]
-        public void DeleteSave() => DeleteSave(saveGameSlotIndex);
-
-        [Button, HorizontalGroup("Delete", 0.5f)]
-        public void DeleteSave(int slot)
+        /// <summary>
+        /// Iterates through the files on disk and provides their names with extensions.
+        /// </summary>
+        public IEnumerable<string> EnumerateSaveFileNames()
         {
+            return EnumerateSaveFilePaths()
+                .Select(path => Path.GetFileName(path));
+        }
+
+        /// <summary>
+        /// Iterates through the files on disk and provides their names without extensions.
+        /// </summary>
+        public IEnumerable<string> EnumerateSaveFileNamesWithoutExtension()
+        {
+            return EnumerateSaveFilePaths()
+                .Select(path => Path.GetFileNameWithoutExtension(path));
+        }
+
+        /// <param name="fileName">Extension optional, but correct extension required.</param>
+        /// <returns><see langword="true"/> if <paramref name="fileName"/> is a known save file.</returns>
+        public bool FileExists(string fileName)
+        {
+            EnsureProperFileExtension(ref fileName);
+            Assert.AreEqual(saveFileNames.Contains(fileName), File.Exists(GetFullPath(fileName)), "Known files in RAM and on disk are different. Most likely this is because the save files were manually modified. If this is the case, please rescan for files.");
+            return saveFileNames.Contains(fileName);
+        }
+
+        /// <summary>
+        /// Loads the default file from disk to memory.
+        /// </summary>
+        [Button, EnableIf("@SaveFileCount > 0")]
+        public void LoadFile()
+        {
+            // check and double-check
+            if (saveFileNames.IsEmpty() && ScanForSaveFiles().IsEmpty())
+                throw new InvalidOperationException("There are no save files to load. Create one first.");
+
+            LoadFileInternal(saveFileNames.First());
+        }
+
+        /// <summary>
+        /// Loads the file at <paramref name="fileName"/> from disk to memory.
+        /// </summary>
+        /// <param name="fileName">File extension optional.</param>
+        public void LoadFile(string fileName)
+        {
+            if (!FileExists(fileName) // it isn't in RAM, maybe we missed it
+                && ScanForSaveFiles().Count > 0 && !FileExists(fileName)) // double-check the file system
+                throw new InvalidOperationException($"The file '{fileName}' cannot be loaded because it doesn't exist.");
+
+            // the save file is valid. Load it.
+            LoadFileInternal(fileName);
+        }
+
+        private void LoadFileInternal(string nextFilePath)
+        {
+            if (saveFile != null)
+                SaveToFile();
+            saveFile = CreateSaveFileObject(nextFilePath, sync: true);
+
+            if (debug)
+                Debug.Log($"Loaded '{SaveFileNameWithExtension}'.", this);
+        }
+
+        /// <summary>
+        /// Generates a new save file and returns the name.
+        /// </summary>
+        [Button(DrawResult = false)]
+        public string CreateFile()
+        {
+            string newName = GenerateFileName();
+            CreateFile(newName);
+            return newName;
+        }
+
+        /// <summary>
+        /// Creates a new save file on disk. Does not allow overwriting existing files.
+        /// </summary>
+        /// <param name="fileName">The name of the file. Extension is optional.</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        [Button]
+        public void CreateFile(string fileName) => CreateFile(fileName, allowOverwriting: false);
+
+        /// <summary>
+        /// Creates a new save file on disk.
+        /// </summary>
+        /// <param name="fileName">The name of the file. Extension is optional.</param>
+        /// <param name="allowOverwriting">Allow overwriting any existing files with the same name.</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void CreateFile(string fileName, bool allowOverwriting)
+        {
+            ValidateFilePath(ref fileName);
+
+            // check for duplicates
+            if (FileExists(fileName))
+            {
+                // check if we are allowing overwriting
+                if (!allowOverwriting)
+                    throw new InvalidOperationException($"Cannot create file at '{fileName}' because it already exists. Delete it or choose a new name.");
+            }
+            else
+            {
+                saveFileNames.Add(fileName);
+            }
+
+            // if we got this far, create the actual file
+            ES3File file = CreateSaveFileObject(fileName, sync: false);
+
+            // put something on disk
+            file.Save(HAS_SAVE_DATA_KEY, true);
+            file.Sync(); // writes to disk
+
+            if (debug)
+                Debug.Log($"Created '{fileName}'.", this);
+
+            // sanity check
+            Assert.AreEqual(file.GetKeys().Length, 1, "Expected the save file to be empty.");
+        }
+
+        /// <summary>
+        /// Saves RAM to Disk.
+        /// </summary>
+        [Button("Save to Disk"), EnableIf(nameof(IsFileLoaded))]
+        public void SaveToFile()
+        {
+            SaveFile.Sync();
+
+            if (debug)
+                Debug.Log($"Saved '{SaveFileName}'.", this);
+        }
+
+        /// <summary>
+        /// Saves the current file to a new location on disk.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void SaveToFile(string newFileName, bool allowOverwriting = false)
+        {
+            ValidateFilePath(ref newFileName);
+
+            if (saveFile == null)
+                throw new InvalidOperationException("No save file is loaded. Please load or create one first.");
+
+            // guard overwriting
+            bool fileExists = FileExists(newFileName);
+            if (fileExists)
+            {
+                // throw if saving over self
+                if (newFileName == SaveFileNameWithExtension)
+                    throw new InvalidOperationException("Destination path is the same as source path. This is redundant. Is it deliberate? Maybe you just want SaveToFile().");
+
+                // throw if overwriting is not allowed
+                if (!allowOverwriting)
+                    throw new InvalidOperationException($"Can't save to the file at '{newFileName}' because it already exists. Delete the file or choose a new name.");
+            }
+            else
+            {
+                saveFileNames.Add(newFileName);
+            }
+
+            SaveFile.Sync(GetSettings(newFileName));
+
+            if (debug)
+                Debug.Log($"Saved '{newFileName}'.", this);
+        }
+
+        /// <summary>
+        /// Deletes the currently loaded save file from disk.
+        /// </summary>
+        [Button, EnableIf(nameof(IsFileLoaded))]
+        public void DeleteFile()
+        {
+            if (SaveFileCount == 0 && ScanForSaveFiles().Count == 0) // double-check
+                throw new InvalidOperationException("Cannot delete save file because there are none.");
+            DeleteFile(SaveFileNameWithExtension);
+        }
+
+        public void DeleteFile(string fileName)
+        {
+            if (SaveFileCount == 0 && ScanForSaveFiles().Count == 0) // double-check
+                throw new InvalidOperationException("Cannot delete save file because there are none.");
+            ValidateFilePath(ref fileName);
+
+            if (!FileExists(fileName))
+                throw new InvalidOperationException($"Cannot delete file '{fileName}' because it doesn't exist!");
+
+            ES3File fileToDelete;
+            // are we trying to delete the current file?
+            if (saveFile != null && fileName == SaveFileNameWithExtension)
+            {
+                fileToDelete = saveFile;
+                saveFile = null;
+            }
+            else
+            {
+                fileToDelete = CreateSaveFileObject(fileName, sync: false); //load into memory
+            }
+
             // operate
-            var saveFile = CreateSaveFileObject(gameSaveFiles[slot]); //load into memory
-            saveFile.Clear(); // clear any lingering data
-            saveFile.Sync(); // sync with file system
+            fileToDelete.Clear(); // clear any lingering data
+            fileToDelete.Sync(); // deletes file on disk
+            saveFileNames.Remove(fileName); // preserve the order
 
             if (debug)
-                Debug.Log($"Deletedfile: {saveFile.settings.path}.");
+                Debug.Log($"Deleted '{fileName}'.", this);
         }
 
-        [Button, DisableInEditorMode]
-        public void Sync() => SaveFile.Sync();
+        [Button]
+        public void DeleteAll()
+        {
+            if (SaveFileCount == 0)
+                return;
 
-        #region Meta Save Data
+#if UNITY_EDITOR
+            if (Application.isEditor)
+            {
+                string title = "Are you sure?";
+                string prompt = $"Delete all the save files at '{SaveFileDirectory}'?";
+                if (!UnityEditor.EditorUtility.DisplayDialog(title, prompt, "Yes", "No"))
+                    return;
+            }
+#endif
+            // re-use this list to avoid an allocation
+            saveFileNames.Clear();
+            foreach (string file in EnumerateSaveFilePaths())
+                File.Delete(file);
+            saveFile = null;
 
-        private ES3File CreateSaveFileObject(ES3SerializableSettings settings)
+            if (debug)
+                Debug.Log("Deleted all save data.", this);
+        }
+
+        #endregion File Management
+
+        #region Game State
+
+        /// <summary>
+        /// Load the world.
+        /// </summary>
+        [Button, DisableInEditorMode] // [EnableIf(nameof(IsFileLoaded))] // enables in editor mode :/
+        public void LoadGame()
+        {
+            // broadcast load command
+            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
+
+            if (debug)
+                Debug.Log($"Loaded game state from: '{SaveFileNameWithExtension}'.", this);
+        }
+
+        /// <summary>
+        /// Save the world.
+        /// </summary>
+        [Button("Save the World"), DisableInEditorMode] // [EnableIf(nameof(IsFileLoaded))] // enables in editor mode :/
+        public void SaveGame() => SaveGame(toDisk: true);
+
+        /// <summary>
+        /// Save the world.
+        /// </summary>
+        public void SaveGame(bool toDisk)
+        {
+            GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(this); // save the world
+
+            if (toDisk)
+                SaveToFile();
+
+            if (debug)
+                Debug.Log($"Saved game state to: {SaveFileName}.", this);
+        }
+
+        #endregion Game State
+
+        /// <summary>
+        /// Checks to see if there is any save data in the active file.
+        /// </summary>
+        /// <returns>True if the save file has any data in it, and false if it's unused.</returns>
+        public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+
+        public void SortSaveFileNames() => saveFileNames.Sort();
+
+        #region ES3 Factories
+
+        private ES3Settings GetSettings(string path)
+        {
+            var newSettings = (ES3Settings)settings.Clone();
+            newSettings.path = path;
+            return newSettings;
+        }
+
+        private ES3File CreateSaveFileObject(string filePath, bool sync)
+        {
+            return CreateSaveFileObject(GetSettings(filePath), sync); // be usre to clone the settings
+        }
+
+        private ES3File CreateSaveFileObject(ES3Settings settings, bool sync)
         {
             try
             {
-                return new ES3File(settings);
+                return new ES3File(settings, sync);
             }
             catch (Exception ex)
             {
@@ -273,7 +637,7 @@ namespace RichPackage.SaveSystem
                 {
                     case ES3.Location.File:
                         // ensure we only delete data in the appropriate folder
-                        if (filePath.Contains(SaveDataFolder) && File.Exists(filePath))
+                        if (filePath.Contains(SaveFileDirectory) && File.Exists(filePath))
                         {
                             File.Delete(filePath);
                         }
@@ -292,46 +656,7 @@ namespace RichPackage.SaveSystem
             return new ES3File(settings); // if this fails, god help us all
         }
 
-        #region Save/Load
-
-        protected void LoadSaveFilePaths()
-        {
-            gameSaveFiles.Clear();
-
-            //load existing files
-            foreach (string file in EnumerateSaveFiles())
-                gameSaveFiles.Add(CreateNewSettings(file));
-
-            currentSaveFile = null;
-        }
-
-        private IEnumerable<string> EnumerateSaveFiles()
-        {
-            // look for all of the save files in the persistent data location
-            return Directory.EnumerateFiles(Application.persistentDataPath)
-                .Where(filePath => Path.GetExtension(filePath).QuickEquals(SaveFileExtension));
-        }
-
-        #endregion Save/Load
-
-        #endregion Meta Save Data
-
-        /// <summary>
-        /// Checks to see if there is any save data in the active file.
-        /// </summary>
-        /// <returns>True if the save file has any data in it, and false if it's unused.</returns>
-        public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
-
-        /// <summary>
-        /// Checks to see if there is any save data in the file at the given slot.
-        /// </summary>
-        /// <returns>True if the save file has any data in it, and false if it's unused.</returns>
-        public bool FileHasSaveData(int slot)
-        {
-            Debug.Assert(slot < maxSaveFiles && slot < gameSaveFiles.Count);
-            saveGameSlotIndex = slot;
-            return SaveFile != null && FileHasSaveData();
-        }
+        #endregion  ES3 Factories
 
         #region ISaveable Consumers
 
@@ -352,25 +677,70 @@ namespace RichPackage.SaveSystem
 
         #endregion ISaveable Consumers
 
-        #region ISaveSystem
+        #region ISaveStore
 
         void ISaveStore.Save<T>(string key, T memento) => SaveFile.Save(key, memento);
         T ISaveStore.Load<T>(string key) => SaveFile.Load<T>(key);
         T ISaveStore.Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
-        void ISaveStore.LoadInto<T>(string key, T memento) where T : class 
+        void ISaveStore.LoadInto<T>(string key, T memento) where T : class
             => SaveFile.LoadInto(key, memento);
         bool ISaveStore.KeyExists(string key) => SaveFile.KeyExists(key);
         void ISaveStore.Delete(string key) => SaveFile.DeleteKey(key);
         void ISaveStore.Clear() => SaveFile.Clear();
 
-        #endregion ISaveSystem
+        #endregion ISaveStore
 
-        [QFSW.QC.Command("openSaveFile"), Button]
+        #region File IO
+
+        [Button, EnableIf(nameof(IsFileLoaded))]
         public void OpenSaveFile()
         {
-            LoadFile(saveGameSlotIndex);
-            System.Diagnostics.Process.Start(SaveFile.settings.FullPath);
+            System.Diagnostics.Process.Start(SaveFilePath);
         }
 
+        public static void EnsureFilePathExists(string filePath)
+        {
+            GuardAgainst.ArgumentIsNull(filePath, nameof(filePath));
+
+            string directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                CreateDirectoriesRecursively(directoryPath);
+            }
+        }
+
+        private static void CreateDirectoriesRecursively(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                CreateDirectoriesRecursively(Path.GetDirectoryName(directoryPath));
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
+
+        #endregion File IO
+
+        public enum EStartBehaviour
+        {
+            /// <summary>
+            /// No automatic behaviour.
+            /// </summary>
+            Nothing = 0,
+
+            /// <summary>
+            /// Load the file on start.
+            /// </summary>
+            LoadFileOnAwake = 1,
+
+            /// <summary>
+            /// Load the game state on start.
+            /// </summary>
+            LoadGameOnStart = 2,
+
+            /// <summary>
+            /// Clear save state on start.
+            /// </summary>
+            ClearFileOnAwake = 3,
+        }
     }
 }

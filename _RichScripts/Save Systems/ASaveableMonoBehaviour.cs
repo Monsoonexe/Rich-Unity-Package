@@ -133,7 +133,7 @@ namespace RichPackage.SaveSystem
         protected void SaveValue<T>(string key, T value)
         {
             string fullKey = SaveID + key;
-            SaveSystem.Instance.SaveFile.Save(fullKey, value);
+            SaveSystem.Instance.Data.Save(fullKey, value);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace RichPackage.SaveSystem
         protected T LoadValue<T>(string key)
         {
             string fullKey = SaveID + key;
-            return SaveSystem.Instance.SaveFile.Load<T>(fullKey);
+            return SaveSystem.Instance.Data.Load<T>(fullKey);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace RichPackage.SaveSystem
         protected T LoadValue<T>(string key, T defaultValue)
         {
             string fullKey = SaveID + key;
-            return SaveSystem.Instance.SaveFile.Load(fullKey, defaultValue);
+            return SaveSystem.Instance.Data.Load(fullKey, defaultValue);
         }
 
         /// <summary>

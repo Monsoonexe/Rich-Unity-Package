@@ -9,13 +9,12 @@ namespace RichPackage.SaveSystem
 	public static class SaveSystemConsoleCommands
 	{
 		#region Console Commands
-		// TODO - move these to its own file
 
 		[Command("save")]
 		public static void Save_()
 		{
 			if (SaveSystem.Instance)
-				SaveSystem.Instance.Save();
+				SaveSystem.Instance.SaveGame();
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
@@ -24,16 +23,16 @@ namespace RichPackage.SaveSystem
 		public static void Load_()
 		{
 			if (SaveSystem.Instance)
-				SaveSystem.Instance.Load();
+				SaveSystem.Instance.LoadGame();
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
 		[Command("loadSlot")]
-		public static void Load_(int slot)
+		public static void Load_(string name) // TODO - suggest save file names
 		{
 			if (SaveSystem.Instance)
-				SaveSystem.Instance.Load(slot);
+				SaveSystem.Instance.LoadFile(name);
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
@@ -42,20 +41,20 @@ namespace RichPackage.SaveSystem
 		public static void DeleteSave_()
 		{
 			if (SaveSystem.Instance)
-				SaveSystem.Instance.DeleteSave();
+				SaveSystem.Instance.DeleteFile();
 			else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
 		[Command("deleteSaveSlot")]
-		public static void DeleteSave_(int slot)
+		public static void DeleteSave_(string name)
 		{
 			if (SaveSystem.Instance)
-				SaveSystem.Instance.DeleteSave(slot);
-			else
+				SaveSystem.Instance.DeleteFile(name); // TODO - suggest save file names
+            else
 				Debug.LogWarning("No SaveSystem in Scene.");
 		}
 
-		#endregion
+		#endregion Console Commands
 	}
 }
