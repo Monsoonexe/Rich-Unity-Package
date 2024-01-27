@@ -37,11 +37,21 @@ namespace RichPackage.UnityMessages
 			InvokeIfFlagSet(EUnityMessage.Awake);
 		}
 
-		#endregion Unity Messages
+        private void Start()
+        {
+            InvokeIfFlagSet(EUnityMessage.Start);
+        }
 
-		#region Managed Messages
+        private void OnDestroy()
+        {
+            InvokeIfFlagSet(EUnityMessage.OnDestroy);
+        }
 
-		public void FixedUpdate()
+        #endregion Unity Messages
+
+        #region Managed Messages
+
+        public void FixedUpdate()
 		{
 			InvokeIfFlagSet(EUnityMessage.FixedUpdate);
 		}
