@@ -1,6 +1,5 @@
 ﻿//TODO - remove dependency on UnityEngine
 
-using RichPackage.Assertions;
 using RichPackage.Collections;
 using System;
 using System.Collections;
