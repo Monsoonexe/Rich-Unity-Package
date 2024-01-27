@@ -23,7 +23,7 @@ namespace RichPackage.SaveSystem
             base.Reset();
             SetDevDescription("Remembers the last time and state of the animation.");
             myAnimator = GetComponent<Animator>();
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: true);
         }
 
         protected override void OnDisable()
@@ -45,6 +45,15 @@ namespace RichPackage.SaveSystem
         protected override void LoadStateInternal()
         {
             myAnimator.Play(SaveData.stateHash, -1, SaveData.time);
+        }
+
+        public override void SaveState(ISaveStore saveFile)
+        {
+            // it looks like we have nothing to save
+            if (stagedState == null && !isActiveAndEnabled)
+                return;
+            
+            base.SaveState(saveFile);
         }
 
         protected override void SaveStateInternal()
