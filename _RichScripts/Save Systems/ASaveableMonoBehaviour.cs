@@ -30,7 +30,7 @@ namespace RichPackage.SaveSystem
         [DelayedProperty]
         [Title("Saving")]
         [CustomContextMenu("Set to Name", nameof(SetDefaultSaveID))]
-        [CustomContextMenu("Set to Scene-Name", nameof(SetSaveIDToScene_Name))]
+        [CustomContextMenu("Set to Scene-Name", nameof(SetSaveIDToSceneGameObjectName))]
         [CustomContextMenu("Complain if not unique", nameof(Editor_PrintIDIsNotUnique))]
         [ValidateInput("@GameObject_Extensions.IsPrefab(gameObject) || IsSaveIDUnique(this)", "ID collision. Regenerate.", InfoMessageType.Warning)]
         public override UniqueID SaveID 
@@ -85,7 +85,7 @@ namespace RichPackage.SaveSystem
         protected override void Reset()
         {
             base.Reset();
-            SetDefaultSaveID();
+            SetSaveIDToSceneGameObjectName();
         }
 
         protected virtual void OnEnable()
@@ -215,18 +215,28 @@ namespace RichPackage.SaveSystem
         public virtual void SetDefaultSaveID()
         {
             SaveID = UniqueID.FromString(gameObject.name);
+            Editor_MarkDirty();
             Editor_PrintIDIsNotUnique();
         }
 
         public void SetRandomSaveID()
         {
             SaveID = UniqueID.New;
+            Editor_MarkDirty();
             Editor_PrintIDIsNotUnique();
         }
 
-        public void SetSaveIDToScene_Name()
+        public void SetSaveIDToSceneGameObjectName()
         {
             SaveID = UniqueID.FromString(gameObject.GetNameWithScene());
+            Editor_MarkDirty();
+            Editor_PrintIDIsNotUnique();
+        }
+
+        public void SetSaveIdToFullScenePath()
+        {
+            SaveID = UniqueID.FromString(gameObject.GetFullyQualifiedName());
+            Editor_MarkDirty();
             Editor_PrintIDIsNotUnique();
         }
 
