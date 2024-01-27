@@ -123,7 +123,7 @@ namespace RichPackage
             // walk hierarchy upwards towards scene root
             while (parent != null)
             {
-                name = parent.name + "/" + name;
+                name = string.Concat(parent.name, "/", name);
                 parent = parent.parent;
             }
 
