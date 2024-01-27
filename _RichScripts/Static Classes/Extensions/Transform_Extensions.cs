@@ -68,6 +68,26 @@ namespace RichPackage
 
         #endregion Angles
 
+        public static Transform AlphabetizeChildren(this Transform transform)
+        {
+            return transform.OrderChildren((a, b) => string.CompareOrdinal(a.name, b.name));
+        }
+        
+        public static Transform OrderChildren(this Transform transform, Comparison<Transform> comparer)
+        {
+            using (UnityEngine.Rendering.ListPool<Transform>.Get(out var children))
+            {
+                children.AddRange(transform.GetChildren());
+                children.Sort((a, b) => comparer(a, b));
+                foreach (Transform child in children)
+                {
+                    child.SetAsLastSibling();
+                }
+            }
+
+            return transform;
+        }
+
         /// <param name="predicate">The condition you are looking for.</param>
         /// <param name="recursive">Should children, grandchildren, etc be searched.</param>
         /// <returns>The <see cref="Transform"/> that matched <paramref name="predicate"/>,
@@ -92,8 +112,6 @@ namespace RichPackage
         /// <summary>
         /// Perform an action on every Transform on each of its children, etc, recursively.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="newLayer"></param>
         public static void ForEachChildRecursive(this Transform obj, Action<Transform> action)
         {
             var childCount = obj.childCount;
@@ -107,8 +125,6 @@ namespace RichPackage
         /// <summary>
         /// Perform an action on this Transform and every Transform on each of its children, etc, recursively.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="newLayer"></param>
         public static void ForEachTransformRecursive(this Transform obj, Action<Transform> action)
         {
             action(obj); //perform 
