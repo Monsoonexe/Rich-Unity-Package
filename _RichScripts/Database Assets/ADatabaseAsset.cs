@@ -87,10 +87,7 @@ namespace RichPackage.Databases
 
         public TData GetOrDefault(int key, TData @default = default)
         {
-            if (lookupTable.TryGetValue(key, out var value))
-                return value;
-            else
-                return @default;
+            return lookupTable.TryGetValue(key, out var value) ? value : @default;
         }
 
         public bool TryGet(int key, out TData value)
@@ -202,7 +199,7 @@ namespace RichPackage.Databases
 
         protected bool IsKeyUnique(TData query)
         {
-            foreach (var item in items)
+            foreach (TData item in items)
             {
                 if (item.Key == query.Key && item != query)
                     return false;
