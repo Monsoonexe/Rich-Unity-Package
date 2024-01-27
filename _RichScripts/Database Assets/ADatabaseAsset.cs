@@ -22,6 +22,9 @@ namespace RichPackage.Databases
     public abstract class ADatabaseAsset<TData> : ADatabaseAsset, IEnumerable<TData>
         where TData : UnityEngine.Object, IDatabaseMember
     {
+        [Title("Settings")]
+        public bool autoAssignIds = false;
+
         [Title("Database")]
         [Tooltip("Index all the replay objects here. Be sure their replay entity script has this index set in the inspector!")]
         [SerializeField, AssetsOnly, Required, LabelWidth(50),
@@ -148,7 +151,8 @@ namespace RichPackage.Databases
             if (!VerifyCollectionHasNoDuplicateEntries())
                 return;
 
-            EnsureEntriesHaveUniqueKeys();
+            if (autoAssignIds)
+                EnsureEntriesHaveUniqueKeys();
         }
 
         protected void EnsureEntriesHaveUniqueKeys()
@@ -219,16 +223,6 @@ namespace RichPackage.Databases
             }
 
             return true;
-        }
-
-        [Button, HideInPlayMode]
-        public void FindAllAssets()
-        {
-            var assets = new List<TData>(8);
-            FindAllAssets(assets);
-            items = assets.ToArray();
-            UnityEditor.EditorUtility.SetDirty(this);
-            OnValidate();
         }
 
         // TODO - move this to a class anywhere can access, not just the editor assembly
