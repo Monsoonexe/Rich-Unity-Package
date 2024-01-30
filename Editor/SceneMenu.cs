@@ -48,7 +48,17 @@ namespace RichPackage.Editor
 
         [MenuItem(MenuPath + "Reload Current Scene", priority = -5)]
         public static void ReloadCurrentScene()
-            => LoadScene(SceneManager.GetActiveScene());
+        {
+            Scene activeScene = SceneManager.GetActiveScene();
+            if (Application.isPlaying)
+            {
+                SceneManager.LoadScene(activeScene.buildIndex);
+            }
+            else
+            {
+                LoadScene(activeScene);
+            }
+        }
 
         #endregion Menu Items
 
