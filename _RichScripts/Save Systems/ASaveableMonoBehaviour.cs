@@ -18,7 +18,11 @@ namespace RichPackage.SaveSystem
         [SerializeField]
         protected TState saveData = new TState();
 
-        public TState SaveData => saveData; //readonly property
+        public TState SaveData
+        {
+            get => saveData;
+            protected set => saveData = value;
+        }
 
         #region ISaveable
 
