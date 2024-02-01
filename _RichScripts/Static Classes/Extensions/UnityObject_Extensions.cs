@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using RichPackage.GuardClauses;
+using System.Runtime.CompilerServices;
 
 namespace UnityEngine
 {
@@ -18,5 +19,21 @@ namespace UnityEngine
             return ReferenceEquals(a, b); // doesn't throw null-references
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsAlive(this Object a)
+        {
+            GuardAgainst.ArgumentIsNull(a, nameof(a));
+            return a; // implicit bool cast lol
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Exists(this Object a) => a; // implicit bool cast lol
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsDestroyed(this Object obj)
+        {
+            GuardAgainst.ArgumentIsNull(obj, nameof(obj));
+            return !obj;
+        }
     }
 }
