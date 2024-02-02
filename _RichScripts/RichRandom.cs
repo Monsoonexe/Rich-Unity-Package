@@ -1,7 +1,8 @@
-﻿using System;
+﻿using RichPackage.FunctionalProgramming;
+using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using RichPackage.FunctionalProgramming;
 using Random = UnityEngine.Random;
 
 namespace RichPackage
@@ -31,7 +32,7 @@ namespace RichPackage
         /// <returns>e.g. 2d6 + mod</returns>
         public static int RollDice(int dice, int sides, int mod = 0)
         {   // validate
-            Debug.Assert(dice >= 0 && sides > 0, 
+            Debug.Assert(dice >= 0 && sides > 0,
                 $"[Utility] Invalid RollDice input: {dice} {sides}.");
 
             int result = mod; // return value
@@ -71,9 +72,9 @@ namespace RichPackage
 
             do
             {
-                u = 2 * a - 1;
-                v = 2 * b - 1;
-                S = u * u + v * v;
+                u = (2 * a) - 1;
+                v = (2 * b) - 1;
+                S = (u * u) + (v * v);
             }
             while (S >= 1 || S == 0);
 
@@ -84,7 +85,16 @@ namespace RichPackage
             // and clamped following the "three-sigma rule"
             float mean = (minValue + maxValue) / 2.0f;
             float sigma = (maxValue - mean) / 3.0f;
-            return Mathf.Clamp(std * sigma + mean, minValue, maxValue);
+            return Mathf.Clamp((std * sigma) + mean, minValue, maxValue);
+        }
+
+        public static T GetRandomElement<T>(this IEnumerable<T> items)
+        {
+            using (UnityEngine.Rendering.ListPool<T>.Get(out List<T> list))
+            {
+                list.AddRange(items);
+                return list.GetRandomElement();
+            }
         }
     }
 }
