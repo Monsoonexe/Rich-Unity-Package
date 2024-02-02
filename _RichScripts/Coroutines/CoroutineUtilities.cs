@@ -124,7 +124,11 @@ namespace RichPackage
             if (coroutine != null)
                 StopCoroutine(coroutine);
         }
-        
+
+        /// <summary>
+        /// Stops <paramref name="coroutine"/> if it is running and clears the reference.
+        /// </summary>
+        /// <param name="coroutine">Possibly null.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void StopCoroutineSafely(ref Coroutine coroutine)
         {
