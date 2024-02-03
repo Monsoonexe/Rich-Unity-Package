@@ -11,6 +11,13 @@ namespace RichPackage
     [Serializable]
     public struct TransformProperties : IEquatable<Transform>, IEquatable<TransformProperties>
     {
+        public static TransformProperties Origin => new()
+        {
+            space = Space.World,
+            position = Vector3.zero,
+            rotation = Quaternion.identity
+        };
+
         public Space space;
         public Vector3 position;
         public Quaternion rotation;
