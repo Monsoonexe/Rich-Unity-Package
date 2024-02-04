@@ -32,7 +32,7 @@ namespace RichPackage
         ///<summary>
         ///
         ///</summary>
-        public static float Angle(this Transform a, Transform b)
+        public static float Angle(this Transform a, Transform b) 
             => Vector3.Angle(a.forward, b.position);
 
         ///<summary>
@@ -174,7 +174,7 @@ namespace RichPackage
                 list.Add(parent.GetChild(i));
             return list;
         }
-        
+
         /// <summary>
         /// Zeroes the postion and rotation of <paramref name="transform"/>.
         /// </summary>
@@ -183,15 +183,21 @@ namespace RichPackage
         {
             if (space == Space.Self)
             {
-                transform.localPosition = Vector3.zero;
-                transform.localRotation = Quaternion.identity;
+                transform.ResetLocal();
             }
             else // world
             {
-                transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+                transform.ResetOrigin();
             }
 
             return transform; // allow chaining
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform ResetOrigin(this Transform transform)
+        {
+            transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            return transform;
         }
 
         /// <summary>
@@ -200,8 +206,13 @@ namespace RichPackage
         /// <returns><paramref name="transform"/> to allow chaining.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform ResetLocal(this Transform transform)
-            => Reset(transform, Space.Self);
+        {
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            return transform;
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionAndRotation(this Transform t, Vector3 position, Vector3 rotation)
         {
             t.localPosition = position;
@@ -209,36 +220,42 @@ namespace RichPackage
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionX(this Transform t, float x)
         {
             t.localPosition = t.localPosition.WithX(x);
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionY(this Transform t, float y)
         {
             t.localPosition = t.localPosition.WithY(y);
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionZ(this Transform t, float z)
         {
             t.localPosition = t.localPosition.WithZ(z);
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetPositionX(this Transform t, float x)
         {
             t.position = t.position.WithX(x);
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetPositionY(this Transform t, float y)
         {
             t.position = t.position.WithY(y);
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetPositionZ(this Transform t, float z)
         {
             t.position = t.position.WithZ(z);
