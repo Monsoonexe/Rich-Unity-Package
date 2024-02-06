@@ -129,6 +129,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Saves this object's state to persistent storage.
         /// </summary>
+        [ContextMenu(nameof(SaveState))]
         public void SaveState() => GlobalSignals.Get<SaveObjectStateSignal>().Dispatch(this);
 
         /// <summary>
