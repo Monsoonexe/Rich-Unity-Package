@@ -11,9 +11,9 @@ namespace RichPackage.SaveSystem
         protected const string ContextMenu = "CONTEXT/" + nameof(GameObjectVariables) + "/";
 
         [SerializeField]
-        private VariableTable table;
+        private JsonTable table;
 
-        public VariableTable Table
+        public JsonTable Table
         {
             get => table;
             protected set => table = value;

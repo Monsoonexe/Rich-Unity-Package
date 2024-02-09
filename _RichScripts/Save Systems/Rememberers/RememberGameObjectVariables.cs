@@ -1,4 +1,3 @@
-using RichPackage.Collections;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -8,8 +7,11 @@ namespace RichPackage.SaveSystem
     /// Saves/Loads game variables that exist as a component on a game object.
     /// </summary>
     /// <seealso cref="GameObjectVariables"/>
-    public class RememberGameObjectVariables : ASaveableMonoBehaviour<RememberGameObjectVariables.Memento>
+    public class RememberGameObjectVariables : ASaveableMonoBehaviour
     {
+        [SerializeField]
+        protected UniqueID saveId;
+
         [Required, Tooltip("The thing that gets remembered.")]
         public GameObjectVariables target;
 
@@ -22,25 +24,20 @@ namespace RichPackage.SaveSystem
 
         #region Save/Load
 
-        protected override void SaveStateInternal()
+        public override UniqueID SaveID { get => saveId; protected set => saveId = value; }
+
+        public override void LoadState(ISaveStore saveFile)
         {
-            saveData.table.Clear();
-            target.Table.CopyTo(saveData.table);
+            if (saveFile.KeyExists(SaveID))
+            {
+                target.Table.Clear();
+                saveFile.LoadInto(SaveID, target.Table);
+            }
         }
 
-        protected override void LoadStateInternal()
+        public override void SaveState(ISaveStore saveFile)
         {
-            target.Table.Clear();
-            target.Table.CopyFrom(saveData.table);
-        }
-
-        /// <summary>
-        /// The save data structure.
-        /// </summary>
-        [System.Serializable]
-        public class Memento : AState
-        {
-            public VariableTable table = new VariableTable();
+            saveFile.Save(SaveID, target.Table);
         }
 
         #endregion Save/Load
