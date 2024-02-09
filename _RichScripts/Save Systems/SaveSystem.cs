@@ -46,6 +46,9 @@ namespace RichPackage.SaveSystem
             private set => s_instance = value;
         }
 
+        public static bool IsSavingGameState { get; private set; }
+        public static bool IsLoadingGameState { get; private set; }
+
         [SerializeField]
         private ES3SerializableSettings settings; // always clone this
 
@@ -576,8 +579,10 @@ namespace RichPackage.SaveSystem
         [Button, DisableInEditorMode] // [EnableIf(nameof(IsFileLoaded))] // enables in editor mode :/
         public void LoadGame()
         {
+            IsLoadingGameState = true;
             // broadcast load command
             GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
+            IsLoadingGameState = false;
 
             if (debug)
                 Debug.Log($"Loaded game state from: '{SaveFileNameWithExtension}'.", this);
@@ -594,7 +599,9 @@ namespace RichPackage.SaveSystem
         /// </summary>
         public void SaveGame(bool toDisk)
         {
+            IsSavingGameState = true;
             GlobalSignals.Get<SaveStateToFileSignal>().Dispatch(this); // save the world
+            IsSavingGameState = false;
 
             if (toDisk)
                 SaveToFile();
