@@ -50,7 +50,7 @@ namespace RichPackage.SaveSystem
         public override void SaveState(ISaveStore saveFile)
         {
             // it looks like we have nothing to save
-            if (stagedState == null && !isActiveAndEnabled)
+            if (stagedState == null && !myAnimator.isActiveAndEnabled)
                 return;
             
             base.SaveState(saveFile);
