@@ -14,12 +14,27 @@ namespace RichPackage.Collections
     public class JsonTable : Dictionary<string, string>, ISaveStore
     {
         // use this method so we can take advantage of any project-wide customization
-        private readonly JsonSerializer converter = JsonSerializer.CreateDefault(); // new JsonSerializer();
-        
+        public static JsonSerializer GlobalSerializer;
+
+        private JsonSerializer _serializer;
+        private JsonSerializer Converter
+        {
+            get
+            {
+                if (_serializer != null)
+                    return _serializer;
+
+                if (GlobalSerializer != null)
+                    return _serializer = GlobalSerializer;
+
+                return _serializer = JsonSerializer.CreateDefault(); // new JsonSerializer();
+            }
+        }
+
         public Formatting Formatting
         {
-            get => converter.Formatting;
-            set => converter.Formatting = value;
+            get => Converter.Formatting;
+            set => Converter.Formatting = value;
         }
 
         public void Set<T>(string key, T value) => this[key] = Serialize(value);
@@ -39,7 +54,7 @@ namespace RichPackage.Collections
             using (var sWriter = new StringWriter(sb))
             using (var jWriter = new JsonTextWriter(sWriter))
             {
-                converter.Serialize(jWriter, value, typeof(T));
+                Converter.Serialize(jWriter, value, typeof(T));
                 return sWriter.ToString();
             }
         }
@@ -49,7 +64,7 @@ namespace RichPackage.Collections
             using (var sReader = new StringReader(json))
             using (var jReader = new JsonTextReader(sReader))
             {
-                return (T)converter.Deserialize(jReader, typeof(T));
+                return (T)Converter.Deserialize(jReader, typeof(T));
             }
         }
 
@@ -63,7 +78,7 @@ namespace RichPackage.Collections
             using (var sReader = new StringReader(this[key]))
             using (var jReader = new JsonTextReader(sReader))
             {
-                converter.Populate(jReader, memento);
+                Converter.Populate(jReader, memento);
             }
         }
         bool ISaveStore.KeyExists(string key) => ContainsKey(key);
