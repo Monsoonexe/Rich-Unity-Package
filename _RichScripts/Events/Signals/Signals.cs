@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RichPackage.Events.Signals
 {
@@ -41,6 +42,7 @@ namespace RichPackage.Events.Signals
     {
         private static readonly SignalHub hub = new SignalHub();
 
+        [DebuggerStepThrough]
         public static TSignal Get<TSignal>()
             where TSignal : ISignal, new()
             => hub.Get<TSignal>();
@@ -85,6 +87,7 @@ namespace RichPackage.Events.Signals
         /// </summary>
         /// <typeparam name="TSignal">Type of signal</typeparam>
         /// <returns>The proper signal binding</returns>
+        [DebuggerStepThrough]
         public TSignal Get<TSignal>()
             where TSignal : ISignal, new()
         {
