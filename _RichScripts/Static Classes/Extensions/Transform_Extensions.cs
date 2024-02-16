@@ -1,9 +1,9 @@
+using RichPackage;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
-namespace RichPackage
+namespace UnityEngine
 {
     public static class Transform_Extensions
     {
@@ -75,7 +75,7 @@ namespace RichPackage
         
         public static Transform OrderChildren(this Transform transform, Comparison<Transform> comparer)
         {
-            using (UnityEngine.Rendering.ListPool<Transform>.Get(out var children))
+            using (Rendering.ListPool<Transform>.Get(out var children))
             {
                 children.AddRange(transform.GetChildren());
                 children.Sort((a, b) => comparer(a, b));
@@ -262,17 +262,17 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Sorts ascending by default, unless <paramref name="inverse"/>, then descending.
+        /// Sorts ascending by default, unless <paramref name="descending"/>, then descending.
         /// </summary>
         /// credit: https://github.com/JimmyCushnie/JimmysUnityUtilities/blob/master/Scripts/Extensions/base%20Unity%20types/TransformExtensions.cs
-        public static void SortChildrenAlphabetically(this Transform t, bool inverse = false)
+        public static void SortChildrenAlphabetically(this Transform t, bool descending = false)
         {
             var children = new List<Transform>(t.childCount);
 
             for (int i = 0; i < t.childCount; i++)
                 children.Add(t.GetChild(i));
 
-            if (inverse)
+            if (descending)
                 children.Sort((t1, t2) => t2.name.CompareTo(t1.name));
             else
                 children.Sort((t1, t2) => t1.name.CompareTo(t2.name));
