@@ -1,4 +1,4 @@
-﻿//TODO - remove dependency on UnityEngine
+//TODO - remove dependency on UnityEngine
 
 using RichPackage.Collections;
 using System;
@@ -463,6 +463,29 @@ namespace RichPackage
             {
                 if (enumerator.MoveNext())
                     return enumerator.Current;
+            }
+
+            return @default;
+        }
+
+        /// <summary>
+        /// First element in a sequence or a default value if it is empty.
+        /// </summary>
+        public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source,
+            Predicate<TSource> query, TSource @default = default)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
+            foreach (TSource item in source)
+            {
+                if (query(item))
+                {
+                    return item;
+                }
             }
 
             return @default;
