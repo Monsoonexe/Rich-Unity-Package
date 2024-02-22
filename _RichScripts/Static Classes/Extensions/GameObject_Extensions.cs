@@ -14,6 +14,14 @@ namespace RichPackage
             return gameObject.scene.rootCount <= 1;
         }
 
+        public static GameObject GetChild(this GameObject gameObject, int i)
+        {
+            // isn't weird that the Transform component is the one in charge 
+            // of the object graph? Sure, children are relative to their parents, but
+            // is this not mostly a relation of game object less than a relation of orientation?
+            return gameObject.transform.GetChild(i).gameObject;
+        }
+
         /// <summary>
         /// Shortcut for a.enabled = true;
         /// </summary>
