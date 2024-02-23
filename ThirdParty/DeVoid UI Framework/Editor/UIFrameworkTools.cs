@@ -10,135 +10,170 @@ namespace deVoid.UIFramework.Editor
 {
     public static class UIFrameworkTools
     {
-        [MenuItem("Assets/Create/deVoid UI/UI Frame in Scene", priority = 2)]
-        public static void CreateUIFrameInScene() {
-            CreateUIFrame();
-        }
-        
-        [MenuItem("Assets/Create/deVoid UI/UI Frame Prefab", priority = 1)]
-        public static void CreateUIFramePrefab() {
-            var frame = CreateUIFrame();
-            
-            string prefabPath = GetCurrentPath();
-            prefabPath = EditorUtility.SaveFilePanel("UI Frame Prefab", prefabPath,"UIFrame", "prefab");
+		[MenuItem("Assets/Create/deVoid UI/UI Frame in Scene", priority = 2)]
+		public static void CreateUIFrameInScene()
+		{
+			CreateUIFrame();
+		}
 
-            if (prefabPath.StartsWith(Application.dataPath)) {
-                prefabPath =  "Assets" + prefabPath.Substring(Application.dataPath.Length);
-            }
+		[MenuItem("Assets/Create/deVoid UI/UI Frame Prefab", priority = 1)]
+		public static void CreateUIFramePrefab()
+		{
+			GameObject frame = CreateUIFrame();
 
-            if (!string.IsNullOrEmpty(prefabPath)) {
-                CreateNewPrefab(frame, prefabPath);    
-            }
+			string prefabPath = GetCurrentPath();
+			prefabPath = EditorUtility.SaveFilePanel("UI Frame Prefab", prefabPath, "UIFrame", "prefab");
 
-            Object.DestroyImmediate(frame);
-        }
+			if (prefabPath.StartsWith(Application.dataPath))
+			{
+				prefabPath = "Assets" + prefabPath.Substring(Application.dataPath.Length);
+			}
 
-        private static GameObject CreateUIFrame() {
-            var uiLayer = LayerMask.NameToLayer("UI");
-            var root = new GameObject("UIFrame");
-            var camera = new GameObject("UICamera");
+			if (!string.IsNullOrEmpty(prefabPath))
+			{
+				CreateNewPrefab(frame, prefabPath);
+			}
 
-            var cam = camera.AddComponent<Camera>();
-            cam.clearFlags = CameraClearFlags.Depth;
-            cam.cullingMask = LayerMask.GetMask("UI");
-            cam.orthographic = true;
-            cam.farClipPlane = 25;
+			Object.DestroyImmediate(frame);
+		}
 
-            root.AddComponent<UIFrame>();
-            var canvas = root.AddComponent<Canvas>();
-            root.layer = uiLayer;
+		private static GameObject CreateUIFrame()
+		{
+			int uiLayer = LayerMask.NameToLayer("UI");
+			var root = new GameObject("UIFrame");
+			var camera = new GameObject("UICamera");
 
-            // ScreenSpaceCamera allows you to have things like 3d models, particles
-            // and post-fx rendering out of the box (shader/render order limitations still apply)
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = cam;
+			var cam = camera.AddComponent<Camera>();
+			cam.clearFlags = CameraClearFlags.Depth;
+			cam.cullingMask = LayerMask.GetMask("UI");
+			cam.orthographic = true;
+			cam.farClipPlane = 25;
 
-            cam.transform.SetParent(root.transform, false);
-            cam.transform.localPosition = new Vector3(0f, 0f, -1500f);
+			var frame = root.AddComponent<UIFrame>();
+			var canvas = root.GetOrAddComponent<Canvas>();
+			root.layer = uiLayer;
 
-            var screenScaler = root.AddComponent<CanvasScaler>();
-            screenScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            screenScaler.referenceResolution = new Vector2(1920, 1080);
+			// ScreenSpaceCamera allows you to have things like 3d models, particles
+			// and post-fx rendering out of the box (shader/render order limitations still apply)
+			canvas.renderMode = RenderMode.ScreenSpaceCamera;
+			canvas.worldCamera = cam;
 
-            root.AddComponent<GraphicRaycaster>();
+			cam.transform.SetParent(root.transform, false);
+			cam.transform.localPosition = new Vector3(0f, 0f, -1500f);
 
-            var eventSystem = new GameObject("EventSystem");
-            eventSystem.transform.SetParent(root.transform, false);
-            eventSystem.AddComponent<EventSystem>();
-            eventSystem.AddComponent<StandaloneInputModule>();
+			var screenScaler = root.GetOrAddComponent<CanvasScaler>();
+			screenScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+			screenScaler.referenceResolution = new Vector2(1920, 1080);
 
-            // Creating the layers
-            var panelLayerGO = CreateRect("PanelLayer", root, uiLayer);
-            var panelLayer = panelLayerGO.AddComponent<PanelUILayer>();
+			var graphicRaycaster = root.GetOrAddComponent<GraphicRaycaster>();
 
-            var windowLayerGO = CreateRect("WindowLayer", root, uiLayer);
-            var windowLayer = windowLayerGO.AddComponent<WindowUILayer>();
+			// event system
+			var eventSystem = new GameObject("EventSystem");
+			eventSystem.transform.SetParent(root.transform, false);
+			eventSystem.AddComponent<EventSystem>();
+			eventSystem.AddComponent<StandaloneInputModule>();
 
-            var prioPanelLayer = CreateRect("PriorityPanelLayer", root, uiLayer);
+			// Creating the layers
+			var panelLayerGO = CreateRect("PanelLayer", root, uiLayer);
+			var panelLayer = panelLayerGO.AddComponent<PanelUILayer>();
 
-            var windowParaLayerGO = CreateRect("PriorityWindowLayer", root, uiLayer);
-            var windowParaLayer = windowParaLayerGO.AddComponent<WindowParaLayer>();
-            // setting the para layer via reflection
-            SetPrivateField(windowLayer, windowParaLayer, "priorityParaLayer");
+			var windowLayerGO = CreateRect("WindowLayer", root, uiLayer);
+			var windowLayer = windowLayerGO.AddComponent<WindowUILayer>();
 
-            var darkenGO = CreateRect("DarkenBG", windowParaLayer.gameObject, uiLayer);
-            var darkenImage = darkenGO.AddComponent<Image>();
-            darkenImage.color = new Color(0f, 0f, 0f, 0.75f);
-            // setting the BG darkener via reflection
-            SetPrivateField(windowParaLayer, darkenGO, "darkenBgObject");
-            darkenGO.SetActive(false);
+			var prioPanelLayer = CreateRect("PriorityPanelLayer", root, uiLayer);
 
-            var tutorialPanelLayer = CreateRect("TutorialPanelLayer", root, uiLayer);
+			var windowParaLayerGO = CreateRect("PriorityWindowLayer", root, uiLayer);
+			var windowParaLayer = windowParaLayerGO.AddComponent<WindowParaLayer>();
+			// setting the para layer via reflection
+			SetPrivateField(windowLayer, windowParaLayer, "priorityParaLayer");
 
-            // Rigging all the Panel Para-Layers on the Panel Layer
-            var prioList = new List<PanelPriorityLayerListEntry>();
-            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.None, panelLayer.transform));
-            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Prioritary, prioPanelLayer.transform));
-            prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Tutorial, tutorialPanelLayer.transform));
-            var panelPrios = new PanelPriorityLayerList(prioList);
+			SetPrivateField(frame, panelLayer, "panelLayer");
+			SetPrivateField(frame, windowLayer, "windowLayer");
 
-            SetPrivateField(panelLayer, panelPrios, "priorityLayers");
+			var darkenGO = CreateRect("DarkenBG", windowParaLayer.gameObject, uiLayer);
+			var darkenImage = darkenGO.AddComponent<Image>();
+			darkenImage.color = new Color(0f, 0f, 0f, 0.75f);
+			// setting the BG darkener via reflection
+			SetPrivateField(windowParaLayer, darkenGO, "darkenBackgroundObject");
+			darkenGO.SetActive(false);
 
-            return root;
-        }
+			var tutorialPanelLayer = CreateRect("TutorialPanelLayer", root, uiLayer);
 
-        public static string GetCurrentPath() {
-            string path = AssetDatabase.GetAssetPath(Selection.activeObject);
-            if (path == "") {
-                path = "Assets";
-            }
-            else if (Path.GetExtension(path) != "") {
-                path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
-            }
+			// Rigging all the Panel Para-Layers on the Panel Layer
+			var prioList = new List<PanelPriorityLayerListEntry>();
+			prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.None, panelLayer.transform));
+			prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Prioritary, prioPanelLayer.transform));
+			prioList.Add(new PanelPriorityLayerListEntry(EPanelPriority.Tutorial, tutorialPanelLayer.transform));
+			var panelPrios = new PanelPriorityLayerList(prioList);
 
-            return path;
-        }
-        
-        private static void SetPrivateField(object target, object element, string fieldName) {
-            var prop = target.GetType().GetField(fieldName,
-                System.Reflection.BindingFlags.NonPublic
-                | System.Reflection.BindingFlags.Instance);
-            prop.SetValue(target, element);
-        }
+			SetPrivateField(panelLayer, panelPrios, "priorityLayers");
 
-        private static GameObject CreateRect(string name, GameObject parentGO, int layer) {
-            var parent = parentGO.GetComponent<RectTransform>();
-            var newRect = new GameObject(name, typeof(RectTransform));
-            newRect.layer = layer;
-            var rt = newRect.GetComponent<RectTransform>();
+			// raycast blocker
+			var raycastBlockerObject = new GameObject("Raycast Blocker");
+			raycastBlockerObject.transform.SetParent(root.transform, false);
+			var blocker = raycastBlockerObject.AddComponent<Image>();
+			blocker.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
+			StretchToFillParent(blocker.rectTransform);
+			SetPrivateField(frame, blocker, "raycastBlocker");
 
-            rt.anchoredPosition = parent.position;
-            rt.anchorMin = new Vector2(0, 0);
-            rt.anchorMax = new Vector2(1, 1);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.transform.SetParent(parent, false);
-            rt.sizeDelta = Vector3.zero;
+			return root;
+		}
 
-            return newRect;
-        }
-        
-        private static void CreateNewPrefab(GameObject obj, string localPath) {
-            PrefabUtility.SaveAsPrefabAsset(obj, localPath);
-        }
+		public static string GetCurrentPath()
+		{
+			string path = AssetDatabase.GetAssetPath(Selection.activeObject);
+			if (path == "")
+			{
+				path = "Assets";
+			}
+			else if (Path.GetExtension(path) != "")
+			{
+				path = path.Replace(Path.GetFileName(AssetDatabase.GetAssetPath(Selection.activeObject)), "");
+			}
+
+			return path;
+		}
+
+		private static void StretchToFillParent(RectTransform rectTransform)
+		{
+			// equivalent to using the Alt + Shift + Stretch pivot preset
+			// and zeroing all the rect properties
+			rectTransform.anchorMin = Vector3.zero;
+			rectTransform.anchorMax = Vector3.one;
+			rectTransform.pivot = Vector3.zero;
+			rectTransform.offsetMin = Vector2.zero;
+			rectTransform.offsetMax = Vector2.zero;
+		}
+
+		private static void SetPrivateField(object target, object value, string fieldName)
+		{
+			var flags = System.Reflection.BindingFlags.NonPublic
+				| System.Reflection.BindingFlags.Instance;
+			target.GetType()
+				.GetField(fieldName, flags)
+				.SetValue(target, value);
+		}
+
+		private static GameObject CreateRect(string name, GameObject parentGO, int layer)
+		{
+			var parent = parentGO.GetComponent<RectTransform>();
+			var newRect = new GameObject(name, typeof(RectTransform));
+			newRect.layer = layer;
+			var rt = newRect.GetComponent<RectTransform>();
+
+			rt.anchoredPosition = parent.position;
+			rt.anchorMin = new Vector2(0, 0);
+			rt.anchorMax = new Vector2(1, 1);
+			rt.pivot = new Vector2(0.5f, 0.5f);
+			rt.transform.SetParent(parent, false);
+			rt.sizeDelta = Vector3.zero;
+
+			return newRect;
+		}
+
+		private static void CreateNewPrefab(GameObject obj, string localPath)
+		{
+			PrefabUtility.SaveAsPrefabAsset(obj, localPath);
+		}
     }
 }
