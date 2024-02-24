@@ -87,7 +87,7 @@ namespace RichPackage.InputSystem
         void Execute();
 
         /// <summary>
-        /// Unique identifier.
+        /// Unique identifier. Mostly used for debugging, but could be used for dynamic lookup.
         /// </summary>
         string Name { get; }
     }
