@@ -169,7 +169,8 @@ namespace RichPackage.SaveSystem
         }
 
         /// <summary>
-        /// The stored data inside the save file.
+        /// The stored data inside the save file. Data saved here is always to the 
+        /// 'live' save file.
         /// </summary>
         public ISaveStore Data => this;
 
