@@ -1,7 +1,7 @@
 # Rich-Unity-Package
  A collection of scripts I use in all my Unity Projects
  
- Hit me up on Discord if you want to talk! Monsoonexe#1990
+ Hit me up on Discord if you want to talk! monsoonexe
 
 Dependencies: 
 Odin Inspector: https://assetstore.unity.com/packages/tools/utilities/odin-inspector-and-serializer-89041
