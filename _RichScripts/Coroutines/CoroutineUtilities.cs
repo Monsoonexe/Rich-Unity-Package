@@ -4,6 +4,7 @@ using UnityEngine;
 using RichPackage.YieldInstructions;
 using RichPackage.Coroutines;
 using System.Runtime.CompilerServices;
+using MalbersAnimations;
 
 namespace RichPackage
 {
@@ -18,6 +19,16 @@ namespace RichPackage
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
+        }
+
+        public static Coroutine RunNextFrame(Action action)
+        {
+            return Runner.StartCoroutine(InvokeNextFrame(action));
+        }
+
+        public static Coroutine RunAtEndOfFrame(Action action)
+        {
+            return Runner.StartCoroutine(InvokeAtEndOfFrame(action));
         }
 
         public static Coroutine Delay(float delay)
