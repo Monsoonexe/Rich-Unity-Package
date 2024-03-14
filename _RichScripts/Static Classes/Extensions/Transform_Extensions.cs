@@ -16,7 +16,8 @@ namespace UnityEngine
             return angle >= accuracy;
         }
 
-        public static bool IsFacing(this Transform a, Transform b, float accuracy = 0.9f)
+        /// <param name="accuracy">I'm sorry, I can't tell what units this is, but it's [-1, 1]</param>
+        public static bool IsFacing(this Transform a, Transform b, float accuracy = 0.25f)
         {
             Vector3 aPos = a.position;
             Vector3 bPos = b.position;
@@ -25,8 +26,8 @@ namespace UnityEngine
             Vector2 bPos2D = new Vector2(bPos.x, bPos.z);
 
             Vector2 direction = (bPos2D - aPos2D).normalized;
-            float angle = Vector2.Dot(a.forward, direction);
-            return angle >= accuracy;
+            float angle = Mathf.Abs(Vector2.Dot(a.forward, direction));
+            return angle <= accuracy;
         }
 
         ///<summary>
