@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RichPackage.GuardClauses;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -173,8 +174,8 @@ namespace RichPackage
         /// <remarks>https://stackoverflow.com/questions/1450774/splitting-a-string-into-chunks-of-a-certain-size</remarks>
         public static IEnumerable<string> SplitBy(this string source, int chunkLength)
         {
-            GuardClauses.GuardAgainst.IsNullOrWhiteSpace(source, nameof(source));
-            GuardClauses.GuardAgainst.IsZeroOrNegative(chunkLength, nameof(chunkLength));
+            GuardAgainst.IsNullOrWhiteSpace(source, nameof(source));
+            GuardAgainst.IsZeroOrNegative(chunkLength, nameof(chunkLength));
 
             int len = source.Length;
             for (int i = 0; i < len; i += chunkLength)
@@ -205,6 +206,23 @@ namespace RichPackage
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static char Last(this string str) => str[str.Length - 1];
+
+        /// <summary>
+        /// Substring the last <paramref name="count"/> characters from <paramref name="str"/>.
+        /// </summary>
+        /// <param name="count">A negative value means 'from end'.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string Last(this string str, int count)
+        {
+            // from end?
+            if (count < 0)
+            {
+                int end = str.Length + count;
+                return str.Substring(0, end);
+            }
+
+            return count >= str.Length ? str : str.Substring(str.Length - count); // last x characters
+        }
 
         #region Functional Conversions
 
