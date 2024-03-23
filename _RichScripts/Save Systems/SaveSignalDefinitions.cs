@@ -1,4 +1,6 @@
-﻿using RichPackage.Events.Signals;
+﻿using RichPackage.Events;
+using RichPackage.Events.Signals;
+using System;
 
 namespace RichPackage.SaveSystem.Signals
 {
@@ -24,13 +26,22 @@ namespace RichPackage.SaveSystem.Signals
 	/// </summary>
 	public class LoadStateFromFileSignal : ASignal<ISaveStore>
 	{
-		// exists
-	}
+        private readonly EventHandlerList<ISaveStore> lateListeners = new();
 
-	/// <summary>
-	/// Alert a listener that this object would like its state saved.
-	/// </summary>
-	public class SaveObjectStateSignal : ASignal<ISaveable>
+        public void AddLateListener(Action<ISaveStore> listener) => lateListeners.Add(listener);
+        public void RemoveLateListener(Action<ISaveStore> listener) => lateListeners.Remove(listener);
+    
+        public new void Dispatch(ISaveStore store)
+        {
+            base.Dispatch(store);
+            lateListeners.Invoke(store);
+        }
+    }
+
+    /// <summary>
+    /// Alert a listener that this object would like its state saved.
+    /// </summary>
+    public class SaveObjectStateSignal : ASignal<ISaveable>
 	{
 		// exists
 	}
