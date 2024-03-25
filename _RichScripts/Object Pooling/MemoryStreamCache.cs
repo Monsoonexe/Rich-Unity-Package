@@ -41,6 +41,13 @@ namespace System.IO
             }
         }
 
+        public static byte[] ToArrayAndReturn(this MemoryStream ms)
+        {
+            byte[] result = ms.ToArray();
+            Return(ms);
+            return result;
+        }
+
         /// <summary>
         /// Pooled object.
         /// </summary>
