@@ -1,6 +1,8 @@
 ﻿/* If I had this to do over again... 
  * Do NOT make the Unique ID part of the save data itself. this makes inheritance really difficult. Appending save data is a pain. Serializing the nested data is a bit of a pain, too
  * Don't have the data backed by the memento at runtime. Use Memento.Instance during the save/load process. Data therefore isn't restricted to the memento
+ * I would also leverage the ES3Type system more. It's really easy to use and 
+ * probably more intuitive than the memento system (especially good with scriptable objects and 'ReadInto') 
  */ 
 
 using System;
