@@ -167,6 +167,12 @@ namespace RichPackage.SaveSystem
             return SaveSystem.Instance.Data.Load(fullKey, defaultValue);
         }
 
+        protected void DeleteValue(string key)
+        {
+            string fullKey = SaveID + key;
+            SaveSystem.Instance.Data.Delete(fullKey);
+        }
+
         /// <summary>
         /// Erases save data from file.
         /// </summary>
@@ -181,6 +187,16 @@ namespace RichPackage.SaveSystem
         public bool Equals(ISaveable other) => this.SaveID == other.SaveID;
 
         #endregion Save / Load Helpers
+
+        [Conditional(ConstStrings.UNITY_EDITOR)]
+        protected void EnsureValid(ref UniqueID id, UniqueID fallback)
+        {
+            if (id == UniqueID.None)
+            {
+                Debug.LogWarning($"Id not set. Using fallback '{fallback}' Please set this id!.", this);
+                id = fallback;
+            }
+        }
 
         public static bool IsSaveIDUnique(ASaveableMonoBehaviour query)
             => IsSaveIDUnique(query, out _);
@@ -269,7 +285,7 @@ namespace RichPackage.SaveSystem
             [HideInInspector]
             [ES3NonSerializable] //don't save it to file
             [Tooltip("Must be unique to all other saveables!")]
-            public UniqueID saveID;
+            public UniqueID saveID; // TODO - move this
 
             //more fields....
 
@@ -277,6 +293,5 @@ namespace RichPackage.SaveSystem
 
             public override string ToString() => saveID + $" ({GetType()})";
         }
-
     }
 }
