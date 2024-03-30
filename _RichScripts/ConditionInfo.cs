@@ -26,6 +26,7 @@ namespace RichPackage
         }
 
         public static ConditionInfo FromFalse(string message) => new ConditionInfo(false, message);
+        public static ConditionInfo FromTrue(string message) => new ConditionInfo(true, message);
 
         public static bool operator ==(ConditionInfo a, bool b)
         {
@@ -65,5 +66,6 @@ namespace RichPackage
         public static implicit operator bool(ConditionInfo info) => info.status;
 
         public static implicit operator string(ConditionInfo info) => info.message;
+        public static implicit operator ConditionInfo(bool value) => new ConditionInfo(value);
     }
 }
