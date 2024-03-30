@@ -1,7 +1,6 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace RichPackage
 {
@@ -54,12 +53,16 @@ namespace RichPackage
         }
 
         public void GenerateNewId() => ID = New;
-        
+
+        #region Object
+
         public override string ToString() => ID;
 
         public override int GetHashCode() => Hash;
 
         public override bool Equals(object obj) => obj is UniqueID other && Equals(other);
+
+        #endregion Object
 
         #region IEquatable
 
@@ -70,11 +73,19 @@ namespace RichPackage
         #endregion IEquatable
 
         public static UniqueID FromString(string src) => new UniqueID(src);
+        public static ConditionInfo IsValid(UniqueID id)
+        {
+            if (id.ID == null)
+                return ConditionInfo.FromFalse("Id is null");
+            if (id.ID == "")
+                return ConditionInfo.FromFalse("Id is empty");
+            return true;
+        }
 
         #region Equality Operators
 
-        public static bool operator == (UniqueID a, UniqueID b) => a.Equals(b);
-        public static bool operator != (UniqueID a, UniqueID b) => !(a == b);
+        public static bool operator ==(UniqueID a, UniqueID b) => a.Equals(b);
+        public static bool operator !=(UniqueID a, UniqueID b) => !(a == b);
 
         public static bool operator ==(UniqueID a, string b) => a.Equals(b);
         public static bool operator !=(UniqueID a, string b) => !(a == b);
@@ -90,7 +101,7 @@ namespace RichPackage
 
         #endregion Equality Operators
 
-        public static implicit operator string (UniqueID id) => id.ID;
+        public static implicit operator string(UniqueID id) => id.ID;
         public static implicit operator int(UniqueID id) => id.Hash;
         public static implicit operator UniqueID(string id) => new UniqueID(id);
     }
