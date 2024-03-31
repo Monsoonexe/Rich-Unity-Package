@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RichPackage;
+using System;
 
 namespace RichPackage
 {
@@ -22,7 +23,7 @@ namespace RichPackage
         public ConditionInfo(bool conditionStatus, string conditionMessage = null)
         {
             status = conditionStatus;
-            message = conditionMessage;
+            message = conditionMessage ?? "";
         }
 
         public static ConditionInfo FromFalse(string message) => new ConditionInfo(false, message);
@@ -67,5 +68,18 @@ namespace RichPackage
 
         public static implicit operator string(ConditionInfo info) => info.message;
         public static implicit operator ConditionInfo(bool value) => new ConditionInfo(value);
+        //public static implicit operator ConditionInfo((bool result, string message) tuple) => new ConditionInfo(tuple.result, tuple.message); // newer C# versions support 'new (true, "");'
+    }
+}
+
+namespace UnityEngine.Assertions
+{
+    public static class ConditionInfoExtensions
+    {
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityAssertions)]
+        public static void Assert(this ConditionInfo c)
+        {
+            UnityEngine.Assertions.Assert.IsTrue(c, c.message);
+        }
     }
 }

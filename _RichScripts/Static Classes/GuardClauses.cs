@@ -24,11 +24,11 @@ namespace RichPackage.GuardClauses
         private const string DEFAULT_PARAM_NAME = "argument";
 
         //Should add the Compiled option?
-        private static readonly Regex emailRegex = new Regex(VALID_EMAIL_ADDRESS_PATTERN,
+        public static readonly Regex emailRegex = new Regex(VALID_EMAIL_ADDRESS_PATTERN,
                 RegexOptions.IgnoreCase);
-        private static readonly Regex urlRegex = new Regex(VALID_URL_PATTERN,
+        public static readonly Regex urlRegex = new Regex(VALID_URL_PATTERN,
                 RegexOptions.IgnoreCase);
-        private static readonly Regex filepathRegex = new Regex(VALID_WINDOWS_FILEPATH_PATTERN,
+        public static readonly Regex filepathRegex = new Regex(VALID_WINDOWS_FILEPATH_PATTERN,
             RegexOptions.IgnoreCase);
 
         #region Boolean
