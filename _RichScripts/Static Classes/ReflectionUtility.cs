@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using ModestTree;
 
 namespace RichPackage.Reflection
 {
@@ -85,6 +86,56 @@ namespace RichPackage.Reflection
 		        // Keep going until we hit UnityEngine.MonoBehaviour type or null.
 		        startType = startType.BaseType;
 	        }
+        }
+
+        public static IEnumerable<FieldInfo> GetSerializedFields<T>(object target)
+        {
+            Type targetType = target.GetType();
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            return targetType.GetFields(flags)
+                .Where(field => field.FieldType.DerivesFromOrEqual(typeof(T)))
+                .Where(field => field.HasCustomAttribute<SerializeField>());
+        }
+
+        public static IEnumerable<FieldInfo> GetPublicFields<T>(object target)
+        {
+            Type targetType = target.GetType();
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            return targetType.GetFields(flags)
+                .Where(field => field.FieldType.DerivesFromOrEqual(typeof(T)));
+        }
+
+        public static bool HasCustomAttribute<TAttribute>(this MemberInfo member)
+            where TAttribute : Attribute
+        {
+            return member.GetCustomAttribute<TAttribute>() != null;
+        }
+
+        public static IEnumerable<T> EnumerateMemberFieldValues<T>(object target)
+        {
+            Type targetType = target.GetType();
+            var flags = BindingFlags.Public
+                | BindingFlags.NonPublic
+                | BindingFlags.Instance;
+            FieldInfo[] fields = targetType.GetFields(flags);
+
+            foreach (FieldInfo field in fields)
+            {
+                if (field.FieldType == typeof(T))
+                {
+                    T dialogueAsset = (T)field.GetValue(target);
+                    if (dialogueAsset != null)
+                    {
+                        yield return dialogueAsset;
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<FieldInfo> EnumerateMemberFields<T>(object target)
+        {
+            return GetPublicFields<T>(target)
+                .Concat(GetSerializedFields<T>(target));
         }
 
         /// <summary>
