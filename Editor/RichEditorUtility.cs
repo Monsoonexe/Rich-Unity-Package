@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 
 namespace RichPackage.Editor
@@ -35,5 +38,18 @@ namespace RichPackage.Editor
         [MenuItem("Tools/Reload Domain")]
         public static void ReloadDomain() => EditorUtility.RequestScriptReload();
 
+        public static string GetGuidFromAsset(UnityEngine.Object asset)
+        {
+            return AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(asset)).ToString();
+        }
+
+        public static IEnumerable<T> LoadAllAssetsInFolder<T>(string folder)
+            where T : UnityEngine.Object
+        {
+            return Directory.EnumerateFiles(folder, "*", SearchOption.TopDirectoryOnly)
+                .Where(f => !f.QuickEndsWith(".meta"))
+                .Where(f => AssetDatabase.GetMainAssetTypeAtPath(f) == typeof(T))
+                .Select(f => AssetDatabase.LoadAssetAtPath<T>(f));
+        }
     }
 }
