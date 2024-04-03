@@ -15,12 +15,28 @@ namespace RichPackage.Editor
         public const string WindowMenuName = MenuName + "Windows/";
 
         private const string CompilerLockMenu = "Tools/Lock Compiler";
+
+        /// <summary>
+        /// Uses the 'gate' strategy instead of Unity's 'depth' strategy.
+        /// </summary>
+        public static bool CompilerIsLocked
+        {
+            get => Menu.GetChecked(CompilerLockMenu);
+            set 
+            {
+                if (value != CompilerIsLocked)
+                {
+                    ToggleCompilerLock();
+                }
+            }
+        }
         
         [MenuItem(CompilerLockMenu)]
         public static void ToggleCompilerLock()
         {
-            // get current state
-            bool locked = Menu.GetChecked(CompilerLockMenu);
+            // https://docs.unity3d.com/ScriptReference/EditorApplication.LockReloadAssemblies.html
+            // get current state (we can't know actual state. This is just a guess).
+            bool locked = CompilerIsLocked;
 
             // flip
             Menu.SetChecked(CompilerLockMenu, !locked);
