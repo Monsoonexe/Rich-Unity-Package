@@ -2,6 +2,7 @@
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -338,5 +339,13 @@ namespace RichPackage.Pooling
             for (int i = manifest.Count - 1; i >= 0; --i)
                 Enpool(manifest[i]);
         }
+        
+		public int PruneDeadObjects()
+		{
+			// prune each object pool
+			return poolDictionary.Values
+				.Select(p => p.PruneDeadObjects())
+				.Sum();
+		}
     }
 }
