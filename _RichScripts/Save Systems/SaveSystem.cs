@@ -58,6 +58,7 @@ namespace RichPackage.SaveSystem
         [ShowInInspector,
             ListDrawerSettings(IsReadOnly = true),
             InlineButton(nameof(RescanForSaveFiles), "Scan"),
+            GUIColor(nameof(GetScanButtonColor)),
             CustomContextMenu("Sort", nameof(SortSaveFileNames)),
             Tooltip("Don't edit these.")]
         private readonly List<string> saveFileNames = new List<string>();
@@ -310,6 +311,11 @@ namespace RichPackage.SaveSystem
         /// </summary>
         public void RescanForSaveFiles() => ScanForSaveFiles();
 
+        private Color GetScanButtonColor()
+        {
+            return saveFileNames.Count > 0 ? Color.white : Color.yellow;
+        }
+
         /// <summary>
         /// Load all the save file paths from the disk and store them.
         /// </summary>
@@ -543,13 +549,6 @@ namespace RichPackage.SaveSystem
         [Button]
         public void DeleteAll()
         {
-            if (SaveFileCount == 0)
-            {
-                if (debug)
-                    Debug.Log("There are no save files to delete.", this);
-                return;
-            }
-
 #if UNITY_EDITOR
             if (Application.isEditor)
             {
@@ -559,11 +558,15 @@ namespace RichPackage.SaveSystem
                     return;
             }
 #endif
-            int count = SaveFileCount;
             // re-use this list to avoid an allocation
             saveFileNames.Clear();
+            int count = 0;
             foreach (string file in EnumerateSaveFilePaths())
+            {
                 File.Delete(file);
+                count++;
+            }
+
             saveFile = null;
 
             if (debug)
@@ -632,7 +635,7 @@ namespace RichPackage.SaveSystem
 
         private ES3File CreateSaveFileObject(string filePath, bool sync)
         {
-            return CreateSaveFileObject(GetSettings(filePath), sync); // be usre to clone the settings
+            return CreateSaveFileObject(GetSettings(filePath), sync); // be sure to clone the settings
         }
 
         private ES3File CreateSaveFileObject(ES3Settings settings, bool sync)
