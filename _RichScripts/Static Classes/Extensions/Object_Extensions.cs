@@ -23,9 +23,12 @@ namespace RichPackage
         public static T CastAs<T>(this object obj)
             where T : class  => obj as T;
 
+        /// <summary>
+        /// Compares references.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Is<T>(this object obj)
-            where T : class => obj is T;
+        public static bool Is(this object obj, object other)
+            => ReferenceEquals(obj, other);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNot<T>(this object obj)
