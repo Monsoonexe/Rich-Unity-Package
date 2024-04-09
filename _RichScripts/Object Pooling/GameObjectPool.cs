@@ -1,9 +1,8 @@
 ﻿using RichPackage.Assertions;
 using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //TODO: Reclaim when empty strategy. Like bullet holes in FPS games.
@@ -340,12 +339,21 @@ namespace RichPackage.Pooling
                 Enpool(manifest[i]);
         }
         
+        /// <summary>
+        /// Removes all dead items from the pool.
+        /// </summary>
+        /// <returns>The number of dead items removed.</returns>
 		public int PruneDeadObjects()
 		{
-			// prune each object pool
-			return poolDictionary.Values
-				.Select(p => p.PruneDeadObjects())
-				.Sum();
+            // remove all dead items
+            int count = pool.Count;
+            var goodItems = pool.Where(item => item != null)
+                .ToArray();
+            pool.Clear();
+            foreach (var item in goodItems)
+                pool.Push(item);
+
+            return count - pool.Count;
 		}
     }
 }
