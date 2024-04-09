@@ -18,7 +18,7 @@ namespace RichPackage.SaveSystem
         protected override void Reset()
         {
             SetDevDescription("Saves/loads the properties of the target variables component.");
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false, includeType: true);
             target = GetComponentInChildren<GameObjectVariables>();
         }
 

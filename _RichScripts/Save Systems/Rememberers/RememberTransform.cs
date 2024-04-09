@@ -14,7 +14,7 @@ namespace RichPackage.SaveSystem
         protected override void Reset()
         {
             SetDevDescription("Saves/loads the properties of the target transform.");
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: false, includeType: true);
 
             // set default
             target = transform;

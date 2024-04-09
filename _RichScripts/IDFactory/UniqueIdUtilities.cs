@@ -7,15 +7,24 @@ namespace RichPackage
     /// </summary>
     public static class UniqueIdUtilities
     {
-        public static UniqueID CreateIdFrom(MonoBehaviour mono, bool includeScene)
+        public static UniqueID CreateIdFrom(MonoBehaviour mono, bool includeScene = false, bool includePath = false, bool includeType = false)
         {
+            string name = mono.name;
+
             string scene = includeScene
                 ? mono.gameObject.scene.name + "/"
                 : string.Empty;
-            string name = mono.name;
-            string type = mono.GetType().Name;
 
-            return new UniqueID($"{scene}{name}-{type}");
+            string path = includePath
+                ? mono.gameObject.GetFullPath()
+                : name;
+
+            string type = includeType
+                ? $" ({mono.GetType().Name})"
+                : string.Empty;
+
+            string final = $"{scene}{path}{type}";
+            return new UniqueID(final);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace RichPackage.SaveSystem
         protected override void Reset()
         {
             SetDevDescription("Saves/loads the properties of the target light.");
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, true);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, true, includeType: true);
 
             // set default
             target = GetComponentInChildren<Light>();

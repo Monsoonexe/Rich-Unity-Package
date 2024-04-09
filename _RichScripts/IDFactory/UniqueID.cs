@@ -82,6 +82,17 @@ namespace RichPackage
             return true;
         }
 
+        public static bool EnsureValid(ref UniqueID id, UniqueID fallback)
+        {
+            bool invalid;
+            if (invalid = id.ID.IsNullOrEmpty())
+            {
+                id = fallback;
+            }
+
+            return !invalid;
+        }
+
         #region Equality Operators
 
         public static bool operator ==(UniqueID a, UniqueID b) => a.Equals(b);

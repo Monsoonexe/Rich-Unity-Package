@@ -191,10 +191,9 @@ namespace RichPackage.SaveSystem
         [Conditional(ConstStrings.UNITY_EDITOR)]
         protected void EnsureValid(ref UniqueID id, UniqueID fallback)
         {
-            if (id == UniqueID.None)
+            if (!UniqueID.EnsureValid(ref id, fallback))
             {
                 Debug.LogWarning($"Id not set. Using fallback '{fallback}' Please set this id!.", this);
-                id = fallback;
             }
         }
 

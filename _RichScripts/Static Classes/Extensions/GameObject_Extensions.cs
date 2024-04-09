@@ -205,6 +205,7 @@ namespace RichPackage
         /// </summary>
         public static string GetFullPath(this GameObject gameObject)
         {
+            // TODO - optimize
             string path = gameObject.name;
             Transform parent = gameObject.transform.parent;
             while (parent != null)
