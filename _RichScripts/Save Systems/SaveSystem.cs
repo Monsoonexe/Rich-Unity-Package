@@ -56,11 +56,13 @@ namespace RichPackage.SaveSystem
         /// All the known save files with extensions.
         /// </summary>
         [ShowInInspector,
+            // ReadOnly,  // note: can't do this because then the button would be inactive
             ListDrawerSettings(IsReadOnly = true),
             InlineButton(nameof(RescanForSaveFiles), "Scan"),
             GUIColor(nameof(GetScanButtonColor)),
             CustomContextMenu("Sort", nameof(SortSaveFileNames)),
-            Tooltip("Don't edit these.")]
+            Tooltip("Don't edit these."),
+            ]
         private readonly List<string> saveFileNames = new List<string>();
 
         [Title("Settings")]
@@ -552,14 +554,23 @@ namespace RichPackage.SaveSystem
 #if UNITY_EDITOR
             if (Application.isEditor)
             {
-                string title = "Are you sure?";
-                string prompt = $"All the files with the extension '{SaveFileExtension}' at '{SaveFileDirectory}' will be deleted";
-                if (!UnityEditor.EditorUtility.DisplayDialog(title, prompt, "Yes", "No"))
+                int fileCount = EnumerateSaveFilePaths().Count();
+
+                if (fileCount == 0)
+                {
+                    Debug.Log($"No files with the extension '{SaveFileExtension}' exist at '{SaveFileDirectory}'.", this);
                     return;
+                }
+
+                string title = "Are you sure?";
+                string prompt = $"{fileCount} files with the extension '{SaveFileExtension}' at '{SaveFileDirectory}' will be deleted.";
+                if (!UnityEditor.EditorUtility.DisplayDialog(title, prompt, "Yes", "No"))
+                {
+                    // canceled
+                    return;
+                }
             }
 #endif
-            // re-use this list to avoid an allocation
-            saveFileNames.Clear();
             int count = 0;
             foreach (string file in EnumerateSaveFilePaths())
             {
@@ -567,6 +578,7 @@ namespace RichPackage.SaveSystem
                 count++;
             }
 
+            saveFileNames.Clear();
             saveFile = null;
 
             if (debug)
