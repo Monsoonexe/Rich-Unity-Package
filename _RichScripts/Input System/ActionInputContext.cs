@@ -10,7 +10,15 @@ namespace RichPackage.InputSystem
         private readonly Action onExit;
         private readonly Action onUpdate;
 
-        public ActionInputContext(string name, Action onEnter = null, Action onExit = null, Action onUpdate = null)
+        #region Constructors
+
+        public ActionInputContext(Action onUpdate)
+            : this(Guid.NewGuid().ToString(), onUpdate, null, null)
+        {
+
+        }
+
+        public ActionInputContext(string name, Action onUpdate = null, Action onEnter = null, Action onExit = null)
         {
             GuardAgainst.ArgumentIsNull(name, nameof(name));
             this.name = name;
@@ -18,6 +26,8 @@ namespace RichPackage.InputSystem
             this.onExit = onExit;
             this.onUpdate = onUpdate;
         }
+
+        #endregion Constructors
 
         #region IInputContext
 

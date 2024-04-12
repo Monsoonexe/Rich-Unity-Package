@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
 
 namespace RichPackage.InputSystem
@@ -40,11 +41,14 @@ namespace RichPackage.InputSystem
 
         #region Context Management
 
-        public void Set(IInputContext context)
+        public void ClearHistory()
         {
-            this.context.OnExit();
-            this.context = context;
-            this.context.OnEnter();
+            stash.Clear();
+        }
+
+        public void Pop()
+        {
+            Set(stash.Pop());
         }
 
         public void Push(IInputContext newContext)
@@ -53,14 +57,21 @@ namespace RichPackage.InputSystem
             Set(newContext);
         }
 
-        public void Pop()
+        public void Push(Action function)
         {
-            Set(stash.Pop());
+            Push(new ActionInputContext(function));
         }
 
-        public void ClearHistory()
+        public void Push(Action<GameplayInput> function)
         {
-            stash.Clear();
+            Push(() => function(this));
+        }
+
+        public void Set(IInputContext context)
+        {
+            this.context.OnExit();
+            this.context = context;
+            this.context.OnEnter();
         }
 
         #endregion Context Management
