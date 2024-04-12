@@ -37,5 +37,7 @@ namespace RichPackage.InputSystem
         public void OnExit() => onExit?.Invoke();
 
         #endregion IInputContext
+
+        public override string ToString() => name;
     }
 }
