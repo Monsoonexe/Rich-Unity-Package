@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using RichPackage.Tweening;
 using RichPackage.Pooling;
+using RichPackage.RandomExtensions;
 
 namespace RichPackage.Spawning
 {

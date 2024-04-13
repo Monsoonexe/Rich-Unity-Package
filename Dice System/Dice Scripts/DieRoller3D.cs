@@ -1,4 +1,5 @@
 using RichPackage.Pooling;
+using RichPackage.RandomExtensions;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;

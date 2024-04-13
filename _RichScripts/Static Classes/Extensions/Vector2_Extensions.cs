@@ -8,13 +8,6 @@ namespace RichPackage
     /// </summary>
     public static class Vector2_Extensions
     {
-        /// <summary>
-        /// Returns a random value between x [inclusive] and y [inclusive].
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float RandomRange(this Vector2 range)
-            => Random.Range(range.x, range.y);
-
         /// <Summmary>
         /// Calculates |x - y|.
         /// </Summmary>

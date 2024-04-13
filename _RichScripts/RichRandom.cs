@@ -1,5 +1,6 @@
 ﻿using RichPackage.FunctionalProgramming;
 using RichPackage.GuardClauses;
+using RichPackage.RandomExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -90,15 +91,6 @@ namespace RichPackage
             return Mathf.Clamp((std * sigma) + mean, minValue, maxValue);
         }
 
-        public static T GetRandomElement<T>(this IEnumerable<T> items)
-        {
-            using (UnityEngine.Rendering.ListPool<T>.Get(out List<T> list))
-            {
-                list.AddRange(items);
-                return list.GetRandomElement();
-            }
-        }
-
         public static void SwapRandom<T>(this IList<T> items, int i)
         {
             GuardAgainst.ArgumentIsNull(items, nameof(items));
@@ -117,13 +109,9 @@ namespace RichPackage
             // swap the element at i with a random (non-i) position
             int j = i;
             while (j == i)
-                j = GetRandomIndex((IList)items);
+                j = items.GetRandomIndex();
 
             items.Swap(i, j);
         }
-        
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int GetRandomIndex(this IList list)
-            => Random.Range(0, list.Count);
     }
 }

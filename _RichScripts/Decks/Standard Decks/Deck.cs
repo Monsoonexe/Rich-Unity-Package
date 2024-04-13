@@ -1,4 +1,5 @@
 ﻿using RichPackage.Assertions;
+using RichPackage.RandomExtensions;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
@@ -111,7 +112,7 @@ namespace RichPackage.Decks
 
             //randomly fill deck (shuffle)
             for (int i = 0; i < deckSize; ++i)
-                unusedCards.Add(usedCards.GetRemoveRandomElement());
+                unusedCards.Add(usedCards.TakeRandomElement());
         }
 
         /// <summary>

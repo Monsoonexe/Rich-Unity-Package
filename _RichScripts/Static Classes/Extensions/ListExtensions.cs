@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Random = UnityEngine.Random;
 
 namespace RichPackage
 {
@@ -211,35 +210,6 @@ namespace RichPackage
                 if (predicate(list[i]))
                     list.RemoveAt(i);
             }
-        }
-
-        /// <summary>
-        /// Removes and returns a random element from <paramref name="list"/>.
-        /// </summary>
-        public static T GetRemoveRandomElement<T>(this List<T> list)
-        {
-            int randomIndex = Random.Range(0, list.Count);
-            T randomElement = list[randomIndex];
-            list.RemoveAt(randomIndex);
-            return randomElement;
-        }
-
-        /// <summary>
-        /// Remove a random element in [start, end).
-        /// </summary>
-        public static T GetRemoveRandomElement<T>(this List<T> list,
-            int start, int end)
-        {
-            int count = list.Count;
-            //validate
-            start = (start < 0 || start >= count) ? 0 : start; //start [0, count - 1]
-            end = (end < 1 || end > count) ? count : end;//end [1, count]
-
-            //compute
-            int randomIndex = Random.Range(start, end);
-            T randomElement = list[randomIndex];
-            list.RemoveAt(randomIndex);
-            return randomElement;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

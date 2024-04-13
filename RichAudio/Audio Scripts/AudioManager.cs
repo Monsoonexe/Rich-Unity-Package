@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
+using RichPackage.RandomExtensions;
 
 /* 
  * TODO - use less memory for WaitForSeconds in RemoveAfterPlay()

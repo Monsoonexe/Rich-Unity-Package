@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using RichPackage.RandomExtensions;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using UnityEngine;
