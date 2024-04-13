@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Runtime.CompilerServices;
@@ -26,7 +25,7 @@ namespace RichPackage
         /// This call will be stripped out of Builds. Use anywhere.
         /// </summary>
         /// <param name="newDes"></param>
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
         public void SetDevDescription(string newDes)
         {
 #if UNITY_EDITOR
@@ -215,17 +214,40 @@ namespace RichPackage
 
         #region Logging
 
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
         protected void LogNotSerializedWarning(string property)
         {
             UnityEngine.Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
         }
 
+
+        #region Debug Helpers
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        protected void DebugLogName(string message)
+        {
+            Debug.Log($"[{name}] {message}", this);
+        }
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        protected void DebugLogType(string message)
+        {
+            Debug.Log($"[{GetType().Name}] {message}", this);
+        }
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        protected void DebugLogSelf(string message)
+        {
+            Debug.Log($"[{name} ({GetType().Name})] {message}", this);
+        }
+
+        #endregion Debug Log Helpers
+
         #endregion Logging
 
         #region Editor
 
-        [Conditional(ConstStrings.UNITY_EDITOR)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
         public void Editor_MarkDirty()
         {
 #if UNITY_EDITOR
