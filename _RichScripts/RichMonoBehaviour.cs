@@ -217,28 +217,51 @@ namespace RichPackage
         [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
         protected void LogNotSerializedWarning(string property)
         {
-            UnityEngine.Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
+            Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
         }
-
 
         #region Debug Helpers
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogName(string message)
         {
-            Debug.Log($"[{name}] {message}", this);
+            DebugLogName(message, this);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+        protected void DebugLogName(string message, UnityEngine.Object context)
+        {
+            Debug.Log($"[{name}] {message}", context);
+        }
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogType(string message)
         {
-            Debug.Log($"[{GetType().Name}] {message}", this);
+            DebugLogType(message, this);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+        protected void DebugLogType(string message, UnityEngine.Object context)
+        {
+            Debug.Log($"[{GetType().Name}] {message}", context);
+        }
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogSelf(string message)
         {
-            Debug.Log($"[{name} ({GetType().Name})] {message}", this);
+            DebugLogSelf(message, this);
+        }
+
+        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+        protected void DebugLogSelf(string message, UnityEngine.Object context)
+        {
+            Debug.Log($"[{name} ({GetType().Name})] {message}", context);
         }
 
         #endregion Debug Log Helpers
