@@ -126,6 +126,8 @@ namespace RichPackage.Databases
 
         #endregion IEnumerable
 
+        public TData this[int key] => Get(key);
+
         #region Editor
 #if UNITY_EDITOR
 
