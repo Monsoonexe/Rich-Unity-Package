@@ -270,7 +270,7 @@ namespace RichPackage
         /// Fast removal from a list. Only use this if the order of items in <paramref name="src"/>
         /// doesn't matter.
         /// </summary>
-        public static T QuickGetRemove<T>(this List<T> src, int index)
+        public static T QuickTake<T>(this List<T> src, int index)
         {
             T item = src[index];
             QuickRemove(src, index);
