@@ -22,6 +22,8 @@ namespace RichPackage
             startTime = UnityEngine.Time.time;
         }
 
+        public override string ToString() => Elapsed.ToString();
+
         public static bool operator >(SimpleTimer timer, float duration)
             => timer.Elapsed > duration;
 
