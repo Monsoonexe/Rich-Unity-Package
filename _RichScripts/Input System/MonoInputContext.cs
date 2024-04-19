@@ -11,9 +11,9 @@ namespace RichPackage.InputSystem
         public virtual string Name => GetType().Name;
 
         /// <remarks>Override 'Update' instead.</remarks>
-        public void Execute() { }
+        public abstract void Execute();
 
-        public void OnEnter() => enabled = true;
+        public void OnEnter() => enabled = true; // mostly just indicator in Inspector
 
         public void OnExit() => enabled = false;
 
@@ -27,8 +27,13 @@ namespace RichPackage.InputSystem
             SetDevDescription("An input context that exists in the scene.");
         }
 
-        protected abstract void Update();
+        #if UNITY_EDITOR
 
-        #endregion Unity Messages
+        /// <remarks>You're not allowed to use this directly.</remarks>
+        protected void Update() { }
+
+        #endif
+
+#endregion Unity Messages
     }
 }
