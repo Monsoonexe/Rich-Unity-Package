@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using RichPackage.FunctionalProgramming;
 
 namespace RichPackage.Animation
 {
-	public sealed class DOMover : ADoer
+    public sealed class DOMover : ADoer
 	{
 		public bool From = false;
 		public Space space = Space.World;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace RichPackage
+namespace RichPackage.FunctionalProgramming
 {
     public static class ObjectExtensions
     {
@@ -10,7 +10,7 @@ namespace RichPackage
         /// Equivalent to `(T)obj`.
         /// </summary>
         /// <returns>The object cast to the given type.</returns>
-        /// <exception cref="System.InvalidCastException"></exception>
+        /// <exception cref="InvalidCastException"></exception>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T CastTo<T>(this object obj) => (T)obj;
 
@@ -21,7 +21,7 @@ namespace RichPackage
         /// <returns>The object cast to the given type or null if the cast is not valid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T CastAs<T>(this object obj)
-            where T : class  => obj as T;
+            where T : class => obj as T;
 
         /// <summary>
         /// Compares references.
@@ -33,7 +33,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsNot<T>(this object obj)
             where T : class => !(obj is T);
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool TryCast<T>(this object source, out T result)
         {
@@ -61,7 +61,7 @@ namespace RichPackage
                 throw new ArgumentNullException(paramName);
             return obj; // allow chaining
         }
-        
+
         /// <summary>
         /// Create a single-element array containing only the given item.
         /// </summary>

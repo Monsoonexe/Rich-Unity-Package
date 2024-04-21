@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using Sirenix.OdinInspector.Editor;
+using RichPackage.FunctionalProgramming;
 
 namespace RichPackage.Editor
 {
