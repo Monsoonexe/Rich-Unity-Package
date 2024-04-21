@@ -32,7 +32,7 @@ namespace RichPackage.SaveSystem
         #region Constants
 
         // there is a line in ES3 that deletes files from disk if the file is Sync'ed with 0 keys.
-        private const string HAS_SAVE_DATA_KEY = "HasData";
+        private const string SerializationVersionKey = "SerializationVersion";
         private const string DEFAULT_SAVE_FILE_NAME = "Save.es3";
         private const string SaveFileExtension = ".es3";
 
@@ -48,6 +48,13 @@ namespace RichPackage.SaveSystem
 
         public static bool IsSavingGameState { get; private set; }
         public static bool IsLoadingGameState { get; private set; }
+
+        /// <summary>
+        /// A number indicating an incremental difference between how a save file is serialized.
+        /// Increment this value (in your own code) each time you release an update that introduces
+        /// a breaking change, and include a data migration pipeline in your project to handle it.
+        /// </summary>
+        public static int SerializationVersion = 0;
 
         [SerializeField]
         private ES3SerializableSettings settings; // always clone this
@@ -451,7 +458,7 @@ namespace RichPackage.SaveSystem
             ES3File file = CreateSaveFileObject(fileName, sync: false);
 
             // put something on disk
-            file.Save(HAS_SAVE_DATA_KEY, true);
+            file.Save(SerializationVersionKey, SerializationVersion);
             file.Sync(); // writes to disk
 
             if (debug)
@@ -632,7 +639,8 @@ namespace RichPackage.SaveSystem
         /// Checks to see if there is any save data in the active file.
         /// </summary>
         /// <returns>True if the save file has any data in it, and false if it's unused.</returns>
-        public bool FileHasSaveData() => SaveFile.Load(HAS_SAVE_DATA_KEY, defaultValue: false);
+        public bool FileHasSaveData()
+            => SaveFile.Load(SerializationVersionKey, defaultValue: -1) != -1;
 
         public void SortSaveFileNames() => saveFileNames.Sort();
 
