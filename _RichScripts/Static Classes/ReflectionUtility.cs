@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using ModestTree;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using ModestTree;
 
 namespace RichPackage.Reflection
 {
@@ -11,7 +11,7 @@ namespace RichPackage.Reflection
     {
         public static Type[] GetAllClassesWithAttribute(Type attribute, bool inherit = true)
         {
-            var allClasses = GetAllTypesThatImplement(typeof(object));
+            Type[] allClasses = GetAllTypesThatImplement(typeof(object));
             return allClasses.Where(o => o.GetCustomAttributes(attribute, inherit).Length > 0).ToArray();
         }
 
@@ -26,72 +26,72 @@ namespace RichPackage.Reflection
         public static void GetAllSerializableFieldsInherited(Type startType, List<FieldInfo> appendList)
         {
             GetAllFieldsInherited(startType, appendList);
-            appendList.RemoveAll(o => 
-	            (
-	                (o.IsPrivate || o.IsFamily) &&
-	                o.GetCustomAttributes(typeof(SerializeField), true).Length == 0
-	            ) ||
-	            o.GetCustomAttributes(typeof(NonSerializedAttribute), true).Length > 0 ||
-	            o.GetCustomAttributes(typeof(HideInInspector), true).Length > 0);
+            appendList.RemoveAll(o =>
+                (
+                    (o.IsPrivate || o.IsFamily) &&
+                    o.GetCustomAttributes(typeof(SerializeField), true).Length == 0
+                ) ||
+                o.GetCustomAttributes(typeof(NonSerializedAttribute), true).Length > 0 ||
+                o.GetCustomAttributes(typeof(HideInInspector), true).Length > 0);
         }
 
         public static void GetAllFieldsInherited(Type startType, List<FieldInfo> appendList)
         {
             GetAllFieldsInherited(startType, appendList, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         }
-        
+
         public static void GetAllFieldsInherited(Type startType, List<FieldInfo> appendList, BindingFlags flags)
         {
-	        while (true)
-	        {
+            while (true)
+            {
                 // base case
-		        if (startType == typeof(MonoBehaviour) || startType == null
-                    || startType == typeof(object))
-		        {
-			        return;
-		        }
-
-		        var fields = startType.GetFields(flags);
-		        foreach (var fieldInfo in fields)
-		        {
-			        if (appendList.Any(o => o.Name == fieldInfo.Name) == false)
-			        {
-				        appendList.Add(fieldInfo);
-			        }
-		        }
-
-		        // Keep going until we hit UnityEngine.MonoBehaviour type or null.
-		        startType = startType.BaseType;
-	        }
-        }
-        
-        public static FieldInfo GetFieldInherited(Type startType, string fieldName)
-        {
-	        while (true)
-	        {
-                // base case
-		        if (startType == typeof(MonoBehaviour) || startType == null
+                if (startType == typeof(MonoBehaviour) || startType == null
                     || startType == typeof(object))
                 {
-			        return null;
+                    return;
                 }
 
-		        // Copied fields can be restricted with BindingFlags
-		        var field = startType.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-		        if (field != null)
-		        {
-			        return field;
-		        }
+                FieldInfo[] fields = startType.GetFields(flags);
+                foreach (FieldInfo fieldInfo in fields)
+                {
+                    if (appendList.Any(o => o.Name == fieldInfo.Name) == false)
+                    {
+                        appendList.Add(fieldInfo);
+                    }
+                }
 
-		        // Keep going until we hit UnityEngine.MonoBehaviour type or null.
-		        startType = startType.BaseType;
-	        }
+                // Keep going until we hit UnityEngine.MonoBehaviour type or null.
+                startType = startType.BaseType;
+            }
+        }
+
+        public static FieldInfo GetFieldInherited(Type startType, string fieldName)
+        {
+            while (true)
+            {
+                // base case
+                if (startType == typeof(MonoBehaviour) || startType == null
+                    || startType == typeof(object))
+                {
+                    return null;
+                }
+
+                // Copied fields can be restricted with BindingFlags
+                FieldInfo field = startType.GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (field != null)
+                {
+                    return field;
+                }
+
+                // Keep going until we hit UnityEngine.MonoBehaviour type or null.
+                startType = startType.BaseType;
+            }
         }
 
         public static IEnumerable<FieldInfo> GetSerializedFields<T>(object target)
         {
             Type targetType = target.GetType();
-            var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
             return targetType.GetFields(flags)
                 .Where(field => field.FieldType.DerivesFromOrEqual(typeof(T)))
                 .Where(field => field.HasCustomAttribute<SerializeField>());
@@ -100,7 +100,7 @@ namespace RichPackage.Reflection
         public static IEnumerable<FieldInfo> GetPublicFields<T>(object target)
         {
             Type targetType = target.GetType();
-            var flags = BindingFlags.Public | BindingFlags.Instance;
+            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
             return targetType.GetFields(flags)
                 .Where(field => field.FieldType.DerivesFromOrEqual(typeof(T)));
         }
@@ -111,10 +111,13 @@ namespace RichPackage.Reflection
             return member.GetCustomAttribute<TAttribute>() != null;
         }
 
-        public static IEnumerable<T> EnumerateMemberFieldValues<T>(object target)
+        /// <summary>
+        /// Enumerates all the fields
+        /// </summary>
+        public static IEnumerable<T> EnumerateSerializedFieldValues<T>(object target)
         {
             Type targetType = target.GetType();
-            var flags = BindingFlags.Public
+            BindingFlags flags = BindingFlags.Public
                 | BindingFlags.NonPublic
                 | BindingFlags.Instance;
             FieldInfo[] fields = targetType.GetFields(flags);
@@ -123,27 +126,16 @@ namespace RichPackage.Reflection
             {
                 if (field.FieldType == typeof(T))
                 {
-                    T dialogueAsset = (T)field.GetValue(target);
-                    if (dialogueAsset != null)
-                    {
-                        yield return dialogueAsset;
-                    }
+                    yield return (T)field.GetValue(target);
                 }
             }
         }
 
         public static IEnumerable<FieldInfo> EnumerateMemberFields<T>(object target)
         {
+            // TODO - account for [NonSerialized]
             return GetPublicFields<T>(target)
                 .Concat(GetSerializedFields<T>(target));
-        }
-
-        /// <summary>
-        /// Gets public/private member method.
-        /// </summary>
-        public static MethodInfo GetMethodByName(Type type, string methodName)
-        {
-            return type.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         /// <summary>
@@ -166,31 +158,31 @@ namespace RichPackage.Reflection
 
         public static Type[] GetAllTypesThatImplement(Type type, bool creatableTypesOnly)
         {
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-//            var assemblyList = new List<Assembly>();
-//            foreach (var assembly in assemblies)
-//            {
-//                if (assembly.FullName.StartsWith("Mono.Cecil") ||
-//                    assembly.FullName.StartsWith("UnityScript") ||
-//                    assembly.FullName.StartsWith("Boo.Lan") ||
-//                    assembly.FullName.StartsWith("System") ||
-//                    assembly.FullName.StartsWith("JetBrains") ||
-//                    assembly.FullName.StartsWith("nunit") ||
-//                    assembly.FullName.StartsWith("NUnit") ||
-//                    assembly.FullName.StartsWith("I18N") ||
-////                    assembly.FullName.StartsWith("UnityEngine") ||
-//                    //assembly.FullName.StartsWith("UnityEditor") ||
-//                    assembly.FullName.StartsWith("mscorlib"))
-//                {
-//                    continue;
-//                }
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            //            var assemblyList = new List<Assembly>();
+            //            foreach (var assembly in assemblies)
+            //            {
+            //                if (assembly.FullName.StartsWith("Mono.Cecil") ||
+            //                    assembly.FullName.StartsWith("UnityScript") ||
+            //                    assembly.FullName.StartsWith("Boo.Lan") ||
+            //                    assembly.FullName.StartsWith("System") ||
+            //                    assembly.FullName.StartsWith("JetBrains") ||
+            //                    assembly.FullName.StartsWith("nunit") ||
+            //                    assembly.FullName.StartsWith("NUnit") ||
+            //                    assembly.FullName.StartsWith("I18N") ||
+            ////                    assembly.FullName.StartsWith("UnityEngine") ||
+            //                    //assembly.FullName.StartsWith("UnityEditor") ||
+            //                    assembly.FullName.StartsWith("mscorlib"))
+            //                {
+            //                    continue;
+            //                }
 
-//                assemblyList.Add(assembly);
-//            }
+            //                assemblyList.Add(assembly);
+            //            }
 
-			// TODO - optimize enumeration
+            // TODO - optimize enumeration
             var types = new List<Type>(assemblies.Length);
-            foreach(var assembly in assemblies)
+            foreach (Assembly assembly in assemblies)
             {
                 try
                 {
@@ -210,7 +202,7 @@ namespace RichPackage.Reflection
 
             return types.ToArray();
         }
-        
+
         /// <summary>
         /// Note that this is a really slow method, and should be used with caution...
         /// </summary>
@@ -222,9 +214,9 @@ namespace RichPackage.Reflection
             var toFields = new List<FieldInfo>();
             GetAllSerializableFieldsInherited(to.GetType(), toFields);
 
-            foreach (var fromField in fromFields)
+            foreach (FieldInfo fromField in fromFields)
             {
-                var toField = toFields.FirstOrDefault(o => o.Name == fromField.Name);
+                FieldInfo toField = toFields.FirstOrDefault(o => o.Name == fromField.Name);
                 if (toField != null)
                 {
                     try
@@ -238,18 +230,10 @@ namespace RichPackage.Reflection
                 }
             }
         }
-        
+
         public static bool IsBuiltInUnityObjectType(Type type)
         {
             return type.Namespace != null && type.Name.Contains("UnityEngine");
-        }
-    
-        /// <returns>All the public instance properties that can be read and written.</returns>
-        public static IEnumerable<PropertyInfo> GetAllProperties<T>()
-        {
-            return typeof(T)
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where((p) => p.CanRead && p.CanWrite);
         }
     }
 }

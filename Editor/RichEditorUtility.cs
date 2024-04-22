@@ -1,7 +1,11 @@
+using RichPackage.GuardClauses;
+using RichPackage.Reflection;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace RichPackage.Editor
 {
@@ -54,18 +58,54 @@ namespace RichPackage.Editor
         [MenuItem("Tools/Reload Domain")]
         public static void ReloadDomain() => EditorUtility.RequestScriptReload();
 
-        public static string GetGuidFromAsset(UnityEngine.Object asset)
-        {
-            return AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(asset)).ToString();
-        }
-
         public static IEnumerable<T> LoadAllAssetsInFolder<T>(string folder)
             where T : UnityEngine.Object
         {
-            return Directory.EnumerateFiles(folder, "*", SearchOption.TopDirectoryOnly)
-                .Where(f => !f.QuickEndsWith(".meta"))
-                .Where(f => AssetDatabase.GetMainAssetTypeAtPath(f) == typeof(T))
-                .Select(f => AssetDatabase.LoadAssetAtPath<T>(f));
+            return RichAssetDatabaseUtilities.LoadAllAssetsInFolder<T>(folder);
+        }
+
+        /// <summary>
+        /// Finds all serializable fields on <paramref name="target"/> of type <typeparamref name="T"/>
+        /// and attempts to assign missing fields to assets found in <paramref name="assetFolder"/> based
+        /// on matching asset name and field name.
+        /// </summary>
+        /// <typeparam name="T">Asset field type.</typeparam>
+        /// <param name="target">The collection to modify and operate on.</param>
+        /// <param name="assetFolder">Folder with root '/Assets' holding possible assets to assign to <paramref name="target"/>'s fields.</param>
+        /// <returns>The count of items assigned.</returns>
+        public static int AssingMissingAssetFields<T>(UnityEngine.Object target, string assetFolder)
+            where T : UnityEngine.Object
+        {
+            GuardAgainst.ArgumentIsNull(target, nameof(target));
+
+            Type targetType = target.GetType();
+            var unassignedFields = ReflectionUtility.EnumerateMemberFields<T>(target)
+                .Where(f => f.GetValue(target) as UnityEngine.Object == null) // 'missing' counts as 'unassigned'
+                .ToArray();
+            var assets = LoadAllAssetsInFolder<T>(assetFolder)
+                .ToArray();
+
+            int count = 0;
+            foreach (FieldInfo field in unassignedFields)
+            {
+                string fieldName = field.Name;
+                T asset = assets
+                    .Where(task => task.name.Contains(fieldName))
+                    .FirstOrDefault();
+
+                if (asset == null)
+                {
+                    Debug.LogWarning($"Asset with name '{fieldName}' could not be found.");
+                    continue;
+                }
+
+                field.SetValue(target, asset);
+                count++;
+            }
+
+            EditorUtility.SetDirty(target);
+            AssetDatabase.SaveAssetIfDirty(target);
+            return count;
         }
     }
 }
