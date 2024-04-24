@@ -29,6 +29,16 @@ namespace RichPackage.Editor
             return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
         }
 
+        public static string GetSourceFileForScriptableObject(ScriptableObject scriptableObject)
+        {
+            return AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(scriptableObject));
+        }
+
+        public static string GetSourceFileForMonoBehavior(MonoBehaviour behaviour)
+        {
+            return AssetDatabase.GetAssetPath(MonoScript.FromMonoBehaviour(behaviour));
+        }
+
         [MenuItem("Assets/Copy Guid")]
         private static void CopyGuidToClipboard(MenuCommand menuCommand)
         {
