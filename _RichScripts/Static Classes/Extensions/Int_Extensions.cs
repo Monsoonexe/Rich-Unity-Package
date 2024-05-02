@@ -49,5 +49,8 @@ namespace RichPackage
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int Xnor(this int lhs, int rhs)
 			=> ~(lhs ^ rhs);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Wrapped(this int num, int min, int max) => RichMath.Wrap(num, min, max);
 	}
 }

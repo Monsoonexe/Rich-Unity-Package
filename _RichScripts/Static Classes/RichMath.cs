@@ -9,14 +9,12 @@ namespace RichPackage
         //these functions are faster than Mathf.Clamp because they aren't marshalled.
         const int TEN = 10;//base 10
 
-        public static readonly float RAD_2_DEG = 180 / Mathf.PI;
-        public static readonly float DEG_2_RAD = Mathf.PI / 180;
+        public const float RAD_2_DEG = 180 / Mathf.PI;
+        public const float DEG_2_RAD = Mathf.PI / 180;
 
         //Returns a position between 4 Vector3 with Catmull-Rom spline algorithm
         //http://www.iquilezles.org/www/articles/minispline/minispline.htm
-        /// <summary>
-        /// 
-        /// </summary>
+        
         public static Vector3 CatmullRomPosition(float t, in Vector3 p0, in Vector3 p1, in Vector3 p2, in Vector3 p3)
         {
             //The coefficients of the cubic polynomial (except the 0.5f * which I added later for performance)
@@ -29,6 +27,18 @@ namespace RichPackage
             Vector3 pos = 0.5f * (a + (b * t) + (c * (t * t)) + (d * (t * t * t)));
 
             return pos;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Wrap(int value, int min, int max)
+        {
+            int range = max - min + 1;  // Calculate the range of valid values
+            int result = (value - min) % range;  // Calculate the wrapped value
+            if (result < 0)  // Handle negative wrapped values
+            {
+                result += range;
+            }
+            return result + min;  // Adjust for the minimum value
         }
 
         #region Clamp
@@ -80,21 +90,25 @@ namespace RichPackage
                 : value < min ? min
                 : value;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ClampMin(float value, float min)
         {
             return value < min ? min : value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ClampMax(float value, float max)
         {
             return value > max ? max : value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ClampMin(int value, int min)
         {
             return value < min ? min : value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ClampMax(int value, int max)
         {
             return value > max ? max : value;
