@@ -134,62 +134,9 @@ namespace RichPackage
             if (count != b.Count)
                 return false;
 
+            EqualityComparer<T> @default = EqualityComparer<T>.Default;
             for (int i = 0; i < count; ++i)
-                if (!a[i].Equals(b[i]))
-                    return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// A and B are the same size and every element in A is equal to the same position in B.
-        /// </summary>
-        /// <returns>True if A and B are the same size and every element in A is in B</returns>
-        public static bool IsSequentiallyEqualTo(this IList<byte> a, IList<byte> b)
-        {
-            int count = a.Count;
-
-            if (count != b.Count)
-                return false;
-
-            for (int i = 0; i < count; ++i)
-                if (a[i] != b[i])
-                    return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// A and B are the same size and every element in A is equal to the same position in B.
-        /// </summary>
-        /// <returns>True if A and B are the same size and every element in A is in B</returns>
-        public static bool IsSequentiallyEqualTo(this IList<int> a, IList<int> b)
-        {
-            int count = a.Count;
-
-            if (count != b.Count)
-                return false;
-
-            for (int i = 0; i < count; ++i)
-                if (a[i] != b[i])
-                    return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// A and B are the same size and every element in A is equal to the same position in B.
-        /// </summary>
-        /// <returns>True if A and B are the same size and every element in A is in B</returns>
-        public static bool IsSequentiallyEqualTo(this IList<char> a, IList<char> b)
-        {
-            int count = a.Count;
-
-            if (count != b.Count)
-                return false;
-
-            for (int i = 0; i < count; ++i)
-                if (a[i] != b[i])
+                if (!@default.Equals(a[i], b[i]))
                     return false;
 
             return true;
@@ -378,7 +325,7 @@ namespace RichPackage
 
         public static List<T> Sublist<T>(this IList<T> list, int startIndex, int length)
         {
-            //validate
+            // validate
             if (startIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(startIndex));
 
@@ -391,12 +338,12 @@ namespace RichPackage
             if (startIndex > list.Count - length)
                 throw new ArgumentOutOfRangeException(nameof(length));
 
-            //early exit
+            // early exit
             if (length == 0)
                 return new List<T>(0);
 
-            //sublist
-            var sublist = new List<T>(length); //return value
+            // sublist
+            var sublist = new List<T>(length); // return value
             int endIndex = startIndex + length;
 
             for (int i = startIndex; i < endIndex; ++i)
@@ -409,14 +356,25 @@ namespace RichPackage
         public static T ElementAtWrapped<T>(this IList<T> list, int index)
             => list[GetWrappedIndex(list, index)];
 
+        public static int IndexOf<T>(this IReadOnlyList<T> list, T item)
+        {
+            int count = list.Count;
+            EqualityComparer<T> @default = EqualityComparer<T>.Default;
+            for (int i = 0; i < count; i++)
+            {
+                if (@default.Equals(list[i], item))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         /// <summary>
         /// Always produces a valid index if <paramref name="list"/>'s size > 0. <br/>
         /// Supports negative indexing. e.g. list[-1] gives list index.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int GetWrappedIndex<T>(this IList<T> list, int index)
         {
@@ -771,6 +729,14 @@ namespace RichPackage
                 if (query(list[i]))
                     return false;
             return true;
+        }
+
+        /// <summary>
+        /// Compiler-driven cast to ienumerable.
+        /// </summary>
+        public static IEnumerable<T> Yield<T>(this T i)
+        {
+            yield return i;
         }
     }
 }
