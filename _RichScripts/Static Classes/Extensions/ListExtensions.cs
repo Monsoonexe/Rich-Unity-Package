@@ -319,5 +319,11 @@ namespace RichPackage
             for (int i = 0; i < count; ++i)
                 list[i] = value;
         }
+
+        public static List<T> ToList<T>(this IEnumerable<T> src, List<T> list)
+        {
+            list.AddRange(src);
+            return list;
+        }
     }
 }
