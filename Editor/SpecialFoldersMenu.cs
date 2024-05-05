@@ -44,5 +44,11 @@ namespace RichPackage.Editor
 		{
 			Process.Start(Application.temporaryCachePath);
 		}
+
+        [MenuItem(MenuPath + nameof(OpenScriptAssembliesPath))]
+        public static void OpenScriptAssembliesPath()
+        {
+            Process.Start("Library/ScriptAssemblies");
+        }
 	}
 }
