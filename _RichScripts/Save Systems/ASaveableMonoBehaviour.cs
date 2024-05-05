@@ -203,8 +203,7 @@ namespace RichPackage.SaveSystem
         public static bool IsSaveIDUnique(ASaveableMonoBehaviour query, 
             out ASaveableMonoBehaviour other)
         {
-            //TODO - cache this cuz it's terribly slow
-            var allSaveables = FindObjectsOfType<ASaveableMonoBehaviour>();
+            var allSaveables = FindObjectsOfType<ASaveableMonoBehaviour>(includeInactive: true);
             bool isUnique = true; //return value
             other = default;
             foreach (var saveable in allSaveables)
