@@ -10,7 +10,7 @@ namespace RichPackage.InputSystem
     public class GameplayInput : RichMonoBehaviour
     {
         protected readonly Stack<IInputContext> stash = new Stack<IInputContext>();
-        private IInputContext context;
+        protected IInputContext context;
 
         public IInputContext Context { get => context; set => Set(value); }
 
