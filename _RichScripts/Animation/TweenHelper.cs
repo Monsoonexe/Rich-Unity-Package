@@ -32,7 +32,7 @@ namespace RichPackage.Animation
 
         public void DoMove(Transform place)
         {
-            animTween = myTransform.DOMove(place.position, duration)
+            animTween = transform.DOMove(place.position, duration)
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
             onAnimationBegin.Invoke();
@@ -40,7 +40,7 @@ namespace RichPackage.Animation
 
         public void DoMoveFrom(Transform place)
         {
-            animTween = myTransform.DOMove(place.position, duration)
+            animTween = transform.DOMove(place.position, duration)
                 .From()
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
@@ -49,7 +49,7 @@ namespace RichPackage.Animation
 
         public void DoLocalMoveX(float x)
         {
-            animTween = myTransform.DOLocalMoveX(x, duration)
+            animTween = transform.DOLocalMoveX(x, duration)
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
             onAnimationBegin.Invoke();
@@ -57,7 +57,7 @@ namespace RichPackage.Animation
 
         public void DoLocalMoveY(float y)
         {
-            animTween = myTransform.DOLocalMoveY(y, duration)
+            animTween = transform.DOLocalMoveY(y, duration)
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
             onAnimationBegin.Invoke();
@@ -65,7 +65,7 @@ namespace RichPackage.Animation
 
         public void DoLocalMoveZ(float z)
         {
-            animTween = myTransform.DOLocalMoveZ(z, duration)
+            animTween = transform.DOLocalMoveZ(z, duration)
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
             onAnimationBegin.Invoke();
@@ -73,7 +73,7 @@ namespace RichPackage.Animation
 
         public void DoRotate(Transform place)
         {
-            animTween = myTransform.DORotate(place.eulerAngles, duration)
+            animTween = transform.DORotate(place.eulerAngles, duration)
                 .SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
             onAnimationBegin.Invoke();
@@ -88,7 +88,7 @@ namespace RichPackage.Animation
         {
             if (IsAnimating) return; //prevent spamming
 
-            animTween = myTransform.DOLocalRotate(
+            animTween = transform.DOLocalRotate(
                 rotationVector, duration, RotateMode.LocalAxisAdd);
             animTween.SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);
@@ -99,7 +99,7 @@ namespace RichPackage.Animation
         {
             if (IsAnimating) return; //prevent spamming
 
-            animTween = myTransform.DORotate(
+            animTween = transform.DORotate(
                 rotationVector, duration, RotateMode.WorldAxisAdd);
             animTween.SetEase(ease)
                 .OnComplete(OnAnimationCompleteHandler);

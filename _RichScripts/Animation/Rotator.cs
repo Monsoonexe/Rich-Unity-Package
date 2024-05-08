@@ -31,7 +31,7 @@ namespace RichPackage.Animation
         {
             base.Awake();
             if (xform == null)
-                xform = myTransform;
+                xform = transform;
         }
 
         private void Update()

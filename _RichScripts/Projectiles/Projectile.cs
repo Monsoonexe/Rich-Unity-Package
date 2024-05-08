@@ -40,7 +40,7 @@ namespace RichPackage.ProjectileSystem
 		private void Update()
         {
             // TODO - move with rigidbody instead of translation
-            myTransform.position += myTransform.forward 
+            transform.position += transform.forward 
                 * (Time.deltaTime * forwardSpeed);
         }
 

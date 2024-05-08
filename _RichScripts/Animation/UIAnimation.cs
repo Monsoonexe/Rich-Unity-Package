@@ -45,7 +45,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_ZoomIn(animInTime);
+            animTween = transform.Animate_ZoomIn(animInTime);
             animTween.onComplete += OnAnimationInComplete;
         }
 
@@ -54,7 +54,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_ZoomOut(animOutTime);
+            animTween = transform.Animate_ZoomOut(animOutTime);
             animTween.onComplete += OnAnimationOutComplete;
         }
 
@@ -63,7 +63,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_ExpandHorizontal(animInTime);
+            animTween = transform.Animate_ExpandHorizontal(animInTime);
             animTween.onComplete += OnAnimationInComplete;
         }
 
@@ -72,7 +72,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_CollapseHorizontal(animOutTime);
+            animTween = transform.Animate_CollapseHorizontal(animOutTime);
             animTween.onComplete += OnAnimationOutComplete;
         }
 
@@ -81,7 +81,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_ExpandVertical(animInTime);
+            animTween = transform.Animate_ExpandVertical(animInTime);
             animTween.onComplete += OnAnimationInComplete;
         }
 
@@ -90,7 +90,7 @@ namespace RichPackage.Animation
         {
             //if (IsAnimating) return;//prevent spamming
 
-            animTween = myTransform.Animate_CollapseVertical(animOutTime);
+            animTween = transform.Animate_CollapseVertical(animOutTime);
             animTween.onComplete += OnAnimationOutComplete;
         }
 

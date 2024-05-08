@@ -42,5 +42,5 @@ public abstract class ATransitionComponent : RichMonoBehaviour, IAnimate<Transfo
 
     public void Play(Transform puppet) => Animate(target = puppet);
 
-	public void Play() => Play(target ? target : myTransform);
+	public void Play() => Play(target ? target : transform);
 }

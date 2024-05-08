@@ -177,7 +177,7 @@ namespace RichPackage
 
             var deltaTime = Time.deltaTime; //cache
             //get relative position of target 
-            var relative = myTransform.InverseTransformPoint(attackTarget.position);
+            var relative = transform.InverseTransformPoint(attackTarget.position);
 
             //get the angle between base forward and target on horizontal plane
             var horAngle = Mathf.Atan2(relative.x, relative.z).ToDeg();
@@ -192,7 +192,7 @@ namespace RichPackage
 
             //handle base swivel
             if (RichMath.AbsoluteValue(horAngle) > optimalAngle)
-                myTransform.Rotate(0, deltaTime * horAngle * swivelSpeed, 0);
+                transform.Rotate(0, deltaTime * horAngle * swivelSpeed, 0);
 
             //handle turret pitch
             if (RichMath.AbsoluteValue(vertAngle) > optimalAngle)

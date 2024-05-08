@@ -24,7 +24,6 @@ namespace RichPackage.Spawning
 
 		protected override void Reset()
 		{
-            myTransform = GetComponent<Transform>();
             SetDevDescription("Provides helpful functions to make spawning GameObjects easier.");
 		}
 

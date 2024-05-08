@@ -1,8 +1,4 @@
-﻿
-using System.IO;
-using System;
-
-namespace RichPackage.SaveSystem
+﻿namespace RichPackage.SaveSystem
 {
 	/// <summary>
 	/// Allows for saving/loading from an <see cref="ES3File"/>.
