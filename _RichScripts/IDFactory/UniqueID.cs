@@ -113,7 +113,6 @@ namespace RichPackage
         #endregion Equality Operators
 
         public static implicit operator string(UniqueID id) => id.ID;
-        public static implicit operator int(UniqueID id) => id.Hash;
         public static implicit operator UniqueID(string id) => new UniqueID(id);
     }
 }
