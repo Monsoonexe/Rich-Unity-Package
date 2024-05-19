@@ -5,6 +5,14 @@ namespace RichPackage
 {
 	public static class Dictionary_Extensions
     {
+        public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> src, IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+        {
+            foreach (var kvp in enumerable)
+            {
+                src.Add(kvp.Key, kvp.Value);
+            }
+        }
+
         /// <returns><see langword="true"/> if the <paramref name="value"/> was added to 
         /// <paramref name="dic"/>, otherwise <see langword="false"/>.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -23,7 +31,7 @@ namespace RichPackage
         /// Otherwise, returns <see langword="false"/>. Will not throw an exception if key does not exist.
         /// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryGetRemove<TKey, TValue>(this Dictionary<TKey, TValue> dic,
+        public static bool TryTake<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, out TValue value)
         {
             bool found; // return value
@@ -37,7 +45,7 @@ namespace RichPackage
         /// keyed by <paramref name="key"/> if it exists.
         /// </summary>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TValue GetRemoveOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dic,
+        public static TValue TakeOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dic,
             TKey key, TValue defaultValue = default)
 		{
             return dic.TryGetValue(key, out TValue value) ? value : defaultValue;

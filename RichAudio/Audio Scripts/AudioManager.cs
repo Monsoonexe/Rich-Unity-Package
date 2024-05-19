@@ -360,7 +360,7 @@ namespace RichPackage.Audio
                 return;
 
             // stop the clip if we were tracking it
-            if (sourceDictionary.TryGetRemove(key, out AudioSource source))
+            if (sourceDictionary.TryTake(key, out AudioSource source))
             {
                 if (fadeOutDuration > 0.01f)
                 {
