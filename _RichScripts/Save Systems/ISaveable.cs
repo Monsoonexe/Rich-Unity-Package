@@ -6,8 +6,6 @@
 	/// <seealso cref="ASaveableMonoBehaviour"/>
 	public interface ISaveable
 	{
-		UniqueID SaveID { get; }
-
 		void SaveState(ISaveStore saveFile);
 
 		void LoadState(ISaveStore saveFile);

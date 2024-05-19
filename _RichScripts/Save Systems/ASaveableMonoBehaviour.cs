@@ -89,7 +89,7 @@ namespace RichPackage.SaveSystem
     /// Base class for all things with default saving behaviour that responds to events.
     /// </summary>
     public abstract class ASaveableMonoBehaviour : RichMonoBehaviour,
-        ISaveable, IEquatable<ISaveable>
+        ISaveable
     {
         #region Unity Messages
 
@@ -179,12 +179,6 @@ namespace RichPackage.SaveSystem
         public void DeleteState(ISaveStore saveFile) => saveFile.Delete(SaveID);
 
         public bool HasSaveData(ISaveStore saveFile) => saveFile.KeyExists(SaveID);
-
-        /// <summary>
-        /// Saveables are equal if their data will be saved to the same entry (has same key).
-        /// </summary>
-        /// <returns>True if saves to either objects will write to the same entry (key collision).</returns>
-        public bool Equals(ISaveable other) => this.SaveID == other.SaveID;
 
         #endregion Save / Load Helpers
 
