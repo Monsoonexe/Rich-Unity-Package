@@ -23,7 +23,7 @@ namespace RichPackage.SaveSystem
             base.Reset();
             SetDevDescription("Remembers the last time and state of the animation.");
             myAnimator = GetComponent<Animator>();
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: true, includeType: true);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: true, includeName: true, includeType: true);
         }
 
         protected override void OnDisable()

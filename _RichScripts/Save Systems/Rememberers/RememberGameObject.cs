@@ -21,7 +21,7 @@ namespace RichPackage.SaveSystem
         protected override void Reset()
         {
             SetDevDescription("Saves/loads properties of a GameObject.");
-            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: true, includeType: true);
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includeScene: true, includeName: true, includeType: true);
 
             // set default
             target = gameObject;

@@ -7,8 +7,11 @@ namespace RichPackage
     /// </summary>
     public static class UniqueIdUtilities
     {
-        public static UniqueID CreateIdFrom(MonoBehaviour mono, bool includeScene = false, 
-            bool includePath = false, bool includeType = false)
+        public static UniqueID CreateIdFrom(MonoBehaviour mono, 
+            bool includeScene = false, 
+            bool includePath = false,
+            bool includeName = false,
+            bool includeType = false)
         {
             string scene = includeScene
                 ? mono.gameObject.scene.name + "/"
@@ -16,13 +19,18 @@ namespace RichPackage
 
             string path = includePath
                 ? mono.gameObject.GetFullPath()
-                : mono.name;
+                : string.Empty;
+
+            string name = includeName
+                ? mono.name
+                : string.Empty;
 
             string type = includeType
                 ? $" ({mono.GetType().Name})"
                 : string.Empty;
 
-            string final = $"{scene}{path}{type}";
+            string final = $"{scene}{path}{name}{type}";
+            UnityEngine.Assertions.Assert.IsFalse(string.IsNullOrEmpty(final), "Should include at least one thing.");
             return new UniqueID(final);
         }
     }
