@@ -109,6 +109,28 @@ namespace RichPackage
         }
 
         /// <summary>
+        /// Looks for a component of <typeparamref name="T"/> on self and any parent.
+        /// </summary>
+        public static bool TryGetComponentInParent<T>(this GameObject gameObject, out T comp)
+            where T : class
+        {
+            // linked-list traversal
+            Transform current = gameObject.transform;
+
+            do
+            {
+                if (current.TryGetComponent(out comp))
+                {
+                    return true;
+                }
+
+                current = current.parent;
+            } while (current != null);
+
+            return false;
+        }
+
+        /// <summary>
         /// Get name of the <see cref="GameObject"/> prefixed 
         /// with the current <see cref="UnityEngine.SceneManagement.Scene"/> name.<br/>
         /// e.g. "MainMenuScene/MainMenu".
