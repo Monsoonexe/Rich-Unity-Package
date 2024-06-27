@@ -8,6 +8,7 @@ namespace RichPackage
     /// </summary>
     public static class Animator_Extensions
     {
+        /// <returns>A coroutine that completes when the current animation state completes.</returns>
         public static Coroutine WaitForEnd(this Animator animator)
         {
             AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
