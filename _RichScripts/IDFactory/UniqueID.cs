@@ -23,7 +23,7 @@ namespace RichPackage
 
         public static UniqueID New => FromString(NewIdProvider());
 
-        public static readonly UniqueID None = new UniqueID(string.Empty);
+        public static UniqueID None => new UniqueID(string.Empty);
 
         [field: SerializeField, LabelText(nameof(ID)),
             OnValueChanged(nameof(RecalculateHash))]
@@ -31,6 +31,7 @@ namespace RichPackage
 
         private int? cachedHash;
         public int Hash { get => cachedHash ?? RecalculateHash(); }
+        public bool IsValid => ID.IsNullOrEmpty();
 
         #region Constructors
 
@@ -73,7 +74,7 @@ namespace RichPackage
         #endregion IEquatable
 
         public static UniqueID FromString(string src) => new UniqueID(src);
-        public static ConditionInfo IsValid(UniqueID id)
+        public static ConditionInfo CheckIsValid(UniqueID id)
         {
             if (id.ID == null)
                 return ConditionInfo.FromFalse("Id is null");

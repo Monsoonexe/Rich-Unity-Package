@@ -1,7 +1,8 @@
-﻿using ScriptableObjectArchitecture;
+﻿using RichPackage.Events.Signals;
+using ScriptableObjectArchitecture;
 using System;
 
-namespace RichPackage.Events.Signals
+namespace RichPackage.Events
 {
     /// <summary>
     /// Raised when the level has finished loading and can be initialized.

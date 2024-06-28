@@ -1,4 +1,5 @@
-﻿using RichPackage.Events.Signals;
+﻿using RichPackage.Events;
+using RichPackage.Events.Signals;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
 using UnityEngine;

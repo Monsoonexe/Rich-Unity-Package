@@ -1,4 +1,6 @@
-﻿namespace RichPackage.Events.Signals
+﻿using RichPackage.Events.Signals;
+
+namespace RichPackage.Events
 {
     /// <summary>
     /// The scene is about to be unloaded. Last call before your possible demise! <br/>

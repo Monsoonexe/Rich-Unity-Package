@@ -1,11 +1,11 @@
-﻿
+﻿using RichPackage.Events.Signals;
 using ScriptableObjectArchitecture;
 using System;
 
-namespace RichPackage.Events.Signals
+namespace RichPackage.Events
 {
     /// <summary>
-    /// Please enter a description.
+    /// Called at the start of the level, after loading.
     /// </summary>
     /// <seealso cref="OnLevelLoadedSignal"/>
     public sealed class OnLevelReadySignal : ABaseSignal
