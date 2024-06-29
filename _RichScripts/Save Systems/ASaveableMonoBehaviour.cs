@@ -202,8 +202,8 @@ namespace RichPackage.SaveSystem
             other = default;
             foreach (var saveable in allSaveables)
             {
-                if (saveable.Equals(query) //matching keys
-                    && saveable != query) //check is not self
+                if (saveable.SaveID.Equals(query.SaveID) //matching keys
+                    && !ReferenceEquals(saveable, query)) //check is not self
                 {
                     isUnique = false;
                     other = saveable;
