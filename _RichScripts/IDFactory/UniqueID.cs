@@ -31,7 +31,7 @@ namespace RichPackage
 
         private int? cachedHash;
         public int Hash { get => cachedHash ?? RecalculateHash(); }
-        public bool IsValid => ID.IsNullOrEmpty();
+        public bool IsValid => !ID.IsNullOrEmpty();
 
         #region Constructors
 
