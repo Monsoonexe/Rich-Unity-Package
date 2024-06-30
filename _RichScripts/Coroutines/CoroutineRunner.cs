@@ -24,7 +24,7 @@ namespace RichPackage.Coroutines
         {
             Assert.IsFalse(App.IsQuitting, "Should not be creating a coroutine runner when the app is quitting.");
                 
-            var go = new GameObject(nameof(CoroutineRunner));
+            var go = new GameObject($"[{nameof(CoroutineRunner)}]");
             
             if (scenePersistent)
                 DontDestroyOnLoad(go);
