@@ -10,6 +10,18 @@ namespace UnityEngine
 			source.Play();
 			return source;
 		}
+
+        public static AudioSource SetVolume(this AudioSource source, float volume)
+        {
+            source.volume = volume;
+            return source;
+        }
+
+        public static AudioSource PlayClip(this AudioSource source, AudioClip clip)
+        {
+            source.PlayOneShot(clip);
+            return source;
+        }
 	}
 }
 
