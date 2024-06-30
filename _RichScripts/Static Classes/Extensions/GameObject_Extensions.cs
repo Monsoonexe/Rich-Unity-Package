@@ -284,4 +284,24 @@ namespace RichPackage
             }
         }
     }
+
+    /// <summary>
+    /// Helper methods for collections of game objects.
+    /// </summary>
+    public static class GameObjectCollection_Extensions
+    {
+        public static void DestroyAll(this IList<GameObject> gameObjects)
+        {
+            int count = gameObjects.Count;
+            for (int i = 0; i < count; i++)
+                GameObject.Destroy(gameObjects[i]);
+        }
+
+        public static void SetAllActive(this IList<GameObject> gameObjects, bool active)
+        {
+            int count = gameObjects.Count;
+            for (int i = 0; i < count; i++)
+                gameObjects[i].SetActive(active);
+        }
+    }
 }
