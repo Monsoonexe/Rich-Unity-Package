@@ -33,5 +33,11 @@ namespace RichPackage.Linq
 
         public static List<T> Sorted<T>(this IEnumerable<T> src)
             => Sorted(src, new List<T>());
+
+        public static List<T> Sorted<T>(this List<T> list, IComparer<T> comparer)
+        {
+            list.Sort(comparer);
+            return list;
+        }
     }
 }
