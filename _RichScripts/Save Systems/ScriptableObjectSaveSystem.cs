@@ -1,7 +1,6 @@
 using UnityEngine;
 using ScriptableObjectArchitecture;
 using RichPackage.Events.Signals;
-using RichPackage.SaveSystem.Signals;
 using System.Collections.Generic;
 
 namespace RichPackage.SaveSystem

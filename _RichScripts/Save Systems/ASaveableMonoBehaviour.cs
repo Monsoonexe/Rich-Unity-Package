@@ -10,7 +10,6 @@ using System.Diagnostics;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using RichPackage.Events.Signals;
-using RichPackage.SaveSystem.Signals;
 using Debug = UnityEngine.Debug;
 
 namespace RichPackage.SaveSystem

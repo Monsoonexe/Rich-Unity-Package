@@ -2,7 +2,7 @@
 using RichPackage.Events.Signals;
 using System;
 
-namespace RichPackage.SaveSystem.Signals
+namespace RichPackage.SaveSystem
 {
 	/// <summary>
 	/// Raise a request to have the entire game save its current state.

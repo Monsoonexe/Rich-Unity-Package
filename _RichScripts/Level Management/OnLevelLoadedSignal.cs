@@ -7,7 +7,7 @@ namespace RichPackage.Events
     /// <summary>
     /// Raised when the level has finished loading and can be initialized.
     /// </summary>
-    /// <see cref="OnLevelReadySignal"/>
+    /// <see cref="OnLevelStartSignal"/>
     public sealed class OnLevelLoadedSignal : ABaseSignal,
         ISignalListener, ISignalListener<SceneVariable>
     {

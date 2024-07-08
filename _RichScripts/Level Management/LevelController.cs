@@ -48,7 +48,7 @@ namespace RichPackage.LevelManagement
 
         private void DispatchLateSceneLoadedSignal()
         {
-            GlobalSignals.Get<OnLevelReadySignal>().Dispatch(sceneData);
+            GlobalSignals.Get<OnLevelStartSignal>().Dispatch(sceneData);
         }
 
         [Button, DisableInEditorMode]
