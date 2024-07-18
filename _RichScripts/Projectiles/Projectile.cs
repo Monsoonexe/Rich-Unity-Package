@@ -53,7 +53,7 @@ namespace RichPackage.ProjectileSystem
 		public UniTask GetImpactOrLifetimeOrDestroyAwaiter(float lifetime)
 		{
             var cts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
-            var onImpactHandler = TriggerVolume.OnEnterEvent.GetAsyncEventHandler(cts.Token);
+            var onImpactHandler = TriggerVolume.OnEnter.GetAsyncEventHandler(cts.Token);
             UniTask lifetimeTask = UniTask.Delay(TimeSpan.FromSeconds(lifetime), cancellationToken: cts.Token);
             UniTask awaiter = UniTask.WhenAny(onImpactHandler.OnInvokeAsync(), lifetimeTask); // return value
             return awaiter.ContinueWith(() =>

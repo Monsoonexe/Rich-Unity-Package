@@ -8,9 +8,10 @@ namespace RichPackage.TriggerVolumes
     /// Trigger Collider that expands its radius when something is within promixity.
     /// Note: Must use a sphere collider.
     /// </summary>
-    [RequireComponent(typeof(SphereCollider))]
-    public class ExpandableTriggerCollider : TriggerVolume
+    public class ExpandableTriggerCollider : RichMonoBehaviour
     {
+        public TriggerVolume triggerVolume;
+
         [Header("Expansion Settings")]
         [Min(0)]
         public float expandedRadius = 10f;
@@ -29,18 +30,20 @@ namespace RichPackage.TriggerVolumes
 
         void OnEnable()
         {
-            enterEvent.AddListener(Expand);
-            enterEvent.AddListener(Contract);
+            triggerVolume.OnEnter.AddListener(Expand);
+            triggerVolume.OnEnter.AddListener(Contract);
         }
 
         void OnDisable()
         {
-            enterEvent.RemoveListener(Expand);
-            enterEvent.RemoveListener(Contract);
+            triggerVolume.OnEnter.RemoveListener(Expand);
+            triggerVolume.OnEnter.RemoveListener(Contract);
         }
+
         #endregion
 
         #region Expanding
+
         /// <summary>
         /// Increases the radius of the collider
         /// </summary>

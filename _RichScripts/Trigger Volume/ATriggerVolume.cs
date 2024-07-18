@@ -12,7 +12,7 @@ namespace RichPackage.TriggerVolumes
     {
         #region Constants
 
-        private const string EVENT_GROUP = "Events";
+        protected const string EVENT_GROUP = "Events";
 
         #endregion Constants
 
@@ -20,50 +20,28 @@ namespace RichPackage.TriggerVolumes
             Tooltip("Will filter collisions that don't have the given tag. Null or empty to filter nothing.")]
         public string reactToTag = GameObjectTags.Player;
 
-        /// <summary>
-        /// Running total of times this has been triggered.
-        /// </summary>
-        [Tooltip("Running total of times this has been triggered.")]
-        [ReadOnly]
-        public int triggerCount = 0;
+        [FoldoutGroup(EVENT_GROUP)]
+        [SerializeField]
+        private UnityEvent onEnter;
 
         [FoldoutGroup(EVENT_GROUP)]
         [SerializeField]
-        protected UnityEvent enterEvent;
-        public UnityEvent OnEnterEvent { get => enterEvent; }
+        private UnityEvent onExit;
 
-        [FoldoutGroup(EVENT_GROUP)]
-        [SerializeField]
-        protected UnityEvent exitEvent;
-        public UnityEvent OnExitEvent { get => exitEvent; }
+        public UnityEvent OnEnter { get => onEnter; }
+        public UnityEvent OnExit { get => onExit; }
 
         [Button, DisableInEditorMode]
-        public void ForceEnter() => enterEvent.Invoke();
+        public void ForceEnter() => onEnter.Invoke();
 
         [Button, DisableInEditorMode]
-        public void ForceExit() => exitEvent.Invoke();
+        public void ForceExit() => onExit.Invoke();
 
-        protected void HandleEnterCollision(GameObject other)
+        protected bool ApplyCollisionFilter(GameObject other)
         {
-            if (!enabled)
-                return;
-
-            if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
-            {
-                ++triggerCount;
-                enterEvent.Invoke();
-            }
-        }
-
-        protected void HandleExitCollision(GameObject other)
-        {
-            if (!enabled)
-                return;
-
-            if (string.IsNullOrEmpty(reactToTag) || other.CompareTag(reactToTag))
-            {
-                exitEvent.Invoke();
-            }
+            return enabled
+                && (string.IsNullOrEmpty(reactToTag)
+                    || other.CompareTag(reactToTag));
         }
     }
 }
