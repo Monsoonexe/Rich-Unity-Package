@@ -247,7 +247,7 @@ namespace RichPackage.SaveSystem
 
         public void SetSaveIDToSceneGameObjectName()
         {
-            SaveID = UniqueID.FromString(gameObject.GetNameWithScene());
+            SaveID = UniqueIdUtilities.CreateIdFrom(this, includePath:true, includeName: true);
             Editor_MarkDirty();
             Editor_PrintIDIsNotUnique();
         }
