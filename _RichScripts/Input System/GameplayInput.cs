@@ -1,6 +1,8 @@
+using RichPackage.GuardClauses;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RichPackage.InputSystem
 {
@@ -13,6 +15,9 @@ namespace RichPackage.InputSystem
         protected IInputContext context;
 
         public IInputContext Context { get => context; set => Set(value); }
+
+        [Tooltip("Prints enter logs.")]
+        public bool debug;
 
         [ShowInInspector]
         public string CurrentContextName => Context?.Name ?? "none";
@@ -69,6 +74,16 @@ namespace RichPackage.InputSystem
 
         public void Set(IInputContext context)
         {
+            // validate
+            GuardAgainst.ArgumentIsNull(context, nameof(context));
+
+            // log
+            if (debug)
+            {
+                DebugLogName($"Context switch from '{CurrentContextName}' to '{context.Name}'");
+            }
+
+            // business
             this.context.OnExit();
             this.context = context;
             this.context.OnEnter();
