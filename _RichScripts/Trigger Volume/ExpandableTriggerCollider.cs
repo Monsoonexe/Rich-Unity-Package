@@ -1,6 +1,4 @@
-﻿//credit: William Lau
-
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RichPackage.TriggerVolumes
 {
@@ -16,16 +14,16 @@ namespace RichPackage.TriggerVolumes
         [Min(0)]
         public float expandedRadius = 10f;
 
-        private SphereCollider sphereCollider;
         private float radiusOrigin;
 
-        #region Initialization
+        private SphereCollider SphereCollider => triggerVolume.Collider as SphereCollider;
+
+        #region Unity Messages
 
         protected override void Awake()
         {
             base.Awake();
-            sphereCollider = GetComponent<SphereCollider>();
-            radiusOrigin = sphereCollider.radius;
+            radiusOrigin = SphereCollider.radius;
         }
 
         void OnEnable()
@@ -40,7 +38,7 @@ namespace RichPackage.TriggerVolumes
             triggerVolume.OnEnter.RemoveListener(Contract);
         }
 
-        #endregion
+        #endregion Unity Messages
 
         #region Expanding
 
@@ -49,7 +47,7 @@ namespace RichPackage.TriggerVolumes
         /// </summary>
         public void Expand()
         {
-            sphereCollider.radius = expandedRadius;
+            SphereCollider.radius = expandedRadius;
         }
 
         /// <summary>
@@ -57,7 +55,7 @@ namespace RichPackage.TriggerVolumes
         /// </summary>
         public void Contract()
         {
-            sphereCollider.radius = radiusOrigin;
+            SphereCollider.radius = radiusOrigin;
         }
 
         #endregion
