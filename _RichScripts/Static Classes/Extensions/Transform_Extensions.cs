@@ -221,6 +221,13 @@ namespace UnityEngine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalPosition(this Transform t, Vector3 position)
+        {
+            t.localPosition = position;
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionX(this Transform t, float x)
         {
             t.localPosition = t.localPosition.WithX(x);
@@ -238,6 +245,27 @@ namespace UnityEngine
         public static Transform SetLocalPositionZ(this Transform t, float z)
         {
             t.localPosition = t.localPosition.WithZ(z);
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalRotation(this Transform t, Vector3 localEulerAngles)
+        {
+            t.localEulerAngles = localEulerAngles;
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetRotation(this Transform t, Quaternion rotation)
+        {
+            t.rotation = rotation;
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetPosition(this Transform t, Vector3 position)
+        {
+            t.position = position;
             return t;
         }
 

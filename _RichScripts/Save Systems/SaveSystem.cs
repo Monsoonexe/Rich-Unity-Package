@@ -478,12 +478,16 @@ namespace RichPackage.SaveSystem
             if (debug)
                 Debug.Log($"Saved '{SaveFileName}'.", this);
         }
+        
+        [Button("Save to Disk"), EnableIf(nameof(IsFileLoaded))]
+        public void SaveToFile(string file)
+            => SaveToFile(file, allowOverwriting: false);
 
         /// <summary>
         /// Saves the current file to a new location on disk.
         /// </summary>
         /// <exception cref="InvalidOperationException"></exception>
-        public void SaveToFile(string newFileName, bool allowOverwriting = false)
+        public void SaveToFile(string newFileName, bool allowOverwriting)
         {
             ValidateFilePath(ref newFileName);
 
@@ -504,6 +508,7 @@ namespace RichPackage.SaveSystem
             }
             else
             {
+                Assert.IsFalse(saveFileNames.Contains(newFileName));
                 saveFileNames.Add(newFileName);
             }
 
