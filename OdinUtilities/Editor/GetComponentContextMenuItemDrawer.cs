@@ -86,9 +86,13 @@ namespace RichPackage.Editor
         
         private void AddComponentAndSetReference(InspectorProperty property)
         {
-            Component newComponent = property.Parent.BaseValueEntry.WeakSmartValue
-                .CastTo<Component>().gameObject
-                .AddComponent<T>();
+            var gameObject = property.Parent.BaseValueEntry.WeakSmartValue
+                .CastTo<Component>().gameObject;
+
+            gameObject.AddComponent<T>();
+
+            // re-fetch it because of the "mono wrapper"
+            Component newComponent = gameObject.GetComponent<T>();
             property.ValueEntry.WeakValues[0] = newComponent;
         }
     }
