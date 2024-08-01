@@ -290,6 +290,13 @@ namespace UnityEngine
             return t;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetScale(this Transform t, Vector3 value)
+        {
+            t.localScale = value;
+            return t;
+        }
+
         /// <summary>
         /// Sorts ascending by default, unless <paramref name="descending"/>, then descending.
         /// </summary>
