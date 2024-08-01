@@ -9,9 +9,16 @@ using Sirenix.OdinInspector;
 /// <seealso cref="SlideScreenTransition"/>
 public class ScaleScreenTransition : ATransitionComponent
 {
-    [Title("Options")]
+    [Title("Settings")]
     [SerializeField] 
     protected bool isOutAnimation;
+
+    /// <summary>
+    /// How many seconds to complete the Animation.
+    /// </summary>
+    [Tooltip("How many seconds to complete the Animation.")]
+    [Min(0)]
+    public float duration = 0.5f;
 
     [SerializeField] 
     protected bool doFade;
@@ -22,7 +29,7 @@ public class ScaleScreenTransition : ATransitionComponent
     [SerializeField] 
     protected Ease ease = Ease.Linear;
 
-    [SerializeField] [Range(0f, 1f)] 
+    [SerializeField, Range(0f, 1f)] 
     protected float xYSplit = 0.25f;
 
     [SerializeField, Title("References")]

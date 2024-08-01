@@ -11,6 +11,13 @@ public sealed class FadeScreenTransition : ATransitionComponent
 {
     [Header("---Settings---")]
     public bool isOutAnimation;
+
+    /// <summary>
+    /// How many seconds to complete the Animation.
+    /// </summary>
+    [Tooltip("How many seconds to complete the Animation.")]
+    [Min(0)]
+    public float duration = 0.5f;
     public Ease ease = Ease.Linear;
 
     [Header("---Scene Refs---")]

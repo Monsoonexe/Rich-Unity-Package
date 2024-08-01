@@ -8,16 +8,6 @@ using RichPackage.Animation;
 /// </summary>
 public abstract class ATransitionComponent : RichMonoBehaviour, IAnimate<Transform>, IAnimate
 {
-    /// <summary>
-    /// How many seconds to complete the Animation.
-    /// </summary>
-    [Tooltip("How many seconds to complete the Animation.")]
-    [SerializeField]
-    [Min(0)]
-    protected float duration = 0.5f;
-
-    public float Duration { get => duration; }
-
     public virtual bool IsAnimating { get; protected set; }
 
     [SerializeField]

@@ -19,12 +19,19 @@ public class SlideScreenTransition : ATransitionComponent
         Bottom = 4,
     }
 
-    [Title("Options")]
+    [Title("Settings")]
     [SerializeField] 
     protected Position origin = Position.Left;
 
     [SerializeField]
     protected bool isOutAnimation;
+
+    /// <summary>
+    /// How many seconds to complete the Animation.
+    /// </summary>
+    [Tooltip("How many seconds to complete the Animation.")]
+    [Min(0)]
+    public float duration = 0.5f;
 
     [SerializeField] 
     protected bool doFade;
