@@ -42,7 +42,8 @@ public class SlideScreenTransition : ATransitionComponent
     [SerializeField] 
     protected Ease ease = Ease.Linear;
 
-    [SerializeField, Title("References")]
+    [Title("Components")]
+    [SerializeField]
     private CanvasGroup canvasGroup = null;
 
     // cache variables to avoid Closure
@@ -64,7 +65,8 @@ public class SlideScreenTransition : ATransitionComponent
         var origAnchoredPos = rTransform.anchoredPosition;
         Vector3 startPosition = Vector3.zero;
 
-        switch (origin) {
+        switch (origin)
+        {
             case Position.Left:
                 startPosition = new Vector3(-rTransform.rect.width, 0.0f, 0.0f);
                 break;
