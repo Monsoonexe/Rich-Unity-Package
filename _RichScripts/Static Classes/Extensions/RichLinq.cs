@@ -1,7 +1,13 @@
+/* TODO - can't the Sorted calls be replaced by "OrderBy"?
+ * 
+ */
+
+
+using Mono.CSharp;
 using System;
 using System.Collections.Generic;
 
-namespace RichPackage.Linq
+namespace System.Linq
 {
     public static class RichLinq
     {
@@ -38,6 +44,26 @@ namespace RichPackage.Linq
         {
             list.Sort(comparer);
             return list;
+        }
+
+        public static int Remove<T>(this List<T> list, Predicate<T> predicate)
+        {
+            int initialCount = list.Count;
+
+            // early exit
+            if (initialCount == 0)
+                return 0;
+
+            // check and remove
+            for (int i = initialCount - 1; i >= 0; i--)
+            {
+                if (predicate(list[i]))
+                {
+                    list.RemoveAt(i);
+                }
+            }
+
+            return initialCount - list.Count;
         }
     }
 }
