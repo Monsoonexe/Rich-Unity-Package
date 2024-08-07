@@ -83,6 +83,10 @@ namespace RichPackage.SaveSystem
         public ES3.EncryptionType encryptionType;
         public string encryptionPassword = "ScaryPassword";
 
+        // backing variable for optimizing caches
+        private IEnumerable<string> _EnumerateSaveFilePathsCache;
+        private IEnumerable<string> _EnumerateSaveFileNamesCache;
+
         /// <summary>
         /// Use the property instead of this directly.
         /// </summary>
@@ -333,7 +337,7 @@ namespace RichPackage.SaveSystem
         private List<string> ScanForSaveFiles()
         {
             saveFileNames.Clear();
-            saveFileNames.AddRange(EnumerateSaveFileNames());
+            saveFileNames.AddRange(EnumerateSaveFileNames(reload: true));
 
             if (debug)
                 DebugLogType($"Found {saveFileNames.Count} save files.");
@@ -344,20 +348,37 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Iterates through the files on disk.
         /// </summary>
-        public IEnumerable<string> EnumerateSaveFilePaths()
+        public IEnumerable<string> EnumerateSaveFilePaths(bool reload = true)
         {
-            // look for all of the save files in the persistent data location
-            return Directory.EnumerateFiles(SaveFileDirectory)
-                .Where(filePath => Path.GetExtension(filePath) == SaveFileExtension);
+            if (reload)
+                _EnumerateSaveFilePathsCache = null;
+
+            if (_EnumerateSaveFilePathsCache == null)
+            {
+                // look for all of the save files in the persistent data location
+                _EnumerateSaveFilePathsCache = Directory
+                    .EnumerateFiles(SaveFileDirectory)
+                    .Where(filePath => Path.GetExtension(filePath) == SaveFileExtension);
+            }
+
+            return _EnumerateSaveFilePathsCache;
         }
 
         /// <summary>
         /// Iterates through the files on disk and provides their names with extensions.
         /// </summary>
-        public IEnumerable<string> EnumerateSaveFileNames()
+        public IEnumerable<string> EnumerateSaveFileNames(bool reload = true)
         {
-            return EnumerateSaveFilePaths()
-                .Select(path => Path.GetFileName(path));
+            if (reload)
+                _EnumerateSaveFileNamesCache = null;
+
+            if (_EnumerateSaveFileNamesCache == null)
+            {
+                _EnumerateSaveFileNamesCache = EnumerateSaveFilePaths(reload)
+                    .Select(path => Path.GetFileName(path));
+            }
+
+            return _EnumerateSaveFileNamesCache;
         }
 
         /// <summary>
@@ -528,7 +549,7 @@ namespace RichPackage.SaveSystem
         public void DeleteFile()
         {
             if (SaveFileCount == 0 && ScanForSaveFiles().Count == 0) // double-check
-                throw new InvalidOperationException("Cannot delete save file because there are none.");
+                throw new InvalidOperationException("Cannot delete save file because there is none.");
             DeleteFile(SaveFileNameWithExtension);
         }
 
@@ -568,7 +589,7 @@ namespace RichPackage.SaveSystem
 #if UNITY_EDITOR
             if (Application.isEditor)
             {
-                int fileCount = EnumerateSaveFilePaths().Count();
+                int fileCount = EnumerateSaveFilePaths(reload: true).Count();
 
                 if (fileCount == 0)
                 {
@@ -586,7 +607,7 @@ namespace RichPackage.SaveSystem
             }
 #endif
             int count = 0;
-            foreach (string file in EnumerateSaveFilePaths())
+            foreach (string file in EnumerateSaveFilePaths(reload: true))
             {
                 File.Delete(file);
                 count++;
