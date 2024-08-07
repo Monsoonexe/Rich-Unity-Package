@@ -1,39 +1,51 @@
-/* Dependencies should not access these until OnLateLevelLoadedSignal.
- * 
- */ 
-
 using UnityEngine;
 
 namespace RichPackage.SaveSystem
 {
-    public abstract class ASaveableScriptableObject<TMemento> : RichScriptableObject, ISaveable
+    public abstract class ASaveableScriptableObject<TMemento> : ASaveableScriptableObject, ISaveable
         where TMemento : class, new()
     {
         [SerializeField]
-        protected UniqueID id;
-
-        [SerializeField]
-        protected TMemento memento = new TMemento();
+        private TMemento memento = new TMemento();
 
         public virtual TMemento Value { get => memento; set => memento = value; }
 
-        public UniqueID SaveID => id;
-
-        public void DeleteState(ISaveStore saveFile) => saveFile.Delete(id);
-
-        public void LoadState(ISaveStore saveFile)
+        public override void LoadState(ISaveStore saveFile)
         {
-            if (saveFile.KeyExists(id))
+            if (saveFile.KeyExists(SaveID))
             {
-                saveFile.LoadInto(id, memento);
+                saveFile.LoadInto(SaveID, memento);
             }
         }
 
-        public void SaveState(ISaveStore saveFile)
+        public override void SaveState(ISaveStore saveFile)
         {
-            saveFile.Save(id, memento);
+            saveFile.Save(SaveID, memento);
         }
 
         public static implicit operator TMemento(ASaveableScriptableObject<TMemento> a) => a.Value;
+    }
+
+    public abstract class ASaveableScriptableObject : RichScriptableObject, ISaveable
+    {
+        [SerializeField]
+        private UniqueID id;
+
+        public UniqueID SaveID { get => id; protected set => id = value; }
+
+        public void DeleteState(ISaveStore saveFile) => saveFile.Delete(id);
+
+        public virtual void LoadState(ISaveStore saveFile)
+        {
+            if (saveFile.KeyExists(SaveID))
+            {
+                saveFile.LoadInto(SaveID, this);
+            }
+        }
+
+        public virtual void SaveState(ISaveStore saveFile)
+        {
+            saveFile.Save(SaveID, this);
+        }
     }
 }

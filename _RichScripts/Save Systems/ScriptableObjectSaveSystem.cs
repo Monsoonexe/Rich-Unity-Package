@@ -11,8 +11,7 @@ namespace RichPackage.SaveSystem
 	/// <seealso cref="SaveSystem"/>
 	public class ScriptableObjectSaveSystem : RichMonoBehaviour
 	{
-		[SerializeField]
-		private List<BaseVariable> savedVariables;
+		public List<BaseVariable> savedVariables;
 
 		protected override void Reset()
 		{
