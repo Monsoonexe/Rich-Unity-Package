@@ -72,7 +72,10 @@ namespace RichPackage.SaveSystem
         private readonly List<string> saveFileNames = new List<string>();
 
         [Title("Settings")]
+        [Tooltip("If set, will log more verbosely.")]
         public bool debug = false;
+
+        [Tooltip("If set, will automatically save the cached save game data to disk OnApplicationQuit. Otherwise, you must save to disk yourself when appropriate.")]
         public bool syncOnQuit = true;
         public EStartBehaviour startBehaviour = EStartBehaviour.LoadGameOnStart;
 
@@ -333,7 +336,7 @@ namespace RichPackage.SaveSystem
             saveFileNames.AddRange(EnumerateSaveFileNames());
 
             if (debug)
-                Debug.Log($"Found {saveFileNames.Count} save files.", this);
+                DebugLogType($"Found {saveFileNames.Count} save files.");
 
             return saveFileNames;
         }
@@ -409,7 +412,7 @@ namespace RichPackage.SaveSystem
             saveFile = CreateSaveFileObject(nextFilePath, sync: true);
 
             if (debug)
-                Debug.Log($"Loaded '{SaveFileNameWithExtension}'.", this);
+                DebugLogType($"Loaded '{SaveFileNameWithExtension}'.");
         }
 
         /// <summary>
@@ -461,7 +464,7 @@ namespace RichPackage.SaveSystem
             file.Sync(); // writes to disk
 
             if (debug)
-                Debug.Log($"Created '{fileName}'.", this);
+                DebugLogType($"Created '{fileName}'.");
 
             // sanity check
             Assert.AreEqual(file.GetKeys().Length, 1, "Expected the save file to be empty.");
@@ -476,7 +479,7 @@ namespace RichPackage.SaveSystem
             SaveFile.Sync();
 
             if (debug)
-                Debug.Log($"Saved '{SaveFileName}'.", this);
+                DebugLogType($"Saved '{SaveFileName}'.");
         }
         
         [Button("Save to Disk"), EnableIf(nameof(IsFileLoaded))]
@@ -515,7 +518,7 @@ namespace RichPackage.SaveSystem
             SaveFile.Sync(GetSettings(newFileName));
 
             if (debug)
-                Debug.Log($"Saved '{newFileName}'.", this);
+                DebugLogType($"Saved '{newFileName}'.");
         }
 
         /// <summary>
@@ -556,7 +559,7 @@ namespace RichPackage.SaveSystem
             saveFileNames.Remove(fileName); // preserve the order
 
             if (debug)
-                Debug.Log($"Deleted '{fileName}'.", this);
+                DebugLogType($"Deleted '{fileName}'.");
         }
 
         [Button]
@@ -569,7 +572,7 @@ namespace RichPackage.SaveSystem
 
                 if (fileCount == 0)
                 {
-                    Debug.Log($"No files with the extension '{SaveFileExtension}' exist at '{SaveFileDirectory}'.", this);
+                    DebugLogType($"No files with the extension '{SaveFileExtension}' exist at '{SaveFileDirectory}'.");
                     return;
                 }
 
@@ -593,7 +596,7 @@ namespace RichPackage.SaveSystem
             saveFile = null;
 
             if (debug)
-                Debug.Log($"Deleted {count} save files.", this);
+                DebugLogType($"Deleted {count} save files.");
         }
 
         #endregion File Management
@@ -612,7 +615,7 @@ namespace RichPackage.SaveSystem
             IsLoadingGameState = false;
 
             if (debug)
-                Debug.Log($"Loaded game state from: '{SaveFileNameWithExtension}'.", this);
+                DebugLogType($"Loaded game state from: '{SaveFileNameWithExtension}'.");
         }
 
         /// <summary>
@@ -634,7 +637,7 @@ namespace RichPackage.SaveSystem
                 SaveToFile();
 
             if (debug)
-                Debug.Log($"Saved game state to: {SaveFileName}.", this);
+                DebugLogType($"Saved game state to: {SaveFileName}.");
         }
 
         #endregion Game State
