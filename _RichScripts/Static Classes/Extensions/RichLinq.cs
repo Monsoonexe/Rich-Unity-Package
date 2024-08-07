@@ -8,12 +8,6 @@ namespace System.Linq
 {
     public static class RichLinq
     {
-        public static void ForEach<T>(this IEnumerable<T> src, Action<T> action)
-        {
-            foreach (T item in src)
-                action(item);
-        }
-
         public static List<T> Sorted<T>(this IEnumerable<T> src, Comparison<T> comparison)
         {
             return Sorted(src, new List<T>(), comparison);
