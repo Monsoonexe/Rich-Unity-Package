@@ -55,7 +55,7 @@ namespace RichPackage.InputSystem
         {
             if (stash.Count == 0)
             {
-                Debug.LogError($"[{nameof(GameplayInput)}] Can't pop input context because the stack is empty.", this);
+                Debug.LogWarning($"[{nameof(GameplayInput)}] Can't pop input context because the stack is empty.", this);
                 return new NullInputContext(); // blocks all input
             }
 
