@@ -256,6 +256,27 @@ namespace UnityEngine
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalEulerX(this Transform t, float x)
+        {
+            t.localEulerAngles = t.localEulerAngles.WithX(x);
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalEulerY(this Transform t, float y)
+        {
+            t.localEulerAngles = t.localEulerAngles.WithY(y);
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalEulerZ(this Transform t, float z)
+        {
+            t.localEulerAngles = t.localEulerAngles.WithZ(z);
+            return t;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetRotation(this Transform t, Quaternion rotation)
         {
             t.rotation = rotation;
