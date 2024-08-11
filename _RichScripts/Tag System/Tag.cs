@@ -10,12 +10,7 @@ namespace RichPackage.TagSystem
         /// <summary>
         /// Empty array of tags. None.
         /// </summary>
-        public static readonly Tag[] None = new Tag[0];
-
-        /// <summary>
-        /// Does the <see cref="Property"/> contain a value?
-        /// </summary>
-        public bool HasProperty => !string.IsNullOrEmpty(Property);
+        public static Tag[] None => Array.Empty<Tag>();
 
         /// <summary>
         /// The property name, such as "Clothing".
@@ -28,6 +23,11 @@ namespace RichPackage.TagSystem
         /// </summary>
         [field: SerializeField, LabelText(nameof(Value))]
         public string Value { get; private set; }
+
+        /// <summary>
+        /// Does the <see cref="Property"/> contain a value?
+        /// </summary>
+        public bool HasProperty => !string.IsNullOrEmpty(Property);
 
         /// <summary>
         /// Does the <see cref="Value"/> contain a value?
@@ -53,7 +53,11 @@ namespace RichPackage.TagSystem
             => MatchProperty(other.Property) && MatchValue(other.Value);
 
         public override string ToString()
-            => $"{{'{Property}':'{Value}'}}";
+        {
+            return HasValue 
+                ? $"{{'{Property}':'{Value}'}}"
+                : Property;
+        }
 
         #region Querries
 
@@ -67,5 +71,8 @@ namespace RichPackage.TagSystem
             => MatchProperty(propertyQuery) && MatchValue(valueQuery);
 
         #endregion Querries
+
+        public static implicit operator string (Tag t) => t?.Property ?? string.Empty;
+        public static implicit operator Tag(string s) => new Tag(s ?? string.Empty);
     }
 }
