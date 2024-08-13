@@ -98,6 +98,7 @@ namespace RichPackage
 
         protected override void Awake()
         {
+            _isQuitting = false;
             base.Awake();
             if (!Singleton.TakeOrDestroyGameObject(
                 this, ref instance, dontDestroyOnLoad: true))
@@ -112,10 +113,6 @@ namespace RichPackage
 
         private void OnApplicationQuit()
         {
-            // check if was called through this api
-            if (IsQuitting)
-                return;
-
             // we were called by some other means, like exiting playmode in the editor
             OnApplicationQuitInternal();
         }
@@ -171,7 +168,7 @@ namespace RichPackage
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
-            Application.Quit();
+            Application.Quit(exitCode);
         }
 
         private static void OnApplicationQuitInternal()
