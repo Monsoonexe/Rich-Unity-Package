@@ -20,6 +20,7 @@ using System.Linq;
 using UnityEngine.Assertions;
 using RichPackage.YieldInstructions;
 using System.Collections;
+using QFSW.QC;
 
 namespace RichPackage.SaveSystem
 {
@@ -640,6 +641,15 @@ namespace RichPackage.SaveSystem
         }
 
         /// <summary>
+        /// Load the world from save data stored in <paramref name="fileName"/>.
+        /// </summary>
+        public void LoadGame(string fileName)
+        {
+            LoadFile(fileName);
+            LoadGame();
+        }
+
+        /// <summary>
         /// Save the world.
         /// </summary>
         [Button("Save the World"), DisableInEditorMode] // [EnableIf(nameof(IsFileLoaded))] // enables in editor mode :/
@@ -810,6 +820,31 @@ namespace RichPackage.SaveSystem
             /// Clear save state on start.
             /// </summary>
             ClearFileOnAwake = 3,
+        }
+
+        [CommandPrefix("SaveLoad.")]
+        public static class ConsoleCommands
+        {
+            [Command]
+            public static bool SyncFileOnQuit { get => Instance.syncOnQuit; set => Instance.syncOnQuit = value; }
+
+            [Command]
+            public static void OpenFile() => Instance.OpenSaveFile();
+
+            [Command]
+            public static void SyncFile() => Instance.SaveToFile();
+
+            [Command]
+            public static void DeleteAllFiles() => Instance.DeleteAll();
+
+            [Command]
+            public static void SaveTo(string fileName) => Instance.SaveToFile(fileName);
+
+            [Command]
+            public static void LoadGame() => Instance.LoadGame();
+
+            [Command]
+            public static void LoadGame(string fileName) => Instance.LoadGame(fileName);
         }
     }
 }
