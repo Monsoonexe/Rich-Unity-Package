@@ -22,6 +22,8 @@ namespace RichPackage.InputSystem
         [ShowInInspector]
         public string CurrentContextName => Context?.Name ?? "none";
 
+        public IInputContext Previous => stash.Count == 0 ? null : stash.Peek();
+
         #region Unity Messages
 
         protected virtual void Start()
