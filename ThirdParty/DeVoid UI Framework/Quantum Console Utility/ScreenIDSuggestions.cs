@@ -5,6 +5,7 @@
 using QFSW.QC;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// Tag. Not sure why this is needed.
@@ -42,7 +43,9 @@ public class ScreenIDSuggestor : BasicCachedQcSuggestor<string>
 
     protected override IEnumerable<string> GetItems(SuggestionContext context, SuggestorOptions options)
     {
-        UIFrame frame = QuantumRegistry.GetRegisteredObject<UIFrame>();//I wrote this
-        return frame?.GetRegisteredScreenIDs() ?? Array.Empty<string>();
+        return QuantumRegistry.GetRegistryContents<UIFrame>()
+            .FirstOrDefault()
+            ?.GetRegisteredScreenIDs()
+            ?? Array.Empty<string>();
     }
 }
