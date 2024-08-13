@@ -174,7 +174,7 @@ namespace RichPackage
         private static void OnApplicationQuitInternal()
         {
             IsQuitting = true;
-            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch();
+            GlobalSignals.Get<GameIsQuittingSignal>().Dispatch(); // should be a fire-once event
         }
 
         #region Static Interface
@@ -200,6 +200,17 @@ namespace RichPackage
     /// <summary>
     /// Dispatched when the Player has requested to close the app.
     /// </summary>
-    public class GameIsQuittingSignal : ASignal { }
+    /// <remarks>Listeners are removed after this event is dispatched (a game only quits once).</remarks>
+    public class GameIsQuittingSignal : ABaseSignal
+    {
+        private System.Action callback;
 
+        public void AddListener(System.Action handler) => callback += handler;
+        public void RemoveListener(System.Action handler) => callback -= handler;
+        public void Dispatch()
+        {
+            callback?.Invoke();
+            callback = null; // should only ever be called once -- supports lambdas
+        }
+    }
 }
