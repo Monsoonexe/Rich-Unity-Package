@@ -3,7 +3,7 @@
 namespace System.Collections.Generic
 {
     /// <seealso cref="QueueExtensions"/>
-    internal static class StackExtensions
+    public static class StackExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void PushRange<T>(this Stack<T> s, IEnumerable<T> e)
@@ -23,5 +23,15 @@ namespace System.Collections.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T PopOrDefault<T>(this Stack<T> s, T defaultValue = default)
             => s.IsEmpty() ? defaultValue : s.Pop();
+
+        /// <summary>
+        /// Tries to pop an item from the stack.
+        /// </summary>
+        /// <returns>True if an item was popped.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Drop<T>(this Stack<T> s)
+        {
+            return s.TryPop(out _);
+        }
     }
 }

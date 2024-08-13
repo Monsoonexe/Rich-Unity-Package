@@ -3,7 +3,7 @@
 namespace System.Collections.Generic
 {
     /// <seealso cref="StackExtensions"/>
-    internal static class QueueExtensions
+    public static class QueueExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void EnqueueRange<T>(this Queue<T> q, IEnumerable<T> e)
@@ -23,5 +23,15 @@ namespace System.Collections.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T DequeueOrDefault<T>(this Queue<T> q, T defaultValue = default)
             => q.IsEmpty() ? defaultValue : q.Dequeue();
+
+        /// <summary>
+        /// If possible, dequeues an item.
+        /// </summary>
+        /// <returns>True if an item was dequeued.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Drop<T>(this Queue<T> q)
+        {
+            return q.TryDequeue(out _);
+        }
     }
 }
