@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using QFSW.QC;
 using System.Collections.Generic;
-using QFSW.QC.Suggestors;
-using QFSW.QC.Suggestors.Tags;
 using static RichPackage.FunctionalProgramming.ConditionalFunctions;
 
 namespace RichPackage.ConsoleCommands
