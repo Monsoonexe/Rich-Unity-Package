@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using RichPackage.Events.Signals;
-using RichPackage.Audio;
 using Sirenix.OdinInspector;
 
 namespace RichPackage
@@ -107,7 +106,6 @@ namespace RichPackage
             }
 
             MainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-            GlobalSignals.Get<RequestQuitGameSignal>().AddListener(QuitApplication);
             ApplyAppSettings();
             DG.Tweening.DOTween.Init();
         }
@@ -126,7 +124,7 @@ namespace RichPackage
         {
             if (Singleton.Release(this, ref instance))
             {
-                GlobalSignals.Get<RequestQuitGameSignal>().RemoveListener(QuitApplication);
+                // 
             }
         }
 
