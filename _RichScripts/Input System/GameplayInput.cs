@@ -12,7 +12,7 @@ namespace RichPackage.InputSystem
     public class GameplayInput : RichMonoBehaviour
     {
         protected readonly Stack<IInputContext> stash = new Stack<IInputContext>();
-        protected IInputContext context;
+        private IInputContext context;
 
         public IInputContext Context { get => context; set => Set(value); }
 
@@ -28,9 +28,7 @@ namespace RichPackage.InputSystem
 
         protected virtual void Start()
         {
-            if (context == null && !TryGetComponent(out context))
-                context = new NullInputContext();
-            context.OnEnter();
+            StartFirstContext(null);
         }
 
         protected virtual void OnDestroy()
@@ -47,6 +45,14 @@ namespace RichPackage.InputSystem
         #endregion Unity Messages
 
         #region Context Management
+
+        protected void StartFirstContext(IInputContext context)
+        {
+            if (context == null && !TryGetComponent(out context))
+                context = new NullInputContext();
+            context.OnEnter();
+            this.context = context;
+        }
 
         public void ClearHistory()
         {
