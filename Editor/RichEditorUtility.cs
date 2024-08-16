@@ -73,7 +73,7 @@ namespace RichPackage.Editor
         /// <param name="target">The collection to modify and operate on.</param>
         /// <param name="assetFolder">Folder with root '/Assets' holding possible assets to assign to <paramref name="target"/>'s fields.</param>
         /// <returns>The count of items assigned.</returns>
-        public static int AssingMissingAssetFields<T>(UnityEngine.Object target, string assetFolder)
+        public static int AssingMissingAssetFieldsFromFolder<T>(UnityEngine.Object target, string assetFolder)
             where T : UnityEngine.Object
         {
             GuardAgainst.ArgumentIsNull(target, nameof(target));
