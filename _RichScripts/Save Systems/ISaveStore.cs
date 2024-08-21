@@ -1,5 +1,8 @@
 namespace RichPackage.SaveSystem
 {
+    /// <summary>
+    /// Stores save data.
+    /// </summary>
     public interface ISaveStore
     {
         /// <summary>
@@ -15,7 +18,7 @@ namespace RichPackage.SaveSystem
         /// <summary>
         /// Load memento with <paramref name="key"/>.
         /// </summary>
-        /// <param name="default">A default value in case <paramref name="key"/> isn't a key.</param>
+        /// <param name="default">A default value to be used when <paramref name="key"/> key doesn't exist.</param>
         T Load<T>(string key, T @default);
 
         /// <summary>
@@ -23,9 +26,6 @@ namespace RichPackage.SaveSystem
         /// </summary>
         void LoadInto<T>(string key, T memento) where T : class;
 
-        /// <summary>
-        /// Returns tr
-        /// </summary>
         /// <param name="key"></param>
         /// <returns><see langword="true"/> if there is data saved in <paramref name="key"/>.</returns>
         bool KeyExists(string key);
@@ -36,7 +36,7 @@ namespace RichPackage.SaveSystem
         void Delete(string key);
 
         /// <summary>
-        /// Reset the entire contents of the save file.
+        /// Removes all save data.
         /// </summary>
         void Clear();
     }
