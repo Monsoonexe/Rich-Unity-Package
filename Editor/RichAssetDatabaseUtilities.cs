@@ -42,7 +42,7 @@ namespace RichPackage.Editor
         [MenuItem("Assets/Copy Guid")]
         private static void CopyGuidToClipboard(MenuCommand menuCommand)
         {
-            Object obj = menuCommand.context;
+            Object obj = Selection.activeObject;
             if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long _))
             {
                 Debug.LogError("I just can't do it!");
