@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace RichPackage
 {
@@ -37,5 +38,15 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SetActive(this Component a, bool active) 
             => a.gameObject.SetActive(active);
+
+        public static void SetAllEnabled<TBehaviour>(this IList<TBehaviour> behaviours, bool enabled)
+            where TBehaviour : Behaviour
+        {
+            int length = behaviours.Count;
+            for (int i = 0; i < length; i++)
+            {
+                behaviours[i].enabled = enabled;
+            }
+        }
     }
 }
