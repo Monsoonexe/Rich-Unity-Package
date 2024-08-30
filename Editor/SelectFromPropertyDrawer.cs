@@ -18,7 +18,7 @@ namespace RichPackage.Editor
             if (property.propertyType == SerializedPropertyType.String)
             {
                 // generate the taglist + custom tags
-                List<string> tagList = new List<string>(GetOptions(property, (SelectFromAttribute)attribute));
+                var tagList = new List<string>(GetOptions(property, (SelectFromAttribute)attribute));
                 string propertyString = property.stringValue;
                 int index = 0;
                 // check if there is an entry that matches the entry and get the index
