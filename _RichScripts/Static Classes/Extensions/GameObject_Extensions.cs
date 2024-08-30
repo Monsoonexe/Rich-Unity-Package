@@ -283,6 +283,16 @@ namespace RichPackage
                 }
             }
         }
+
+        public static void HookOnDestroy(this GameObject obj, UnityEngine.Events.UnityAction action)
+        {
+            GuardAgainst.ArgumentIsNull(obj, nameof(obj));
+            if (obj == null)
+                throw new ArgumentException(nameof(obj) + " is already destroyed!");
+
+            obj.GetOrAddComponent<UnityMessages.OnDestroyUnityMessage>()
+                .LifetimeEvent.AddListener(action);
+        }
     }
 
     /// <summary>

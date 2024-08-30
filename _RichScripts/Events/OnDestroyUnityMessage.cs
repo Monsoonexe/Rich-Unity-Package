@@ -15,6 +15,7 @@ namespace RichPackage.UnityMessages
         private void OnDestroy()
         {
             lifetimeEvent.Invoke();
+            lifetimeEvent.RemoveAllListeners();
         }
     }
 }
