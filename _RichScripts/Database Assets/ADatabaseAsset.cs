@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,7 +81,7 @@ namespace RichPackage.Databases
         [Button]
         public TData Get(int key)
         {
-            if (lookupTable.TryGetValue(key, out TData value))
+            if (TryGet(key, out TData value))
                 return value;
 
             throw new KeyNotFoundException($"Key {key} not found in {this}.");
@@ -99,12 +100,21 @@ namespace RichPackage.Databases
 
         public TData GetOrDefault(int key, TData @default = default)
         {
-            return lookupTable.TryGetValue(key, out TData value) ? value : @default;
+            return TryGet(key, out TData value) ? value : @default;
         }
 
         public bool TryGet(int key, out TData value)
         {
-            return lookupTable.TryGetValue(key, out value);
+            bool found = lookupTable.TryGetValue(key, out value);
+
+            // FIXME: make this more elegant
+            // devs might change the lookup at any time! if that's the case, rebuild the database
+#if UNITY_EDITOR
+            BuildTable();
+            found = lookupTable.TryGetValue(key, out value);
+#endif
+
+            return found;
         }
 
         /// <summary>
@@ -112,9 +122,9 @@ namespace RichPackage.Databases
         /// </summary>
         public TData GetRandom() => items.GetRandomElement();
 
-        public bool Contains(TData data) => lookupTable.ContainsValue(data);
+        private bool Contains(TData data) => lookupTable.ContainsValue(data);
 
-        public bool Contains(int key) => lookupTable.ContainsKey(key);
+        private bool Contains(int key) => lookupTable.ContainsKey(key);
 
         protected virtual int GenerateNewKey() => UnityEngine.Random.Range(int.MinValue + 1, int.MaxValue);
 
