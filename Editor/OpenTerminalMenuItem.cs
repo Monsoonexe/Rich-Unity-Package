@@ -13,25 +13,25 @@ namespace RichPackage.Editor
 		[MenuItem(TerminalMenu + "/Powershell %`")] //%` means you can press ctrl+` to call this function
 		public static void OpenPowershell()
 		{
-			var process = Process.Start("powershell");
-			process.EnableRaisingEvents = true;
-			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
+            // b.c. in Lost In Space, CTRL+` opens the console
+            if (UnityEngine.Application.isPlaying)
+            {
+                return;
+            }
+
+			Process.Start("powershell");
 		}
 
 		[MenuItem(TerminalMenu + "/Command Prompt")]
 		public static void OpenCommandPrompt()
 		{
-			var process = Process.Start("cmd");
-			process.EnableRaisingEvents = true;
-			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
+			Process.Start("cmd");
 		}
 
 		[MenuItem(TerminalMenu + "/Bash")]
 		public static void OpenBash()
 		{
-			var process = Process.Start(@"D:\3rdPartyUtility\Git\git-bash.exe");//, "--cd-to-home");
-			process.EnableRaisingEvents = true;
-			process.Exited += (obj, ctx) => ((Process)obj).Dispose();
+			Process.Start(@"D:\3rdPartyUtility\Git\git-bash.exe");//, "--cd-to-home");
 		}
 	}
 }
