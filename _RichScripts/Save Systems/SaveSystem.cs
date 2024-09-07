@@ -632,12 +632,30 @@ namespace RichPackage.SaveSystem
         public void LoadGame()
         {
             IsLoadingGameState = true;
-            // broadcast load command
-            GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
-            IsLoadingGameState = false;
 
             if (debug)
-                DebugLogType($"Loaded game state from: '{SaveFileNameWithExtension}'.");
+                DebugLogType($"Loading game state from: '{SaveFileNameWithExtension}'.");
+
+            try
+            {
+                // broadcast load command
+                GlobalSignals.Get<LoadStateFromFileSignal>().Dispatch(this);
+            }
+            // probably dev's recent changes can't read old save file
+            catch (FormatException ex)
+            {
+                Debug.LogError("[SaveSystem] Save data error while loading game: Loading code can't correctly read data in save file.", this);
+                Debug.LogException(ex, this);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[SaveSystem] Encountered: {ex.GetType().Name} while loading game:", this);
+                Debug.LogException(ex, this);
+            }
+            finally
+            {
+                IsLoadingGameState = false;
+            }
         }
 
         /// <summary>
