@@ -431,6 +431,7 @@ namespace RichPackage.SaveSystem
         {
             if (saveFile != null)
                 SaveToFile();
+
             saveFile = CreateSaveFileObject(nextFilePath, sync: true);
 
             if (debug)
