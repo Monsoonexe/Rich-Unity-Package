@@ -54,7 +54,7 @@ namespace RichPackage.Databases
 
         #endregion Unity Messages
 
-        protected void BuildTable()
+        public void BuildTable()
         {
             lookupTable.Clear();
             foreach (TData item in items)

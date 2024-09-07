@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using RichPackage.Comparers;
-
+using RichPackage.GuardClauses;
 using Object = UnityEngine.Object;
 
 namespace RichPackage.Assertions
@@ -15,13 +15,13 @@ namespace RichPackage.Assertions
 	[DebuggerStepThrough]
 	public static class Assert
 	{
-		internal const string UNITY_ASSERTIONS = "UNITY_ASSERTIONS";
+        internal const string UNITY_ASSERTIONS = ScriptingSymbols.UnityAssertions;
 
         /// <summary>
         /// Method that should be used for logging to a console. <br/>
         /// By default it is set to <see cref="UnityEngine.Debug.LogAssertion"/>.
         /// </summary>
-        public static Action<string> Logger = (str) => UnityEngine.Debug.LogAssertion(str); //lamba because LogAssertion is [Conditional]
+        public static Action<string> Logger = (str) => UnityEngine.Debug.LogAssertion(str); // lamba because LogAssertion is [Conditional]
 
 		/// <summary>
 		/// Method that should be used for logging to a console. <br/>
@@ -29,13 +29,25 @@ namespace RichPackage.Assertions
 		/// </summary>
 		public static Action<string, Object> LoggerWithContext = (str, context) => UnityEngine.Debug.LogAssertion(str, context);
 
+        [Conditional(UNITY_ASSERTIONS)]
+        public static void IsValidIndex(int index, System.Collections.IList list)
+        {
+            GuardAgainst.ArgumentIsNull(list, nameof(list));
+
+            if (!index.IsWithin(0, list.Count))
+            {
+                Fail($"('{index}') is not a valid index [0, {list.Count}).", null);
+            }
+        }
+
 		//
 		// Summary:
 		//     Set to true to throw a <see cref="AssertionException"/> when assertion methods fail and false if otherwise.
 		//     This value defaults to false.
 		public static bool raiseExceptions = false;
 
-		private static void Fail(string message, string userMessage)
+        [Conditional(UNITY_ASSERTIONS)]
+        private static void Fail(string message, string userMessage)
 		{
 			if (!raiseExceptions)
 			{
@@ -53,7 +65,8 @@ namespace RichPackage.Assertions
 			}
 		}
 
-		private static void Fail(string message, string userMessage, Object context)
+        [Conditional(UNITY_ASSERTIONS)]
+        private static void Fail(string message, string userMessage, Object context)
 		{
 			if (!raiseExceptions)
 			{

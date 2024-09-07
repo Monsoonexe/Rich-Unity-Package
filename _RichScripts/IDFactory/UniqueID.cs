@@ -30,7 +30,14 @@ namespace RichPackage
         public string ID { get; private set; } // I wish I could make this null-safe. if only it were backed by a SerializeField :/
 
         private int? cachedHash;
-        public int Hash { get => cachedHash ?? RecalculateHash(); }
+        public int Hash
+        {
+            // RSO: caching leads to weird editor behavior if you change the value and don't reload the domain.
+            // until you make it more reliable, just regenerate it each time. ez.
+            // get => cachedHash ?? RecalculateHash();
+            get => RecalculateHash();
+        }
+
         public bool IsValid => !ID.IsNullOrEmpty();
 
         #region Constructors
@@ -67,7 +74,7 @@ namespace RichPackage
 
         #region IEquatable
 
-        public bool Equals(UniqueID other) => this.Hash == other.Hash;
+        public bool Equals(UniqueID other) => ID.QuickEquals(other.ID);
         public bool Equals(string other) => ID.QuickEquals(other);
         public bool Equals(int other) => Hash == other;
 
