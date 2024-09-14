@@ -168,6 +168,7 @@ namespace RichPackage
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
+            Debug.Log("[App] Exiting with exit code " + exitCode);
             Application.Quit(exitCode);
         }
 
