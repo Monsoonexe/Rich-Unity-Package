@@ -140,6 +140,11 @@ namespace ScriptableObjectArchitecture
             return value;
         }
 
+        public void SetValueNoNotify(T value)
+        {
+            _value = SetValue(value);
+        }
+
         protected virtual T ClampValue(T value) => value;
 
         public void Initialize()
