@@ -94,6 +94,8 @@ namespace RichPackage.InputSystem
         public void Set(IInputContext context)
         {
             // validate
+            UnityEngine.Assertions.Assert.IsNotNull(this, 
+                "Probably shouldn't change contexts with a dead component.");
             GuardAgainst.ArgumentIsNull(context, nameof(context));
 
             // log
