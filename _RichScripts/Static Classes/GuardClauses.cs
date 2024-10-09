@@ -9,6 +9,7 @@ namespace RichPackage.GuardClauses
     /// <summary>
     /// Throw exceptions if the guard condition is true.
     /// </summary>
+    [System.Diagnostics.DebuggerStepThrough]
     public static class GuardAgainst
     {
         // https://devblogs.microsoft.com/csharpfaq/what-is-the-difference-between-const-and-static-readonly/
