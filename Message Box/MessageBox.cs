@@ -131,8 +131,8 @@ namespace RichPackage.UI
 
 		#endregion Unity Messages
 
-		/// <param name="messageBoxText">Main text body paragraph prompting user.</param>
-		/// <param name="messageBoxTitle">Title of the window.</param>
+		/// <param name="text">Main text body paragraph prompting user.</param>
+		/// <param name="title">Title of the window.</param>
 		/// <param name="style">Sets how many buttons and their default values.</param>
 		/// <param name="resultCallback">Callback that will contain the choice determined by the User.</param>
 		/// <param name="button1Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
@@ -140,7 +140,7 @@ namespace RichPackage.UI
 		/// <param name="button3Text">Text on button. 'null' means use default value. 'Empty' means such.</param>
 		/// <param name="animate">Should the window animate opened and closed?</param>
 		[Button]
-		public void Show(string messageBoxText, string messageBoxTitle = ConstStrings.EMPTY,
+		public void Show(string text, string title = ConstStrings.EMPTY,
 			EMessageBoxButton style = EMessageBoxButton.OK,
 			bool animate = false,
 			MessageBoxResultCallback resultCallback = null,
@@ -150,8 +150,8 @@ namespace RichPackage.UI
 		{
 			this.animate = animate;
 			this.Style = style;
-			promptText.text = messageBoxText;
-			titleText.text = messageBoxTitle;
+			promptText.text = text;
+			titleText.text = title;
 
 			OnResult = resultCallback;
 
@@ -411,17 +411,17 @@ namespace RichPackage.UI
 	public enum EMessageBoxButton
 	{
 		/// <summary>
-		/// MessageBoxButton.
+		/// Single button to ask the User to acknowledge something.
 		/// </summary>
 		OK = 0,
 
 		/// <summary>
-		/// MessageBoxButton.
+		/// 2 buttons to ask the User to accept or reject an operation.
 		/// </summary>
 		OKCancel = 1,
 
 		/// <summary>
-		/// MessageBoxButton.
+		/// 2 buttons. Virtually identical to OK/Cancel.
 		/// </summary>
 		YesNo = 2,
 
