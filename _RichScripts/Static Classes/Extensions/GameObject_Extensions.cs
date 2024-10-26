@@ -130,6 +130,13 @@ namespace RichPackage
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryGetComponentInChildren<T>(this GameObject gameObject, out T comp)
+        {
+            comp = gameObject.GetComponentInChildren<T>();
+            return comp != null;
+        }
+
         /// <summary>
         /// Get name of the <see cref="GameObject"/> prefixed 
         /// with the current <see cref="UnityEngine.SceneManagement.Scene"/> name.<br/>
