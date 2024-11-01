@@ -19,7 +19,7 @@ namespace RichPackage.SaveSystem
         /// Load memento with <paramref name="key"/>.
         /// </summary>
         /// <param name="default">A default value to be used when <paramref name="key"/> key doesn't exist.</param>
-        T Load<T>(string key, T @default);
+        T Load<T>(string key, T @default) => KeyExists(key) ? Load<T>(key) : @default;
 
         /// <summary>
         /// Load memento with <paramref name="key"/>.
