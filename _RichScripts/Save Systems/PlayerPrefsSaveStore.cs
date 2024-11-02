@@ -1,10 +1,15 @@
 // TODO - obfuscate
+// TODO - abstract the serializatation backend
 
 using System;
 using UnityEngine;
 
 namespace RichPackage.SaveSystem
 {
+    /// <summary>
+    /// A save store for UnityEngine.PlayerPrefs.
+    /// </summary>
+    /// <remarks>Currently only uses EasySave's serializer.</remarks>
     public class PlayerPrefsSaveStore : ISaveStore
     {
         public void Clear() => throw new NotImplementedException("How to do this? should we track ALL of our keys? Or really delete the entire PlayerPrefs??");
