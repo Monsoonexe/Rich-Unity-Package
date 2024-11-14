@@ -4,7 +4,6 @@ using UnityEngine;
 using RichPackage.YieldInstructions;
 using RichPackage.Coroutines;
 using System.Runtime.CompilerServices;
-using MalbersAnimations;
 
 namespace RichPackage
 {
@@ -15,10 +14,34 @@ namespace RichPackage
     {
         private static CoroutineRunner _runner;
         
-        public static MonoBehaviour Runner
+        /// <summary>
+        /// Coroutine runner bound to the active scene.
+        /// </summary>
+        public static CoroutineRunner Runner
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => _runner ? _runner : (_runner = CoroutineRunner.CreateNew(false));
+            get
+            {
+                return _runner == null
+                    ? (_runner = CoroutineRunner.CreateNew(scenePersistent: false))
+                    : _runner;
+            }
+        }
+
+        private static CoroutineRunner _globalRunner;
+
+        /// <summary>
+        /// Coroutine runner bound to the the "Don't destroy on load" scene.
+        /// </summary>
+        public static CoroutineRunner GlobalRunner
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return _globalRunner == null
+                    ? (_globalRunner = CoroutineRunner.CreateNew(scenePersistent: true))
+                    : _globalRunner;
+            }
         }
 
         public static Coroutine RunNextFrame(Action action)
@@ -55,8 +78,7 @@ namespace RichPackage
 
         public static IEnumerator InvokeAtEndOfFrame(Action action)
         {
-            yield return CommonYieldInstructions.WaitForEndOfFrame;
-            action();
+            return InvokeAfter(action, CommonYieldInstructions.WaitForEndOfFrame);
         }
 
         public static IEnumerator InvokeNextFrame(Action action)
@@ -71,8 +93,7 @@ namespace RichPackage
         public static IEnumerator InvokeAfter(
             Action action, float delay)
         {
-            yield return new WaitForSeconds(delay);
-            action();
+            return InvokeAfter(action, new WaitForSeconds(delay));
         }
 
         public static IEnumerator InvokeAfter(Action action,

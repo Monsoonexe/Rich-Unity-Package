@@ -36,4 +36,14 @@ namespace RichPackage.Coroutines
             return instance;
         }
     }
+
+    public static class GameObjectExtensions
+    {
+        public static Coroutine StartCoroutine(this GameObject self,
+            System.Collections.IEnumerator routine)
+        {
+            return self.GetOrAddComponent<CoroutineRunner>()
+                .StartCoroutine(routine);
+        }
+    }
 }
