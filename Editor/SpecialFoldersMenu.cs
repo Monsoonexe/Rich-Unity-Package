@@ -12,43 +12,59 @@ using UnityEngine;
 namespace RichPackage.Editor
 {
 	/// <summary>
-	/// 
+	/// Contains paths and MenuItems for common file paths in unity.
 	/// </summary>
 	public static class SpecialFoldersMenu
 	{
 		private const string MenuPath = RichEditorUtility.MenuName + "Special Folders/";
+        private const string MenuPath_Library = MenuPath + "Library/";
 
-		[MenuItem(MenuPath + nameof(OpenDataPath) + " (Assets)")]
+        private static string LibraryFolder => Application.dataPath + "/../Library";
+        private static string ScriptAssembliesFolder => LibraryFolder + "/ScriptAssemblies";
+
+        [MenuItem(MenuPath + "'dataPath' (Assets)", priority = 1)]
 		public static void OpenDataPath()
 		{
 			Process.Start(Application.dataPath);
 		}
 
-		[MenuItem(MenuPath + nameof(OpenPersistentDataPath))]
+		[MenuItem(MenuPath + "'persistentDataPath' (AppData)", priority = 2)]
 		public static void OpenPersistentDataPath()
 		{
 			Process.Start(Application.persistentDataPath);
 		}
 
-		[MenuItem(MenuPath + nameof(OpenStreamingAssetsPath))]
+		[MenuItem(MenuPath + "'streamingAssetsPath' (Streaming Assets)", priority = 3)]
 		public static void OpenStreamingAssetsPath()
 		{
 			//ensure it exists if it hasn't been created yet.
 			if (!Directory.Exists(Application.streamingAssetsPath))
-				AssetDatabase.CreateFolder(Application.dataPath, "StreamingAssets"); //Unity's default location
+				AssetDatabase.CreateFolder(Application.dataPath, "StreamingAssets"); // Unity's default location
 			Process.Start(Application.streamingAssetsPath);
 		}
 
-		[MenuItem(MenuPath + nameof(OpenTemporaryCachePath))]
+		[MenuItem(MenuPath + "'temporaryCachePath' (Temp)", priority = 4)]
 		public static void OpenTemporaryCachePath()
 		{
 			Process.Start(Application.temporaryCachePath);
 		}
 
-        [MenuItem(MenuPath + nameof(OpenScriptAssembliesPath))]
+        [MenuItem(MenuPath + "'applicationContentsPath' (Installation)", priority = 5)]
+        public static void OpenApplicationContentsPath()
+        {
+            Process.Start(EditorApplication.applicationContentsPath);
+        }
+
+        [MenuItem(MenuPath_Library + "Library")]
+        public static void OpenLibraryFolder()
+        {
+            Process.Start(LibraryFolder);
+        }
+
+        [MenuItem(MenuPath_Library + "Script Assemblies")]
         public static void OpenScriptAssembliesPath()
         {
-            Process.Start(Application.dataPath + "/../Library/ScriptAssemblies");
+            Process.Start(ScriptAssembliesFolder);
         }
 	}
 }
