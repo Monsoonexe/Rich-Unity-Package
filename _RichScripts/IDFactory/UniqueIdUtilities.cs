@@ -7,6 +7,9 @@ namespace RichPackage
     /// </summary>
     public static class UniqueIdUtilities
     {
+        public static UniqueID CreateFullScopeIdFrom(MonoBehaviour mono, bool includeType = true)
+            => CreateIdFrom(mono, true, true, true, includeType);
+
         /// <param name="includeScene">If <see langword="true"/>, the id will include the name of the scene.</param>
         /// <param name="includePath">If <see langword="true"/>, the id will be formatted as a path, taking the other flags into account.</param>
         /// <param name="includeName">If <see langword="true"/>, the id will include <paramref name="mono"/>'s name.</param>
@@ -39,7 +42,10 @@ namespace RichPackage
             string name = string.Empty;
             if (includeName)
             {
-                name = mono.name;
+                string n = mono.name;
+                // prevent dupes
+                if (path != n)
+                    name = n;
             }
             else if (includePath)
             {
@@ -65,6 +71,7 @@ namespace RichPackage
                 }
             }
 
+            // FIXME: smarter separators
             string final = $"{scene}{path}{name}{type}";
 
             // TODO - assert path with no name or type
