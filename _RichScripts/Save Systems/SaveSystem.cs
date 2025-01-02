@@ -235,10 +235,11 @@ namespace RichPackage.SaveSystem
 
         private void OnDestroy()
         {
+            if (!Singleton.Release(this, ref s_instance))
+                return;
+
             if (syncOnQuit && App.IsQuitting && IsFileLoaded)
                 SaveToFile();
-
-            Singleton.Release(this, ref s_instance);
         }
 
         protected void OnEnable()
