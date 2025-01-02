@@ -100,19 +100,27 @@ namespace RichPackage.SaveSystem
 
         protected virtual void OnEnable()
         {
-            // subscribe to save events
-            GlobalSignals.Get<SaveStateToFileSignal>().AddListener(SaveState);
-            GlobalSignals.Get<LoadStateFromFileSignal>().AddListener(LoadState);
+            SubscribeToSaveEvents();
         }
 
         protected virtual void OnDisable()
         {
-            // unsubscribe from save events
-            GlobalSignals.Get<SaveStateToFileSignal>().RemoveListener(SaveState);
-            GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
+            UnsubscribeFromSaveEvents();
         }
 
         #endregion Unity Messages
+
+        protected void SubscribeToSaveEvents()
+        {
+            GlobalSignals.Get<SaveStateToFileSignal>().AddListener(SaveState);
+            GlobalSignals.Get<LoadStateFromFileSignal>().AddListener(LoadState);
+        }
+
+        protected void UnsubscribeFromSaveEvents()
+        {
+            GlobalSignals.Get<SaveStateToFileSignal>().RemoveListener(SaveState);
+            GlobalSignals.Get<LoadStateFromFileSignal>().RemoveListener(LoadState);
+        }
 
         #region ISaveable Implementation
 
