@@ -24,11 +24,7 @@ namespace RichPackage
             string scene = string.Empty;
             if (includeScene)
             {
-                scene = mono.gameObject.scene.name;
-
-                // add separator if doing a full path
-                if (includePath)
-                    scene += "/";
+                scene = mono.gameObject.scene.name + "/";
             }
 
             // handle path
