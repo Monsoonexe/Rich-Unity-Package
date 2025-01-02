@@ -46,6 +46,8 @@ namespace RichPackage.SaveSystem
             private set => s_instance = value;
         }
 
+        public static bool IsEnabled => s_instance != null && s_instance.isActiveAndEnabled;
+
         public static bool IsSavingGameState { get; private set; }
         public static bool IsLoadingGameState { get; private set; }
 
@@ -856,6 +858,9 @@ namespace RichPackage.SaveSystem
 
             [Command]
             public static void DeleteAllFiles() => Instance.DeleteAll();
+
+            [Command]
+            public static void CreateFile() => Instance.CreateFile();
 
             [Command]
             public static void SaveTo(string fileName) => Instance.SaveToFile(fileName);
