@@ -117,7 +117,7 @@ namespace RichPackage.SaveSystem
                     return;
 
                 // ensure the folder exists
-                EnsureFilePathExists(value + "x.txt"); // this method expects a file path, so give a dummy file name
+                EnsureFilePathExists(value + "/x.txt"); // this method expects a file path, so give a dummy file name
                 Assert.IsTrue(Directory.Exists(value)); // sanity check
 
                 // ensure the directory ends in a backslash
@@ -241,7 +241,10 @@ namespace RichPackage.SaveSystem
                 return;
 
             if (syncOnQuit && App.IsQuitting && IsFileLoaded)
+            {
                 SaveToFile();
+                saveFile = null;
+            }
         }
 
         protected void OnEnable()
@@ -740,7 +743,12 @@ namespace RichPackage.SaveSystem
                         // ensure we only delete data in the appropriate folder
                         if (filePath.Contains(SaveFileDirectory) && File.Exists(filePath))
                         {
-                            File.Delete(filePath);
+                            // don't actually delete it, in case the player could somehow recover it
+                            // File.Delete(filePath);
+                            string backup = filePath + ".corrupted";
+                            if (File.Exists(backup))
+                                File.Delete(backup);
+                            File.Move(filePath, backup);
                         }
                         break;
                     case ES3.Location.PlayerPrefs:
@@ -753,7 +761,6 @@ namespace RichPackage.SaveSystem
                         break;
                 }
             }
-
             return new ES3File(settings); // if this fails, god help us all
         }
 
