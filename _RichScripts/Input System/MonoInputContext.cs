@@ -10,7 +10,6 @@ namespace RichPackage.InputSystem
 
         public virtual string Name => GetType().Name;
 
-        /// <remarks>Override 'Update' instead.</remarks>
         public abstract void Execute();
 
         public void OnEnter() => enabled = true; // mostly just indicator in Inspector
