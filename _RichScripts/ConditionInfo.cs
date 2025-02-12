@@ -76,7 +76,7 @@ namespace UnityEngine.Assertions
 {
     public static class ConditionInfoExtensions
     {
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityAssertions)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_ASSERTIONS)]
         public static void Assert(this ConditionInfo c)
         {
             UnityEngine.Assertions.Assert.IsTrue(c, c.message);

@@ -27,7 +27,7 @@ namespace RichPackage
         /// This call will be stripped out of Builds. Use anywhere.
         /// </summary>
         /// <param name="newDes"></param>
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR)]
         public void SetDevDescription(string newDes)
         {
 #if UNITY_EDITOR
@@ -215,7 +215,7 @@ namespace RichPackage
 
         #region Logging
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR)]
         protected void LogNotSerializedWarning(string property)
         {
             Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
@@ -223,42 +223,42 @@ namespace RichPackage
 
         #region Debug Helpers
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogName(string message)
         {
             DebugLogName(message, this);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogName(string message, UnityEngine.Object context)
         {
             Debug.Log($"[{name}] {message}", context);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogType(string message)
         {
             DebugLogType(message, this);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogType(string message, UnityEngine.Object context)
         {
             Debug.Log($"[{GetType().Name}] {message}", context);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogSelf(string message)
         {
             DebugLogSelf(message, this);
         }
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor),
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
             System.Diagnostics.DebuggerStepThrough, HideInCallstack]
         protected void DebugLogSelf(string message, UnityEngine.Object context)
         {
@@ -271,7 +271,7 @@ namespace RichPackage
 
         #region Editor
 
-        [System.Diagnostics.Conditional(ScriptingSymbols.UnityEditor)]
+        [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR)]
         public void Editor_MarkDirty()
         {
 #if UNITY_EDITOR

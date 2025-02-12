@@ -15,7 +15,7 @@ namespace RichPackage.Assertions
 	[DebuggerStepThrough]
 	public static class Assert
 	{
-        internal const string UNITY_ASSERTIONS = ScriptingSymbols.UnityAssertions;
+        internal const string UNITY_ASSERTIONS = ScriptingSymbols.UNITY_ASSERTIONS;
 
         /// <summary>
         /// Method that should be used for logging to a console. <br/>
