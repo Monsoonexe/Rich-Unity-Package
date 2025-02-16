@@ -19,11 +19,12 @@
  *  // no deciphering or order of operations required!
  */
 
+using System;
 using System.Runtime.CompilerServices;
 
 namespace RichPackage.FunctionalProgramming
 {
-    internal static class ArithmeticFunctions
+    public static class ArithmeticFunctions
     {
         #region Integers
 
@@ -55,5 +56,27 @@ namespace RichPackage.FunctionalProgramming
         public static int Cubed(this int a) => a * a * a;
 
         #endregion Integers
+
+        #region Floats
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Ceiling(this float f)
+        {
+            return (float)Math.Ceiling(f);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Divide(this float f, int x)
+        {
+            return f / x;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Divide(this float f, float x)
+        {
+            return f / x;
+        }
+
+        #endregion Floats
     }
 }
