@@ -16,7 +16,7 @@ namespace RichPackage.Editor
 	/// </summary>
 	public static class SpecialFoldersMenu
 	{
-		private const string MenuPath = RichEditorUtility.MenuName + "Special Folders/";
+		private const string MenuPath = "Tools/Special Folders/";
         private const string MenuPath_Library = MenuPath + "Library/";
 
         private static string LibraryFolder => Application.dataPath + "/../Library";
