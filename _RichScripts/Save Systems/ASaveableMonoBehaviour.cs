@@ -204,7 +204,12 @@ namespace RichPackage.SaveSystem
         public static bool IsSaveIDUnique(ASaveableMonoBehaviour query, 
             out ASaveableMonoBehaviour other)
         {
-            var allSaveables = FindObjectsOfType<ASaveableMonoBehaviour>(includeInactive: true);
+            var allSaveables =
+#if UNITY_2020_OR_NEWER
+                FindObjectsOfType<ASaveableMonoBehaviour>(includeInactive: true);
+#else
+                FindObjectsOfType<ASaveableMonoBehaviour>();
+#endif
             bool isUnique = true; //return value
             other = default;
             foreach (var saveable in allSaveables)

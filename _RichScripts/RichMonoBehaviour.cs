@@ -115,8 +115,13 @@ namespace RichPackage
             // null-coalesce should be okay here because we're not using the result of functions, not serialized properties
             component = GetComponent<T>()
                 ?? GetComponentInChildren<T>(includeInactive)
+#if UNITY_2020_OR_NEWER
                 ?? GetComponentInParent<T>(includeInactive)
                 ?? FindObjectOfType(typeof(T), includeInactive) as T;
+#else
+                ?? GetComponentInParent<T>()
+                ?? FindObjectOfType(typeof(T)) as T;
+#endif
         }
  
         protected T GetComponentInChildrenIfNull<T>(Maybe<T> maybeComponent)
@@ -146,7 +151,7 @@ namespace RichPackage
             return gameObject.AddComponent<T>();
         }
 
-        #endregion GetComponent Helpers
+#endregion GetComponent Helpers
 
         #region Coroutine Helpers
 
@@ -168,7 +173,7 @@ namespace RichPackage
 
         protected Coroutine InvokeWhen(Action action, Func<bool> condition)
         {
-            static IEnumerator Wait(Action _action, Func<bool> _condition)
+            IEnumerator Wait(Action _action, Func<bool> _condition)
             {
                 yield return new WaitUntil(_condition);
                 _action();
@@ -179,7 +184,7 @@ namespace RichPackage
 
         public Coroutine StartTimerRoutine(float duration)
         {
-            static IEnumerator Wait(float _duration)
+            IEnumerator Wait(float _duration)
             {
                 yield return new WaitForSeconds(_duration);
             }
@@ -224,50 +229,68 @@ namespace RichPackage
         #region Debug Helpers
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogName(string message)
         {
             DebugLogName(message, this);
         }
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogName(string message, UnityEngine.Object context)
         {
             Debug.Log($"[{name}] {message}", context);
         }
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogType(string message)
         {
             DebugLogType(message, this);
         }
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogType(string message, UnityEngine.Object context)
         {
             Debug.Log($"[{GetType().Name}] {message}", context);
         }
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogSelf(string message)
         {
             DebugLogSelf(message, this);
         }
 
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR),
-            System.Diagnostics.DebuggerStepThrough, HideInCallstack]
+            System.Diagnostics.DebuggerStepThrough]
+#if UNITY_2020_OR_NEWER
+        [HideInCallstack]
+#endif
         protected void DebugLogSelf(string message, UnityEngine.Object context)
         {
             Debug.Log($"[{name} ({GetType().Name})] {message}", context);
         }
 
-        #endregion Debug Log Helpers
+#endregion Debug Log Helpers
 
-        #endregion Logging
+#endregion Logging
 
         #region Editor
 

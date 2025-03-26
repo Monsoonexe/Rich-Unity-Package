@@ -10,8 +10,12 @@ namespace RichPackage
     {
         public static bool IsPrefab(this GameObject gameObject)
         {
+#if UNITY_EDITOR
             // a prefab has 0 roots if in project or 1 if it's in the prefab editor scene
             return gameObject.scene.rootCount <= 1;
+#else
+            return false;
+#endif
         }
 
         public static GameObject GetChild(this GameObject gameObject, int i)

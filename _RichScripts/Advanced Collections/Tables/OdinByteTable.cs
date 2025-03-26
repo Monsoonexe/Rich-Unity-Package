@@ -30,8 +30,7 @@ namespace RichPackage.Collections
 
         void ISaveStore.Save<T>(string key, T memento) => Set(key, memento);
         T ISaveStore.Load<T>(string key) => Get<T>(key);
-        T ISaveStore.Load<T>(string key, T @default) => GetOrDefault(key, @default);
-        void ISaveStore.LoadInto<T>(string key, T memento) where T : class
+        void ISaveStore.LoadInto<T>(string key, T memento)
         {
             // maybe use reflection to get all the members of each?
             throw new System.NotImplementedException();

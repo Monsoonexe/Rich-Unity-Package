@@ -19,9 +19,9 @@ namespace RichPackage.Animation
 		public override void Play()
 		{
             if (space == Space.World)
-                Tween = target.DORotate(destination, duration, mode);
+                Tween = target.DORotate(destination, Duration, mode);
             else
-                Tween = target.DOLocalRotate(destination, duration, mode);
+                Tween = target.DOLocalRotate(destination, Duration, mode);
 
             //configure
             Tween.SetEase(ease);
@@ -67,7 +67,7 @@ namespace RichPackage.Animation
             if (IsAnimating) return; //prevent spamming
 
             Tween = target.DOLocalRotate(
-                rotationVector, duration, RotateMode.LocalAxisAdd);
+                rotationVector, Duration, RotateMode.LocalAxisAdd);
             Tween.SetEase(ease);
             SubscribeTweenEvents(Tween);
         }
@@ -77,7 +77,7 @@ namespace RichPackage.Animation
             if (IsAnimating) return; //prevent spamming
 
             Tween = target.DORotate(
-                rotationVector, duration, RotateMode.WorldAxisAdd);
+                rotationVector, Duration, RotateMode.WorldAxisAdd);
             Tween.SetEase(ease);
             SubscribeTweenEvents(Tween);
         }

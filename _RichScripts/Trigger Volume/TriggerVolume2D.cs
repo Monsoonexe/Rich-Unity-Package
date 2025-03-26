@@ -27,11 +27,11 @@ namespace RichPackage.TriggerVolumes
             ShowIf(nameof(IsPhysical))]
         public Collision2DUnityEvent onCollisionExitEvent;
 
-        private readonly EventHandlerList<TriggerVolume2D, Collider2D> onTriggerEnterHandlers = new();
-        private readonly EventHandlerList<TriggerVolume2D, Collider2D> onTriggerExitHandlers = new();
+        private readonly EventHandlerList<TriggerVolume2D, Collider2D> onTriggerEnterHandlers = new EventHandlerList<TriggerVolume2D, Collider2D>();
+        private readonly EventHandlerList<TriggerVolume2D, Collider2D> onTriggerExitHandlers = new EventHandlerList<TriggerVolume2D, Collider2D>();
 
-        private readonly EventHandlerList<TriggerVolume2D, Collision2D> onCollisionEnterHandlers = new();
-        private readonly EventHandlerList<TriggerVolume2D, Collision2D> onCollisionExitHandlers = new();
+        private readonly EventHandlerList<TriggerVolume2D, Collision2D> onCollisionEnterHandlers = new EventHandlerList<TriggerVolume2D, Collision2D>();
+        private readonly EventHandlerList<TriggerVolume2D, Collision2D> onCollisionExitHandlers = new EventHandlerList<TriggerVolume2D, Collision2D>();
 
 #pragma warning disable IDE1006 // Naming Styles
 

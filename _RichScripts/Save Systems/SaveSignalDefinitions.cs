@@ -26,7 +26,7 @@ namespace RichPackage.SaveSystem
 	/// </summary>
 	public class LoadStateFromFileSignal : ASignal<ISaveStore>
 	{
-        private readonly EventHandlerList<ISaveStore> lateListeners = new();
+        private readonly EventHandlerList<ISaveStore> lateListeners = new EventHandlerList<ISaveStore>();
 
         public void AddLateListener(Action<ISaveStore> listener) => lateListeners.Add(listener);
         public void RemoveLateListener(Action<ISaveStore> listener) => lateListeners.Remove(listener);

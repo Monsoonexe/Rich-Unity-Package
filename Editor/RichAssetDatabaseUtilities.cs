@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Linq;
-using ModestTree;
 
 namespace RichPackage.Editor
 {
@@ -18,9 +17,18 @@ namespace RichPackage.Editor
                 .Select(f => AssetDatabase.LoadAssetAtPath<T>(f));
         }
 
+        public static string GUIDFromAssetPath(string path)
+        {
+#if UNITY_2020_OR_NEWER
+            return AssetDatabase.GUIDFromAssetPath(path).ToString();
+#else
+            return AssetDatabase.AssetPathToGUID(path);
+#endif
+        }
+
         public static string GetGuidFromAsset(Object asset)
         {
-            return AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(asset)).ToString();
+            return GUIDFromAssetPath(AssetDatabase.GetAssetPath(asset));
         }
 
         public static T LoadAssetFromGuid<T>(string guid)

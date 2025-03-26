@@ -31,7 +31,11 @@ namespace System.Collections.Generic
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Drop<T>(this Stack<T> s)
         {
-            return s.TryPop(out _);
+            if (s.Count == 0)
+                return false;
+
+            s.Pop();
+            return true;
         }
     }
 }

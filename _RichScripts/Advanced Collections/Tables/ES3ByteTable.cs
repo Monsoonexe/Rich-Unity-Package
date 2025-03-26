@@ -28,11 +28,13 @@ namespace RichPackage.Collections
 
         void ISaveStore.Save<T>(string key, T memento) => Set(key, memento);
         T ISaveStore.Load<T>(string key) => Get<T>(key);
+#if UNITY_2020_OR_NEWER
         T ISaveStore.Load<T>(string key, T @default) => GetOrDefault(key, @default);
-        void ISaveStore.LoadInto<T>(string key, T memento) where T : class => ES3.DeserializeInto<T>(this[key], memento, settings);
+#endif
+        void ISaveStore.LoadInto<T>(string key, T memento) => ES3.DeserializeInto<T>(this[key], memento, settings);
         bool ISaveStore.KeyExists(string key) => ContainsKey(key);
         void ISaveStore.Delete(string key) => Remove(key);
 
-        #endregion ISaveStore
+#endregion ISaveStore
     }
 }

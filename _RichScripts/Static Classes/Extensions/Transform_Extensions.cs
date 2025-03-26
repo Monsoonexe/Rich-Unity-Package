@@ -22,8 +22,8 @@ namespace UnityEngine
             Vector3 aPos = a.position;
             Vector3 bPos = b.position;
 
-            Vector2 aPos2D = new Vector2(aPos.x, aPos.z);
-            Vector2 bPos2D = new Vector2(bPos.x, bPos.z);
+            var aPos2D = new Vector2(aPos.x, aPos.z);
+            var bPos2D = new Vector2(bPos.x, bPos.z);
 
             Vector2 direction = (bPos2D - aPos2D).normalized;
             float angle = Mathf.Abs(Vector2.Dot(a.forward, direction));
@@ -33,7 +33,7 @@ namespace UnityEngine
         ///<summary>
         ///
         ///</summary>
-        public static float Angle(this Transform a, Transform b) 
+        public static float Angle(this Transform a, Transform b)
             => Vector3.Angle(a.forward, b.position);
 
         ///<summary>
@@ -63,20 +63,44 @@ namespace UnityEngine
         public static float AngleArcTan(this Transform a, Transform b)
         {
             Vector3 targetsRelativePosition = a.InverseTransformPoint(b.position);//what is the target's position if it were in MY local space
-            
+
             return Mathf.Atan2(targetsRelativePosition.x, targetsRelativePosition.y) * Mathf.Rad2Deg;//get arc tan, then convert to degrees
         }
 
         #endregion Angles
 
+#if !UNITY_2020_OR_NEWER
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetPositionAndRotation(this Transform transform, out Vector3 position, out Quaternion rotation)
+        {
+            position = transform.position;
+            rotation = transform.rotation;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetLocalPositionAndRotation(this Transform transform, out Vector3 position, out Quaternion rotation)
+        {
+            position = transform.localPosition;
+            rotation = transform.localRotation;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetLocalPositionAndRotation(this Transform transform, out Vector3 position, out Vector3 rotation)
+        {
+            position = transform.localPosition;
+            rotation = transform.localEulerAngles;
+        }
+#endif
+
         public static Transform AlphabetizeChildren(this Transform transform)
         {
             return transform.OrderChildren((a, b) => string.CompareOrdinal(a.name, b.name));
         }
-        
+
         public static Transform OrderChildren(this Transform transform, Comparison<Transform> comparer)
         {
-            using (Rendering.ListPool<Transform>.Get(out var children))
+            using (Rendering.ListPool<Transform>.Get(out List<Transform> children))
             {
                 children.AddRange(transform.GetChildren());
                 children.Sort((a, b) => comparer(a, b));
@@ -107,6 +131,7 @@ namespace UnityEngine
                         return found;
                 }
             }
+
             return null;
         }
 
@@ -115,10 +140,10 @@ namespace UnityEngine
         /// </summary>
         public static void ForEachChildRecursive(this Transform obj, Action<Transform> action)
         {
-            var childCount = obj.childCount;
-            for (var i = childCount - 1; i >= 0; --i)
+            int childCount = obj.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
             {
-                var child = obj.GetChild(i);
+                Transform child = obj.GetChild(i);
                 ForEachTransformRecursive(child, action);
             }
         }
@@ -129,14 +154,14 @@ namespace UnityEngine
         public static void ForEachTransformRecursive(this Transform obj, Action<Transform> action)
         {
             action(obj); //perform 
-            var childCount = obj.childCount;
-            for (var i = childCount - 1; i >= 0; --i)
+            int childCount = obj.childCount;
+            for (int i = childCount - 1; i >= 0; --i)
             {
-                var child = obj.GetChild(i);
+                Transform child = obj.GetChild(i);
                 ForEachTransformRecursive(child, action);
             }
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform GetFirstChild(this Transform transform)
             => transform.GetChild(0);
@@ -151,18 +176,18 @@ namespace UnityEngine
         public static void SetLayerRecursively(this Transform obj, int newLayer)
         {
             obj.gameObject.layer = newLayer;
-            var childCount = obj.childCount;
-            for (var i = 0; i < childCount; ++i)
+            int childCount = obj.childCount;
+            for (int i = 0; i < childCount; ++i)
             {
-                var child = obj.GetChild(i);
+                Transform child = obj.GetChild(i);
                 SetLayerRecursively(child, newLayer);
             }
         }
-        
+
         public static Transform[] GetChildren(this Transform parent)
         {
             int count = parent.childCount;
-            Transform[] result = new Transform[count];
+            var result = new Transform[count];
             for (int i = 0; i < count; i++)
                 result[i] = parent.GetChild(i);
             return result;
@@ -211,6 +236,18 @@ namespace UnityEngine
             transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             return transform;
         }
+
+#if !UNITY_2020_OR_NEWER
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Transform SetLocalPositionAndRotation(this Transform t, Vector3 position, Quaternion rotation)
+        {
+            t.localPosition = position;
+            t.localRotation = rotation;
+            return t;
+        }
+
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Transform SetLocalPositionAndRotation(this Transform t, Vector3 position, Vector3 rotation)

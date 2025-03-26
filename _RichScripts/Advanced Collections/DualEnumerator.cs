@@ -14,19 +14,19 @@ namespace RichPackage.Collections
             enumerator2 = collection2.GetEnumerator();
         }
 
-        public readonly (T1, T2) Current => (enumerator1.Current, enumerator2.Current);
+        public (T1, T2) Current => (enumerator1.Current, enumerator2.Current);
 
-        readonly object IEnumerator.Current => Current;
+        object IEnumerator.Current => Current;
 
-        public readonly bool MoveNext() => enumerator1.MoveNext() && enumerator2.MoveNext();
+        public bool MoveNext() => enumerator1.MoveNext() && enumerator2.MoveNext();
 
-        public readonly void Reset()
+        public void Reset()
         {
             enumerator1.Reset();
             enumerator2.Reset();
         }
 
-        public readonly void Dispose()
+        public void Dispose()
         {
             enumerator1.Dispose();
             enumerator2.Dispose();

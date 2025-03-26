@@ -12,7 +12,9 @@ namespace RichPackage.Coroutines
         private SimpleTimer timer;
         public override bool keepWaiting { get => timer < duration; }
 
+        #if UNITY_2021_OR_NEWER
         public override void Reset() => Reset(duration);
+        #endif
 
         public void Reset(float newDuration)
         {

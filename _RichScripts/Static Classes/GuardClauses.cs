@@ -39,7 +39,7 @@ namespace RichPackage.GuardClauses
         /// <paramref name="condition"/> is <see langword="true"/>.
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsTrue(bool condition,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -52,7 +52,7 @@ namespace RichPackage.GuardClauses
         /// <paramref name="condition"/> is <see langword="false"/>.
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsFalse(bool condition,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -65,7 +65,7 @@ namespace RichPackage.GuardClauses
         #region Arithmetic
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZero(int argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -74,7 +74,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZero(long argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -83,7 +83,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZero(decimal argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -92,7 +92,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZero(double argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -101,7 +101,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZero(float argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -110,7 +110,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNegative(int argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -119,7 +119,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNegative(long argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -128,7 +128,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNegative(decimal argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -137,7 +137,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNegative(double argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -146,7 +146,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNegative(float argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -155,7 +155,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsPositive(int argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -164,7 +164,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsPositive(long argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -173,7 +173,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsPositive(decimal argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -182,7 +182,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsPositive(float argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -191,7 +191,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsPositive(double argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -200,7 +200,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZeroOrNegative(int argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -209,7 +209,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZeroOrNegative(long argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -218,7 +218,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZeroOrNegative(decimal argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -227,7 +227,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZeroOrNegative(double argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -236,7 +236,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsZeroOrNegative(float argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -249,7 +249,7 @@ namespace RichPackage.GuardClauses
         #region Equivalence
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsEqualTo<T>(T argumentValue, T guardValue,
             string paramName = DEFAULT_PARAM_NAME)
             where T : IEquatable<T>
@@ -260,7 +260,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNotEqualTo<T>(T argumentValue, T guardValue,
             string paramName = DEFAULT_PARAM_NAME)
             where T : IEquatable<T>
@@ -275,7 +275,7 @@ namespace RichPackage.GuardClauses
         #region Comparison
 
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsOutOfRange<T>(T argumentValue,
             T min, T max, string paramName = DEFAULT_PARAM_NAME)
             where T : IComparable<T>
@@ -287,7 +287,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="IndexOutOfRangeException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IndexOutOfRange(IList list, int index,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -297,7 +297,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsGreaterThan<T>(T argumentValue,
             T compareValue, string paramName = DEFAULT_PARAM_NAME)
             where T : IComparable<T>
@@ -307,7 +307,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsLessThan<T>(T argumentValue,
             T compareValue, string paramName = DEFAULT_PARAM_NAME)
             where T : IComparable<T>
@@ -321,7 +321,7 @@ namespace RichPackage.GuardClauses
         #region Collections
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsLengthExceeded(ICollection argumentValue,
             int maximumLength, string paramName = DEFAULT_PARAM_NAME)
         {
@@ -333,7 +333,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNullOrEmpty(ICollection argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -346,7 +346,7 @@ namespace RichPackage.GuardClauses
         #region Strings
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void LengthMoreThan(string argumentValue,
             int maximumLength, string paramName = DEFAULT_PARAM_NAME)
         {
@@ -358,7 +358,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void LengthLessThan(string argumentValue,
             int minimumLength, string paramName = DEFAULT_PARAM_NAME)
         {
@@ -370,7 +370,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void LengthIsNotExactly(string argumentValue,
             int mandatedLength, string paramName = DEFAULT_PARAM_NAME)
         {
@@ -382,7 +382,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNullOrEmptyOrWhiteSpace(string argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -391,7 +391,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNullOrWhiteSpace(string argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -400,7 +400,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsNullOrEmpty(string argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -411,7 +411,7 @@ namespace RichPackage.GuardClauses
         #endregion Strings
 
         /// <exception cref="ArgumentNullException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void ArgumentIsNull(object value,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -420,7 +420,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsStringEmptyGuid(string argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -430,7 +430,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void IsEmptyGuid(Guid argumentValue,
             string paramName = DEFAULT_PARAM_NAME)
         {
@@ -440,7 +440,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void InvalidEmail(string email)
         {
             if (!emailRegex.IsMatch(email))
@@ -448,7 +448,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void InvalidURL(string url)
         {
             if (!urlRegex.IsMatch(url))
@@ -458,7 +458,7 @@ namespace RichPackage.GuardClauses
         #region File IO
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void InvalidFilePath(string path)
         {
             if (!filepathRegex.IsMatch(path))
@@ -466,7 +466,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="DirectoryNotFoundException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void DirectoryNotFound(string dirPath)
         {
             if (!Directory.Exists(dirPath))
@@ -474,7 +474,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="ArgumentException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void DirectoryAlreadyExists(string dirPath)
         {
             if (Directory.Exists(dirPath))
@@ -483,7 +483,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="FileNotFoundException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void FileDoesNotExist(string filePath)
         {
             if (!File.Exists(filePath))
@@ -492,7 +492,7 @@ namespace RichPackage.GuardClauses
         }
 
         /// <exception cref="FileNotFoundException"></exception>
-        [HideInCallstack]
+        //[HideInCallStack]
         public static void FileAlreadyExists(string filePath)
         {
             if (File.Exists(filePath))

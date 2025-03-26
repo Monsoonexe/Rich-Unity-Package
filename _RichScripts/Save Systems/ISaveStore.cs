@@ -15,11 +15,15 @@ namespace RichPackage.SaveSystem
         /// </summary>
         T Load<T>(string key);
 
+#if UNITY_2020_OR_NEWER
+
         /// <summary>
         /// Load memento with <paramref name="key"/>.
         /// </summary>
         /// <param name="default">A default value to be used when <paramref name="key"/> key doesn't exist.</param>
         T Load<T>(string key, T @default) => KeyExists(key) ? Load<T>(key) : @default;
+
+#endif
 
         /// <summary>
         /// Load memento with <paramref name="key"/>.
@@ -40,4 +44,13 @@ namespace RichPackage.SaveSystem
         /// </summary>
         void Clear();
     }
+
+#if !UNITY_2020_OR_NEWER
+
+    public static class ISaveStoreExtensions
+    {
+        public static T Load<T>(this ISaveStore self, string key, T @default) => self.KeyExists(key) ? self.Load<T>(key) : @default;
+    }
+
+#endif
 }

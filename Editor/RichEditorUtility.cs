@@ -104,7 +104,8 @@ namespace RichPackage.Editor
             }
 
             EditorUtility.SetDirty(target);
-            AssetDatabase.SaveAssetIfDirty(target);
+            // AssetDatabase.SaveAssetIfDirty(target); 2020
+            AssetDatabase.SaveAssets();
             return count;
         }
     }

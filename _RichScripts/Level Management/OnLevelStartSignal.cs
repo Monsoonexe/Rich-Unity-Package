@@ -10,8 +10,8 @@ namespace RichPackage.Events
     /// <seealso cref="OnLevelLoadedSignal"/>
     public sealed class OnLevelStartSignal : ABaseSignal
     {
-        private readonly EventHandlerList onLateSceneLoaded = new();
-        private readonly EventHandlerList<SceneVariable> onLateSceneLoadedData = new();
+        private readonly EventHandlerList onLateSceneLoaded = new EventHandlerList();
+        private readonly EventHandlerList<SceneVariable> onLateSceneLoadedData = new EventHandlerList<SceneVariable>();
 
         public void AddListener(Action action) => onLateSceneLoaded.Add(action);
 

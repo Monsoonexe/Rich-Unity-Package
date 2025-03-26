@@ -17,9 +17,9 @@ namespace RichPackage.Animation
 		{
 			//local or world space?
 			if (space == Space.Self)
-				Tween = target.DOLocalMove(destination, duration);
+				Tween = target.DOLocalMove(destination, Duration);
 			else
-				Tween = target.DOMove(destination, duration);
+				Tween = target.DOMove(destination, Duration);
 
 			//configure
 			Tween.SetEase(ease);

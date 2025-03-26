@@ -17,8 +17,8 @@ namespace RichPackage.Animation
 		private Graphic targetGraphic;
 
 		[Title("---Settings---")]
-		[Min(0)]
-		public float animTime = 1.0f;
+		[SerializeField, Min(0)]
+		private float animTime = 1.0f;
 
 		public Ease ease = Ease.Linear;
 
@@ -44,9 +44,10 @@ namespace RichPackage.Animation
 
 		[ShowInInspector, ReadOnly]
 		public bool IsAnimating { get => animTween != null; }
+        public float Duration { get => animTime; set => animTime = value; }
 
-		//runtime data
-		private Tween animTween;
+        //runtime data
+        private Tween animTween;
 		private Color cachedColor;
 
 		/// <summary>

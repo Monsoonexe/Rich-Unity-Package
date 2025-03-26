@@ -7,6 +7,7 @@ namespace RichPackage.Animation
     public interface IAnimateBase
     {
         bool IsAnimating { get; }
+        float Duration { get; set; }
         void Stop();
     }
 

@@ -18,6 +18,8 @@ namespace RichPackage.Animation
         [ShowInInspector, ReadOnly]
         public bool IsAnimating => enabled;
 
+        public float Duration { get => -1; set { } } // no-op
+
         #region Unity Messages
 
         protected override void Reset()

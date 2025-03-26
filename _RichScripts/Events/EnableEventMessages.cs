@@ -11,7 +11,7 @@ namespace UnityEngine
     {
         private EventHandlerList onDisabledList;
         private EventHandlerList onEnabledList;
-        private EventHandlerList<bool> eventList;
+        private readonly EventHandlerList<bool> eventList = new EventHandlerList<bool>();
         private EventHandlerList<EnableEventMessages, bool> eventList1;
 
         #region Unity Messages
@@ -20,32 +20,31 @@ namespace UnityEngine
         {
             onDisabledList?.RemoveAll();
             onEnabledList?.RemoveAll();
-            eventList?.RemoveAll();
+            eventList.RemoveAll();
             eventList1?.RemoveAll();
 
             onDisabledList = null;
             onEnabledList = null;
-            eventList = null;
             eventList1 = null;
         }
 
         private void OnEnable()
         {
             onEnabledList?.Invoke();
-            eventList?.Invoke(true);
+            eventList.Invoke(true);
             eventList1?.Invoke(this, true);
         }
 
         private void OnDisable()
         {
             onDisabledList?.Invoke();
-            eventList?.Invoke(false);
+            eventList.Invoke(false);
             eventList1?.Invoke(this, false);
         }
 
         #endregion Unity Messages
 
-        public void AddListener(Action<bool> action) => (eventList ??= new()).Add(action);
+        public void AddListener(Action<bool> action) => eventList.Add(action);
         public void RemoveListener(Action<bool> action) => eventList.Remove(action);
 
         // TODO - add more support

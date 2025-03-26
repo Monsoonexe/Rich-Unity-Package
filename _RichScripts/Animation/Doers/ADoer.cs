@@ -19,9 +19,9 @@ namespace RichPackage.Animation
 
 		[Title("Settings")]
 		public Transform target;
-		[Min(0)]
-		public float duration = 0.85f;
-		public bool loop;
+        [SerializeField, Min(0)]
+        private float duration = 0.5f;
+        public bool loop;
 		[HideIf(nameof(loop)), Min(-1)]
 		public int loops = -1;
 
@@ -29,8 +29,9 @@ namespace RichPackage.Animation
 
 		[ShowInInspector, ReadOnly]
 		public bool IsAnimating => Tween != null && Tween.IsPlaying();
+        public float Duration { get => duration; set => duration = value; }
 
-		protected override void Reset()
+        protected override void Reset()
 		{
 			SetDevDescription("Helps provide DOTween animations.");
 			myTransform = GetComponent<Transform>();

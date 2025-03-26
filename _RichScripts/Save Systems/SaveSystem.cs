@@ -121,8 +121,9 @@ namespace RichPackage.SaveSystem
                 Assert.IsTrue(Directory.Exists(value)); // sanity check
 
                 // ensure the directory ends in a backslash
-                if (value.Last() is not '/' or '\\')
-                    value += '/';
+                //if (value.Last() is not '/' or '\\')
+                if (value.Last() != '/' && value.Last() != '\\')
+                        value += '/';
 
                 _saveFileDirectory = value;
             }
@@ -789,14 +790,16 @@ namespace RichPackage.SaveSystem
 
         void ISaveStore.Save<T>(string key, T memento) => SaveFile.Save(key, memento);
         T ISaveStore.Load<T>(string key) => SaveFile.Load<T>(key);
+#if UNITY_2020_OR_NEWER
         T ISaveStore.Load<T>(string key, T @default) => SaveFile.Load<T>(key, @default);
-        void ISaveStore.LoadInto<T>(string key, T memento) where T : class
+#endif
+        void ISaveStore.LoadInto<T>(string key, T memento)
             => SaveFile.LoadInto(key, memento);
         bool ISaveStore.KeyExists(string key) => SaveFile.KeyExists(key);
         void ISaveStore.Delete(string key) => SaveFile.DeleteKey(key);
         void ISaveStore.Clear() => SaveFile.Clear();
 
-        #endregion ISaveStore
+#endregion ISaveStore
 
         #region File IO
 

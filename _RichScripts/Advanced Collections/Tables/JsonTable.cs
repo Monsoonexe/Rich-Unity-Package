@@ -72,8 +72,10 @@ namespace RichPackage.Collections
 
         void ISaveStore.Save<T>(string key, T memento) => Set(key, memento);
         T ISaveStore.Load<T>(string key) => Get<T>(key);
+#if UNITY_2020_OR_NEWER
         T ISaveStore.Load<T>(string key, T @default) => GetOrDefault(key, @default);
-        void ISaveStore.LoadInto<T>(string key, T memento) where T : class
+#endif
+        void ISaveStore.LoadInto<T>(string key, T memento)
         {
             using (var sReader = new StringReader(this[key]))
             using (var jReader = new JsonTextReader(sReader))
@@ -84,6 +86,6 @@ namespace RichPackage.Collections
         bool ISaveStore.KeyExists(string key) => ContainsKey(key);
         void ISaveStore.Delete(string key) => Remove(key);
 
-        #endregion ISaveStore
+#endregion ISaveStore
     }
 }
