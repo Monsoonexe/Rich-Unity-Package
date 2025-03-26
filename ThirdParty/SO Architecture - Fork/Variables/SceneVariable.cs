@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ScriptableObjectArchitecture
 {
@@ -24,6 +25,27 @@ namespace ScriptableObjectArchitecture
         // A scene variable is essentially a constant for edit-time modification only; there is not
         // any kind of expectation for a user to be able to set this at runtime.
         public override bool ReadOnly => true;
+
+        #region Load
+
+        public void LoadScene() => LoadScene(LoadSceneMode.Single);
+
+        public void LoadScene(LoadSceneMode mode)
+        {
+            SceneManager.LoadScene(Value.SceneIndex, mode);
+        }
+
+        public AsyncOperation LoadSceneAsync(LoadSceneMode mode)
+        {
+            return SceneManager.LoadSceneAsync(Value.SceneIndex, mode);
+        }
+
+        public AsyncOperation UnloadSceneAsync()
+        {
+            return SceneManager.UnloadSceneAsync(Value.SceneIndex);
+        }
+
+        #endregion Load
     }
 
     [Serializable]
