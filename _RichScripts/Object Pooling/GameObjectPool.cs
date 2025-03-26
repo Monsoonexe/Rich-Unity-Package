@@ -1,6 +1,5 @@
 ﻿using RichPackage.Assertions;
 using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -340,6 +339,8 @@ namespace RichPackage.Pooling
                 Enpool(manifest[i]);
         }
         
+        /*
+         * 
 		public int PruneDeadObjects()
 		{
 			// prune each object pool
@@ -347,5 +348,7 @@ namespace RichPackage.Pooling
 				.Select(p => p.PruneDeadObjects())
 				.Sum();
 		}
+
+        */
     }
 }
