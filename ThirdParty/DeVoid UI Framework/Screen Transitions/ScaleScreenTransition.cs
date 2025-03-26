@@ -17,8 +17,8 @@ public class ScaleScreenTransition : ATransitionComponent
     /// How many seconds to complete the Animation.
     /// </summary>
     [Tooltip("How many seconds to complete the Animation.")]
-    [Min(0)]
-    public float duration = 0.5f;
+    [SerializeField, Min(0)]
+    private float duration = 0.5f;
 
     [SerializeField] 
     protected bool doFade;
@@ -38,6 +38,8 @@ public class ScaleScreenTransition : ATransitionComponent
     //cache variables to avoid Closure
     private Action callback;
     private RectTransform rTransform;
+
+    public override float Duration { get => duration; set => duration = value; }
 
     public override void Animate(Transform target, Action callWhenFinished)
     {

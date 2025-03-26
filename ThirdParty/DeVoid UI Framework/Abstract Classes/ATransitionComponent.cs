@@ -8,7 +8,10 @@ using RichPackage.Animation;
 /// </summary>
 public abstract class ATransitionComponent : RichMonoBehaviour, IAnimate<Transform>, IAnimate
 {
+    protected const string SettingsHeaderGroup = "---Settings---";
+
     public virtual bool IsAnimating { get; protected set; }
+    public abstract float Duration { get; set; }
 
     [SerializeField]
     private Transform target;
