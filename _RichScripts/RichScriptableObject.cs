@@ -12,6 +12,8 @@ namespace RichPackage
     /// <seealso cref="RichMonoBehaviour"/>
     public abstract class RichScriptableObject : ScriptableObject
     {
+        protected const string SettingsTitleGroup = "Settings";
+
 #if UNITY_EDITOR
         [SerializeField, TextArea]
         [PropertyOrder(-5)]
