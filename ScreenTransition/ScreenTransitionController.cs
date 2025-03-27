@@ -6,6 +6,7 @@ using Button = Sirenix.OdinInspector.ButtonAttribute;
 using Required = Sirenix.OdinInspector.RequiredAttribute;
 using RichPackage.YieldInstructions;
 using RichPackage.FunctionalProgramming;
+using System;
 
 /* Callback system for OnTransitionEnd (UnityEvent)
  * 

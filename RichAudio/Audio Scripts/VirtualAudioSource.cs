@@ -50,6 +50,8 @@ namespace RichPackage.Audio
         public void PlayBGM(AudioClip clip, in AudioOptions options)
             => audioID = AudioManager.Instance.PlayMusic(clip, options);
 
+        public void PlayBGM() => PlayBGM(clip.Clip, clip.Options);
+
         [Button, HorizontalGroup("butts"), DisableInEditorMode]
         public void PlayOneShot()
             => AudioManager.Instance.PlayOneShot(clip.Clip, clip.Options);
@@ -70,5 +72,7 @@ namespace RichPackage.Audio
         [Button, HorizontalGroup("butts_off"), DisableInEditorMode]
         public void StopBGM()
             => AudioManager.Instance.StopAllMusic();
+
+        public void FadeOutBGM(float duration = 0.5f) => AudioManager.Instance.StopAllMusic(duration);
     }
 }

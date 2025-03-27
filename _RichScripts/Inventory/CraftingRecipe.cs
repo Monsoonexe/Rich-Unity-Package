@@ -7,8 +7,6 @@ namespace RichPackage.InventorySystem
     /// </summary>
     /// <remarks>TODO - make materials and results an array, since they are not resizable 
     /// once created.</remarks>
-    [CreateAssetMenu(fileName = "_CraftRecipe",
-        menuName = "ScriptableObjects/Crafting Recipe")]
     public class CraftingRecipe : RichScriptableObject
     {   //please update Constructors when adding properties!
         [SerializeField]

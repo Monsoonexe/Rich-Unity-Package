@@ -27,5 +27,12 @@ namespace RichPackage.Mathematics
         {
             return (int)curve.Evaluate(t);
         }
+
+        public static CurveAsset CreateInstance(AnimationCurve curve)
+        {
+            var instance = CreateInstance<CurveAsset>();
+            instance.curve = curve;
+            return instance;
+        }
     }
 }
