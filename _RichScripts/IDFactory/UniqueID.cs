@@ -74,7 +74,7 @@ namespace RichPackage
 
         #region IEquatable
 
-        public bool Equals(UniqueID other) => ID == other.ID;
+        public bool Equals(UniqueID other) => Equals(other.ID);
         public bool Equals(string other) => ID == other;
         public bool Equals(int other) => Hash == other;
 
