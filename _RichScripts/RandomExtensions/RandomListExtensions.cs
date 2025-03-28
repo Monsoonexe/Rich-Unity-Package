@@ -8,7 +8,7 @@ namespace RichPackage.RandomExtensions
     /// <summary>
     /// Random extension methods for lists.
     /// </summary>
-    public static class ListExtensions
+    public static class RandomListExtensions
     {
         /// <summary>
         /// Removes and returns a random element from <paramref name="list"/>.
