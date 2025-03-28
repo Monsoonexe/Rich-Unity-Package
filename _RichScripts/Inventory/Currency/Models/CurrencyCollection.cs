@@ -1,4 +1,4 @@
-﻿using Sirenix.OdinInspector;
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,5 +26,22 @@ namespace RichPackage.InventorySystem.Currency
         }
 
         IEnumerator IEnumerable.GetEnumerator() => currencies.GetEnumerator();
+
+        public CurrencyDefinition this[UniqueID key] => this[key.ID];
+
+        public CurrencyDefinition this[string key]
+        {
+            get
+            {
+                for (int i = 0; i < currencies.Length; i++)
+                {
+                    if (currencies[i].Id.Equals(key))
+                        return currencies[i];
+                }
+
+                //throw new KeyNotFoundException(name);
+                return null;
+            }
+        }
     }
 }
