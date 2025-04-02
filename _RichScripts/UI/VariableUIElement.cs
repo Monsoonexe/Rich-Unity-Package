@@ -6,7 +6,7 @@ namespace RichPackage.UI
     /// <summary>
     /// Class that shows data based on a BaseVariable.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of <see cref="BaseVariable"/> to observe.</typeparam>
     [SelectionBase]
     public abstract class VariableUIElement<T> : RichUIElement<T>
         where T : BaseVariable
