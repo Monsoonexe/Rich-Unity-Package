@@ -27,34 +27,8 @@ namespace ScriptableObjectArchitecture
                 Raise();
             }
         }
-        public virtual T MinClampValue
-        {
-            get
-            {
-                if(Clampable)
-                {
-                    return _minClampedValue;
-                }
-                else
-                {
-                    return default(T);
-                }
-            }
-        }
-        public virtual T MaxClampValue
-        {
-            get
-            {
-                if(Clampable)
-                {
-                    return _maxClampedValue;
-                }
-                else
-                {
-                    return default(T);
-                }
-            }
-        }
+        public virtual T MinClampValue => Clampable ? _minClampedValue : default(T);
+        public virtual T MaxClampValue => Clampable ? _maxClampedValue : default(T);
 
         public override bool Clampable { get { return false; } }
         public override bool ReadOnly { get { return _readOnly; } }
@@ -116,8 +90,8 @@ namespace ScriptableObjectArchitecture
         }
         public void Raise(T value)
         {
-            for (var i = _typedActions.Count - 1; i >= 0; --i)
-                _typedActions[i].Invoke(value);               
+            for (int i = _typedActions.Count - 1; i >= 0; --i)
+                _typedActions[i].Invoke(value);
         }
         /// <summary>
         /// Processes new values. Does not actually change Value property.
@@ -132,7 +106,7 @@ namespace ScriptableObjectArchitecture
                 RaiseReadonlyWarning();
                 return _value;
             }
-            else if(Clampable && IsClamped)
+            else if (Clampable && IsClamped)
             {
                 return ClampValue(value);
             }
@@ -156,7 +130,7 @@ namespace ScriptableObjectArchitecture
         protected void RaiseReadonlyWarning()
         {
             if (_readOnly && _raiseWarning)
-                Debug.LogWarning("Tried to set value on " + name 
+                Debug.LogWarning("Tried to set value on " + name
                     + ", but value is readonly!", this);
         }
         public override string ToString()
@@ -167,5 +141,5 @@ namespace ScriptableObjectArchitecture
         {
             return variable.Value;
         }
-    } 
+    }
 }
