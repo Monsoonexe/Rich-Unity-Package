@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using System.Reflection;
 
 namespace RichPackage.Editor
 {
@@ -28,22 +27,20 @@ namespace RichPackage.Editor
         private static HashSet<Type> GatherTypes()
         {
             const AssemblyTypeFlags flags
-                = AssemblyTypeFlags.UserTypes
-                | AssemblyTypeFlags.PluginTypes;
+                = AssemblyTypeFlags.All;
 
             HashSet<Type> types = AssemblyUtilities.GetTypes(flags)
-                .Concat(Assembly.GetAssembly(typeof(ScriptableObjectArchitecture.SOArchitectureBaseObject)).GetTypes())
-                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t) && t.IsAbstract == false)
+                .Where(t => t.IsClass && typeof(ScriptableObject).IsAssignableFrom(t))
                 .ToHashSet();
             return types;
         }
 
         [MenuItem("Assets/Create Scriptable Object", priority = -1000),
-            MenuItem("Tools/Odin/Create Scriptable Object")]
+            MenuItem("Tools/Odin Inspector/Create Scriptable Object")]
         private static void OpenWindow()
         {
-			// handle generation
-			if (scriptableObjectTypes == null)
+            // handle generation
+            if (scriptableObjectTypes == null)
                 scriptableObjectTypes = GatherTypes();
 
             var path = "Assets";
@@ -135,6 +132,7 @@ namespace RichPackage.Editor
             {
                 base.DrawEditor(index);
             }
+
             GUILayout.EndScrollView();
 
             if (this.previewObject)
@@ -169,10 +167,9 @@ namespace RichPackage.Editor
                 AssetDatabase.Refresh();
                 var item = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
                 Selection.activeObject = item;
-                // EditorApplication.delayCall += this.Close;
+                // EditorApplication.delayCall += this.Close; // keep open for batch creation
             }
         }
-
     }
 }
 
