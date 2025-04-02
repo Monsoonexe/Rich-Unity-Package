@@ -57,7 +57,7 @@ namespace RichPackage.UI.Framework
                 {
                     GameObject screenInstance = Instantiate(screenPrefab);
 
-                    if (screenInstance.TryGetComponent<IUIScreen>(
+                    if (screenInstance.TryGetComponent(
                         out IUIScreen screenController))
                     {
                         bool usePrefabName = string.IsNullOrEmpty(screenController.ScreenID);

@@ -7,17 +7,21 @@
 	/// <seealso cref="APanel"/>
 	public abstract class AWindow<TProps> : AUIScreen<TProps>, IWindow where TProps : IWindowProperties
 	{
-		#region IWindow
+        #region IWindow
 
-		public bool IsPopup { get => Properties.IsPopup; } // repeat
+        public bool IsPopup { get => Properties.IsPopup; }
 		public bool ShouldDarkenBackground { get => IsPopup && Properties.ShouldDarkenBackground; }
 		IWindowProperties IWindow.Properties { get => Properties; }
 		UIFrame IWindow.Frame { get; set; }
-		protected IWindow Window => this; // fast cast
 
-		#endregion IWindow
+        #endregion IWindow
 
-		protected sealed override void SetProperties(TProps payload)
+        /// <summary>
+        /// Self-cast to IWindow for protected access to <see cref="IWindow"/> properties.
+        /// </summary>
+        protected IWindow Window => this; // fast cast
+
+        protected sealed override void SetProperties(TProps payload)
 		{
 			if (payload != null)
 			{
