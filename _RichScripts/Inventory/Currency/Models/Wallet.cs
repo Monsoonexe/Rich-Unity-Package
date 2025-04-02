@@ -92,16 +92,23 @@ namespace RichPackage.InventorySystem.Currency
             set => GetOrAdd(key).Value = value;
         }
 
+        public CurrencyAmount this[UniqueID key] => Amounts.FirstOrDefault(c => c.Currency.Id == key);
+
         public static Wallet operator +(Wallet wallet, CurrencyAmount value)
         {
             wallet.Add(value);
             return wallet;
         }
-
         public static Wallet operator -(Wallet wallet, CurrencyAmount amount)
         {
             wallet.Sub(amount);
             return wallet;
         }
+        public static bool operator >(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] > amount.Amount;
+        public static bool operator <(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] < amount.Amount;
+        public static bool operator >=(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] >= amount.Amount;
+        public static bool operator <=(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] <= amount.Amount;
+        public static bool operator !=(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] != amount.Amount;
+        public static bool operator ==(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] == amount.Amount;
     }
 }
