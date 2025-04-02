@@ -13,10 +13,6 @@ using UnityEngine.Events;
 
 namespace RichPackage.HealthSystem
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <remarks></remarks>
     public class HealthController : RichMonoBehaviour, 
         IDamageable, IHealable
     {
