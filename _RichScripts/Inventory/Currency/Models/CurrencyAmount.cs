@@ -24,6 +24,15 @@ namespace RichPackage.InventorySystem.Currency
             Amount = amount;
         }
 
+        public override string ToString()
+        {
+            // a combo of the amount and currency definition name
+            if (Currency == null)
+                return Amount.ToString("N");
+
+            return $"{Currency.ShortName}{Amount:N} {Currency.PluralName}";
+        }
+
         // TODO - helper methods that check currency is correct
         // TODO - operators
         // TODO - IComparable<CurrencyAmount>
