@@ -1,11 +1,11 @@
-using System;
-using System.Threading;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using Sirenix.OdinInspector;
 using Cysharp.Threading.Tasks;
+using RichPackage.UI.Transitions;
+using Sirenix.OdinInspector;
+using System;
+using TMPro;
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 /*
  * On a message box that has an OK button, OK is returned if:
@@ -36,21 +36,21 @@ namespace RichPackage.UI
 	[SelectionBase]
 	public class MessageBox : RichUIElement, IMessageBox
 	{
-        #region Constants
+		#region Constants
 
-        private const string YES = "Yes";
+		private const string YES = "Yes";
 		private const string NO = "No";
 		private const string OKAY = "Okay";
 		private const string CANCEL = "Cancel";
 
-        #endregion Constants
+		#endregion Constants
 
-        #region Fields
+		#region Fields
 
-        /// <summary>
-        /// For loading really complex payloads.
-        /// </summary>
-        [Serializable]
+		/// <summary>
+		/// For loading really complex payloads.
+		/// </summary>
+		[Serializable]
 		public struct Payload
 		{
 			[Serializable]
@@ -108,16 +108,16 @@ namespace RichPackage.UI
 		public bool animate = false;
 
 		[SerializeField, ShowIf("@animate == true")]
-		ATransitionComponent transitionINAnimator;
+		private ATransitionComponent transitionINAnimator;
 
 		[SerializeField, ShowIf("@animate == true")]
-		ATransitionComponent transitionOUTAnimator;
+		private ATransitionComponent transitionOUTAnimator;
 
 		public event MessageBoxResultCallback OnResult;
 
-        #endregion Fields
+		#endregion Fields
 
-        public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
+		public EMessageBoxButton Style { get; private set; } = EMessageBoxButton.OK;
 
 		public EMessageBoxResult LastResult { get; private set; } = EMessageBoxResult.None;
 
@@ -205,7 +205,7 @@ namespace RichPackage.UI
 			else
 				Finally();
 		}
-		
+
 		private void Finally()
 		{
 			Hide(); //hide window
@@ -273,7 +273,7 @@ namespace RichPackage.UI
 			string button3Text = null)
 		{
 			bool asyncResultPending = true;
-			
+
 			Show(messageBoxText, messageBoxTitle, style, animate,
 				(_) => asyncResultPending = false, button1Text, button2Text, button3Text);
 
