@@ -1,4 +1,8 @@
-﻿using RichPackage.GuardClauses;
+﻿// I think in this case it makes sense that "Equals" is not the same as "Equivalent"
+#pragma warning disable CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning disable CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
+
+using RichPackage.GuardClauses;
 using RichPackage.PrimitivePointers;
 using System.Collections.Generic;
 
@@ -112,3 +116,6 @@ namespace RichPackage.InventorySystem.Currency
         public static bool operator ==(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] == amount.Amount;
     }
 }
+
+#pragma warning restore CS0660 // Type defines operator == or operator != but does not override Object.Equals(object o)
+#pragma warning restore CS0661 // Type defines operator == or operator != but does not override Object.GetHashCode()
