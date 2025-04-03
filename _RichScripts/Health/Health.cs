@@ -119,6 +119,7 @@ namespace ApexOfficer
         }
 
         public override string ToString() => $"{Amount.Value} | {Max}";
+        internal void Kill() => Modify(-Amount);
 
         #region Operators
 

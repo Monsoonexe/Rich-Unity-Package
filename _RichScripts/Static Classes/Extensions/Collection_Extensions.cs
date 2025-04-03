@@ -157,17 +157,6 @@ namespace RichPackage
         }
 
         /// <summary>
-        /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
-        /// </summary>
-        public static T Find<T>(this IEnumerable<T> collection, Predicate<T> query)
-        {
-            foreach (T item in collection)
-                if (query(item))
-                    return item;
-            return default;
-        }
-
-        /// <summary>
         /// Fills a new <see cref="List{T}"/> with the results of <paramref name="query"/>.
         /// </summary>
         public static List<T> FindAll<T>(this IList<T> list, Predicate<T> query)

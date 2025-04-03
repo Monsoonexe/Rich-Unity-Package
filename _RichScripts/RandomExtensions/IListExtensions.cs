@@ -77,5 +77,14 @@ namespace RichPackage.RandomExtensions
             for (int i = 0; i < repeat; ++i)
                 list.Shuffle();
         }
+
+        public static void AddRange<T>(this IList<T> list, IList<T> collection)
+        {
+            int count = collection.Count;
+            for (int i = 0; i < count; i++)
+            {
+                list.Add(collection[i]);
+            }
+        }
     }
 }
