@@ -18,7 +18,10 @@ namespace RichPackage.InventorySystem.Currency
 		[field: SerializeField, LabelText(nameof(Description), true)]
 		public string Description { get; private set; } = "";
 
-		[field: SerializeField, LabelText(nameof(ShortName), true)]
+        /// <summary>
+        /// A short symbol descriptor (e.g. $, �, �, etc.)
+        /// </summary>
+        [field: SerializeField, LabelText(nameof(ShortName), true)]
 		public string ShortName { get; private set; } = "$";
 
 		[field: SerializeField, LabelText(nameof(Icon), true)]
