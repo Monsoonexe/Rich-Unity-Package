@@ -32,9 +32,12 @@ public abstract class AKeyPair_Drawer : PropertyDrawer
             valueWidth, position.height);
         //contentPosition.x += HORIZONTAL_SPACE;
 
-        //draw fields
-        EditorGUI.PropertyField(factionLabel, property.FindPropertyRelative("key"), GUIContent.none);
-        EditorGUI.PropertyField(amountLabel, property.FindPropertyRelative("value"), GUIContent.none);
+        if (property != null)
+        {
+            //draw fields
+            EditorGUI.PropertyField(factionLabel, property.FindPropertyRelative("key"), GUIContent.none);
+            EditorGUI.PropertyField(amountLabel, property.FindPropertyRelative("value"), GUIContent.none);
+        }
 
         //end drawing
         EditorGUI.EndProperty();
