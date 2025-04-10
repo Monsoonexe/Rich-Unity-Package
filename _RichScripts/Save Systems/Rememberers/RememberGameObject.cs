@@ -1,4 +1,9 @@
+/* TODO - cache string keys
+ * assert components are children of target
+ */
+
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.SaveSystem
@@ -11,6 +16,9 @@ namespace RichPackage.SaveSystem
     {
         [Required]
         public GameObject target;
+
+        [Required]
+        public List<Component> components = new List<Component>();
 
         [Title("Settings")]
         public bool rememberActive = false;
@@ -52,6 +60,53 @@ namespace RichPackage.SaveSystem
             if (rememberLayer)
                 SaveData.layer = target.layer;
         }
+
+        public override void SaveState(ISaveStore saveFile)
+        {
+            if (target == null)
+                return;
+
+            base.SaveState(saveFile);
+            SaveComponents(saveFile);
+        }
+
+        public override void LoadState(ISaveStore saveFile)
+        {
+            if (!saveFile.KeyExists(SaveID))
+                return;
+
+            saveFile.LoadInto(SaveID, SaveData);
+            LoadStateInternal();
+            LoadComponents(saveFile);
+        }
+
+        private void SaveComponents(ISaveStore saveFile)
+        {
+            string prefix = GetKeyPrefix();
+            for (int i = 0; i < components.Count; i++)
+            {
+                Component c = components[i];
+                UnityEngine.Assertions.Assert.IsNotNull(c);
+
+                string key = prefix + c.GetType().Name; // TODO - cache keys
+                saveFile.Save(key, (object)c); // let ES3 figure out the concrete type
+            }
+        }
+
+        private void LoadComponents(ISaveStore saveFile)
+        {
+            string prefix = GetKeyPrefix();
+            for (int i = 0; i < components.Count; i++)
+            {
+                Component c = components[i];
+                UnityEngine.Assertions.Assert.IsNotNull(c);
+
+                string key = prefix + c.GetType().Name; // TODO - cache keys
+                saveFile.LoadInto(key, (object)c); // let ES3 figure out the concrete type
+            }
+        }
+
+        private string GetKeyPrefix() => SaveID + "-";
 
         [System.Serializable]
         public class Memento : AState
