@@ -2,11 +2,11 @@
 
 namespace RichPackage.InventorySystem.Currency
 {
-	[System.Serializable, ]
-	public struct CurrencyAmount
-	{
-		[HorizontalGroup("A"), LabelWidth(64)]
-		public CurrencyDefinition Currency;
+    [System.Serializable]
+    public struct CurrencyAmount
+    {
+        [HorizontalGroup("A"), LabelWidth(64)]
+        public CurrencyDefinition Currency;
 
         [HorizontalGroup("A"), LabelWidth(64)]
         public int Amount;
@@ -38,9 +38,9 @@ namespace RichPackage.InventorySystem.Currency
         // TODO - IComparable<CurrencyAmount>
 
         public static implicit operator int(CurrencyAmount currencyAmount) => currencyAmount.Amount;
-		public static implicit operator CurrencyDefinition(CurrencyAmount currencyAmount) => currencyAmount.Currency;
+        public static implicit operator CurrencyDefinition(CurrencyAmount currencyAmount) => currencyAmount.Currency;
         public static CurrencyAmount operator -(CurrencyAmount currencyAmount) => new CurrencyAmount(currencyAmount.Currency, -currencyAmount.Amount);
-	}
+    }
 
     /// <summary>
     /// Reference to a <see cref="CurrencyAmount"/>.

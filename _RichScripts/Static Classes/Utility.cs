@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using RichPackage.FunctionalProgramming;
 using UnityEngine;
 
 namespace RichPackage
@@ -15,32 +13,8 @@ namespace RichPackage
         /// <example>RowColumnToIndex(1, 2, 3) = 5 </example>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RowColumnToIndex(int row, int column, int columnCount)
-            => row * columnCount + column;
+            => (row * columnCount) + column;
 
-        #region Functional Iterating
-
-        /// <summary>
-        /// Simply loops a given number of times
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Repeat(Action action, int cycles)
-        {
-            for (int i = 0; i < cycles; ++i)
-                action();
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Times how long the action took to complete and returns that time in seconds.
-        /// </summary>
-        public static float Time(this Action action)
-        {
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            action();
-            return watch.Elapsed.TotalSeconds.ToFloat();
-        }
-        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(ref T a, ref T b)
         {

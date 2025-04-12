@@ -12,13 +12,7 @@ namespace RichPackage
         /// </summary>
         public readonly string message;
 
-        public static ConditionInfo Success
-        {
-            get
-            {
-                return new ConditionInfo(true);
-            }
-        }
+        public static ConditionInfo Success => new ConditionInfo(true);
 
         public ConditionInfo(bool conditionStatus, string conditionMessage = null)
         {
@@ -69,6 +63,18 @@ namespace RichPackage
         public static implicit operator string(ConditionInfo info) => info.message;
         public static implicit operator ConditionInfo(bool value) => new ConditionInfo(value);
         //public static implicit operator ConditionInfo((bool result, string message) tuple) => new ConditionInfo(tuple.result, tuple.message); // newer C# versions support 'new (true, "");'
+    }
+
+    // TODO- move this somewhere better
+    public static class ConditionConversion
+    {
+        /// <summary>
+        /// Convert from devdgo info to rich info.
+        /// </summary>
+        public static ConditionInfo ToConditionInfo(this Devdog.QuestSystemPro.ConditionInfo dogInfo)
+        {
+            return new ConditionInfo(dogInfo.status, dogInfo.ToString());
+        }
     }
 }
 

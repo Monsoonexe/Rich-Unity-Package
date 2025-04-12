@@ -45,7 +45,7 @@ namespace RichPackage.InventorySystem.Currency
 
         public void Sub(CurrencyAmount amount)
         {
-            Add(new CurrencyAmount(amount.Currency, -amount.Amount));
+            Add(-amount);
         }
 
         public bool Spend(CurrencyAmount cost)
