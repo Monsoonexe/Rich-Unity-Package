@@ -634,10 +634,8 @@ namespace RichPackage.Assertions
             string reason;
             try
             {
-                string becauseOrEmpty = because ?? string.Empty;
-                reason =  (becauseArgs?.Contains((arg) => arg != null) == true) ? 
-					string.Format(CultureInfo.InvariantCulture, becauseOrEmpty, becauseArgs)
-					: becauseOrEmpty;
+                because = because ?? string.Empty;
+				reason = string.Format(CultureInfo.InvariantCulture, because, becauseArgs);
             }
             catch (FormatException formatException)
             {
