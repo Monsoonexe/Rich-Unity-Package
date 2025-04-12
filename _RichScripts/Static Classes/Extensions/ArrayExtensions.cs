@@ -101,6 +101,22 @@ namespace RichPackage
             return false;
         }
 
+        /// Returns 'true' if at least 1 item in array `query(list) == true`.
+        /// </summary>
+        public static bool Contains<T>(this IList<T> list, Predicate<T> query)
+        {
+            int count = list.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                if (query(list[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <returns>
         /// <see langword="false"/> if <paramref name="item"/> is found in
         /// <paramref name="array"/>; otherwise <see langword="true"/>.

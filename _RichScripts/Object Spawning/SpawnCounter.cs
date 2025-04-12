@@ -70,8 +70,9 @@ namespace RichPackage.Spawning
                     => obj.activeSelf == true;
 
                 //look for an active item
-                var itemInUse = objectPool.Manifest.Find(IsGameObjectActive);
-                if (itemInUse == null) break;//break if not found
+                var itemInUse = objectPool.Manifest.FirstOrDefault(IsGameObjectActive);
+                if (itemInUse == null)
+                    break; // break if not found
                 objectPool.Enpool(itemInUse);//return to pool (despawn)
             }
         }

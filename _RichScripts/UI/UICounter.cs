@@ -103,7 +103,7 @@ namespace RichPackage.UI
                         => obj.activeSelf == true;
 
                     //look for an active item
-                    GameObject itemInUse = objectPool.Manifest.Find(
+                    GameObject itemInUse = objectPool.Manifest.FirstOrDefault(
                         IsGameObjectActive);
                     if (itemInUse == null)
                         break; // break if not found

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace RichPackage
-{
+//namespace RichPackage
+//{
     /// <summary>
     /// My Collection Extension collection.
     /// </summary>
@@ -100,7 +100,6 @@ namespace RichPackage
             return false;
         }
 
-        /// <summary>
         /// Returns 'true' if at least 1 item in array `query(list) == true`.
         /// </summary>
         public static bool Contains<T>(this IList<T> list, Predicate<T> query)
@@ -145,49 +144,13 @@ namespace RichPackage
         #endregion IsSequentiallyEqualTo
 
         /// <summary>
-        /// Returns the first item in <paramref name="list"/> that <paramref name="query"/> returns true.
-        /// </summary>
-        public static T Find<T>(this IList<T> list, Predicate<T> query)
-        {
-            int count = list.Count;
-            for (int i = 0; i < count; ++i)
-                if (query(list[i]))
-                    return list[i];
-            return default;
-        }
-
-        /// <summary>
-        /// Fills a new <see cref="List{T}"/> with the results of <paramref name="query"/>.
-        /// </summary>
-        public static List<T> FindAll<T>(this IList<T> list, Predicate<T> query)
-        {
-            int count = list.Count;
-            var listToFill = new List<T>(count);
-            for (int i = 0; i < count; ++i)
-                if (query(list[i]))
-                    listToFill.Add(list[i]);
-            return listToFill;
-        }
-
-        /// <summary>
-        /// Fills <paramref name="list"/> with the results of <paramref name="query"/>.
-        /// </summary>
-        public static void FindAll<T>(this IList<T> list, Predicate<T> query, List<T> listToFill)
-        {
-            int count = list.Count;
-            for (int i = 0; i < count; ++i)
-                if (query(list[i]))
-                    listToFill.Add(list[i]);
-        }
-
-        /// <summary>
         /// Returns the last item in <paramref name="list"/> that <paramref name="query"/> returns true.
         /// </summary>
-        public static T FindLast<T>(this IList<T> list, Predicate<T> query)
+        public static int LastIndexOf<T>(this IList<T> list, Predicate<T> query)
         {
             for (int i = list.Count - 1; i >= 0; --i)
                 if (query(list[i]))
-                    return list[i];
+                    return i;
             return default;
         }
 
@@ -276,8 +239,6 @@ namespace RichPackage
         /// <summary>
         /// A and B are the same size and every element in A is in B (order agnostic).
         /// </summary>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
         /// <returns>True if A and B are the same size and every element in A is in B</returns>
         public static bool IsEquivalentTo<T>(this IList<T> a, IList<T> b)
         {
@@ -297,7 +258,6 @@ namespace RichPackage
         /// </summary>
         /// <param name="a">check if this one is a subset</param>
         /// <param name="b">"master" set</param>
-        /// <returns></returns>
         public static bool IsSubsetOf<T>(this IList<T> a, IList<T> b)
         {
             foreach (T item in a)
@@ -358,6 +318,25 @@ namespace RichPackage
             }
 
             return -1;
+        }
+
+        public static int IndexOf<T>(this IReadOnlyList<T> list, Predicate<T> query)
+        {
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (query(list[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public static bool Contains<T>(this IReadOnlyList<T> list, Predicate<T> query)
+        {
+            return list.IndexOf(query) >= 0;
         }
 
         /// <summary>
@@ -728,4 +707,4 @@ namespace RichPackage
             yield return i;
         }
     }
-}
+//}
