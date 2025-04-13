@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using System;
 
 namespace RichPackage.InventorySystem.Currency
 {
@@ -37,17 +38,15 @@ namespace RichPackage.InventorySystem.Currency
         // TODO - operators
         // TODO - IComparable<CurrencyAmount>
 
-        public static implicit operator int(CurrencyAmount currencyAmount) => currencyAmount.Amount;
-        public static implicit operator CurrencyDefinition(CurrencyAmount currencyAmount) => currencyAmount.Currency;
-        public static CurrencyAmount operator -(CurrencyAmount currencyAmount) => new CurrencyAmount(currencyAmount.Currency, -currencyAmount.Amount);
-    }
-
-    /// <summary>
-    /// Reference to a <see cref="CurrencyAmount"/>.
-    /// </summary>
-    /// <remarks>Useful for dictionary-like operations.</remarks>
-    public class CurrencyAmountPtr
-    {
-        public CurrencyAmount Value;
+        public static implicit operator int(CurrencyAmount currencyAmount)
+            => currencyAmount.Amount;
+        public static implicit operator CurrencyDefinition(CurrencyAmount currencyAmount)
+            => currencyAmount.Currency;
+        public static CurrencyAmount operator -(CurrencyAmount currencyAmount)
+            => new CurrencyAmount(currencyAmount.Currency, -currencyAmount.Amount);
+        public static CurrencyAmount operator -(CurrencyAmount currencyAmount, int amount)
+            => new CurrencyAmount(currencyAmount.Currency, currencyAmount.Amount - amount);
+        public static CurrencyAmount operator +(CurrencyAmount currencyAmount, int amount)
+            => new CurrencyAmount(currencyAmount.Currency, currencyAmount.Amount + amount);
     }
 }
