@@ -13,7 +13,6 @@ namespace RichPackage.WeightedProbabilities
         protected int weight;
 
         public int Weight { get => weight; } // readonly
-
     }
 
     /// <summary>
