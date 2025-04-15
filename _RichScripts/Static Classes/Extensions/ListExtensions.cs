@@ -16,92 +16,6 @@ namespace RichPackage
             return isNew;
         }
 
-        /// <summary>
-        /// Pop <paramref name="count"/> items off of <paramref name="src"/>
-        /// and add them to <paramref name="dest"/>.
-        /// </summary>
-        /// <param name="src">List to remove items from.</param>
-        /// <param name="dest">List to add items to.</param>
-        /// <param name="count">Number of items to drain. &lt;0 implies 'drain all'.</param>
-        /// <returns>Actual number of items added to <paramref name="dest"/>.</returns>
-        public static int DrainInto<T>(this List<T> src, List<T> dest, int count)
-        {
-            //validate
-            if (src == null)
-                throw new ArgumentNullException(nameof(src));
-            if (dest == null)
-                throw new ArgumentNullException(nameof(dest));
-
-            //flag to drain all
-            if (count < 0 || count > src.Count)
-                count = src.Count;
-
-            //ensure capacity
-            if (dest.Capacity < Math.Min(count, src.Count))
-                dest.Capacity = count;
-            int itemsAdded = count; //return value
-
-            //work
-            while (count-- > 0)
-                dest.Add(src.GetRemoveLast());
-            return itemsAdded;
-        }
-
-        /// <summary>
-        /// Pop <paramref name="count"/> items off of <paramref name="src"/>
-        /// and add them to <paramref name="dest"/>.
-        /// </summary>
-        /// <param name="src">List to remove items from.</param>
-        /// <param name="dest">List to add items to.</param>
-        /// <param name="count">Number of items to drain. &lt;0 implies 'drain all'.</param>
-        /// <returns>Actual number of items added to <paramref name="dest"/>.</returns>
-        public static int DrainInto<T>(this List<T> src, Queue<T> dest, int count)
-        {
-            //validate
-            if (src == null)
-                throw new ArgumentNullException(nameof(src));
-            if (dest == null)
-                throw new ArgumentNullException(nameof(dest));
-
-            //flag to drain all
-            if (count < 0 || count > src.Count)
-                count = src.Count;
-            int itemsAdded = count; //return value
-
-            //work
-            while (count-- > 0)
-                dest.Enqueue(src.GetRemoveLast());
-            return itemsAdded;
-        }
-
-        /// <summary>
-        /// Pop <paramref name="count"/> items off of <paramref name="src"/>
-        /// and add them to <paramref name="dest"/>.
-        /// </summary>
-        /// <param name="src">List to remove items from.</param>
-        /// <param name="dest">List to add items to.</param>
-        /// <param name="count">Number of items to drain. &lt;0 implies 'drain all'.</param>
-        /// <returns>Actual number of items added to <paramref name="dest"/>.</returns>
-        public static int DrainInto<T>(this List<T> src, Stack<T> dest, int count)
-        {
-            //validate
-            if (src == null)
-                throw new ArgumentNullException(nameof(src));
-            if (dest == null)
-                throw new ArgumentNullException(nameof(dest));
-
-            //flag to drain all
-            if (count < 0 || count > src.Count)
-                count = src.Count;
-
-            int itemsAdded = count; //return value
-
-            //work
-            while (count-- > 0)
-                dest.Push(src.GetRemoveLast());
-            return itemsAdded;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void InsertWrapped<T>(this List<T> list,
             int index, T item)
@@ -264,7 +178,6 @@ namespace RichPackage
             list.Clear();
             return list;
         }
-        
 
         /// <summary>
         /// Fast removal from a list. Only use this if the order of items in <paramref name="src"/>
@@ -318,6 +231,27 @@ namespace RichPackage
             int count = list.Count;
             for (int i = 0; i < count; ++i)
                 list[i] = value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T TakeFirst<T>(this List<T> list)
+        {
+            return TakeAt(list, 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T TakeLast<T>(this List<T> list)
+        {
+            return TakeAt(list, list.Count - 1);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T TakeAt<T>(this List<T> list, int index)
+        {
+            list.AssertValidIndex(index);
+            T item = list[index];
+            list.RemoveAt(index);
+            return item;
         }
 
         public static List<T> ToList<T>(this IEnumerable<T> src, List<T> list)
