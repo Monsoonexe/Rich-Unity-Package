@@ -36,16 +36,17 @@ namespace RichPackage.InventorySystem.Currency
             return value;
         }
 
-        public void Add(CurrencyAmount amount)
+        public CurrencyAmount Add(CurrencyAmount amount)
         {
             IntObject value = GetOrAdd(amount.Currency);
             int sum = amount.Amount + value.Value;
             value.Value = sum.Clamp(0, sum);
+            return new CurrencyAmount(amount.Currency, value.Value);
         }
 
-        public void Sub(CurrencyAmount amount)
+        public CurrencyAmount Sub(CurrencyAmount amount)
         {
-            Add(-amount);
+            return Add(-amount);
         }
 
         public bool Spend(CurrencyAmount cost)
@@ -103,11 +104,13 @@ namespace RichPackage.InventorySystem.Currency
             wallet.Add(value);
             return wallet;
         }
+
         public static Wallet operator -(Wallet wallet, CurrencyAmount amount)
         {
             wallet.Sub(amount);
             return wallet;
         }
+
         public static bool operator >(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] > amount.Amount;
         public static bool operator <(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] < amount.Amount;
         public static bool operator >=(Wallet wallet, CurrencyAmount amount) => wallet[amount.Currency] >= amount.Amount;
