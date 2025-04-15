@@ -37,7 +37,7 @@ namespace RichPackage.HealthSystem
         public bool IsDamaged { get => currentHealth < maxHealth; }
 
         [ShowInInspector]
-        public bool IsDead { get; private set; }
+        public bool IsDead { get => currentHealth <= 0; }
 
         #region Events
 
@@ -102,8 +102,7 @@ namespace RichPackage.HealthSystem
         /// <param name="healthRatio">Range: 0 lt value lte 1.0f</param>
         public void Revive(float healthRatio = 1)
         {
-            IsDead = false;
-            RecoverHealth((int)(healthRatio * maxHealth));
+            RecoverHealth((int)System.Math.Round(healthRatio * maxHealth, System.MidpointRounding.AwayFromZero));
         }
         
         /// <summary>
@@ -133,7 +132,6 @@ namespace RichPackage.HealthSystem
 
             if (currentHealth <= 0 && !IsDead)//if this is the moment of death
             {
-                IsDead = true;
                 deadEvent.Invoke();
             }
         }
