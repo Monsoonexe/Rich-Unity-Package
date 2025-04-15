@@ -188,6 +188,8 @@ namespace RichPackage.SaveSystem
             }
         }
 
+        public ES3Settings Settings => SaveFile.settings;
+
         /// <summary>
         /// The stored data inside the save file. Data saved here is always to the 
         /// 'live' save file.
