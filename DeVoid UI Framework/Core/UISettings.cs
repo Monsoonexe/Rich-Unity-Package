@@ -1,6 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace RichPackage.UI.Framework
 {
@@ -37,8 +38,9 @@ namespace RichPackage.UI.Framework
         /// all the screens listed and registers them. If the deactivateScreenGOs flag is
         /// true, it will deactivate all Screen GameObjects in case they're active.
         /// </summary>
-        public void DoCreateUIInstance()
-            => CreateUIInstance(instanceAndRegisterScreens: true);
+        public UIFrame CreateUIInstance()
+            => CreateUIInstance((prefab) => Object.Instantiate(prefab),
+                instanceAndRegisterScreens: true);
 
         /// <summary>
         /// Creates an instance of the UI Frame Prefab. By default, also instantiates
@@ -47,15 +49,21 @@ namespace RichPackage.UI.Framework
         /// </summary>
         /// <param name="instanceAndRegisterScreens">Should the screens listed in the Settings file be instanced and registered?</param>
         /// <returns>A new UI Frame</returns>
-        public UIFrame CreateUIInstance(bool instanceAndRegisterScreens = true)
+        public UIFrame CreateUIInstance(System.Func<GameObject, GameObject> instantiate,
+            bool instanceAndRegisterScreens = true)
         {
-            Instance = Instantiate(templateUIPrefab);
+            Assert.IsNotNull(templateUIPrefab);
+
+            Instance = instantiate(templateUIPrefab.gameObject)
+                .GetComponent<UIFrame>();
+
+            Assert.IsNotNull(Instance);
 
             if (instanceAndRegisterScreens)
             {
                 foreach (GameObject screenPrefab in screensToRegister)
                 {
-                    GameObject screenInstance = Instantiate(screenPrefab);
+                    GameObject screenInstance = instantiate(screenPrefab);
 
                     if (screenInstance.TryGetComponent(
                         out IUIScreen screenController))
