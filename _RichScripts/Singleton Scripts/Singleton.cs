@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace RichPackage
 {
@@ -36,7 +36,7 @@ namespace RichPackage
         /// <returns>False if a SingletonError occured.</returns>
         public static bool Take<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : Object
+            where T : MonoBehaviour
         {
             bool valid = true; // return value
             
@@ -44,7 +44,10 @@ namespace RichPackage
             {   //we are the singleton
                 singleton = instance;
                 if (dontDestroyOnLoad)
+                {
+                    instance.transform.parent = null;
                     Object.DontDestroyOnLoad(instance);
+                }
             }
             else if (instance.GetInstanceID() != singleton.GetInstanceID())
             {
@@ -56,7 +59,7 @@ namespace RichPackage
 
         public static bool TakeOrDestroy<T>(T instance, ref T singleton,
             bool dontDestroyOnLoad = true)
-            where T : Object
+            where T : MonoBehaviour
         {
             bool valid;
             if (!(valid = Take(instance, ref singleton, dontDestroyOnLoad)))
