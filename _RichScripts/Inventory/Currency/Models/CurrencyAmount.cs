@@ -1,5 +1,4 @@
 ﻿using Sirenix.OdinInspector;
-using System;
 
 namespace RichPackage.InventorySystem.Currency
 {
