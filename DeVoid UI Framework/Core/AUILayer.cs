@@ -87,7 +87,8 @@ namespace RichPackage.UI.Framework
 		public void RegisterScreen(string screenID, TScreen screen)
 		{
 			// validate
-			GuardAgainst.IsNullOrEmpty(screenID, nameof(screenID));
+			GuardAgainst.ArgumentIsNull(screen, nameof(screen));
+			GuardAgainst.IsNullOrEmpty(screenID, $"{screen.GetType().FullName} {nameof(screenID)}");
 			Assert.IsFalse(IsScreenRegistered(screenID), $"screenID <{screenID}> " +
 				"is already registered to this Layer.");
 
