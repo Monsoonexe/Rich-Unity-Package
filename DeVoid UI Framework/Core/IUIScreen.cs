@@ -11,9 +11,9 @@ namespace RichPackage.UI.Framework
 
 		bool IsOpen { get; }
 
-		void Show(IScreenProperties payload = null);
+		void Show(IScreenProperties payload);
 
-		void Hide(bool animate = true);
+		void Hide(bool animate);
 
 		event Action<IUIScreen> OnTransitionInFinishedCallback;
 

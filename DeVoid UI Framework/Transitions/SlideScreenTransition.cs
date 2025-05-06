@@ -40,7 +40,7 @@ namespace RichPackage.UI.Transitions
 
 		public override void Animate(Transform target, Action callWhenFinished = null)
 		{
-			Debug.Assert(target == this.target, "I didn't expect you to change targets!", this);
+			Debug.Assert(target == this.target, $"[{name}] I didn't expect you to change targets!", this);
 
 			// lazy init because awake isn't reliable
 			if (rTransform is null)
@@ -55,7 +55,8 @@ namespace RichPackage.UI.Transitions
 
 			if (doFade)
 			{
-				canvasGroup = gameObject.GetComponentIfNull(canvasGroup);
+				if (canvasGroup == null)
+					canvasGroup = gameObject.GetComponent<CanvasGroup>();
 				canvasGroup.DOFade(isOutAnimation ? 0f : 1f, duration * fadeDurationPercent);
 			}
 

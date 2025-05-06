@@ -16,13 +16,9 @@
 
         #endregion IPanel
 
-        /// <remarks>Animates if able.</remarks>
-        public void Show() => Panel.Layer.ShowScreen(this);
-        /// <remarks>Animates if able.</remarks>
-        public void Hide() => Hide(true);
-        public void Hide(bool animate) => Panel.Layer.HideScreen(this, animate);
-        /// <remarks>Suppresses animation.</remarks>
-        public void HideImmediately() => Panel.Layer.HideScreen(this, animate: false);
+        public void Open() => Panel.Layer.ShowScreen(this);
+        public void Close() => Close(true);
+        public void Close(bool animate) => Panel.Layer.HideScreen(this, animate);
 
         protected sealed override void SetProperties(TProps payload)
         {

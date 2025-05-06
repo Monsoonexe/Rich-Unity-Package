@@ -76,18 +76,6 @@ namespace RichPackage
         }
 
         /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
-        /// a <see cref="Component"/> fetched with 
-        /// <see cref="GameObject.GetComponent"/>.
-        /// </returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T GetComponentIfNull<T>(this GameObject gameObject,
-            T comp = null)
-            where T : Component
-        {
-            return (comp != null) ? comp : gameObject.GetComponent<T>();
-        }
-
-        /// <returns><paramref name="comp"/> if <paramref name="comp"/> is not null, or
         /// a <see cref="Component"/> fetched with <see cref="GameObject.GetComponent"/>.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
