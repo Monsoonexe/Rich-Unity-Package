@@ -111,6 +111,9 @@ namespace RichPackage.InputSystem
         }
 
         #endregion Context Management
+
+        public void Enable() => enabled = true;
+        public void Disable() => enabled = false;
     }
 
     /// <summary>
