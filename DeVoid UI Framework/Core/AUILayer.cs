@@ -161,10 +161,12 @@ namespace RichPackage.UI.Framework
 			}
 		}
 
-		private static System.Exception GetScreenNotRegisteredException(string screenID)
+		private System.Exception GetScreenNotRegisteredException(string screenID)
 		{
-			return new System.Exception($"[{nameof(AUILayer<TScreen>)}] screenID: " +
-				$"<{screenID}> is not registered to this Layer.");
+			string layerName = name.Remove("Layer")
+				.Trim();
+			return new System.ArgumentException($"[{nameof(AUILayer<TScreen>)}] screenID " +
+				$"'{screenID}' is not registered to this Layer ({layerName}).");
 		}
 
 		[Button, DisableInEditorMode, FoldoutGroup(FunctionBoxGroup)]
