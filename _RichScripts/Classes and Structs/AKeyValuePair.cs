@@ -35,7 +35,7 @@ namespace RichPackage
 
         public override string ToString()
         {
-            return Key.ToString() + Value.ToString();
+            return $"{Key} - {Value})";
         }
 
         public static bool operator ==(AKeyValuePair<TKey, TValue> a, 
