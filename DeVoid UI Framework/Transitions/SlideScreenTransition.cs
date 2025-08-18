@@ -40,7 +40,7 @@ namespace RichPackage.UI.Transitions
 
 		public override void Animate(Transform target, Action callWhenFinished = null)
 		{
-			Debug.Assert(target == this.target, $"[{name}] I didn't expect you to change targets!", this);
+			Debug.Assert(target == this.target || this.target == null, $"[{name}] I didn't expect you to change targets!", this);
 
 			// lazy init because awake isn't reliable
 			if (rTransform is null)
