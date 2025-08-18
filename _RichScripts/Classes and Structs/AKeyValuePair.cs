@@ -33,6 +33,16 @@ namespace RichPackage
             this.value = value;
         }
 
+        /// <summary>
+        /// Copy-constructor.
+        /// </summary>
+        /// <param name="other">Source of copy.</param>
+        public AKeyValuePair(AKeyValuePair<TKey, TValue> other)
+        {
+            this.key = other.key;
+            this.value = other.value;
+        }
+
         public override string ToString()
         {
             return $"{Key} - {Value})";
