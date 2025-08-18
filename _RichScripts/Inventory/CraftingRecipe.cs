@@ -36,7 +36,7 @@ namespace RichPackage.InventorySystem
             for (var i = 0; i < len; ++i)
             {
                 var itemStack = results[i];//get copy for ref
-                itemContainer.AddItem(ref itemStack);
+                itemContainer.GiveItem(ref itemStack);
             }
         }
 

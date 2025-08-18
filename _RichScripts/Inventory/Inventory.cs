@@ -6,8 +6,6 @@ namespace RichPackage.InventorySystem
     /// <summary>
     /// A collection of items with amounts.
     /// </summary>
-    /// <seealso cref="ItemChest"/>
-    /// <seealso cref="InventoryUIController"/>
     public class Inventory : RichMonoBehaviour, IItemContainer // behaviour
     {
         private const string DEFAULT_STASH_NAME = "Item Stash";
@@ -15,35 +13,37 @@ namespace RichPackage.InventorySystem
         private string inventoryName = DEFAULT_STASH_NAME;
         public string ContainerName { get => inventoryName; }
 
-        /// <summary>
-        /// List of all Items in stock. Can be ScriptableObject
-        /// data or Runtime data, like an ATool.
-        /// </summary>
-        [Tooltip("List of all Items in stock. Can be ScriptableObject " +
-            "data or Runtime data, like an ATool.")]
         [SerializeField]
         protected List<ItemStack> stock = new List<ItemStack>();
 
         /// <summary>
         /// All items  this Inventory has.
         /// </summary>
-        public List<ItemStack> Stock { get => stock; }
+        public IReadOnlyList<ItemStack> Stock { get => stock; }
 
         [Tooltip("Maximum number of items stacks that will fit in this Inventory.")]
         [SerializeField]
-        private int capacityLimit = 16;
+        private int _capacityLimit = 16;
         
         /// <summary>
         /// Maximum number of ItemStacks that will fit in this Inventory. 
         /// </summary>
-        public virtual int CapacityLimit { get => capacityLimit; set => ChangeCapactity(value); }
+        public virtual int CapacityLimit
+        {
+            get => _capacityLimit;
+            set => ChangeCapactity(value);
+        }
+
+        public void Add(ItemStack stack)
+        {
+            GiveItem(ref stack);
+        }
         
         /// <summary>
         /// Take from source stack and give to inventory stacks. 
         /// This operation potentially modifies given stack, hence the 'ref'.
         /// </summary>
-        /// <param name="stack"></param>
-        public virtual void AddItem(ref ItemStack stack)
+        public virtual void GiveItem(ref ItemStack stack)
         {
             Debug.Assert(stack.Item != null, 
                 "[Inventory] null item being added", this);
@@ -92,15 +92,13 @@ namespace RichPackage.InventorySystem
         /// No overflow, no swap, add stack to given matching stack at index.
         /// UI usually uses this because it has the concept of indices as well.
         /// </summary>
-        /// <param name="stack"></param>
-        /// <param name="index"></param>
         public void AddToStackAtIndex(ref ItemStack stack, int index)
         {
             // validate
-            if(index >= capacityLimit || index < 0)
+            if(index >= _capacityLimit || index < 0)
             {
                 throw new System.IndexOutOfRangeException("[Inventory] " + index 
-                    + " / " + capacityLimit);
+                    + " / " + _capacityLimit);
             }
 
             while (index >= stock.Count)//pad with empty slots
@@ -125,12 +123,9 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Returns true if the entire amount can be added to Stock.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
         public virtual bool CanAddItem(Item item, int amount)
         {   //subtract available space from amount. if availableSpace > amount, amount will be negative
-            amount -= (capacityLimit - stock.Count) * item.MaximumStacks; //check empty space
+            amount -= (_capacityLimit - stock.Count) * item.MaximumStacks; //check empty space
 
             if (amount > 0)
             {//inventory mostly full, try to add stack to similar stacks.
@@ -151,9 +146,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Returns true if the entire amount can be added to Stock.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
         public virtual bool CanAddItem(ItemStack stack)
             => CanAddItem(stack, stack); // lol implicit conversions.
 
@@ -223,10 +215,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// UI will probably need this, as UI has a concept of indices as well.
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        /// <param name="index"></param>
-        /// <param name="greedy"></param>
         /// <returns>The stack of items removed. Can be discarded.</returns>
         public virtual ItemStack RemoveFromStackAtIndex(int amount, 
             int index, bool greedy = false)
@@ -283,8 +271,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Returns total amount of items.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         public virtual int ItemCount(string itemID)
         {   //O(n) complexity. Can be reduced by sorting list, or one major stack divided up
             var amount = 0;//return value
@@ -297,8 +283,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Returns total amount of items.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
         public virtual int ItemCount(Item item)
         {   //O(n) complexity. Can be reduced by sorting list, or one major stack divided up
             var amount = 0;//return value
@@ -311,7 +295,6 @@ namespace RichPackage.InventorySystem
         /// <summary>
         /// Change the totaly amount of Items this Inventory can hold.
         /// </summary>
-        /// <param name="newCapacity"></param>
         public virtual void ChangeCapactity(int newCapacity)
         {
             if(newCapacity < stock.Count)
@@ -321,7 +304,7 @@ namespace RichPackage.InventorySystem
             }
             else
             {
-                capacityLimit = newCapacity;
+                _capacityLimit = newCapacity;
             }
         }
 
@@ -329,9 +312,6 @@ namespace RichPackage.InventorySystem
         /// Returns 'true' if the inventory contains at least the given amount of Items.
         /// Less iterations that 'ItemCount() lessThan amount' 
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
         public bool HasAtLeast(Item item, int amount)
         {
             foreach (var stack in stock)

@@ -12,9 +12,9 @@ namespace RichPackage.InventorySystem
         int CapacityLimit { get; }
         string ContainerName { get; }
         int StackCount { get; }
-        List<ItemStack> Stock { get; }
+        IReadOnlyList<ItemStack> Stock { get; }
 
-        void AddItem(ref ItemStack stack);
+        void GiveItem(ref ItemStack stack);
         void AddToStackAtIndex(ref ItemStack item, int index);
         bool CanAddItem(Item item, int amount);
         bool CanAddItem(ItemStack stack);

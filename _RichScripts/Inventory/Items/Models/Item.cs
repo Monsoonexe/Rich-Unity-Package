@@ -1,12 +1,14 @@
 ﻿using RichPackage.Audio;
 using RichPackage.InventorySystem.Currency;
+using RichPackage.TagSystem;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.InventorySystem
 {
     /// <summary>
-    /// 
+    /// A good that has a value in the galaxy.
     /// </summary>
     /// <seealso cref="ItemStack"/>
     public partial class Item : RichScriptableObject
@@ -87,6 +89,11 @@ namespace RichPackage.InventorySystem
         [field: SerializeField, LabelText(nameof(Rarity))]
         public ItemRarity Rarity { get; private set; }
 
+        [SerializeField]
+        private Tag[] tags = System.Array.Empty<Tag>();
+
+        public IReadOnlyList<Tag> Tags => tags;
+
         [Title("Currency")]
         [field: SerializeField, LabelText(nameof(BuyPrice))]
         public CurrencyAmount BuyPrice { get; private set; }
@@ -106,15 +113,17 @@ namespace RichPackage.InventorySystem
 
         public override string ToString() => SingleName + " " + Id.ToString();
 
-#if UNITY_EDITOR//AssetDatabase is Editor only
+#if UNITY_EDITOR // AssetDatabase is Editor only
 
         protected virtual void OnValidate()
         {
             if (string.IsNullOrEmpty(id))
+            {
                 id = UniqueID.New;
+            }
         }
 
-    #endif
+#endif
 
     }
 }

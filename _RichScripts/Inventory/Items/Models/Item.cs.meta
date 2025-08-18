@@ -3,7 +3,13 @@ guid: 92bba284122135d47ac4881c1653e993
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - icon: {instanceID: 0}
+  - itemPrefab: {instanceID: 0}
+  - <Rarity>k__BackingField: {fileID: 11400000, guid: 12740ef110ee13b4d9c216ccb5b1533d,
+      type: 2}
+  - <ShippingPriceCurve>k__BackingField: {fileID: 11400000, guid: 631be0cc9c8651940bc899a0d3a6c1cd,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

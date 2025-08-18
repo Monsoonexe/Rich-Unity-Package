@@ -3,7 +3,7 @@ namespace RichPackage.InventorySystem.Currency
     /// <summary>
     /// A group of <see cref="CurrencyDefinition"/>s.
     /// </summary>
-    public sealed class CurrencyCollection : ScriptableCollection<CurrencyDefinition>
+    public sealed class CurrencyDefinitions : ScriptableCollection<CurrencyDefinition>
     {
         public CurrencyDefinition this[UniqueID key] => this[key.ID];
 
