@@ -243,7 +243,7 @@ namespace RichPackage.UI.Framework
 
 			OnHierarchyChanged(); // react to change in hierarchy
 
-			// catch exception, but don't let it interrupt the opening of the window.
+			// don't let errors in user code interrupt the operation of the window framework
 			try
 			{
 				OnPropertiesSet(); // validate and load data
@@ -251,6 +251,7 @@ namespace RichPackage.UI.Framework
 			catch (Exception ex)
 			{
 				Debug.LogException(ex, this);
+				Debug.LogError($"[UI] {name} ({ScreenID}) encountered '{ex.GetType().Name}' while opening.", this);
 			}
 
 			if (IsOpen) // if currently showing
@@ -265,5 +266,10 @@ namespace RichPackage.UI.Framework
 		} // end function
 
 		#endregion Hide/Show Interface
+
+		public override string ToString()
+		{
+			return $"{ScreenID}";
+		}
 	}
 }
