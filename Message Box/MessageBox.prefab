@@ -1413,7 +1413,7 @@ GameObject:
   - component: {fileID: 5663427087482932512}
   - component: {fileID: 2992082761988813618}
   m_Layer: 5
-  m_Name: Message Box Host
+  m_Name: MessageBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
