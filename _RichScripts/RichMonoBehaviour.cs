@@ -223,7 +223,7 @@ namespace RichPackage
         [System.Diagnostics.Conditional(ScriptingSymbols.UNITY_EDITOR)]
         protected void LogNotSerializedWarning(string property)
         {
-            Debug.LogWarning($"Property '{property}' is not serialized. Using GetComponent for now.", this);
+            Debug.LogWarning($"Property '{property}' is not serialized on '{name}'. Using GetComponent for now.", this);
         }
 
         #region Debug Helpers
