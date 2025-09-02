@@ -278,7 +278,7 @@ namespace RichPackage
             {
                 foreach (Transform child in obj.transform)
                 {
-                    foreach (TComp comp in EnumerateComponents<TComp>(obj, recursive))
+                    foreach (TComp comp in EnumerateComponents<TComp>(child.gameObject, recursive))
                         yield return comp;
                 }
             }
