@@ -260,6 +260,7 @@ namespace RichPackage
             gameObject.SetActiveChecked(active);
         }
 
+        /// <param name="recursive">If set, include components in children.</param>
         public static IEnumerable<TComp> EnumerateComponents<TComp>(
             this GameObject obj, bool recursive)
             where TComp : class
