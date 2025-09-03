@@ -4,16 +4,25 @@ using UnityEngine;
 using UnityEngine.Events;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using RichPackage.Timers;
 
 namespace RichPackage
 {
+	public enum ETimeScale
+	{
+		Realtime,
+		GameTime,
+	}
+
 	/// <summary>
 	/// A pretty-accurate timer Mono.
 	/// Counts down and raises an event when timer hits 0. Can loop.
 	/// </summary>
 	public class Timer : RichMonoBehaviour
-	{
-		private bool paused = false;
+    {
+        private static readonly ITimeProvider DefaultTimeProvider = new UnityTimeProvider();
+
+        private bool paused = false;
 
 		[ShowInInspector, ReadOnly]
 		public bool Paused
@@ -28,7 +37,7 @@ namespace RichPackage
 			}
 		}
 
-		[Header("---Settings---")]
+		[Title("Settings")]
 		public bool loop = false;
 
 		/// <summary>
@@ -36,6 +45,8 @@ namespace RichPackage
 		/// </summary>
 		[Tooltip("Total duration of timer. TOP")]
 		public float TimerDuration = 0;
+
+		public ETimeScale Timing = ETimeScale.GameTime;
 
 		/// <summary>
 		/// Time remaining on current loop. COUNTDOWN
@@ -66,6 +77,12 @@ namespace RichPackage
 		[SerializeField]
 		private UnityEvent onTimerExpire = new UnityEvent();
 		public UnityEvent OnTimerExpire { get => onTimerExpire; }
+
+		/// <summary>
+		/// This timer's provider of time data.
+		/// </summary>
+		/// <remarks>Default value is <see cref="UnityTimeProvider"/>.</remarks>
+		public ITimeProvider TimeProvider = DefaultTimeProvider;
 
 		//runtime data
 		private Coroutine timerRoutine;
@@ -161,7 +178,7 @@ namespace RichPackage
 				while (TimeRemaining > 0)
 				{
 					yield return null;//wait for next frame
-					var scaledDeltaTime = App.DeltaTime * TimeScale;
+					var scaledDeltaTime = GetDeltaTime();
 					TimeElapsed += scaledDeltaTime;//track total time (in case duration was modified while running)
 					TimeRemaining.Value -= scaledDeltaTime;//tick... tick... tick...
 				}
@@ -169,6 +186,21 @@ namespace RichPackage
 				onTimerExpire.Invoke(); //ring ring ring
 			} while (loop);
 		}
+
+		private float GetDeltaTime()
+		{
+			float result;
+			if (Timing is ETimeScale.GameTime)
+			{
+				result = TimeProvider.DeltaTime;
+			}
+			else
+			{
+				result = TimeProvider.UnscaledDeltaTime;
+			}
+
+			return result;
+        }
 
 		#region Constructors
 
