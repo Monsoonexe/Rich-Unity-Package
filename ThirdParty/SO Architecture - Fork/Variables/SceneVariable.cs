@@ -37,6 +37,8 @@ namespace ScriptableObjectArchitecture
 
         public AsyncOperation LoadSceneAdditiveAsync() => LoadSceneAsync(LoadSceneMode.Additive);
 
+        public AsyncOperation LoadSceneAsync() => LoadSceneAsync(LoadSceneMode.Single);
+
         public AsyncOperation LoadSceneAsync(LoadSceneMode mode)
         {
             return SceneManager.LoadSceneAsync(Value.SceneIndex, mode);
