@@ -49,6 +49,15 @@ namespace ScriptableObjectArchitecture
             return SceneManager.UnloadSceneAsync(Value.SceneIndex);
         }
 
+#if UNITY_EDITOR
+        [Obsolete("From UnityDocs: Use UnloadSceneAsync. This function is not safe to use during triggers and under other circumstances. See Scripting reference for more details.")]
+        public void UnloadScene()
+        {
+            SceneManager.UnloadScene(Value.SceneIndex);
+        }
+
+#endif
+
         #endregion Load
     }
 
