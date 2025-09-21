@@ -248,7 +248,7 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T TakeAt<T>(this List<T> list, int index)
         {
-            list.AssertValidIndex(index);
+            list.IndexIsInRange(index);
             T item = list[index];
             list.RemoveAt(index);
             return item;
