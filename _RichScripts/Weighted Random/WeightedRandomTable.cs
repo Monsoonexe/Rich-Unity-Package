@@ -64,13 +64,20 @@ namespace RichPackage.WeightedProbabilities
         /// <summary>
         /// Weighted random.
         /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
         public static U GetRandomItem<T, U>(this IList<T> table, IRandomNumberGenerator random)
             where T : AWeightedProbability<U>
         {
-            int count = table.Count;
             int totalWeight = GetTotalWeight(table);
             int randomValue = random.Range(0, totalWeight);
+            return GetRandomItem<T, U>(table, randomValue);
+        }
+
+        /// <param name="randomValue">Value pulled from a random number generator based on weights.</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static U GetRandomItem<T, U>(this IList<T> table, int randomValue)
+            where T : AWeightedProbability<U>
+        {
+            int count = table.Count;
             int cumulativeWeight = 0;
 
             for (int i = 0; i < count; i++)
