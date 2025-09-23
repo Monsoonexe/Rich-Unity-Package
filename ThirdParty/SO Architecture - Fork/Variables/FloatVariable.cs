@@ -97,6 +97,7 @@ namespace ScriptableObjectArchitecture
         public void Halve() => Value /= 2;
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
+        public float AsPercentOfMax() => Value / MaxClampValue;
 
         private float GetPowerOfTen(int power)
         {
