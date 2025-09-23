@@ -74,6 +74,18 @@ namespace ScriptableObjectArchitecture
             Initialize();
         }
 
+        /// <summary>
+        /// Inits the variable with clamped values.
+        /// </summary>
+        public void Init(T current, T min, T max)
+        {
+            _minClampedValue = min;
+            _maxClampedValue = max;
+            _value = current;
+            _isClamped = true;
+            _readOnly = false;
+        }
+
         public void AddListener(Action<T> action)
         {
             if (!_typedActions.Contains(action))
@@ -133,10 +145,12 @@ namespace ScriptableObjectArchitecture
                 Debug.LogWarning("Tried to set value on " + name
                     + ", but value is readonly!", this);
         }
+
         public override string ToString()
         {
             return _value == null ? "null" : _value.ToString();
         }
+
         public static implicit operator T(BaseVariable<T> variable)
         {
             return variable.Value;

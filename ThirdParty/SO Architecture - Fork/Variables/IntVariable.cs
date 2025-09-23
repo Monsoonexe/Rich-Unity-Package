@@ -80,25 +80,17 @@ namespace ScriptableObjectArchitecture
 
         #region Static Constructors
 
+        public static IntVariable CreateInstance() => Create(0);
+
         public static IntVariable Create(int value)
 		{
-            var newVariable = Create(value, int.MinValue, int.MaxValue);
-
-            newVariable._isClamped = false;
-
-            return newVariable;
+            return Create(value, int.MinValue, int.MaxValue);
 		}
 
         public static IntVariable Create(int initial, int min, int max)
         {
             var newVariable = CreateInstance<IntVariable>();
-
-            newVariable.SetMaxClampValue(max);
-            newVariable.SetMinClampValue(min);
-            newVariable.Value = initial;
-            newVariable._isClamped = true;
-            newVariable._readOnly = false;
-
+            newVariable.Init(initial, min, max);
             return newVariable;
         }
 

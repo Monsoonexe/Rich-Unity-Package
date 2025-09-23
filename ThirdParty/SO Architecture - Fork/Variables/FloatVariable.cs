@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace ScriptableObjectArchitecture
@@ -146,5 +146,12 @@ namespace ScriptableObjectArchitecture
             => x.Value - y;
 
 		#endregion Operators
+
+        public static FloatVariable CreateInstance(float current, float min, float max)
+        {
+            var instance = CreateInstance<FloatVariable>();
+            instance.Init(current, min, max);
+            return instance;
+        }
 	}
 }
