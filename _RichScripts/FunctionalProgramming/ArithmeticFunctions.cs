@@ -55,6 +55,22 @@ namespace RichPackage.FunctionalProgramming
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Cubed(this int a) => a * a * a;
 
+        /// <summary>
+        /// Functional notation for <paramref name="lhs"/> ^ <paramref name="rhs"/>.
+        /// </summary>
+        /// <returns><paramref name="lhs"/> ^ <paramref name="rhs"/></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Xor(this int lhs, int rhs)
+            => lhs ^ rhs;
+
+        /// <summary>
+        /// Functional notation for <paramref name="lhs"/> !^ <paramref name="rhs"/>.
+        /// </summary>
+        /// <returns><paramref name="lhs"/> !^ <paramref name="rhs"/></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Xnor(this int lhs, int rhs)
+            => ~(lhs ^ rhs);
+
         #endregion Integers
 
         #region Floats
@@ -76,6 +92,9 @@ namespace RichPackage.FunctionalProgramming
         {
             return f / x;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Multiply(this int a, float b) => a * b;
 
         #endregion Floats
     }

@@ -45,7 +45,7 @@ namespace ApexOfficer
 
         public Health(int min, int max, int current)
         {
-            Amount = IntVariable.Create(current, min, max);
+            Amount = IntVariable.CreateInstance(current, min, max);
         }
 
         #endregion Constructors

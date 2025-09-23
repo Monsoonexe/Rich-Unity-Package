@@ -80,14 +80,14 @@ namespace ScriptableObjectArchitecture
 
         #region Static Constructors
 
-        public static IntVariable CreateInstance() => Create(0);
+        public static IntVariable CreateInstance() => CreateInstance(0);
 
-        public static IntVariable Create(int value)
+        public static IntVariable CreateInstance(int value)
 		{
-            return Create(value, int.MinValue, int.MaxValue);
+            return CreateInstance(value, int.MinValue, int.MaxValue);
 		}
 
-        public static IntVariable Create(int initial, int min, int max)
+        public static IntVariable CreateInstance(int initial, int min, int max)
         {
             var newVariable = CreateInstance<IntVariable>();
             newVariable.Init(initial, min, max);
