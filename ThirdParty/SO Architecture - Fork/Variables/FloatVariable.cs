@@ -80,10 +80,10 @@ namespace ScriptableObjectArchitecture
                         value, decimalDigits, MidpointRounding.AwayFromZero);
                     break;
                 case EMantissaBehaviour.Ceiling:
-                    value = CeilingAtNthDecimal(value, decimalDigits);
+                    value = CeilingAtNthDecimal(value);
                     break;
                 case EMantissaBehaviour.Floor:
-                    value = FloorAtNthDecimal(value, decimalDigits);
+                    value = FloorAtNthDecimal(value);
                     break;
             }
 
@@ -110,7 +110,7 @@ namespace ScriptableObjectArchitecture
             return factor;
         }
 
-        private float CeilingAtNthDecimal(float a, int decimalDigits)
+        private float CeilingAtNthDecimal(float a)
         {
             if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
                 return Mathf.Ceil(a);
@@ -124,7 +124,7 @@ namespace ScriptableObjectArchitecture
             return a;
         }
 
-        private float FloorAtNthDecimal(float a, int decimalDigits)
+        private float FloorAtNthDecimal(float a)
         {
             if (decimalDigits <= 0) //cast it to and from an int to clear mantissa
                 return Mathf.Floor(a);
@@ -148,10 +148,17 @@ namespace ScriptableObjectArchitecture
 
 		#endregion Operators
 
-        public static FloatVariable CreateInstance(float current, float min, float max)
+        public static FloatVariable CreateInstance(float initialValue, bool isReadOnly = false)
         {
             var instance = CreateInstance<FloatVariable>();
-            instance.Init(current, min, max);
+            instance.Init(initialValue, isReadOnly);
+            return instance;
+        }
+
+        public static FloatVariable CreateInstance(float initialValue, float min, float max)
+        {
+            var instance = CreateInstance<FloatVariable>();
+            instance.Init(initialValue, min, max);
             return instance;
         }
 	}

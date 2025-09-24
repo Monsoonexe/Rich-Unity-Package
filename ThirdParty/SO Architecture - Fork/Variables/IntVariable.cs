@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Codice.Client.BaseCommands;
+using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -32,12 +33,12 @@ namespace ScriptableObjectArchitecture
         /// Change the max clamp value. Does not raise events.
         /// </summary>
         public void SetMaxClampValue(int value)
-		{
+        {
             if (ReadOnly)
-			{
+            {
                 RaiseReadonlyWarning();
                 return;
-			}
+            }
             _maxClampedValue = value;
         }
 
@@ -54,17 +55,17 @@ namespace ScriptableObjectArchitecture
             _minClampedValue = value;
         }
 
-		#region Operators
+        #region Operators
 
-		public static int operator +(IntVariable x, int y)
+        public static int operator +(IntVariable x, int y)
             => x.Value + y;
 
         public static int operator -(IntVariable x, int y)
             => x.Value - y;
 
-		#endregion Operators
+        #endregion Operators
 
-		public void Add(int x) => Value += x;
+        public void Add(int x) => Value += x;
         public void Add(IntVariable x) => Value += x;
         public void Add(FloatVariable x) => Value += (int)x;
 
@@ -82,10 +83,12 @@ namespace ScriptableObjectArchitecture
 
         public static IntVariable CreateInstance() => CreateInstance(0);
 
-        public static IntVariable CreateInstance(int value)
-		{
-            return CreateInstance(value, int.MinValue, int.MaxValue);
-		}
+        public static IntVariable CreateInstance(int initial, bool isReadOnly = false)
+        {
+            var newVariable = CreateInstance<IntVariable>();
+            newVariable.Init(initial, isReadOnly);
+            return newVariable;
+        }
 
         public static IntVariable CreateInstance(int initial, int min, int max)
         {
@@ -94,6 +97,6 @@ namespace ScriptableObjectArchitecture
             return newVariable;
         }
 
-		#endregion Static Constructors
-	}
+        #endregion Static Constructors
+    }
 }

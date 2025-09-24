@@ -75,13 +75,23 @@ namespace ScriptableObjectArchitecture
         }
 
         /// <summary>
+        /// Inits the variable.
+        /// </summary>
+        public void Init(T initialValue, bool isReadOnly = false)
+        {
+            _value = initialValue;
+            _isClamped = false;
+            _readOnly = isReadOnly;
+        }
+
+        /// <summary>
         /// Inits the variable with clamped values.
         /// </summary>
-        public void Init(T current, T min, T max)
+        public void Init(T initialValue, T min, T max)
         {
             _minClampedValue = min;
             _maxClampedValue = max;
-            _value = current;
+            _value = initialValue;
             _isClamped = true;
             _readOnly = false;
         }
