@@ -15,6 +15,26 @@ namespace RichPackage.FunctionalProgramming
         public static T CastTo<T>(this object obj) => (T)obj;
 
         /// <summary>
+        /// Cast <paramref name="a"/> to a base class.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TBaseClass DownCast<TSuperClass, TBaseClass>(this TSuperClass a, out TBaseClass b)
+            where TSuperClass : TBaseClass
+        {
+            return b = a;
+        }
+
+        /// <summary>
+        /// Cast <paramref name="a"/> to a super class.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TSuperClass CastTo<TBaseClass, TSuperClass>(this TBaseClass a, out TSuperClass b)
+            where TSuperClass : TBaseClass
+        {
+            return b = (TSuperClass)a;
+        }
+
+        /// <summary>
         /// Convenient way to cast without needing parentheses. <br/>
         /// Equivalent to `obj as T`.
         /// </summary>
