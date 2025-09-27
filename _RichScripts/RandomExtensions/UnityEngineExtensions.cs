@@ -30,6 +30,15 @@ namespace RichPackage.RandomExtensions
         public static float Sample(this AnimationCurve animationCurve)
             => Sample(animationCurve, Rng.Current);
 
+        /// <param name="t">T on curve.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Chance(this AnimationCurve animationCurve, float t)
+        {
+            var y = animationCurve.Evaluate(t);
+            var rgn = Rng.Current.Next();
+            return rgn < y;
+        }
+
         /// <summary>
         /// Randomly draw a value on <paramref name="animationCurve"/>.
         /// </summary>

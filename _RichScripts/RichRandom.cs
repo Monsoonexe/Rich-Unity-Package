@@ -20,14 +20,14 @@ namespace RichPackage
         /// </summary>
         /// <param name="n">[0, 1]</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Chance(float n) => Random.Range(float.Epsilon, 1f) <= n;
+        public static bool Chance(float n) => RNG.Rng.Current.Next() <= n;
 
         /// <summary>
         /// Has an <paramref name="n"/> : 100 probability of returning <see langword="true"/>.
         /// </summary>
         /// <param name="n">[0, 100]</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool Chance(int n) => Random.Range(1, 101) <= n;
+        public static bool Chance(int n) => Chance(n / 100f);
 
         /// <param name="dice">[0, inf)</param>
         /// <param name="sides">[1, inf)</param>
