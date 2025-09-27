@@ -40,6 +40,13 @@ namespace ScriptableObjectArchitecture
         public int decimalDigits = 2;
 
         public override bool Clampable { get { return true; } }
+        public override bool IsInitializeable { get => !_readOnly; }
+        public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
+        public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
+        public float AsPercent => IsClamped
+            ? Mathf.InverseLerp(MinClampValue, MaxClampValue, Value)
+            : 0;
+
         protected override float ClampValue(float value)
         {
             if (value.CompareTo(MinClampValue) < 0)
@@ -55,9 +62,6 @@ namespace ScriptableObjectArchitecture
                 return value;
             }
         }
-        public override bool IsInitializeable { get => !_readOnly; }
-        public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
-        public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
 
         protected override float SetValue(float value)
         {
@@ -97,7 +101,6 @@ namespace ScriptableObjectArchitecture
         public void Halve() => Value /= 2;
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
-        public float AsPercentOfMax() => Value / MaxClampValue;
 
         private float GetPowerOfTen(int power)
         {

@@ -1,5 +1,4 @@
-﻿using Codice.Client.BaseCommands;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -28,6 +27,9 @@ namespace ScriptableObjectArchitecture
         public override bool IsInitializeable { get => !_readOnly; }
         public bool IsAtMaxValue { get => IsClamped && Value == MaxClampValue; }
         public bool IsAtMinValue { get => IsClamped && Value == MinClampValue; }
+        public float AsPercent => IsClamped
+            ? Mathf.InverseLerp(MinClampValue, MaxClampValue, Value)
+            : 0;
 
         /// <summary>
         /// Change the max clamp value. Does not raise events.
