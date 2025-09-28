@@ -26,24 +26,31 @@ namespace RichPackage.Interaction
         private IInteractable _target;
 
         /// <summary>
-        /// The current interactable (or null if there is none).
+        /// The current interactable (or <see langword="null"/> if there is none).
         /// </summary>
         public IInteractable Target
         {
             get => _target;
             set
             {
+                if (value == _target)
+                {
+                    return; // no change
+                }
+
                 // unfocus the old one
                 if (_target != null)
                 {
                     if (debug)
                         Debug.Log($"{Actor} is losing focus on {_target}");
+
                     Actor.OnLoseFocus(_target);
                     _target.OnLoseFocus(Actor); // hover effects
                 }
 
                 // take the new one.
                 _target = value;
+                interactables.AddIfNew(_target);
 
                 // focus the new one
                 if (_target != null)

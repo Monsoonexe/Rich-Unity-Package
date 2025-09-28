@@ -10,19 +10,19 @@ namespace RichPackage.Interaction
     [RequireComponent(typeof(Collider))]
     public class ProximityInteractableFinder : RichMonoBehaviour
     {
+        [Title("Dependencies")]
+        [Required]
+        public Collider myCollider;
+
+        [Required]
+        public InteractionManager interactionManager;
+
         [Title("Settings")]
         public bool debug = false;
         public bool requireMatchingTag = false;
 
         [Tag, ShowIf(nameof(requireMatchingTag))]
         public string interactableTag = "Interactable";
-
-        [Title("Components")]
-        [Required]
-        public Collider myCollider;
-
-        [Required]
-        public InteractionManager interactionManager;
 
         #region Unity Messages
 
@@ -55,6 +55,7 @@ namespace RichPackage.Interaction
             {
                 // this is a new thing
                 interactionManager.Add(newInteractable);
+                // could add extra IProximalInteractable logic here if desired
             }
         }
 
@@ -69,6 +70,7 @@ namespace RichPackage.Interaction
             if (other.TryGetComponent(out IInteractable newInteractable)) // if encountered an IInteractable
             {
                 interactionManager.Remove(newInteractable);
+                // could add extra IProximalInteractable logic here if desired
             }
         }
 
