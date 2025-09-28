@@ -10,8 +10,8 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AddIfNew<T>(this List<T> list, T item)
         {
-            bool isNew;
-            if (isNew = !list.Contains(item))
+            bool isNew = !list.Contains(item);
+            if (isNew)
                 list.Add(item);
             return isNew;
         }
