@@ -1,343 +1,249 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
+﻿using RichPackage.GuardClauses;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using Zenject.Internal;
 
 namespace RichPackage.Interaction
 {
     /// <summary>
-    /// Handles triggering Interactions between a Player and the world.
+    /// Manages an actor's interaction with interactables.
     /// </summary>
-    /// <remarks>
-    /// IsKinematic Rigidbodies sometimes call OnTriggerEnter/Exit at unexpected times, 
-    /// or repeatedly
-    /// 
-    /// If you need more information, either follow the same pattern with a new IIInteractable,
-    /// or get it from the 'context': player.Inventory[0].Item or something.
-    /// </remarks>
-    /// <seealso cref="Interactable"/>
-    [RequireComponent(typeof(Collider))]
-    public sealed class InteractionManager : RichMonoBehaviour
+    public class InteractionManager : RichMonoBehaviour
     {
-        private static readonly List<IInteractable> interactableList = new List<IInteractable>(12);
+        private readonly List<IInteractable> interactables = new List<IInteractable>(8);
 
-        [Title("---Settings---")]
-        public bool requireMatchingTag = true;
-
-        [Tag, ShowIf(nameof(requireMatchingTag))]
-        public string interactableTag = "Interactable";
-
-        public bool allowProximityInteractions = true;
-
-        [ShowIf(nameof(allowProximityInteractions))]
-        [Tooltip("This component needs a Rigidbody on the same GameObject" +
-            "in order to detect proximity.")]
-        [Required, SerializeField]
-        private Rigidbody myRigidbody;
-
-        [Header("---Input---")]
-        public bool useKeyCode = false;
-
-        [ShowIf(nameof(useKeyCode))]
-        public KeyCode interactKeyCode = KeyCode.Space;
-
-        public bool useButton = true;
-
-        [ShowIf(nameof(useButton))]
-        [NaughtyAttributes.InputAxis]
-        public string interactButton = "Fire1";
-
-        [BoxGroup("---Raycast Settings---")]
-        public bool allowRaycastInteractions = true;
-
-        [BoxGroup("---Raycast Settings---")]
-        [ShowIf(nameof(allowRaycastInteractions))]
-        public QueryTriggerInteraction queryTriggerInteraction
-            = QueryTriggerInteraction.Ignore;
-
-        [BoxGroup("---Raycast Settings---")]
-        [ShowIf(nameof(allowRaycastInteractions))]
-        public LayerMask raycastLayerMask = -1;
-
-        [MinValue(0)]
-        [BoxGroup("---Raycast Settings---")]
-        [ShowIf(nameof(allowRaycastInteractions))]
-        public float raycastLength = 10.0f;
-
-        [Tooltip("[Modifying has no effect in PlayMode]\r\n"
-            + "Seconds between each raycast query for an IInteractable.\r\n"
-            + "Lower is more responsive but costly.")]
-        [MinValue(0)]
-        [BoxGroup("---Raycast Settings---")]
-        [ShowIf(nameof(allowRaycastInteractions))]
-        public float raycastInterval = 0.25f;
-
-        [BoxGroup("---Raycast Settings---")]
-        [ShowIf(nameof(allowRaycastInteractions))]
-        [Required]
-        public Transform raycastOrigin = null;
-
-        [FoldoutGroup("---Events---")]
-        [SerializeField]
-        private UnityEvent interactEvent = new UnityEvent();
-        public UnityEvent OnInteractEvent { get => interactEvent; }
-
-        [FoldoutGroup("---Events---")]
-        [SerializeField]
-        private UnityEvent enterRangeEvent = new UnityEvent();
-        public UnityEvent OnEnterEvent { get => enterRangeEvent; }
-
-        [FoldoutGroup("---Events---")]
-        [SerializeField]
-        private UnityEvent exitRangeEvent = new UnityEvent();
-        public UnityEvent OnExitEvent { get => exitRangeEvent; }
-
-        [FoldoutGroup("---Events---")]
-        [SerializeField]
-        private UnityEvent enterHoverEvent = new UnityEvent();
-        public UnityEvent OnEnterHoverEvent { get => enterHoverEvent; }
-
-        [FoldoutGroup("---Events---")]
-        [SerializeField]
-        private UnityEvent exitHoverEvent = new UnityEvent();
-        public UnityEvent OnExitHoverEvent { get => exitHoverEvent; }
-
-        // member components
-        private Collider myCollider;
-        private Timer myRaycastTimer;
+        [Title("Settings")]
+        public bool debug = false;
 
         // runtime data
-        public IInteractor actor;
-        private IInteractable proximityIInteractable;
-        private IInteractable raycastInteractable; //has higher priority
+        /// <summary>
+        /// The thing performing the interaction.
+        /// </summary>
+        public IInteractor Actor;
+
+        private IInteractable _target;
 
         /// <summary>
-        /// Can externally request an Interact to occur.
+        /// The current interactable (or null if there is none).
         /// </summary>
-        private bool interactRequested = false;
+        public IInteractable Target
+        {
+            get => _target;
+            set
+            {
+                // unfocus the old one
+                if (_target != null)
+                {
+                    if (debug)
+                        Debug.Log($"{Actor} is losing focus on {_target}");
+                    Actor.OnLoseFocus(_target);
+                    _target.OnLoseFocus(Actor); // hover effects
+                }
+
+                // take the new one.
+                _target = value;
+
+                // focus the new one
+                if (_target != null)
+                {
+                    if (debug)
+                        Debug.Log($"{Actor} is taking focus on {_target}");
+
+                    // note: should these call even when the target is 'null' to indicate 'none'?
+                    Actor.OnTakeFocus(_target);
+                    _target.OnTakeFocus(Actor); // hover effects
+                }
+
+                OnInteractableChanged?.Invoke(Actor, value);
+            }
+        }
+
+        public bool HasTarget => _target != null;
+
+        /// <summary>
+        /// actor, new, old.
+        /// </summary>
+
+        public event System.Action<IInteractor, IInteractable> OnInteractableChanged;
+
+        public IReadOnlyList<IInteractable> KnownInteractables => interactables;
+
+        #region Editor
+#if UNITY_EDITOR
+
+        [ShowInInspector, LabelText("Actor Name")]
+        private string Editor_ActorName
+        {
+            get => Actor?.ToString() ?? "none";
+        }
+
+        [ShowInInspector, LabelText("Target Name")]
+        private string Editor_TargetName
+        {
+            get => Target?.ToString() ?? "none";
+        }
+
+        [ShowInInspector, LabelText("Count")]
+        public int Count => interactables.Count;
+
+#endif
+        #endregion Editor
 
         #region Unity Messages
 
-        protected override void Awake()
+        protected override void Reset()
         {
-            base.Awake();
-
-            //gather member component references
-            myRigidbody = GetComponent<Rigidbody>();
-            myCollider = GetComponent<Collider>();
-            myRaycastTimer = gameObject.AddComponent<Timer>(); //this timer isn't for mortal eyes 0.o
-
-            //configure timer to raycast on repeat
-            myRaycastTimer.Initialize(raycastInterval, ProcessRaycast, loop: true);
-
-            //configure rigidbody (only needs to do this if the RB is separate from player RB)
-            // myRigidbody.isKinematic = true;
-            // myRigidbody.useGravity = false;
-            // myRigidbody.angularDrag = 0;
-            // myRigidbody.drag = 0;
-            // myRigidbody.mass = Mathf.Epsilon;//can't actually be zero.
-
-            //validate settings
-            Debug.Assert(useButton || useKeyCode,
-                "[InteractionManager] useButton and useKeyCode both false! "
-                + "How to interact???", this);
-
-            // Signals.Get<OnPauseGameSignal>().AddListener(PauseGameHandler);
-            // Signals.Get<TogglePlayerInteractability>().AddListener(ToggleHandler);
-        }
-
-        private void Start()
-        {
-            // if (!playerCharacter)
-            // 	LocatePlayer();
-            // if (!raycastOrigin)
-            // 	LocateMainCameraTransform();
-        }
-
-        private void OnDestroy()
-        {
-            // Signals.Get<OnPauseGameSignal>().RemoveListener(PauseGameHandler);
-            // Signals.Get<TogglePlayerInteractability>().RemoveListener(ToggleHandler);
+            SetDevDescription("Handles interactions between actors and interactables.");
         }
 
         private void OnEnable()
         {
-            myRaycastTimer.Restart();
+            RemoveOutOfRangeInteractables();
+
+            // if we are in range of an interactable when we are enabled,
+            // then we need to enter it now
+            if (Actor != null && Target != null && Target.IsEnabled)
+            {
+                Actor.OnTakeFocus(Target);
+            }
         }
 
         private void OnDisable()
         {
-            myRaycastTimer.Stop();
-        }
+            if (App.IsQuitting)
+                return;
 
-        private void Update()
-        {
-            // if Input indicates we are to cause an Interact to occur
-            if (interactRequested || GetInteractRequested())
+            if (Target != null && Actor != null)
             {
-                DoInteraction();
-                interactRequested = false; //clear flag
-            }
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (allowProximityInteractions == false) return;
-
-            if (!requireMatchingTag || other.gameObject.CompareTag(interactableTag))
-            {
-                var newIInteractable = other.GetComponent<IInteractable>();
-                if (newIInteractable != null  //if encountered an IInteractable
-                    && newIInteractable != proximityIInteractable) // prevents repeats / stuttering
-                {
-                    proximityIInteractable = newIInteractable;
-                    enterRangeEvent.Invoke();
-                    proximityIInteractable.OnEnterRange(actor);
-                }
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (allowProximityInteractions == false) return;
-
-            if (!requireMatchingTag || other.gameObject.CompareTag(interactableTag))
-            {
-                var newIInteractable = other.GetComponent<IInteractable>();
-                if (newIInteractable != null  //if encountered an IInteractable
-                    && newIInteractable == proximityIInteractable) // prevents repeats / stuttering
-                {
-                    exitRangeEvent.Invoke();
-                    proximityIInteractable.OnExitRange(actor);
-                    proximityIInteractable = null;
-                }
+                Actor.OnLoseFocus(Target);
             }
         }
 
         #endregion Unity Messages
-        
+
         public void DoInteraction()
         {
-            IInteractable targetIInteractable = null;
-
-            // prioritize raycast interactable since Player is pointing to it.
-            if (allowRaycastInteractions && raycastInteractable != null)
-                targetIInteractable = raycastInteractable;
-            else if (allowProximityInteractions && proximityIInteractable != null)
-                targetIInteractable = proximityIInteractable;
-
-            if (actor == null)
+            if (Actor == null)
             {
-                Debug.LogError("No actor has been set.");
+                Debug.LogError("No actor has been set.", this);
                 return;
             }
 
-            if (targetIInteractable == null)
+            if (Target == null)
             {
-                Debug.LogError("No interactable has been set.");
+                Debug.LogError("No interactable has been set.", this);
                 return;
             }
 
             // interact is requested and possible 
-            interactEvent.Invoke();
-            actor.Interact(targetIInteractable);
+            Actor.InteractWith(Target);
         }
 
         /// <summary>
-        /// Determine if an Interact, through Input or other means, was requested.
+        /// Adds <paramref name="interactable"/> to the system but does not force taking focus.
         /// </summary>
-        private bool GetInteractRequested()
+        /// <remarks>Will only take focus if it is the only known item.</remarks>
+        public void Add(IInteractable interactable)
         {
-            var pressedInteract = false;
+            GuardAgainst.ArgumentIsNull(interactable, nameof(interactable));
 
-            if (useKeyCode)
+            if (AddInternal(interactable))
             {
-                pressedInteract = Input.GetKeyDown(interactKeyCode);
+                if (interactable.IsEnabled)
+                    Target = interactable;
             }
-            if (!pressedInteract && useButton)
-            {
-                pressedInteract = Input.GetButtonDown(interactButton);
-            }
-
-            return pressedInteract;
         }
 
-        private void TakeInteractable(IInteractable interactable)
+        /// <returns>True if <paramref name="interactable"/> was added, or False if already known.</returns>
+        private bool AddInternal(IInteractable interactable)
         {
-            raycastInteractable = interactable; // track
-            enterHoverEvent.Invoke();
-            raycastInteractable.OnEnterHover();
-        }
-
-        private void ReleaseInteractable()
-        {
-            exitHoverEvent.Invoke();
-            raycastInteractable.OnExitHover();
-            raycastInteractable = null; // release
-        }
-
-        private IInteractable GetInteractableFromMouse()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo,
-                raycastLength, raycastLayerMask, queryTriggerInteraction)
-                && (!requireMatchingTag || hitInfo.collider.CompareTag(interactableTag)))
-            {
-                return hitInfo.collider.GetComponent<IInteractable>();
-            }
-            return null;
-        }
-
-        private IInteractable GetInteractable()
-        {
-            // check to see if player is looking at interactable object's model
-            var ray = new Ray(raycastOrigin.position, raycastOrigin.forward);
-            if (Physics.Raycast(ray, out RaycastHit hitInfo,
-                raycastLength, raycastLayerMask, queryTriggerInteraction)
-                && (!requireMatchingTag || hitInfo.collider.CompareTag(interactableTag)))
-            {
-                return hitInfo.collider.GetComponent<IInteractable>();
-            }
-            return null;
+            // track it (once)
+            bool added = interactables.AddIfNew(interactable);
+            return added;
         }
 
         /// <summary>
-        /// Casts raycast to look for IInteractable within range.
+        /// Remove an interactable from the context.
         /// </summary>
-        private void ProcessRaycast()
+        public void Remove(IInteractable interactable)
         {
-            if (!allowRaycastInteractions) return; //check if raycasting is disabled.
+            GuardAgainst.ArgumentIsNull(interactable, nameof(interactable));
 
-            IInteractable newInteractable = GetInteractable();
-            
-            if (raycastInteractable != null)
-                ReleaseInteractable();
+            interactables.QuickRemove(interactable);
 
-            if (newInteractable != null && newInteractable.IsEnabled)
-                TakeInteractable(newInteractable);
+            if (interactable == Target)
+                Target = null;
         }
 
-        ///<summary>
-        /// Can externally request interaction start.
-        ///</summary>
-        public void RequestInteract() => interactRequested = true;
-
-        ///<summary>
-        /// Cancel a request for an interaction (only works if it was set requested this frame).
-        ///</summary>
-        public void CancelRequestInteract() => interactRequested = false;
-
-        [Button("TestRay()")]
-        public void DrawRay()
+        public void RemoveAll()
         {
-            Debug.DrawRay(raycastOrigin.position,
-                raycastOrigin.forward, Color.red, 2);
+            while (interactables.Count > 0)
+            {
+                Remove(interactables[^1]); // last
+            }
         }
 
-        public static void RegisterInteractable(IInteractable i)
-            => interactableList.AddIfNew(i);
+        /// <remarks>Will try to focus the next best interactable.</remarks>
+        public void RemoveOutOfRangeInteractables()
+        {
+            // approximate our collider's bounds (it's definitely a capsule, right?).
+            Vector3 start = transform.position;
+            Vector3 end = start.PlusY(2); // height guess
+            float radius = 0.5f; // guess
+            int layer
+                = (1 << 0) // default layer
+                | (1 << gameObject.layer);
 
-        public static void UnregisterInteractable(IInteractable i)
-            => interactableList.Remove(i);
+            // include all known objects in the layer mask
+            foreach (var i in interactables
+                .Cast<Component>())
+            {
+                layer |= 1 << i.gameObject.layer;
+            }
+
+            // get all interactables within our aproximate range
+            using var _ = ZenPools.Spawn(out Collider[] colliders, 16); // lol what happens if we do this while inside a particle effect???
+            using var __ = ZenPools.Spawn(out List<IInteractable> interactablesInRange);
+            int count = Physics.OverlapCapsuleNonAlloc(start, end, radius,
+                colliders, layer, QueryTriggerInteraction.Collide);
+
+            // optimize linq if this goes to production.
+            colliders
+                .Take(count)
+                .Select((c) => c.GetComponent<IInteractable>())
+                .Where(i => i != null)
+                .ToList(interactablesInRange);
+
+            // iterate backwards due to removal
+            for (int i = interactables.Count - 1; i >= 0; i--)
+            {
+                var query = interactables[i];
+                // if we are no longer inside this guy's trigger volume
+                if (!interactablesInRange.Contains(query))
+                {
+                    Remove(query);
+                }
+            }
+        }
+
+        public IInteractable GetClosestEnabledInteractable()
+        {
+            Vector3 pos = Actor.Transform.position;
+            return Utility.GetClosestObject(EnumerateEnabledInteractables(), pos);
+        }
+
+        /// <summary>
+        /// Yields all enabled interactables and their transforms.
+        /// </summary>
+        public IEnumerable<(IInteractable Interactable, Transform Transform)> EnumerateEnabledInteractables()
+        {
+            foreach (IInteractable interactable in interactables)
+            {
+                if (interactable.IsEnabled)
+                    yield return (interactable, interactable.InteractionPoint);
+            }
+        }
     }
 }

@@ -1,16 +1,21 @@
 ﻿
 namespace RichPackage.Interaction
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public partial interface IInteractor
+    /// <summary>
+    /// Something that can interact with an IInteractable.
+    /// </summary>
+    public partial interface IInteractor
 	{
+        UnityEngine.Transform Transform { get; }
+
+        void OnLoseFocus(IInteractable interactable);
+        void OnTakeFocus(IInteractable interactable);
+
         /// <summary>
         /// This method should call `interactable.Activate(this)`.
         /// </summary>
-        /// <param name="actor">Activate of the "visitor" pattern.</param>
-        void Interact(IInteractable interactable);
+        /// <param name="interactable">Activate of the "visitor" pattern.</param>
+        void InteractWith(IInteractable interactable);
 
 		/* special interactions
 		 * void InteractWith(Spinner spinner);

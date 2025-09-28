@@ -1,4 +1,6 @@
 
+using UnityEngine;
+
 namespace RichPackage.Interaction
 {
     public partial interface IInteractable
@@ -16,30 +18,24 @@ namespace RichPackage.Interaction
         bool IsEnabled { get; set; }
 
         /// <summary>
+        /// The point the actor should navigate to.
+        /// </summary>
+        Transform InteractionPoint { get; }
+
+        /// <summary>
         /// Called when the interactor stops hovering over the interactable.
         /// </summary>
-        void OnEnterHover();
+        void OnTakeFocus(IInteractor actor);
 
         /// <summary>
         /// Called when the interactor begins hovering over the interactable.
         /// </summary>
-        void OnExitHover();
-
-        /// <summary>
-        /// Called when the <paramref name="actor"/> enters the range.
-        /// </summary>
-        void OnEnterRange(IInteractor actor);
-
-        /// <summary>
-        /// Called when the <paramref name="actor"/> exits the range.
-        /// </summary>
-        void OnExitRange(IInteractor actor);
+        void OnLoseFocus(IInteractor actor);
 
         /// <summary>
         /// The target of this call should call the <paramref name="actor"/>'s specific InteractWith method.
         /// </summary>
-        /// <param name="actor"></param>
-        void Activate(IInteractor actor);
+        void InteractWith(IInteractor actor);
 
         /// <summary>
         /// Called when the <paramref name="actor"/> is finished operating this.
