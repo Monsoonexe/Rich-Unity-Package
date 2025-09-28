@@ -14,14 +14,6 @@ namespace RichPackage.Interaction
     {
         [Foldout("---Events---")]
         [SerializeField]
-        protected UnityEvent enterRangeEvent = new UnityEvent();
-
-        [Foldout("---Events---")]
-        [SerializeField]
-        protected UnityEvent exitRangeEvent = new UnityEvent();
-
-        [Foldout("---Events---")]
-        [SerializeField]
         protected UnityEvent enterHoverEvent = new UnityEvent();
 
         [Foldout("---Events---")]
@@ -35,24 +27,17 @@ namespace RichPackage.Interaction
         [Foldout("---Events---")]
         [SerializeField]
         protected UnityEvent endInteractEvent = new UnityEvent();
-        
-        protected virtual void OnEnable()
-            => RegisterWithManager();
 
-        protected virtual void OnDisable()
-            => UnregisterWithManager();
+        public bool IsAvailable { get => IsEnabled; set => IsEnabled = value; }
+
+        public bool IsEnabled { get => enabled; set => enabled = value; }
+        public virtual Transform InteractionPoint { get => transform; }
 
         public virtual void OnTakeFocus(IInteractor actor)
             => enterHoverEvent.Invoke();
 
         public virtual void OnLoseFocus(IInteractor actor)
             => exitHoverEvent.Invoke();
-
-        public virtual void OnEnterRange(IInteractor actor)
-            => enterRangeEvent.Invoke();
-
-        public virtual void OnExitRange(IInteractor actor)
-            => exitRangeEvent.Invoke();
 
         public virtual void InteractWith(IInteractor actor)
         {
@@ -62,20 +47,5 @@ namespace RichPackage.Interaction
 
         public virtual void Release(IInteractor actor)
             => endInteractEvent.Invoke();
-
-        public bool IsAvailable { get => IsEnabled; set => IsEnabled = value; }
-
-        public bool IsEnabled { get => enabled; set => enabled = value; }
-        public virtual Transform InteractionPoint { get => transform; }
-
-        protected void RegisterWithManager()
-        {
-            //=> InteractionManager.RegisterInteractable(this);
-        }
-
-        protected void UnregisterWithManager()
-        {
-            //=> InteractionManager.UnregisterInteractable(this);
-        }
     }
 }
