@@ -26,13 +26,15 @@ namespace RichPackage.InputSystem
             SetDevDescription("An input context that exists in the scene.");
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
 
         /// <remarks>You're not allowed to use this directly.</remarks>
+#pragma warning disable UNT0001 // Empty Unity message
         protected void Update() { }
+#pragma warning restore UNT0001 // Empty Unity message
 
-        #endif
+#endif
 
-#endregion Unity Messages
+        #endregion Unity Messages
     }
 }
