@@ -1,4 +1,6 @@
-﻿namespace RichPackage.RNG
+﻿using RichPackage.Assertions;
+
+namespace RichPackage.RNG
 {
     public static class  Rng
     {
@@ -12,6 +14,17 @@
         public static float Next() => Current.Next();
         public static float Range(float min, float max) => Current.Range(min, max);
         public static int Range(int min, int max) => Current.Range(min, max);
+        
+        /// <summary>
+        /// Makes a random draw against <paramref name="against"/>.
+        /// </summary>
+        /// <param name="against">[0,1] Chance of success.</param>
+        public static bool Check(this IRandomNumberGenerator rng, float against)
+        {
+            Assert.IsTrue(against is >= 0 and <= 1, $"Out of range '{against}' [0,1]");
+
+            return rng.Next() <= against;
+        }
     }
 
     /// <summary>
@@ -47,9 +60,15 @@
 
     public sealed class UnityRandom : ARandomNumberGenerator, IRandomNumberGenerator
     {
+        public UnityRandom() { }
+        public UnityRandom(int seed)
+        {
+            UnityEngine.Random.InitState(seed);
+        }
         public override float Next() => UnityEngine.Random.value;
         public override float Range(float min, float max) => UnityEngine.Random.Range(min, max);
         public override int Range(int min, int max) => UnityEngine.Random.Range(min, max);
+
     }
 
     public sealed class CryptoRandom : ARandomNumberGenerator, IRandomNumberGenerator, System.IDisposable
@@ -79,6 +98,7 @@
 
     public interface IRandomNumberGenerator
     {
+        /// <returns>[0,1]</returns>
         float Next();
         /// <returns>[min, max]</returns>
         float Range(float min, float max);
