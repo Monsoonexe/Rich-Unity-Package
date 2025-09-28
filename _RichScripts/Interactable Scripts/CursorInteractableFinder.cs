@@ -33,6 +33,7 @@ namespace RichPackage.Interaction
         protected override void Reset()
         {
             base.Reset();
+            SetDevDescription("Finds interactables via cursor.");
             interactionManager = GetComponentInParent<InteractionManager>();
             raycastOrigin = Camera.main;
         }
