@@ -44,8 +44,8 @@ namespace ScriptableObjectArchitecture
         public void SetFalse() => Value = false;
         public void InvertValue() => Value = !Value;
 
-        public static BoolVariable Create() => CreateInstance<BoolVariable>();
-        public static BoolVariable Create(bool initialValue)
+        public static BoolVariable CreateInstance() => CreateInstance<BoolVariable>();
+        public static BoolVariable CreateInstance(bool initialValue)
         {
             var variable = CreateInstance<BoolVariable>();
             variable._value = initialValue;
