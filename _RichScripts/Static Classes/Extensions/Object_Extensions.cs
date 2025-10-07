@@ -18,7 +18,7 @@ namespace RichPackage.FunctionalProgramming
         /// Cast <paramref name="a"/> to a base class.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static TBaseClass DownCast<TSuperClass, TBaseClass>(this TSuperClass a, out TBaseClass b)
+        public static TBaseClass CastDown<TSuperClass, TBaseClass>(this TSuperClass a, out TBaseClass b)
             where TSuperClass : TBaseClass
         {
             return b = a;
@@ -36,7 +36,7 @@ namespace RichPackage.FunctionalProgramming
 
         /// <summary>
         /// Convenient way to cast without needing parentheses. <br/>
-        /// Equivalent to `obj as T`.
+        /// Equivalent to <code>obj <see langword="as"/> T</code>
         /// </summary>
         /// <returns>The object cast to the given type or null if the cast is not valid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
