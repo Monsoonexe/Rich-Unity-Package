@@ -48,6 +48,15 @@ namespace RichPackage.Interaction
             interactionManager.OnInteractableChanged -= OnInteractableChangedHandler;
         }
 
+        /*
+        private void OnGUI()
+        {
+            GUI.Label(new Rect(10, 10, 300, 20),
+                $"over UI: {IsPointerOverUi()}");
+        }
+
+        */
+
         #endregion Unity Messages
 
         private void OnInteractableChangedHandler(
@@ -60,10 +69,25 @@ namespace RichPackage.Interaction
             }
         }
 
+        private bool IsPointerOverUi()
+        {
+            return UnityEngine.EventSystems.EventSystem.current
+                ?.IsPointerOverGameObject()
+                ?? false;
+        }
+
         public void ProcessRaycast()
         {
             // check to see if player is looking at interactable object's model
-            IInteractable interactable = null;
+            IInteractable newTarget = null;
+
+            // test against UI first
+            if (IsPointerOverUi())
+            {
+                goto exit;
+            }
+
+            // test against world object
             Ray ray = raycastOrigin.ScreenPointToRay(Input.mousePosition);
             bool hit = Physics.Raycast(ray, out RaycastHit hitInfo,
                 raycastLength, raycastLayerMask, queryTriggerInteraction);
@@ -73,11 +97,12 @@ namespace RichPackage.Interaction
                 Collider collider = hitInfo.collider;
                 if (!requireMatchingTag || collider.CompareTag(interactableTag))
                 {
-                    interactable = collider.GetComponent<IInteractable>();
+                    newTarget = collider.GetComponent<IInteractable>();
                 }
             }
 
-            interactionManager.Target = interactable;
+        exit:
+            interactionManager.Target = newTarget;
         }
 
         [Button]
