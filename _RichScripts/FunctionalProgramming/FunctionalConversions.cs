@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace RichPackage.FunctionalProgramming
 {
@@ -61,6 +62,22 @@ namespace RichPackage.FunctionalProgramming
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToFloat(this double value) => (float)value;
+
+        /// <returns><paramref name="value"/> to the nearest integer.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int RoundToInt(this float value) => Mathf.RoundToInt(value);
+
+        /// <summary>
+        /// Returns the smallest integer greater to or equal to f.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int CeilToInt(this float value) => Mathf.CeilToInt(value);
+
+        /// <summary>
+        /// Returns the largest integer smaller to or equal to f.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FloorToInt(this float value) => Mathf.FloorToInt(value);
     }
 
     /// <summary>

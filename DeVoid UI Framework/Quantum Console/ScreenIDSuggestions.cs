@@ -45,7 +45,7 @@ namespace RichPackage.Console
 
 		protected override IEnumerable<string> GetItems(SuggestionContext context, SuggestorOptions options)
 		{
-			UIFrame frame = QuantumRegistry.GetRegisteredObject<UIFrame>(); // I wrote this
+			UIFrame frame = QuantumRegistry.GetRegistryContents<UIFrame>().FirstOrDefault(); // I wrote this
 			return frame?.GetRegisteredScreenIDs() ?? Array.Empty<string>();
 		}
 	}
