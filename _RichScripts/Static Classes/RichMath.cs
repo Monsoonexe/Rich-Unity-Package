@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace RichPackage
 {
@@ -308,6 +308,26 @@ namespace RichPackage
             => v * DEG_2_RAD;
 
         #endregion
+
+        public static int CalculateDamage(int atk, int def, int pwr, int lvl, int mod)
+        {
+            // damage = ((2 * level + 10) * power / MAX_POWER * a / d + 2) * modifier
+            const int MAX_POWER = 250;
+            int dmg = (2 * lvl) * (pwr / MAX_POWER) * (atk / def) * mod;
+            return dmg;
+        }
+
+        public static int CalculateDamageTuned(int atk, int def, int pwr, int lvl, int mod)
+        {
+            // damage = ((2 * level + 10) * power / MAX_POWER * a / d + 2) * modifier
+            const int MAX_POWER = 250; // max possible power of a move
+            const int LVL_SCALE = 2; // level scaling factor
+            const int LVL_MOD = 10; // level modifier to balance scaling
+            const int MIN_DMG_MOD = 2; // minimum damage modifier to balance low-power moves
+
+            int dmg = (LVL_SCALE * lvl + LVL_MOD) * (pwr / MAX_POWER + MIN_DMG_MOD) * (atk / def) * mod;
+            return dmg;
+        }
 
         public static int GreatestCommonDenominator(int a, int b)
             => a == 0 ? b : b == 0 ? a
