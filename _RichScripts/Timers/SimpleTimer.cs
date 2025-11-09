@@ -48,5 +48,7 @@ namespace RichPackage
         public static bool operator <=(float duration, SimpleTimer timer)
             => duration <= timer.Elapsed;
 
+        public static implicit operator float (SimpleTimer timer)
+            => timer.Elapsed;
     }
 }
