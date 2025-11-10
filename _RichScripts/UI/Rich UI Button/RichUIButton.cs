@@ -1,9 +1,9 @@
+using Sirenix.OdinInspector;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using TMPro;
-using Sirenix.OdinInspector;
 
 namespace RichPackage.UI
 {
@@ -19,12 +19,12 @@ namespace RichPackage.UI
         private const string DefaultStringProperty = "--";
         private const string PropertiesGroup = "Properties";
 
-		#endregion Constants
+        #endregion Constants
 
-		[Title("Prefab References")]
+        [Title("Prefab References")]
         [SerializeField, Required]
         protected Button myButton;
-        
+
         public Button Button { get => myButton; }
 
         [SerializeField]
@@ -32,7 +32,7 @@ namespace RichPackage.UI
 
         public TextMeshProUGUI Label { get => myText; }
 
-		[Tooltip("Optional value that can be stored and retrieved later.")]
+        [Tooltip("Optional value that can be stored and retrieved later.")]
         [LabelWidth(100), BoxGroup(PropertiesGroup)]
         public int IntegerProperty = 0;
 
@@ -65,8 +65,8 @@ namespace RichPackage.UI
             set => myButton.enabled = value;
         }
 
-        public ColorBlock ColorBlock 
-        { 
+        public ColorBlock ColorBlock
+        {
             get => myButton.colors;
             set => myButton.colors = value;
         }
@@ -85,10 +85,10 @@ namespace RichPackage.UI
             set => Image.sprite = value;
         }
 
-        public Color Color 
-        { 
-            get => myButton.targetGraphic.color; 
-            set => myButton.targetGraphic.color = value; 
+        public Color Color
+        {
+            get => myButton.targetGraphic.color;
+            set => myButton.targetGraphic.color = value;
         }
 
         public string Text
@@ -114,9 +114,9 @@ namespace RichPackage.UI
         /// </summary>
         public event Action<RichUIButton> OnPressedEvent;
 
-		#region Unity Messages
+        #region Unity Messages
 
-		protected override void Reset()
+        protected override void Reset()
         {
             base.Reset();
             SetDevDescription("Automatically handles subscribing " +
@@ -158,9 +158,9 @@ namespace RichPackage.UI
             myButton.onClick.RemoveAllListeners();
         }
 
-		#endregion Unity Messages
+        #endregion Unity Messages
 
-		public void AddListener(UnityAction action) => myButton.onClick.AddListener(action);
+        public void AddListener(UnityAction action) => myButton.onClick.AddListener(action);
 
         public void RemoveListener(UnityAction action) => myButton.onClick.RemoveListener(action);
 
@@ -235,6 +235,13 @@ namespace RichPackage.UI
             Show();
         }
 
+        public System.Collections.IEnumerator WaitForPress(string text)
+        {
+            bool wasPressed = false;
+            Show(() => wasPressed = true, text);
+            return new WaitUntil(() => wasPressed);
+        }
+
         /// <returns>The <see cref="ObjectProperty"/> value cast to <typeparamref name="T"/>.</returns>
         /// <exception cref="InvalidCastException"/>
         /// <seealso cref="SetPayload(object)"/>
@@ -249,14 +256,14 @@ namespace RichPackage.UI
         #region Button Helpers
 
         public void SetNormalColor(in Color newColor)
-		{
+        {
             ColorBlock overrideColors = myButton.colors;
             overrideColors.normalColor = newColor;
             myButton.colors = overrideColors;
         }
 
         public void SetHighlightedColor(in Color newColor)
-		{
+        {
             ColorBlock overrideColors = myButton.colors;
             overrideColors.highlightedColor = newColor;
             myButton.colors = overrideColors;
@@ -264,7 +271,7 @@ namespace RichPackage.UI
 
         #endregion
 
-        public static implicit operator Button (RichUIButton a) => a.Button;
+        public static implicit operator Button(RichUIButton a) => a.Button;
 
         public static RichUIButton operator +(RichUIButton button, UnityAction action)
         {
