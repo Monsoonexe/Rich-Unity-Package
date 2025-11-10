@@ -93,11 +93,6 @@ namespace RichPackage
 			SetDevDescription("Counts down and raises an event when timer hits 0. Can loop.");
 		}
 
-		private void Start()
-		{
-			App.EnsureInstance();
-		}
-
 		private void OnDisable()
 		{
 			Stop();
@@ -225,6 +220,35 @@ namespace RichPackage
 		public static Timer Construct(Component siblingComponent)
 			=> siblingComponent.gameObject.AddComponent<Timer>();
 
-		#endregion
-	}
+        #endregion
+
+        public override string ToString() => TimeElapsed.ToString();
+
+        public static bool operator >(Timer timer, float duration)
+            => timer.TimeElapsed > duration;
+
+        public static bool operator <(Timer timer, float duration)
+            => timer.TimeElapsed < duration;
+
+        public static bool operator >=(Timer timer, float duration)
+            => timer.TimeElapsed >= duration;
+
+        public static bool operator <=(Timer timer, float duration)
+            => timer.TimeElapsed <= duration;
+
+        public static bool operator >(float duration, Timer timer)
+            => duration > timer.TimeElapsed;
+
+        public static bool operator <(float duration, Timer timer)
+            => duration < timer.TimeElapsed;
+
+        public static bool operator >=(float duration, Timer timer)
+            => duration >= timer.TimeElapsed;
+
+        public static bool operator <=(float duration, Timer timer)
+            => duration <= timer.TimeElapsed;
+
+        public static implicit operator float(Timer timer)
+            => timer.TimeElapsed;
+    }
 }

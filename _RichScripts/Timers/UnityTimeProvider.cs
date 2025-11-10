@@ -5,6 +5,8 @@
     /// </summary>
     public class UnityTimeProvider : ITimeProvider
     {
+        public static readonly UnityTimeProvider Shared = new UnityTimeProvider();
+
         public float DeltaTime { get => UnityEngine.Time.deltaTime; }
         public float UnscaledDeltaTime { get => UnityEngine.Time.unscaledDeltaTime; }
         public float UnscaledTime { get => UnityEngine.Time.unscaledTime; }
