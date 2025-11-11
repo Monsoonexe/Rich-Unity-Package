@@ -39,7 +39,8 @@ namespace RichPackage
         public static void SetActive(this Component a, bool active) 
             => a.gameObject.SetActive(active);
 
-        public static void SetAllEnabled<TBehaviour>(this IList<TBehaviour> behaviours, bool enabled)
+        public static void SetAllEnabled<TBehaviour>(this IList<TBehaviour> behaviours,
+            bool enabled)
             where TBehaviour : Behaviour
         {
             int length = behaviours.Count;

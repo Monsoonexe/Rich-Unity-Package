@@ -1,8 +1,8 @@
 ﻿using RichPackage.FunctionalProgramming;
 using RichPackage.GuardClauses;
 using RichPackage.RandomExtensions;
+using RichPackage.RNG;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -53,6 +53,23 @@ namespace RichPackage
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RollDie(int sides) => Random.Range(1, sides + 1);
 
+        // Copilot
+        public static float NormalDistribution(float mean, float stdev)
+        {
+            float u1 = Rng.Next();
+            float u2 = Rng.Next();
+            float randStdNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1)) * Mathf.Sin(2.0f * Mathf.PI * u2); //random normal(0,1)
+            return mean + stdev * randStdNormal; //random normal(mean,stdDev^2)
+        }
+
+        // https://www.youtube.com/watch?v=4_KwhtDGIOY && https://github.com/WillHess3/Normal-Distributions/blob/main/NormalDistribution.cs
+        public static float NormalDistribution(float mean, float stdev, float t)
+        {
+            float z = (float)(-0.6266570687 * Math.Log((1 / t) - 1));
+            float rand = stdev * z + mean;
+            return rand; // do we need to clamp??
+        }
+
         /// <summary>
         /// Standard normal random. 0 is average, and the stdev is 1.
         /// </summary>
@@ -82,7 +99,7 @@ namespace RichPackage
             while (S >= 1 || S == 0);
 
             // Standard Normal Distribution
-            float std = u * Math.Sqrt(-2.0f * Math.Log(S) / S).ToFloat();
+            float std = u * Mathf.Sqrt(-2.0f * Mathf.Log(S) / S);
 
             // Normal Distribution centered between the min and max value
             // and clamped following the "three-sigma rule"
