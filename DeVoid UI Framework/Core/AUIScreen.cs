@@ -7,14 +7,12 @@ using UnityEngine.UI;
 namespace RichPackage.UI.Framework
 {
 	[SelectionBase,
-		RequireComponent(typeof(Canvas)),
-		RequireComponent(typeof(GraphicRaycaster))]
+		RequireComponent(typeof(Canvas))]
 	public abstract class AUIScreen<TProps> : MonoBehaviour, IUIScreen
 		where TProps : IScreenProperties
 	{
 		[SerializeField, Required]
 		protected GameObject container;
-		protected GraphicRaycaster graphicRaycaster;
 
 		[Title("Transitions")]
 		[Tooltip("Transition IN animation.")]
@@ -254,16 +252,17 @@ namespace RichPackage.UI.Framework
 				Debug.LogError($"[UI] {name} ({ScreenID}) encountered '{ex.GetType().Name}' while opening.", this);
 			}
 
-			if (IsOpen) // if currently showing
+			if (IsOpen)
 			{
-				OnTransitionINFinished();
+                // already visible, so just do OnFinish callback
+                OnTransitionINFinished();
 			}
-			else // already visible, so just do OnFinish callback
+			else
 			{
 				// animate with this animator, when finished call this, show?
 				Animate(transitionINAnimator, OnTransitionINFinished, true);
 			}
-		} // end function
+		}
 
 		#endregion Hide/Show Interface
 
