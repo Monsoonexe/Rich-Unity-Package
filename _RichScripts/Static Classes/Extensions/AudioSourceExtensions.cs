@@ -1,22 +1,26 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace UnityEngine
 {
 	public static class AudioSourceExtensions
-	{
-		public static AudioSource Restart(this AudioSource source)
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static AudioSource Restart(this AudioSource source)
         {
 			source.Stop();
 			source.Play();
 			return source;
 		}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AudioSource SetVolume(this AudioSource source, float volume)
         {
             source.volume = volume;
             return source;
         }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static AudioSource PlayClip(this AudioSource source, AudioClip clip)
         {
             source.PlayOneShot(clip);
@@ -31,12 +35,12 @@ namespace DG.Tweening
 	{
 		public static Tween DOFadeIn(this AudioSource source, float duration, Ease ease = Ease.Linear, float volume = 1.0f)
 		{
-			source.volume = 0; // start quiet
-			source.Play();
 			return source
 				.DOFade(volume, duration)
-				.SetEase(ease);
-		}
+				.From(0) // start quiet
+				.SetEase(ease)
+				.OnStart(source.Play);
+        }
 
 		public static Tween DOFadeOut(this AudioSource source, float duration, Ease ease = Ease.Linear)
 		{
