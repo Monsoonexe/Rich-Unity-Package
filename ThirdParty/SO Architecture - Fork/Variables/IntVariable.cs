@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace ScriptableObjectArchitecture
 {
@@ -81,9 +81,14 @@ namespace ScriptableObjectArchitecture
         public void Double() => Value *= 2;
         public void Negate() => Value *= -1;
 
-        #region Static Constructors
+        #region Factory Methods
 
         public static IntVariable CreateInstance() => CreateInstance(0);
+
+        public static IntVariable CreateInstance(int value)
+        {
+            return CreateInstance(value, int.MinValue, int.MaxValue);
+        }
 
         public static IntVariable CreateInstance(int initial, bool isReadOnly = false)
         {
@@ -99,6 +104,6 @@ namespace ScriptableObjectArchitecture
             return newVariable;
         }
 
-        #endregion Static Constructors
-    }
+		#endregion Factory Methods
+	}
 }

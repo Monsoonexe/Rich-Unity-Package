@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,12 +44,17 @@ namespace ScriptableObjectArchitecture
         public void SetFalse() => Value = false;
         public void InvertValue() => Value = !Value;
 
+        #region Factory Methods
+
         public static BoolVariable CreateInstance() => CreateInstance<BoolVariable>();
+
         public static BoolVariable CreateInstance(bool initialValue)
         {
             var variable = CreateInstance<BoolVariable>();
             variable._value = initialValue;
             return variable;
         }
-    } 
+
+        #endregion Factory Methods
+    }
 }

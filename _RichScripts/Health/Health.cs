@@ -1,4 +1,4 @@
-﻿using ScriptableObjectArchitecture;
+using ScriptableObjectArchitecture;
 using System;
 using UnityEngine.Assertions;
 
@@ -45,6 +45,7 @@ namespace ApexOfficer
 
         public Health(int min, int max, int current)
         {
+            // TODO - IDisposable?
             Amount = IntVariable.CreateInstance(current, min, max);
         }
 
