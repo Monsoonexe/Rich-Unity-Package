@@ -21,7 +21,9 @@ namespace RichPackage.RNG
         /// <param name="against">[0,1] Chance of success.</param>
         public static bool Check(this IRandomNumberGenerator rng, float against)
         {
+#if UNITY_2020_OR_NEWER
             Assert.IsTrue(against is >= 0 and <= 1, $"Out of range '{against}' [0,1]");
+#endif
 
             return rng.Next() <= against;
         }

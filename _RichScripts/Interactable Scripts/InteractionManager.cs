@@ -188,7 +188,7 @@ namespace RichPackage.Interaction
         {
             while (interactables.Count > 0)
             {
-                Remove(interactables[^1]); // last
+                Remove(interactables.Last()); // last
             }
         }
 
@@ -211,26 +211,28 @@ namespace RichPackage.Interaction
             }
 
             // get all interactables within our aproximate range
-            using var _ = ZenPools.Spawn(out Collider[] colliders, 16); // lol what happens if we do this while inside a particle effect???
-            using var __ = ZenPools.Spawn(out List<IInteractable> interactablesInRange);
-            int count = Physics.OverlapCapsuleNonAlloc(start, end, radius,
-                colliders, layer, QueryTriggerInteraction.Collide);
-
-            // optimize linq if this goes to production.
-            colliders
-                .Take(count)
-                .Select((c) => c.GetComponent<IInteractable>())
-                .Where(i => i != null)
-                .ToList(interactablesInRange);
-
-            // iterate backwards due to removal
-            for (int i = interactables.Count - 1; i >= 0; i--)
+            using (ZenPools.Spawn(out Collider[] colliders, 16)) // lol what happens if we do this while inside a particle effect???
+            using (ZenPools.Spawn(out List<IInteractable> interactablesInRange))
             {
-                var query = interactables[i];
-                // if we are no longer inside this guy's trigger volume
-                if (!interactablesInRange.Contains(query))
+                int count = Physics.OverlapCapsuleNonAlloc(start, end, radius,
+                    colliders, layer, QueryTriggerInteraction.Collide);
+
+                // optimize linq if this goes to production.
+                colliders
+                    .Take(count)
+                    .Select((c) => c.GetComponent<IInteractable>())
+                    .Where(i => i != null)
+                    .ToList(interactablesInRange);
+
+                // iterate backwards due to removal
+                for (int i = interactables.Count - 1; i >= 0; i--)
                 {
-                    Remove(query);
+                    var query = interactables[i];
+                    // if we are no longer inside this guy's trigger volume
+                    if (!interactablesInRange.Contains(query))
+                    {
+                        Remove(query);
+                    }
                 }
             }
         }
