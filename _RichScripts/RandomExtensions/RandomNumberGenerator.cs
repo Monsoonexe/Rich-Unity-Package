@@ -1,8 +1,6 @@
-﻿using RichPackage.Assertions;
-
-namespace RichPackage.RNG
+﻿namespace RichPackage.RNG
 {
-    public static class  Rng
+    public static class Rng
     {
         public static readonly UnityRandom Unity = new UnityRandom(); // a solid choice
         public static readonly SystemRandom System = new SystemRandom(); // what, do you want more control?
@@ -14,7 +12,7 @@ namespace RichPackage.RNG
         public static float Next() => Current.Next();
         public static float Range(float min, float max) => Current.Range(min, max);
         public static int Range(int min, int max) => Current.Range(min, max);
-        
+
         /// <summary>
         /// Makes a random draw against <paramref name="against"/>.
         /// </summary>
