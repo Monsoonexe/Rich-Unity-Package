@@ -1,11 +1,12 @@
 using Sirenix.OdinInspector;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RichPackage.TagSystem
 {
     [Serializable]
-    public class Tag : IEquatable<Tag>
+    public class Tag : IEquatable<Tag>, IEquatable<string>
     {
         /// <summary>
         /// Empty array of tags. None.
@@ -50,11 +51,34 @@ namespace RichPackage.TagSystem
         /// Tags are equal to each other if both of their properties are equal.
         /// </summary>
         public bool Equals(Tag other)
-            => MatchProperty(other.Property) && MatchValue(other.Value);
+        {
+            if (other is null)
+                return false;
+
+            return MatchProperty(other.Property) && MatchValue(other.Value);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Tag other && Equals(other);
+        }
+
+        public bool Equals(string other)
+        {
+            return !HasValue && MatchProperty(other);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1027930222;
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Property);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Value);
+            return hashCode;
+        }
 
         public override string ToString()
         {
-            return HasValue 
+            return HasValue
                 ? $"{{'{Property}':'{Value}'}}"
                 : Property;
         }
@@ -72,7 +96,17 @@ namespace RichPackage.TagSystem
 
         #endregion Querries
 
-        public static implicit operator string (Tag t) => t?.Property ?? string.Empty;
+        public static bool operator ==(Tag a, Tag b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (a is null)
+                return false;
+            return a.Equals(b);
+        }
+        public static bool operator !=(Tag a, Tag b) => !(a == b);
+
+        public static implicit operator string(Tag t) => t?.Property ?? string.Empty;
         public static implicit operator Tag(string s) => new Tag(s ?? string.Empty);
     }
 }
