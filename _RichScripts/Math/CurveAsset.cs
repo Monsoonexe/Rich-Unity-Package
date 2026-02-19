@@ -1,4 +1,5 @@
 ﻿using Sirenix.OdinInspector;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace RichPackage.Mathematics
@@ -17,22 +18,32 @@ namespace RichPackage.Mathematics
         }
 
         [Button]
-        public virtual float Evaluate(float t)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float Evaluate(float t)
         {
             return curve.Evaluate(t);
         }
 
         [Button]
-        public virtual int Evaluate(int t)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int Evaluate(int t)
         {
             return (int)curve.Evaluate(t);
         }
 
+        #region Factory Methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static CurveAsset CreateInstance() => CreateInstance<CurveAsset>();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static CurveAsset CreateInstance(AnimationCurve curve)
         {
-            var instance = CreateInstance<CurveAsset>();
+            var instance = CreateInstance();
             instance.curve = curve;
             return instance;
         }
+
+        #endregion Factory Methods
     }
 }
