@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace RichPackage
 {
@@ -81,6 +82,15 @@ namespace RichPackage
         #endregion IEquatable
 
         public static UniqueID FromString(string src) => new UniqueID(src);
+
+        public static UniqueID Combine(UniqueID a, UniqueID b, string separator = "/")
+        {
+            Assert.IsTrue(a.IsValid, nameof(a));
+            Assert.IsTrue(b.IsValid, nameof(b));
+
+            return new UniqueID($"{a.ID}{separator}{b.ID}");
+        }
+
         public static ConditionInfo CheckIsValid(UniqueID id)
         {
             if (id.ID == null)
