@@ -20,7 +20,14 @@ namespace ScriptableObjectArchitecture.Editor
         {
             SerializedProperty property = serializedObject.FindProperty("_debugValue");
 
-            EditorGUILayout.PropertyField(property);
+            try
+            {
+                EditorGUILayout.PropertyField(property);
+            }
+            catch
+            {
+                Debug.LogError("Is your game event type [Serializable]?")
+            }
 
             if (GUILayout.Button("Raise"))
             {
