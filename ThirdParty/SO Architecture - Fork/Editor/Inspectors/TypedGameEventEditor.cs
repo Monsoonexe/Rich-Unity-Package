@@ -26,7 +26,7 @@ namespace ScriptableObjectArchitecture.Editor
             }
             catch
             {
-                Debug.LogError("Is your game event type [Serializable]?")
+                Debug.LogError("Is your game event type [Serializable]?");
             }
 
             if (GUILayout.Button("Raise"))
