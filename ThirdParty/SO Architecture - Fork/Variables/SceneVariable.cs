@@ -26,6 +26,11 @@ namespace ScriptableObjectArchitecture
         // any kind of expectation for a user to be able to set this at runtime.
         public override bool ReadOnly => true;
 
+        private void OnValidate()
+        {
+            _value.OnBeforeSerialize();
+        }
+
         #region Load
 
         public void LoadScene() => LoadScene(LoadSceneMode.Single);
@@ -63,7 +68,7 @@ namespace ScriptableObjectArchitecture
 
     [Serializable]
     [MultiLine]
-    public sealed class SceneInfo : ISerializationCallbackReceiver
+    public sealed class SceneInfo
     {
         [SerializeField]
         private string _scenePath;
@@ -103,18 +108,18 @@ namespace ScriptableObjectArchitecture
         /// </summary>
         public string SceneName => _sceneName;
 
-		/// <summary>
-		/// Player-facing description of level.
-		/// </summary>
-		[Tooltip("Player-facing description of level.")]
-		[SerializeField]
-		private string _sceneDescription = "A nice place to visit.";
-		public string Description => _sceneDescription;
+        /// <summary>
+        /// Player-facing description of level.
+        /// </summary>
+        [Tooltip("Player-facing description of level.")]
+        [SerializeField]
+        private string _sceneDescription = "A nice place to visit.";
+        public string Description => _sceneDescription;
 
-		[SerializeField]
-		[Tooltip("Player-facing icon.")]
-		private Sprite _icon;
-		public Sprite Icon => _icon;
+        [SerializeField]
+        [Tooltip("Player-facing icon.")]
+        private Sprite _icon;
+        public Sprite Icon => _icon;
 
         /// <summary>
         /// Returns true if the scene is present in the build settings, otherwise false.
@@ -137,29 +142,29 @@ namespace ScriptableObjectArchitecture
 
         public void OnBeforeSerialize()
         {
-			#if UNITY_EDITOR
-			if (Scene != null)
+            #if UNITY_EDITOR
+            if (Scene != null)
             {
                 var sceneAssetPath = UnityEditor.AssetDatabase.GetAssetPath(Scene);
                 var sceneAssetGUID = UnityEditor.AssetDatabase.AssetPathToGUID(sceneAssetPath);
                 var scenes = UnityEditor.EditorBuildSettings.scenes;
 
                 SceneIndex = -1;
-				int enabledSceneIndex = 0;//scenes are only given a build index if enabled.
-				for (var i = 0; i < scenes.Length; i++)
+                int enabledSceneIndex = 0;//scenes are only given a build index if enabled.
+                for (var i = 0; i < scenes.Length; i++)
                 {
-					bool sceneIsEnabled = scenes[i].enabled;
+                    bool sceneIsEnabled = scenes[i].enabled;
                     if (scenes[i].guid.ToString() == sceneAssetGUID)
                     {
-						if(sceneIsEnabled)
-							SceneIndex = enabledSceneIndex++;
+                        if(sceneIsEnabled)
+                            SceneIndex = enabledSceneIndex++;
                         IsSceneEnabled = sceneIsEnabled;
                         break;
                     }
-					else if (sceneIsEnabled)
-					{
-						++enabledSceneIndex;
-					}
+                    else if (sceneIsEnabled)
+                    {
+                        ++enabledSceneIndex;
+                    }
                 }
             }
             #endif
