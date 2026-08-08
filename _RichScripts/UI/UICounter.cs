@@ -1,6 +1,7 @@
 ﻿using RichPackage.Pooling;
 using ScriptableObjectArchitecture;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace RichPackage.UI
         // member Components
         [SerializeField, Required]
         private GameObjectPool objectPool;
+        private readonly List<GameObject> activeItems = new List<GameObject>();
 
         protected override void Reset()
         {
@@ -75,11 +77,16 @@ namespace RichPackage.UI
                     .ToStringAndReturn();
 
                 // make change from AAAAAAAAA to A x5 lives
-                if (objectPool.InUseCount != 1) // only need to do this once 
+                if (activeItems.Count != 1) // only need to do this once 
                 {
-                    objectPool.ReturnAllToPool();
+                    while (activeItems.Count > 0)
+                    {
+                        Release(activeItems.Last());
+                    }
+
                     //show a single item
-                    objectPool.Depool();
+                    var item = objectPool.Depool();
+                    activeItems.Add(item);
                     textReadout.enabled = true;
                 }
             }
@@ -88,28 +95,26 @@ namespace RichPackage.UI
                 textReadout.enabled = false;
                 
                 // need to create more
-                while (targetData.Value > objectPool.InUseCount)
+                while (targetData.Value > activeItems.Count)
                 {
                     GameObject item = objectPool.Depool(); // (spawn)
                     if (item == null)
                         break; // pool is exhausted
+                    activeItems.Add(item);
                 }
 
                 // have too many
-                while (targetData.Value < objectPool.InUseCount)
+                while (targetData.Value < activeItems.Count)
                 {
-                    // TODO - cache delegate instance
-                    bool IsGameObjectActive(GameObject obj)
-                        => obj.activeSelf == true;
-
-                    //look for an active item
-                    GameObject itemInUse = objectPool.Manifest.FirstOrDefault(
-                        IsGameObjectActive);
-                    if (itemInUse == null)
-                        break; // break if not found
-                    objectPool.Enpool(itemInUse); // return to pool (despawn)
+                    Release(activeItems.Last());
                 }
             }
+        }
+
+        private void Release(GameObject obj)
+        {
+            objectPool.Enpool(obj); // return to pool (despawn)
+            activeItems.Remove(obj);
         }
     }
 }

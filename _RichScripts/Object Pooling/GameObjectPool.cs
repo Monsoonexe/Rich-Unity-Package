@@ -347,6 +347,13 @@ namespace RichPackage.Pooling
                 pool.Push(item);
 
             return count - pool.Count;
-		}
+        }
+
+        public void ReturnAllToPool()
+        {
+            // iterate backwards to preserve stack order
+            for (int i = manifest.Count - 1; i >= 0; --i)
+                Enpool(manifest[i]);
+        }
     }
 }

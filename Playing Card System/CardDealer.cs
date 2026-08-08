@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using DG.Tweening;
+﻿using DG.Tweening;
 using RichPackage.Audio;
 using RichPackage.Decks;
 using RichPackage.Pooling;
-using Sirenix.OdinInspector;
-using RichPackage.Animation;
+using UnityEngine;
 
 namespace RichPackage.PlayingCards
 {
@@ -40,9 +38,9 @@ namespace RichPackage.PlayingCards
         [SerializeField]
         private RichAudioClipReference flipCardAudio;
 
-		protected override void Awake()
-		{
-			base.Awake();
+        protected override void Awake()
+        {
+            base.Awake();
 
             //configure pool
             gameObjectPool.OnEnpoolMethod += (item) => item.GetComponent<ACardBehaviour>().Hide(); //hide show
@@ -109,11 +107,5 @@ namespace RichPackage.PlayingCards
         /// Discard the top card.
         /// </summary>
         public void Discard() => DrawCardInternal();
-
-        /// <summary>
-        /// Hide all the cards dealt.
-        /// </summary>
-        public void ResetCards()
-            => gameObjectPool.ReturnAllToPool();
     }
 }
