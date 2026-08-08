@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if !UNITY_6000_0_OR_NEWER
+using System.Collections.Generic;
 
 namespace RichPackage
 {
@@ -17,3 +18,5 @@ namespace RichPackage
         }
     }
 }
+
+#endif
